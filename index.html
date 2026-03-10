@@ -3,32 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICEGRAM SAVED</title>
+    <title>DICEGRAM PREMIER</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --bg: #0e1621; --panel: #17212b; --blue: #5288c1; --text: #ffffff; }
+        :root { --bg: #0e1621; --panel: #17212b; --blue: #5288c1; --text: #ffffff; --msg-in: #182533; --msg-out: #2b5278; }
         body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
         
         .screen { display: none; height: 100vh; flex-direction: column; }
         .active { display: flex; }
 
-        /* Шапка */
-        .header { background: var(--panel); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000; }
+        .header { background: var(--panel); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000; z-index: 10; }
         .menu-btn { cursor: pointer; font-size: 24px; }
 
-        /* Центрирование входа */
         .auth-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         input { width: 100%; max-width: 280px; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: var(--panel); color: white; outline: none; }
         .btn { width: 100%; max-width: 280px; padding: 15px; background: var(--blue); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; }
 
-        /* Список чатов */
         .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { padding: 15px; border-bottom: 1px solid #080d13; display: flex; align-items: center; }
+        .chat-item { padding: 15px; border-bottom: 1px solid #080d13; display: flex; align-items: center; cursor: pointer; }
         .avatar { width: 45px; height: 45px; background: var(--blue); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        /* Боковое меню */
-        #side-menu { position: fixed; left: -100%; top: 0; width: 280px; height: 100%; background: var(--panel); transition: 0.3s; z-index: 300; padding: 20px; box-sizing: border-box; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        /* Окно чата (Full Screen) */
+        #chat-window { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); transition: 0.3s; z-index: 500; display: flex; flex-direction: column; }
+        #chat-window.open { left: 0; }
+        .messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
+        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 75%; font-size: 15px; }
+        .bubble.in { background: var(--msg-in); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .bubble.out { background: var(--msg-out); align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        .input-area { background: var(--panel); padding: 10px; display: flex; gap: 10px; align-items: center; }
+        .input-area input { margin: 0; flex: 1; }
+
+        /* Профиль игрока */
+        #profile-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--panel); padding: 20px; border-radius: 20px; z-index: 600; display: none; width: 80%; max-width: 300px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #profile-modal.active { display: block; transform: translate(-50%, -50%) scale(1); }
+
+        #side-menu { position: fixed; left: -100%; top: 0; width: 280px; height: 100%; background: var(--panel); transition: 0.3s; z-index: 300; padding: 20px; box-sizing: border-box; }
         #side-menu.open { left: 0; }
-        .menu-item { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .menu-item { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; }
         
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 250; }
         .overlay.active { display: block; }
@@ -39,7 +52,6 @@
     <div id="auth-screen" class="screen">
         <div class="auth-center">
             <h1 style="color: var(--blue); font-size: 35px;">DICEGRAM</h1>
-            <p id="auth-desc">У вас нет активного аккаунта</p>
             <input type="text" id="username" placeholder="@твой_ник">
             <button class="btn" onclick="createNewAccount()">Создать аккаунт</button>
         </div>
@@ -48,37 +60,55 @@
     <div id="main-screen" class="screen">
         <div class="header">
             <div class="menu-btn" onclick="toggleMenu()">☰</div>
-            <span style="font-weight: bold;">DICEGRAM</span>
-            <div style="width: 24px;"></div> </div>
-        <div class="chat-list" id="chat-list">
-            </div>
+            <b>DICEGRAM</b>
+            <div class="menu-btn" onclick="openSearch()">🔍</div>
+        </div>
+        <div class="chat-list" id="chat-list"></div>
+    </div>
+
+    <div id="chat-window">
+        <div class="header">
+            <div onclick="closeChat()" style="cursor:pointer">⬅</div>
+            <b id="chat-target-nick">@nick</b>
+            <div style="width:24px"></div>
+        </div>
+        <div class="messages" id="msg-container"></div>
+        <div class="input-area">
+            <input type="text" id="msg-input" placeholder="Сообщение...">
+            <b onclick="sendMessage()" style="color:var(--blue); cursor:pointer; padding:10px;">ОТПР.</b>
+        </div>
+    </div>
+
+    <div id="profile-modal">
+        <div class="avatar" style="width:80px; height:80px; margin: 0 auto 15px; font-size: 30px;" id="p-avatar">?</div>
+        <h2 id="p-nick">@user</h2>
+        <p style="color:gray; font-size:14px;">Пользователь DICEGRAM</p>
+        <button class="btn" onclick="startChatFromProfile()">Написать</button>
+        <p onclick="closeProfile()" style="margin-top:15px; cursor:pointer; color:gray;">Закрыть</p>
     </div>
 
     <div id="side-menu">
         <h2 id="current-user-title" style="color: var(--blue);">@nick</h2>
-        <div style="font-size: 12px; color: gray; margin-bottom: 10px;">ВАШИ АККАУНТЫ (МАКС 2)</div>
         <div id="acc-list"></div>
-        
-        <div id="add-acc-btn" class="menu-item" style="color: #4CAF50; margin-top: 10px;" onclick="goToAddAccount()">+ Добавить аккаунт</div>
-        
-        <div class="menu-item" style="color: red; margin-top: 40px; border: none;" onclick="fullReset()">Полный сброс</div>
-        <div class="menu-item" onclick="toggleMenu()" style="border: none; color: gray;">Закрыть</div>
+        <div id="add-acc-btn" class="menu-item" style="color: #4CAF50;" onclick="goToAddAccount()">+ Добавить аккаунт</div>
+        <div class="menu-item" onclick="toggleMenu()" style="margin-top:20px; border:none; color: gray;">Закрыть</div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
     <script>
-        // Загрузка данных
+        // БАЗА ДАННЫХ (Публичная для теста)
+        const firebaseConfig = { databaseURL: "https://dicegram-default-rtdb.firebaseio.com" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         let accounts = JSON.parse(localStorage.getItem('dg_data')) || [];
         let currentIdx = parseInt(localStorage.getItem('dg_active_idx')) || 0;
+        let activeTarget = null; 
 
         window.onload = () => {
-            // Если в памяти есть аккаунты, сразу открываем приложение
-            if (accounts.length > 0) {
-                renderApp();
-            } else {
-                showScreen('auth-screen');
-            }
+            if (accounts.length > 0) renderApp();
+            else showScreen('auth-screen');
         };
 
         function showScreen(id) {
@@ -86,29 +116,20 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function createNewAccount() {
+        async function createNewAccount() {
             const nick = document.getElementById('username').value.trim().replace('@', '');
-            if (nick.length < 3) return alert("Ник слишком короткий!");
+            if (nick.length < 3) return alert("Ник короткий!");
 
-            // Проверяем, нет ли уже такого ника на этом телефоне
-            if (accounts.some(a => a.nick === nick)) {
-                alert("Этот аккаунт уже создан на вашем устройстве!");
-                return;
+            // Проверка в глобальной базе
+            const snap = await db.ref('u/' + nick).once('value');
+            if (snap.exists() && !accounts.some(a => a.nick === nick)) return alert("Ник занят другим!");
+
+            if (!accounts.some(a => a.nick === nick)) {
+                if (accounts.length >= 2) return alert("Лимит 2 аккаунта!");
+                accounts.push({ nick: nick, contacts: [] });
+                await db.ref('u/' + nick).set({ reg: Date.now() });
             }
-
-            if (accounts.length >= 2) {
-                alert("Лимит 2 аккаунта исчерпан!");
-                return;
-            }
-
-            // Добавляем новый акк
-            accounts.push({
-                nick: nick,
-                chats: ["DICEGRAM Bot", "Избранное"]
-            });
-
-            // Сохраняем и заходим
-            currentIdx = accounts.length - 1;
+            currentIdx = accounts.findIndex(a => a.nick === nick);
             saveAndRefresh();
         }
 
@@ -117,63 +138,91 @@
             const user = accounts[currentIdx];
             document.getElementById('current-user-title').innerText = "@" + user.nick;
 
-            // Список чатов
             const list = document.getElementById('chat-list');
             list.innerHTML = "";
-            user.chats.forEach(c => {
-                list.innerHTML += `
-                    <div class="chat-item">
-                        <div class="avatar">${c[0]}</div>
-                        <div><b>${c}</b><br><small style="color:gray">Аккаунт: ${user.nick}</small></div>
-                    </div>
-                `;
+            user.contacts.forEach(c => {
+                list.innerHTML += `<div class="chat-item" onclick="openChat('${c}')">
+                    <div class="avatar">${c[0]}</div>
+                    <div><b>@${c}</b><br><small style="color:gray">Нажмите, чтобы открыть чат</small></div>
+                </div>`;
             });
 
-            // Список аккаунтов в меню
             const accList = document.getElementById('acc-list');
             accList.innerHTML = "";
             accounts.forEach((acc, i) => {
-                accList.innerHTML += `
-                    <div class="menu-item" onclick="switchAccount(${i})">
-                        @${acc.nick} ${i === currentIdx ? "✅" : ""}
-                    </div>
-                `;
+                accList.innerHTML += `<div class="menu-item" onclick="switchAccount(${i})">@${acc.nick} ${i === currentIdx ? "✅" : ""}</div>`;
             });
-
-            // Кнопка "Добавить"
-            document.getElementById('add-acc-btn').style.display = accounts.length >= 2 ? "none" : "flex";
+            document.getElementById('add-acc-btn').style.display = accounts.length >= 2 ? "none" : "block";
         }
 
-        function switchAccount(idx) {
-            currentIdx = idx;
-            saveAndRefresh();
-            toggleMenu();
+        // ПОИСК И ПРОФИЛЬ
+        async function openSearch() {
+            const nick = prompt("Введите ник игрока:");
+            if (!nick) return;
+            const cleanNick = nick.replace('@', '');
+            
+            const snap = await db.ref('u/' + cleanNick).once('value');
+            if (snap.exists()) {
+                activeTarget = cleanNick;
+                document.getElementById('p-nick').innerText = "@" + cleanNick;
+                document.getElementById('p-avatar').innerText = cleanNick[0].toUpperCase();
+                document.getElementById('profile-modal').classList.add('active');
+                document.getElementById('overlay').classList.add('active');
+            } else {
+                alert("Игрок не найден!");
+            }
         }
 
-        function goToAddAccount() {
-            toggleMenu();
-            document.getElementById('username').value = "";
-            document.getElementById('auth-desc').innerText = "Добавление второго аккаунта";
-            showScreen('auth-screen');
+        function startChatFromProfile() {
+            if (!accounts[currentIdx].contacts.includes(activeTarget)) {
+                accounts[currentIdx].contacts.push(activeTarget);
+                saveAndRefresh();
+            }
+            closeProfile();
+            openChat(activeTarget);
         }
 
+        function openChat(nick) {
+            activeTarget = nick;
+            document.getElementById('chat-target-nick').innerText = "@" + nick;
+            document.getElementById('chat-window').classList.add('open');
+            
+            const myNick = accounts[currentIdx].nick;
+            const chatId = [myNick, nick].sort().join('_');
+            
+            db.ref('m/' + chatId).off();
+            db.ref('m/' + chatId).on('value', snap => {
+                const cont = document.getElementById('msg-container');
+                cont.innerHTML = "";
+                snap.forEach(m => {
+                    const d = m.val();
+                    const type = d.s === myNick ? 'out' : 'in';
+                    cont.innerHTML += `<div class="bubble ${type}">${d.t}</div>`;
+                });
+                cont.scrollTop = cont.scrollHeight;
+            });
+        }
+
+        async function sendMessage() {
+            const t = document.getElementById('msg-input').value.trim();
+            if (!t) return;
+            const myNick = accounts[currentIdx].nick;
+            const chatId = [myNick, activeTarget].sort().join('_');
+            await db.ref('m/' + chatId).push({ s: myNick, t: t });
+            document.getElementById('msg-input').value = "";
+        }
+
+        function switchAccount(idx) { currentIdx = idx; saveAndRefresh(); toggleMenu(); }
         function saveAndRefresh() {
             localStorage.setItem('dg_data', JSON.stringify(accounts));
             localStorage.setItem('dg_active_idx', currentIdx);
             renderApp();
         }
-
-        function toggleMenu() {
-            document.getElementById('side-menu').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function fullReset() {
-            if (confirm("Это удалит все аккаунты на этом телефоне. Уверены?")) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
+        function toggleMenu() { document.getElementById('side-menu').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeChat() { document.getElementById('chat-window').classList.remove('open'); db.ref().off(); }
+        function closeProfile() { document.getElementById('profile-modal').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+        function closeAll() { closeProfile(); toggleMenu(); }
+        function goToAddAccount() { toggleMenu(); showScreen('auth-screen'); }
     </script>
 </body>
 </html>

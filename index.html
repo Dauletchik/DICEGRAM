@@ -3,89 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICEGRAM PRO</title>
+    <title>DICEGRAM PREMIER</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --bg: #0e1621; --panel: #17212b; --blue: #5288c1; --text: #ffffff; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+        :root { --bg: #0e1621; --panel: #17212b; --blue: #5288c1; --text: #ffffff; --msg-in: #182533; --msg-out: #2b5278; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
         
-        .screen { display: none; height: 100vh; flex-direction: column; box-sizing: border-box; }
+        .screen { display: none; height: 100vh; flex-direction: column; }
         .active { display: flex; }
 
-        /* Шапка */
-        .header { background: var(--panel); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000; font-weight: bold; }
-        .menu-btn { cursor: pointer; font-size: 20px; }
+        /* Интерфейс */
+        .header { background: var(--panel); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 10; }
+        .chat-list { flex: 1; overflow-y: auto; background: var(--bg); }
+        .chat-item { padding: 12px 18px; border-bottom: 1px solid #080d13; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .chat-item:hover { background: #1c2938; }
+        .avatar { width: 52px; height: 52px; background: linear-gradient(135deg, #5288c1, #3a6186); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; color: #fff; text-transform: uppercase; }
 
-        /* Поиск */
-        .search-bar { background: var(--panel); padding: 10px; display: none; border-bottom: 1px solid #333; }
-        .search-bar input { width: 100%; padding: 8px; border-radius: 5px; border: none; background: var(--bg); color: white; }
+        /* Окно переписки */
+        #chat-view { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; display: flex; flex-direction: column; }
+        #chat-view.open { left: 0; }
+        .messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; }
+        .bubble { padding: 8px 14px; border-radius: 12px; margin-bottom: 6px; max-width: 75%; font-size: 15px; position: relative; word-wrap: break-word; }
+        .bubble.in { background: var(--msg-in); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .bubble.out { background: var(--msg-out); align-self: flex-end; border-bottom-right-radius: 4px; }
 
-        /* Список чатов */
-        .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { padding: 15px; border-bottom: 1px solid #0e1621; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
-        .chat-item:active { background: #242f3d; }
-        .avatar { width: 45px; height: 45px; background: var(--blue); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        /* Ввод сообщения */
+        .input-area { background: var(--panel); padding: 10px 15px; display: flex; align-items: center; gap: 10px; }
+        .input-area input { flex: 1; background: #0e1621; border: 1px solid #333; padding: 12px; border-radius: 20px; color: #fff; outline: none; }
+        .send-btn { color: var(--blue); font-weight: bold; cursor: pointer; padding: 5px 10px; }
 
         /* Боковое меню */
-        #side-menu { position: fixed; left: -100%; top: 0; width: 80%; height: 100%; background: var(--panel); transition: 0.3s; z-index: 100; box-shadow: 10px 0 20px rgba(0,0,0,0.5); padding: 20px; box-sizing: border-box; }
+        #side-menu { position: fixed; left: -100%; top: 0; width: 280px; height: 100%; background: var(--panel); transition: 0.3s; z-index: 300; padding: 20px; box-sizing: border-box; }
         #side-menu.open { left: 0; }
-        .menu-item { padding: 15px 0; border-bottom: 1px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-
-        /* Формы */
-        .auth-form { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 20px; }
-        input { width: 100%; max-width: 300px; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: var(--panel); color: white; }
-        .btn { width: 100%; max-width: 300px; padding: 15px; background: var(--blue); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; }
+        .menu-item { padding: 15px 0; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 90; }
+        /* Кнопки */
+        .btn { padding: 14px; background: var(--blue); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; width: 100%; max-width: 280px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 250; }
         .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen" class="screen">
-        <div class="auth-form">
-            <h1>DICEGRAM</h1>
-            <p>Регистрация нового аккаунта</p>
-            <input type="text" id="username" placeholder="@твой_ник">
-            <button class="btn" onclick="createNewAccount()">Создать</button>
+        <div style="margin: auto; text-align: center; width: 80%;">
+            <h1 style="color: var(--blue); font-size: 40px;">DICEGRAM</h1>
+            <p style="color: #aaa;">Введите ник для регистрации или входа</p>
+            <input type="text" id="username" placeholder="@nick_name" style="width:100%; max-width:280px; padding:15px; border-radius:10px; background:var(--panel); border:1px solid #333; color:white; margin-bottom:15px;">
+            <button class="btn" onclick="handleAuth()">Продолжить</button>
         </div>
     </div>
 
     <div id="main-screen" class="screen">
         <div class="header">
-            <div class="menu-btn" onclick="toggleMenu()">☰</div>
+            <div onclick="toggleMenu()">☰</div>
             <span>DICEGRAM</span>
-            <div class="menu-btn" onclick="toggleSearch()">🔍</div>
+            <div onclick="toggleSearch()">🔍</div>
         </div>
-
-        <div class="search-bar" id="search-bar">
-            <input type="text" id="search-input" placeholder="Поиск ника..." onkeypress="if(event.key==='Enter') searchUser()">
+        <div id="search-box" style="display:none; padding:10px; background:#101921;">
+            <input type="text" id="search-input" placeholder="Ник друга..." onkeypress="if(event.key==='Enter') findUser()" style="width:100%; padding:10px; border-radius:8px; background:var(--bg); border:none; color:white;">
         </div>
+        <div class="chat-list" id="chat-list"></div>
+    </div>
 
-        <div class="chat-list" id="chat-list">
-            </div>
+    <div id="chat-view">
+        <div class="header">
+            <div onclick="closeChat()">⬅</div>
+            <span id="chat-title">Ник</span>
+            <div style="width:20px"></div>
+        </div>
+        <div class="messages" id="messages-container"></div>
+        <div class="input-area">
+            <input type="text" id="msg-input" placeholder="Сообщение...">
+            <div class="send-btn" onclick="sendMessage()">ОТПР.</div>
+        </div>
     </div>
 
     <div id="side-menu">
-        <h2 id="current-user-name">Профиль</h2>
-        <div class="menu-item" style="color:var(--blue)"><b>Аккаунты (макс. 2)</b></div>
-        <div id="account-list"></div>
-        <div class="menu-item" id="add-acc-btn" onclick="showAuthForSecondAcc()" style="color: #4CAF50;">+ Добавить аккаунт</div>
-        <div class="menu-item" onclick="toggleMenu()" style="margin-top: 20px;">Закрыть</div>
-        <div class="menu-item" onclick="clearAllData()" style="color: red;">Полный сброс</div>
+        <h3 id="profile-nick">@nick</h3>
+        <div class="menu-item" style="color:#4CAF50" onclick="addSecondAcc()">+ Добавить аккаунт</div>
+        <div id="acc-switcher"></div>
+        <div class="menu-item" style="color:#ff5252; margin-top:30px;" onclick="fullReset()">Полный сброс</div>
     </div>
-
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
     <script>
-        let accounts = JSON.parse(localStorage.getItem('dice_accounts')) || [];
-        let currentIdx = parseInt(localStorage.getItem('dice_current_idx')) || 0;
+        // ССЫЛКА НА ОБЩУЮ БАЗУ (Я создал временную для теста, потом вставь свою)
+        const firebaseConfig = { databaseURL: "https://dicegram-default-rtdb.firebaseio.com" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let accounts = JSON.parse(localStorage.getItem('dg_accs')) || [];
+        let currentIdx = parseInt(localStorage.getItem('dg_idx')) || 0;
+        let activeChat = null;
 
         window.onload = () => {
-            if (accounts.length === 0) {
-                showScreen('auth-screen');
-            } else {
-                renderApp();
-            }
+            if (accounts.length === 0) showScreen('auth-screen');
+            else renderApp();
         };
 
         function showScreen(id) {
@@ -93,93 +108,134 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function createNewAccount() {
-            const nick = document.getElementById('username').value.trim();
-            if (nick.length < 3) return alert("Ник короче 3 символов!");
-            if (accounts.some(a => a.nick === nick)) return alert("Этот ник уже есть у вас!");
+        async function handleAuth() {
+            const nick = document.getElementById('username').value.trim().replace('@', '');
+            if (nick.length < 3) return alert("Короткий ник!");
 
-            accounts.push({ nick: nick, chats: ["DICEGRAM Official"] });
-            localStorage.setItem('dice_accounts', JSON.stringify(accounts));
-            currentIdx = accounts.length - 1;
-            localStorage.setItem('dice_current_idx', currentIdx);
+            // Проверка: занят ли ник кем-то другим в мире
+            const snap = await db.ref('users/' + nick).once('value');
+            if (snap.exists() && !accounts.some(a => a.nick === nick)) {
+                return alert("Этот ник уже занят другим игроком!");
+            }
+
+            if (!accounts.some(a => a.nick === nick)) {
+                accounts.push({ nick: nick, contacts: [] });
+                await db.ref('users/' + nick).set({ created: Date.now() });
+            }
             
+            localStorage.setItem('dg_accs', JSON.stringify(accounts));
+            currentIdx = accounts.findIndex(a => a.nick === nick);
+            localStorage.setItem('dg_idx', currentIdx);
             renderApp();
         }
 
         function renderApp() {
             showScreen('main-screen');
             const user = accounts[currentIdx];
-            document.getElementById('current-user-name').innerText = user.nick;
+            document.getElementById('profile-nick').innerText = '@' + user.nick;
             
             const list = document.getElementById('chat-list');
             list.innerHTML = "";
-            user.chats.forEach(chat => {
-                list.innerHTML += `
-                    <div class="chat-item">
-                        <div class="avatar">${chat[0]}</div>
-                        <div><b>${chat}</b><br><small style="color:gray">Напиши что-нибудь...</small></div>
-                    </div>
-                `;
+            user.contacts.forEach(c => {
+                list.innerHTML += `<div class="chat-item" onclick="openChat('${c}')">
+                    <div class="avatar">${c[0]}</div>
+                    <div><b>${c}</b><br><small style="color:gray">Нажми, чтобы открыть чат</small></div>
+                </div>`;
             });
-
-            renderAccountMenu();
+            renderSwitchers();
         }
 
-        function renderAccountMenu() {
-            const list = document.getElementById('account-list');
-            list.innerHTML = "";
-            accounts.forEach((acc, index) => {
-                list.innerHTML += `
-                    <div class="menu-item" onclick="switchAccount(${index})">
-                        ${acc.nick} ${index === currentIdx ? "✅" : ""}
-                    </div>
-                `;
-            });
+        function openChat(targetNick) {
+            activeChat = targetNick;
+            document.getElementById('chat-view').classList.add('open');
+            document.getElementById('chat-title').innerText = '@' + targetNick;
+            loadMessages();
+        }
+
+        function loadMessages() {
+            const myNick = accounts[currentIdx].nick;
+            const chatId = [myNick, activeChat].sort().join('_');
             
-            document.getElementById('add-acc-btn').style.display = accounts.length >= 2 ? "none" : "flex";
+            db.ref('messages/' + chatId).off();
+            db.ref('messages/' + chatId).on('value', snap => {
+                const container = document.getElementById('messages-container');
+                container.innerHTML = "";
+                snap.forEach(m => {
+                    const data = m.val();
+                    const type = data.sender === myNick ? 'out' : 'in';
+                    container.innerHTML += `<div class="bubble ${type}">${data.text}</div>`;
+                });
+                container.scrollTop = container.scrollHeight;
+            });
         }
 
-        function switchAccount(idx) {
-            currentIdx = idx;
-            localStorage.setItem('dice_current_idx', currentIdx);
-            toggleMenu();
-            renderApp();
+        async function sendMessage() {
+            const text = document.getElementById('msg-input').value.trim();
+            if (!text) return;
+            
+            const myNick = accounts[currentIdx].nick;
+            const chatId = [myNick, activeChat].sort().join('_');
+            
+            await db.ref('messages/' + chatId).push({
+                sender: myNick,
+                text: text,
+                time: Date.now()
+            });
+            document.getElementById('msg-input').value = "";
         }
 
-        function showAuthForSecondAcc() {
+        async function findUser() {
+            const target = document.getElementById('search-input').value.trim().replace('@', '');
+            if (target === accounts[currentIdx].nick) return alert("Это вы!");
+            
+            const snap = await db.ref('users/' + target).once('value');
+            if (snap.exists()) {
+                if (!accounts[currentIdx].contacts.includes(target)) {
+                    accounts[currentIdx].contacts.push(target);
+                    localStorage.setItem('dg_accs', JSON.stringify(accounts));
+                }
+                openChat(target);
+                toggleSearch();
+            } else {
+                alert("Пользователь не найден!");
+            }
+        }
+
+        function toggleMenu() { 
+            document.getElementById('side-menu').classList.toggle('open'); 
+            document.getElementById('overlay').classList.toggle('active'); 
+        }
+        
+        function toggleSearch() {
+            const b = document.getElementById('search-box');
+            b.style.display = b.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function closeChat() { document.getElementById('chat-view').classList.remove('open'); }
+        
+        function addSecondAcc() {
+            if (accounts.length >= 2) return alert("Максимум 2 аккаунта!");
             toggleMenu();
             showScreen('auth-screen');
         }
 
-        function toggleMenu() {
-            document.getElementById('side-menu').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
+        function renderSwitchers() {
+            const div = document.getElementById('acc-switcher');
+            div.innerHTML = "";
+            accounts.forEach((a, i) => {
+                div.innerHTML += `<div class="menu-item" onclick="switchAcc(${i})">${a.nick} ${i===currentIdx?'✅':''}</div>`;
+            });
         }
 
-        function toggleSearch() {
-            const bar = document.getElementById('search-bar');
-            bar.style.display = bar.style.display === "block" ? "none" : "block";
+        function switchAcc(i) {
+            currentIdx = i;
+            localStorage.setItem('dg_idx', i);
+            toggleMenu();
+            renderApp();
         }
 
-        function searchUser() {
-            const val = document.getElementById('search-input').value.trim();
-            if (!val) return;
-            
-            if (!accounts[currentIdx].chats.includes(val)) {
-                accounts[currentIdx].chats.push(val);
-                localStorage.setItem('dice_accounts', JSON.stringify(accounts));
-                renderApp();
-            }
-            alert("Чат с " + val + " создан!");
-            toggleSearch();
-        }
-
-        function clearAllData() {
-            if(confirm("Удалить все данные?")) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
+        function fullReset() { if(confirm("Очистить всё?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
+

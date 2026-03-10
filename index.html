@@ -3,48 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DauletGram Web</title>
+    <title>DICEGRAM</title>
     <style>
-        body { margin: 0; font-family: sans-serif; background: #0e1621; color: white; }
-        .header { background: #17212b; padding: 15px; font-weight: bold; border-bottom: 1px solid #000; position: sticky; top: 0; }
-        .chat-area { height: calc(100vh - 120px); overflow-y: auto; padding: 10px; display: flex; flex-direction: column; }
-        .msg { max-width: 80%; padding: 8px 12px; border-radius: 10px; margin: 5px 0; font-size: 14px; }
-        .sent { background: #2b5278; align-self: flex-end; }
-        .received { background: #182533; align-self: flex-start; }
-        .input-area { position: fixed; bottom: 0; width: 100%; background: #17212b; padding: 10px; display: flex; box-sizing: border-box; }
-        input { flex: 1; background: transparent; border: none; color: white; outline: none; padding: 10px; }
-        button { background: none; border: none; color: #5288c1; font-weight: bold; cursor: pointer; }
+        :root { --bg: #0e1621; --panel: #17212b; --blue: #5288c1; --text: #ffffff; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; background: var(--bg); color: var(--text); overflow: hidden; }
+        
+        /* Экраны */
+        .screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .active { display: flex; }
+
+        /* Дизайн кнопок и инпутов */
+        h1 { color: var(--blue); margin-bottom: 30px; }
+        .btn { width: 100%; max-width: 300px; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; background: var(--blue); color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-back { background: transparent; border: 1px solid #555; }
+        input { width: 100%; max-width: 300px; padding: 15px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: var(--panel); color: white; outline: none; box-sizing: border-box; }
+
+        /* Список чатов (Главная) */
+        .header { width: 100%; background: var(--panel); padding: 15px; font-weight: bold; text-align: center; border-bottom: 1px solid #000; }
+        .chat-list { width: 100%; flex: 1; overflow-y: auto; }
+        .chat-item { padding: 15px; border-bottom: 1px solid #0e1621; background: var(--panel); display: flex; align-items: center; }
+        .avatar { width: 50px; height: 50px; background: var(--blue); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header">DauletGram</div>
+    <div id="welcome-screen" class="screen active">
+        <h1>DICEGRAM</h1>
+        <button class="btn" onclick="showScreen('reg-screen')">Зарегистрироваться</button>
+        <button class="btn btn-back" onclick="showScreen('login-screen')">Войти</button>
+    </div>
 
-<div class="chat-area" id="chat">
-    <div class="msg received">Привет! Это твой мессенджер.</div>
-    <div class="msg sent">Работает на GitHub Pages!</div>
-</div>
+    <div id="reg-screen" class="screen">
+        <h2>Регистрация</h2>
+        <input type="tel" id="reg-phone" placeholder="Введите номер телефона">
+        <button class="btn" onclick="checkRegPhone()">Далее</button>
+        <button class="btn btn-back" onclick="showScreen('welcome-screen')">Назад</button>
+    </div>
 
-<div class="input-area">
-    <input type="text" id="text" placeholder="Написать сообщение...">
-    <button onclick="send()">ОТПРАВИТЬ</button>
-</div>
+    <div id="pass-screen" class="screen">
+        <h2>Придумайте пароль</h2>
+        <input type="password" id="reg-pass1" placeholder="Введите пароль">
+        <input type="password" id="reg-pass2" placeholder="Повторите пароль">
+        <button class="btn" onclick="checkPassword()">Далее</button>
+    </div>
 
-<script>
-    function send() {
-        let input = document.getElementById('text');
-        if (input.value.trim() == "") return;
-        
-        let chat = document.getElementById('chat');
-        let msg = document.createElement('div');
-        msg.className = "msg sent";
-        msg.innerText = input.value;
-        chat.appendChild(msg);
-        
-        chat.scrollTop = chat.scrollHeight; // Прокрутка вниз
-        input.value = "";
-    }
-</script>
+    <div id="name-screen" class="screen">
+        <h2>О себе</h2>
+        <input type="text" id="reg-name" placeholder="Имя (обязательно)">
+        <input type="text" id="reg-surname" placeholder="Фамилия (необязательно)">
+        <input type="text" id="reg-nick" placeholder="Ник (латиница, напр. @dice_pro)">
+        <button class="btn" onclick="finishReg()">Завершить</button>
+    </div>
 
+    <div id="login-screen" class="screen">
+        <h2>Войти</h2>
+        <input type="tel" id="login-phone" placeholder="Номер телефона">
+        <input type="password" id="login-pass" placeholder="Пароль">
+        <button class="btn" onclick="login()">Войти</button>
+        <button class="btn btn-back" onclick="showScreen('welcome-screen')">Назад</button>
+    </div>
+
+    <div id="main-screen" class="screen" style="padding:0; justify-content: flex-start;">
+        <div class="header">DICEGRAM</div>
+        <div class="chat-list" id="chats">
+            </div>
+    </div>
+
+    <script>
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function checkRegPhone() {
+            let phone = document.getElementById('reg-phone').value;
+            if (phone.length < 5) return alert("Введите нормальный номер!");
+            // Тут будет проверка в БД: if(userExists) alert("Номер занят");
+            showScreen('pass-screen');
+        }
+
+        function checkPassword() {
+            let p1 = document.getElementById('reg-pass1').value;
+            let p2 = document.getElementById('reg-pass2').value;
+            if (p1 !== p2 || p1.length < 4) return alert("Пароли не совпадают или слишком короткие!");
+            showScreen('name-screen');
+        }
+
+        function finishReg() {
+            let name = document.getElementById('reg-name').value;
+            let nick = document.getElementById('reg-nick').value;
+            let regex = /^[a-zA-Z0-9_]+$/; // Только латиница
+
+            if (!name || !nick) return alert("Заполните обязательные поля!");
+            if (!regex.test(nick)) return alert("Ник должен быть только на латинице!");
+
+            enterApp("Вы успешно зарегистрировались в DICEGRAM!");
+        }
+
+        function login() {
+            // Тут будет проверка по БД Firebase
+            enterApp("Вы успешно вошли в DICEGRAM!");
+        }
+
+        function enterApp(botText) {
+            showScreen('main-screen');
+            const chatList = document.getElementById('chats');
+            chatList.innerHTML = `
+                <div class="chat-item">
+                    <div class="avatar">DG</div>
+                    <div>
+                        <div style="font-weight:bold">DICEGRAM Official</div>
+                        <div style="font-size:12px; color:#aaa">${botText}</div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>

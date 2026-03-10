@@ -4,25 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DICEGRAM</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         :root { --bg: #0e1621; --panel: #17212b; --blue: #5288c1; --text: #ffffff; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; background: var(--bg); color: var(--text); overflow: hidden; }
-        
-        /* Экраны */
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
         .screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
-
-        /* Дизайн кнопок и инпутов */
         h1 { color: var(--blue); margin-bottom: 30px; }
-        .btn { width: 100%; max-width: 300px; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; background: var(--blue); color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .btn-back { background: transparent; border: 1px solid #555; }
+        .btn { width: 100%; max-width: 300px; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; background: var(--blue); color: white; font-weight: bold; cursor: pointer; }
         input { width: 100%; max-width: 300px; padding: 15px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: var(--panel); color: white; outline: none; box-sizing: border-box; }
-
-        /* Список чатов (Главная) */
-        .header { width: 100%; background: var(--panel); padding: 15px; font-weight: bold; text-align: center; border-bottom: 1px solid #000; }
+        
+        /* Главный экран и чат */
+        .header { width: 100%; background: var(--panel); padding: 15px; font-weight: bold; text-align: center; border-bottom: 1px solid #000; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
         .chat-list { width: 100%; flex: 1; overflow-y: auto; }
-        .chat-item { padding: 15px; border-bottom: 1px solid #0e1621; background: var(--panel); display: flex; align-items: center; }
-        .avatar { width: 50px; height: 50px; background: var(--blue); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .chat-item { padding: 15px; border-bottom: 1px solid #0e1621; background: var(--panel); display: flex; align-items: center; cursor: pointer; }
+        .avatar { width: 45px; height: 45px; background: var(--blue); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        
+        /* Окно переписки */
+        #chat-window { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); transition: 0.3s; z-index: 100; display: flex; flex-direction: column; }
+        #chat-window.open { left: 0; }
+        .messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+        .msg { padding: 10px; border-radius: 10px; margin-bottom: 8px; max-width: 80%; font-size: 14px; }
+        .received { background: var(--panel); align-self: flex-start; }
     </style>
 </head>
 <body>
@@ -30,28 +34,27 @@
     <div id="welcome-screen" class="screen active">
         <h1>DICEGRAM</h1>
         <button class="btn" onclick="showScreen('reg-screen')">Зарегистрироваться</button>
-        <button class="btn btn-back" onclick="showScreen('login-screen')">Войти</button>
+        <button class="btn" style="background:#242f3d" onclick="showScreen('login-screen')">Войти</button>
     </div>
 
     <div id="reg-screen" class="screen">
-        <h2>Регистрация</h2>
-        <input type="tel" id="reg-phone" placeholder="Введите номер телефона">
+        <h2>Номер телефона</h2>
+        <input type="tel" id="reg-phone" placeholder="+7 (___) ___ __ __">
         <button class="btn" onclick="checkRegPhone()">Далее</button>
-        <button class="btn btn-back" onclick="showScreen('welcome-screen')">Назад</button>
+        <button onclick="showScreen('welcome-screen')" style="background:none; border:none; color:gray; cursor:pointer">Назад</button>
     </div>
 
     <div id="pass-screen" class="screen">
         <h2>Придумайте пароль</h2>
-        <input type="password" id="reg-pass1" placeholder="Введите пароль">
+        <input type="password" id="reg-pass1" placeholder="Пароль">
         <input type="password" id="reg-pass2" placeholder="Повторите пароль">
         <button class="btn" onclick="checkPassword()">Далее</button>
     </div>
 
     <div id="name-screen" class="screen">
         <h2>О себе</h2>
-        <input type="text" id="reg-name" placeholder="Имя (обязательно)">
-        <input type="text" id="reg-surname" placeholder="Фамилия (необязательно)">
-        <input type="text" id="reg-nick" placeholder="Ник (латиница, напр. @dice_pro)">
+        <input type="text" id="reg-name" placeholder="Имя">
+        <input type="text" id="reg-nick" placeholder="Ник (латиница)">
         <button class="btn" onclick="finishReg()">Завершить</button>
     </div>
 
@@ -60,64 +63,112 @@
         <input type="tel" id="login-phone" placeholder="Номер телефона">
         <input type="password" id="login-pass" placeholder="Пароль">
         <button class="btn" onclick="login()">Войти</button>
-        <button class="btn btn-back" onclick="showScreen('welcome-screen')">Назад</button>
+        <button onclick="showScreen('welcome-screen')" style="background:none; border:none; color:gray; cursor:pointer">Назад</button>
     </div>
 
     <div id="main-screen" class="screen" style="padding:0; justify-content: flex-start;">
-        <div class="header">DICEGRAM</div>
-        <div class="chat-list" id="chats">
-            </div>
+        <div class="header">
+            <span>DICEGRAM</span>
+            <span onclick="logout()" style="color:#e53935; font-size:12px">Выйти</span>
+        </div>
+        <div class="chat-list" id="chats"></div>
+    </div>
+
+    <div id="chat-window">
+        <div class="header">
+            <span onclick="closeChat()">⬅ Назад</span>
+            <span id="chat-name">Бот</span>
+            <span></span>
+        </div>
+        <div class="messages" id="msgs"></div>
     </div>
 
     <script>
+        // ТУТ НУЖНО ВСТАВИТЬ ТВОИ ДАННЫЕ ИЗ ШАГА 2 (НИЖЕ)
+        const firebaseConfig = {
+            databaseURL: "ЗДЕСЬ_БУДЕТ_ТВОЯ_ССЫЛКА"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        function checkRegPhone() {
-            let phone = document.getElementById('reg-phone').value;
-            if (phone.length < 5) return alert("Введите нормальный номер!");
-            // Тут будет проверка в БД: if(userExists) alert("Номер занят");
+        // Проверка номера
+        async function checkRegPhone() {
+            let phone = document.getElementById('reg-phone').value.replace(/\D/g, "");
+            if (phone.length < 5) return alert("Мало цифр!");
+            
+            const snapshot = await db.ref('users/' + phone).once('value');
+            if (snapshot.exists()) return alert("Этот номер уже занят!");
+            
+            window.tempPhone = phone;
             showScreen('pass-screen');
         }
 
         function checkPassword() {
-            let p1 = document.getElementById('reg-pass1').value;
-            let p2 = document.getElementById('reg-pass2').value;
-            if (p1 !== p2 || p1.length < 4) return alert("Пароли не совпадают или слишком короткие!");
+            if (document.getElementById('reg-pass1').value !== document.getElementById('reg-pass2').value) return alert("Пароли не совпадают!");
             showScreen('name-screen');
         }
 
-        function finishReg() {
+        async function finishReg() {
+            let phone = window.tempPhone;
             let name = document.getElementById('reg-name').value;
+            let pass = document.getElementById('reg-pass1').value;
             let nick = document.getElementById('reg-nick').value;
-            let regex = /^[a-zA-Z0-9_]+$/; // Только латиница
 
-            if (!name || !nick) return alert("Заполните обязательные поля!");
-            if (!regex.test(nick)) return alert("Ник должен быть только на латинице!");
-
-            enterApp("Вы успешно зарегистрировались в DICEGRAM!");
+            await db.ref('users/' + phone).set({ name, pass, nick });
+            localStorage.setItem('dice_user', phone); // Запоминаем вход
+            enterApp("Добро пожаловать в DICEGRAM! Это официальный бот.");
         }
 
-        function login() {
-            // Тут будет проверка по БД Firebase
-            enterApp("Вы успешно вошли в DICEGRAM!");
+        async function login() {
+            let phone = document.getElementById('login-phone').value.replace(/\D/g, "");
+            let pass = document.getElementById('login-pass').value;
+
+            const snapshot = await db.ref('users/' + phone).once('value');
+            if (snapshot.exists() && snapshot.val().pass === pass) {
+                localStorage.setItem('dice_user', phone);
+                enterApp("С возвращением в DICEGRAM!");
+            } else {
+                alert("Неверный номер или пароль!");
+            }
         }
 
-        function enterApp(botText) {
+        function enterApp(botMsg) {
             showScreen('main-screen');
-            const chatList = document.getElementById('chats');
-            chatList.innerHTML = `
-                <div class="chat-item">
+            document.getElementById('chats').innerHTML = `
+                <div class="chat-item" onclick="openChat('DICEGRAM Bot', '${botMsg}')">
                     <div class="avatar">DG</div>
                     <div>
                         <div style="font-weight:bold">DICEGRAM Official</div>
-                        <div style="font-size:12px; color:#aaa">${botText}</div>
+                        <div style="font-size:12px; color:gray">Бот: ${botMsg.substring(0,20)}...</div>
                     </div>
                 </div>
             `;
         }
+
+        function openChat(name, msg) {
+            document.getElementById('chat-window').classList.add('open');
+            document.getElementById('chat-name').innerText = name;
+            document.getElementById('msgs').innerHTML = `<div class="msg received">${msg}</div>`;
+        }
+
+        function closeChat() { document.getElementById('chat-window').classList.remove('open'); }
+        
+        function logout() { localStorage.removeItem('dice_user'); location.reload(); }
+
+        // АВТО-ВХОД
+        window.onload = async () => {
+            let saved = localStorage.getItem('dice_user');
+            if (saved) {
+                const snap = await db.ref('users/' + saved).once('value');
+                if (snap.exists()) enterApp("Вы в системе. Сообщения подгружены.");
+            }
+        };
     </script>
 </body>
 </html>
+

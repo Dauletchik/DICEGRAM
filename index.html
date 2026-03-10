@@ -12,16 +12,15 @@
         .screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
         h1 { color: var(--blue); margin-bottom: 30px; }
-        .btn { width: 100%; max-width: 300px; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; background: var(--blue); color: white; font-weight: bold; cursor: pointer; }
+        .btn { width: 100%; max-width: 300px; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; background: var(--blue); color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); opacity: 0.8; }
         input { width: 100%; max-width: 300px; padding: 15px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: var(--panel); color: white; outline: none; box-sizing: border-box; }
         
-        /* Главный экран и чат */
         .header { width: 100%; background: var(--panel); padding: 15px; font-weight: bold; text-align: center; border-bottom: 1px solid #000; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
         .chat-list { width: 100%; flex: 1; overflow-y: auto; }
         .chat-item { padding: 15px; border-bottom: 1px solid #0e1621; background: var(--panel); display: flex; align-items: center; cursor: pointer; }
         .avatar { width: 45px; height: 45px; background: var(--blue); border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         
-        /* Окно переписки */
         #chat-window { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); transition: 0.3s; z-index: 100; display: flex; flex-direction: column; }
         #chat-window.open { left: 0; }
         .messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
@@ -38,23 +37,23 @@
     </div>
 
     <div id="reg-screen" class="screen">
-        <h2>Номер телефона</h2>
-        <input type="tel" id="reg-phone" placeholder="+7 (___) ___ __ __">
-        <button class="btn" onclick="checkRegPhone()">Далее</button>
-        <button onclick="showScreen('welcome-screen')" style="background:none; border:none; color:gray; cursor:pointer">Назад</button>
+        <h2>Регистрация</h2>
+        <input type="tel" id="reg-phone" placeholder="7771234455">
+        <button class="btn" id="reg-btn-next" onclick="checkRegPhone()">Далее</button>
+        <button class="btn" style="background:none; color:gray" onclick="showScreen('welcome-screen')">Назад</button>
     </div>
 
     <div id="pass-screen" class="screen">
-        <h2>Придумайте пароль</h2>
-        <input type="password" id="reg-pass1" placeholder="Пароль">
+        <h2>Пароль</h2>
+        <input type="password" id="reg-pass1" placeholder="Придумайте пароль">
         <input type="password" id="reg-pass2" placeholder="Повторите пароль">
         <button class="btn" onclick="checkPassword()">Далее</button>
     </div>
 
     <div id="name-screen" class="screen">
         <h2>О себе</h2>
-        <input type="text" id="reg-name" placeholder="Имя">
-        <input type="text" id="reg-nick" placeholder="Ник (латиница)">
+        <input type="text" id="reg-name" placeholder="Ваше имя">
+        <input type="text" id="reg-nick" placeholder="Ник (например: dice_boss)">
         <button class="btn" onclick="finishReg()">Завершить</button>
     </div>
 
@@ -63,13 +62,13 @@
         <input type="tel" id="login-phone" placeholder="Номер телефона">
         <input type="password" id="login-pass" placeholder="Пароль">
         <button class="btn" onclick="login()">Войти</button>
-        <button onclick="showScreen('welcome-screen')" style="background:none; border:none; color:gray; cursor:pointer">Назад</button>
+        <button class="btn" style="background:none; color:gray" onclick="showScreen('welcome-screen')">Назад</button>
     </div>
 
     <div id="main-screen" class="screen" style="padding:0; justify-content: flex-start;">
         <div class="header">
             <span>DICEGRAM</span>
-            <span onclick="logout()" style="color:#e53935; font-size:12px">Выйти</span>
+            <span onclick="logout()" style="color:#ff4444; font-size:12px">Выйти</span>
         </div>
         <div class="chat-list" id="chats"></div>
     </div>
@@ -84,10 +83,16 @@
     </div>
 
     <script>
-        // ТУТ НУЖНО ВСТАВИТЬ ТВОИ ДАННЫЕ ИЗ ШАГА 2 (НИЖЕ)
+        // === НАСТРОЙКА FIREBASE (ВСТАВЬ СВОЮ ССЫЛКУ!) ===
         const firebaseConfig = {
-            databaseURL: "ЗДЕСЬ_БУДЕТ_ТВОЯ_ССЫЛКА"
+            databaseURL: "ЗДЕСЬ_ТВОЯ_ССЫЛКА_ОТ_FIREBASE"
         };
+        
+        // Инициализация
+        if (firebaseConfig.databaseURL.includes("ЗДЕСЬ")) {
+            console.warn("БАЗА ДАННЫХ НЕ ПОДКЛЮЧЕНА! Кнопки не будут работать.");
+        }
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -96,55 +101,75 @@
             document.getElementById(id).classList.add('active');
         }
 
-        // Проверка номера
-        async function checkRegPhone() {
+        // РЕГИСТРАЦИЯ: ШАГ 1
+        function checkRegPhone() {
             let phone = document.getElementById('reg-phone').value.replace(/\D/g, "");
-            if (phone.length < 5) return alert("Мало цифр!");
+            if (phone.length < 5) return alert("Введите правильный номер!");
+
+            document.getElementById('reg-btn-next').innerText = "Проверка...";
             
-            const snapshot = await db.ref('users/' + phone).once('value');
-            if (snapshot.exists()) return alert("Этот номер уже занят!");
-            
-            window.tempPhone = phone;
-            showScreen('pass-screen');
+            db.ref('users/' + phone).once('value').then((snapshot) => {
+                document.getElementById('reg-btn-next').innerText = "Далее";
+                if (snapshot.exists()) {
+                    alert("Этот номер уже занят!");
+                } else {
+                    window.tempPhone = phone;
+                    showScreen('pass-screen');
+                }
+            }).catch(e => {
+                alert("Ошибка базы! Проверь ссылку databaseURL.");
+                console.error(e);
+            });
         }
 
+        // РЕГИСТРАЦИЯ: ШАГ 2
         function checkPassword() {
-            if (document.getElementById('reg-pass1').value !== document.getElementById('reg-pass2').value) return alert("Пароли не совпадают!");
+            let p1 = document.getElementById('reg-pass1').value;
+            let p2 = document.getElementById('reg-pass2').value;
+            if (p1.length < 4) return alert("Пароль слишком короткий!");
+            if (p1 !== p2) return alert("Пароли не совпадают!");
             showScreen('name-screen');
         }
 
-        async function finishReg() {
-            let phone = window.tempPhone;
+        // РЕГИСТРАЦИЯ: ФИНАЛ
+        function finishReg() {
             let name = document.getElementById('reg-name').value;
-            let pass = document.getElementById('reg-pass1').value;
             let nick = document.getElementById('reg-nick').value;
+            if (!name || !nick) return alert("Заполни все поля!");
 
-            await db.ref('users/' + phone).set({ name, pass, nick });
-            localStorage.setItem('dice_user', phone); // Запоминаем вход
-            enterApp("Добро пожаловать в DICEGRAM! Это официальный бот.");
+            db.ref('users/' + window.tempPhone).set({
+                name: name,
+                nick: nick,
+                pass: document.getElementById('reg-pass1').value
+            }).then(() => {
+                localStorage.setItem('dice_user', window.tempPhone);
+                enterApp("Вы успешно зарегистрировались в DICEGRAM!");
+            });
         }
 
-        async function login() {
+        // ВХОД
+        function login() {
             let phone = document.getElementById('login-phone').value.replace(/\D/g, "");
             let pass = document.getElementById('login-pass').value;
 
-            const snapshot = await db.ref('users/' + phone).once('value');
-            if (snapshot.exists() && snapshot.val().pass === pass) {
-                localStorage.setItem('dice_user', phone);
-                enterApp("С возвращением в DICEGRAM!");
-            } else {
-                alert("Неверный номер или пароль!");
-            }
+            db.ref('users/' + phone).once('value').then((snap) => {
+                if (snap.exists() && snap.val().pass === pass) {
+                    localStorage.setItem('dice_user', phone);
+                    enterApp("С возвращением в DICEGRAM!");
+                } else {
+                    alert("Неверный номер или пароль!");
+                }
+            });
         }
 
         function enterApp(botMsg) {
             showScreen('main-screen');
             document.getElementById('chats').innerHTML = `
-                <div class="chat-item" onclick="openChat('DICEGRAM Bot', '${botMsg}')">
+                <div class="chat-item" onclick="openChat('DICEGRAM Official', '${botMsg}')">
                     <div class="avatar">DG</div>
                     <div>
                         <div style="font-weight:bold">DICEGRAM Official</div>
-                        <div style="font-size:12px; color:gray">Бот: ${botMsg.substring(0,20)}...</div>
+                        <div style="font-size:12px; color:gray">Бот: ${botMsg}</div>
                     </div>
                 </div>
             `;
@@ -157,15 +182,15 @@
         }
 
         function closeChat() { document.getElementById('chat-window').classList.remove('open'); }
-        
         function logout() { localStorage.removeItem('dice_user'); location.reload(); }
 
-        // АВТО-ВХОД
-        window.onload = async () => {
+        // ПРОВЕРКА ПРИ ЗАГРУЗКЕ
+        window.onload = function() {
             let saved = localStorage.getItem('dice_user');
             if (saved) {
-                const snap = await db.ref('users/' + saved).once('value');
-                if (snap.exists()) enterApp("Вы в системе. Сообщения подгружены.");
+                db.ref('users/' + saved).once('value').then(snap => {
+                    if (snap.exists()) enterApp("Вы в системе!");
+                });
             }
         };
     </script>

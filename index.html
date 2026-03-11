@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICEGRAM</title>
+    <title>DICEGRAM - Messenger</title>
     <style>
         * {
             margin: 0;
@@ -11,125 +11,697 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-primary: #17212b;
-            --bg-secondary: #0e1621;
-            --bg-chat: #0e1621;
-            --bg-message-out: #2b5278;
-            --bg-message-in: #182533;
-            --text-primary: #f5f5f5;
-            --text-secondary: #708499;
-            --accent: #5288c1;
-            --accent-hover: #6ba1d6;
-            --border: #101921;
-            --input-bg: #242f3d;
-            --online: #4dcd5e;
-            --danger: #e53935;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        /* ===== AUTH SCREEN ===== */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Auth Screens */
         .auth-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: var(--bg-secondary);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+            display: none;
         }
 
-        .auth-container {
-            background: var(--bg-primary);
-            border-radius: 16px;
-            padding: 48px 40px;
-            width: 360px;
+        .auth-screen.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
         }
 
-        .auth-logo {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, var(--accent), #7c4dff);
-            border-radius: 50%;
-            margin: 0 auto 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            animation: pulse 2s infinite;
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .auth-container h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .auth-container p {
-            color: var(--text-secondary);
-            margin-bottom: 32px;
+        .logo p {
+            color: #666;
             font-size: 14px;
         }
 
-        .auth-input {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] {
             width: 100%;
-            padding: 14px 16px;
-            background: var(--input-bg);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 15px;
-            margin-bottom: 12px;
-            outline: none;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
             transition: border-color 0.3s;
         }
 
-        .auth-input:focus {
-            border-color: var(--accent);
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="tel"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .auth-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .auth-btn {
+        .btn {
             width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
+            padding: 12px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 8px;
+            transition: all 0.3s;
         }
 
-        .auth-btn:hover {
-            background: var(--accent-hover);
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 10px;
         }
 
-        .auth-toggle {
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .toggle-auth {
+            text-align: center;
             margin-top: 20px;
+            color: #666;
             font-size: 14px;
-            color: var(--text-secondary);
         }
 
-        .auth-toggle span {
-            color: var(--accent);
+        .toggle-auth button {
+            background: none;
+            border: none;
+            color: #667eea;
             cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
         }
+
+        /* Messenger Screen */
+        .messenger-screen {
+            display: none;
+            height: 100vh;
+            background: white;
+            display: flex;
+        }
+
+        .messenger-screen.active {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h2 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .sidebar-header button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #667eea;
+        }
+
+        .search-bar {
+            padding: 15px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .channels-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .channel-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .channel-item:hover {
+            background: #efefef;
+        }
+
+        .channel-item.active {
+            background: #e8eaf6;
+            border-left: 4px solid #667eea;
+        }
+
+        .channel-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .channel-info h3 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .channel-info p {
+            color: #999;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .chat-header button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 60%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.other .message-bubble {
+            background: #e8eaf6;
+            color: #333;
+        }
+
+        .message.own .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+
+        .message.own .message-time {
+            text-align: right;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .input-area button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .input-area button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal for creating account */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-content .btn-primary {
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .chat-area {
+                display: none;
+            }
+
+            .messenger-screen.show-chat .chat-area {
+                display: flex;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 100;
+            }
+
+            .message-bubble {
+                max-width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="auth-screen active">
+        <div class="logo">
+            <h1>DICEGRAM</h1>
+            <p>Connect with Friends</p>
+        </div>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <div class="toggle-auth">
+            Don't have an account? <button type="button" onclick="toggleScreen('signup')">Sign Up</button>
+        </div>
+    </div>
+
+    <!-- Signup Screen -->
+    <div id="signupScreen" class="auth-screen">
+        <div class="logo">
+            <h1>DICEGRAM</h1>
+            <p>Create Your Account</p>
+        </div>
+        <form onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="signupPhone" placeholder="Enter your phone number" required>
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="signupUsername" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="Create a password" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="Confirm your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        <div class="toggle-auth">
+            Already have an account? <button type="button" onclick="toggleScreen('login')">Login</button>
+        </div>
+    </div>
+
+    <!-- Messenger Screen -->
+    <div id="messengerScreen" class="messenger-screen">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Chats</h2>
+                <button onclick="logout()">↪️</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search conversations...">
+            </div>
+            <div class="channels-list" id="channelsList">
+                <!-- Channels will be added here -->
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h3 id="chatHeaderName">Select a chat</h3>
+                <button onclick="closeChat()">✕</button>
+            </div>
+            <div class="messages-container" id="messagesContainer">
+                <p style="text-align: center; color: #999; padding: 20px;">Select a conversation to start chatting</p>
+            </div>
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let users = JSON.parse(localStorage.getItem('dicegram_users')) || {};
+        let currentUser = null;
+        let conversations = JSON.parse(localStorage.getItem('dicegram_conversations')) || {};
+
+        // Toggle between login and signup screens
+        function toggleScreen(screen) {
+            document.querySelectorAll('.auth-screen').forEach(el => el.classList.remove('active'));
+            if (screen === 'login') {
+                document.getElementById('loginScreen').classList.add('active');
+            } else {
+                document.getElementById('signupScreen').classList.add('active');
+            }
+        }
+
+        // Handle signup
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const phone = document.getElementById('signupPhone').value;
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+
+            if (password !== confirm) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (users[username]) {
+                alert('Username already exists!');
+                return;
+            }
+
+            // Save user data
+            users[username] = {
+                name: name,
+                phone: phone,
+                password: password,
+                avatar: username.charAt(0).toUpperCase()
+            };
+
+            localStorage.setItem('dicegram_users', JSON.stringify(users));
+            alert('Account created successfully! Please login.');
+            
+            // Clear form and switch to login
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupPhone').value = '';
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupConfirm').value = '';
+            
+            toggleScreen('login');
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!users[username] || users[username].password !== password) {
+                alert('Invalid username or password!');
+                return;
+            }
+
+            currentUser = username;
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            
+            // Show messenger
+            document.querySelectorAll('.auth-screen').forEach(el => el.classList.remove('active'));
+            document.getElementById('messengerScreen').classList.add('active');
+            
+            loadChannels();
+        }
+
+        // Load channels/conversations
+        function loadChannels() {
+            const channelsList = document.getElementById('channelsList');
+            channelsList.innerHTML = '';
+
+            const userList = Object.keys(users).filter(u => u !== currentUser);
+
+            userList.forEach(user => {
+                const channelKey = [currentUser, user].sort().join('-');
+                const channel = document.createElement('div');
+                channel.className = 'channel-item';
+                channel.onclick = () => openChannel(channelKey, user);
+                
+                channel.innerHTML = `
+                    <div class="channel-avatar">${users[user].avatar}</div>
+                    <div class="channel-info">
+                        <h3>${users[user].name}</h3>
+                        <p>@${user}</p>
+                    </div>
+                `;
+                
+                channelsList.appendChild(channel);
+            });
+        }
+
+        // Open a conversation
+        function openChannel(channelKey, otherUser) {
+            currentChannel = channelKey;
+            currentChannelUser = otherUser;
+            
+            document.getElementById('chatHeaderName').textContent = users[otherUser].name;
+            displayMessages(channelKey);
+            
+            // Mark as active
+            document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+            event.target.closest('.channel-item').classList.add('active');
+        }
+
+        let currentChannel = null;
+        let currentChannelUser = null;
+
+        // Display messages
+        function displayMessages(channelKey) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '';
+
+            const messages = conversations[channelKey] || [];
+
+            messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${msg.sender === currentUser ? 'own' : 'other'}`;
+                
+                const msgBubble = document.createElement('div');
+                msgBubble.className = 'message-bubble';
+                msgBubble.textContent = msg.text;
+                
+                msgDiv.appendChild(msgBubble);
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                msgDiv.appendChild(timeDiv);
+                
+                messagesContainer.appendChild(msgDiv);
+            });
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+
+            if (!text || !currentChannel) return;
+
+            if (!conversations[currentChannel]) {
+                conversations[currentChannel] = [];
+            }
+
+            conversations[currentChannel].push({
+                sender: currentUser,
+                text: text,
+                time: new Date().toISOString()
+            });
+
+            localStorage.setItem('dicegram_conversations', JSON.stringify(conversations));
+            input.value = '';
+            displayMessages(currentChannel);
+        }
+
+        // Handle enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Close chat
+        function closeChat() {
+            currentChannel = null;
+            document.getElementById('messagesContainer').innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Select a conversation to start chatting</p>';
+            document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            document.querySelectorAll('.auth-screen').forEach(el => el.classList.remove('active'));
+            document.getElementById('loginScreen').classList.add('active');
+            document.getElementById('messengerScreen').classList.remove('active');
+        }
+    </script>
+</body>
+    </html>

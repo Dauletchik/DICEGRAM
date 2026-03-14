@@ -3,182 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DICETOK</title>
+<title>DICETOK Google Auth</title>
 <style>
 body{font-family:Arial,sans-serif;background:#0f172a;color:white;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;}
 h1{margin:20px;}
-input,button{padding:12px;margin:5px;border-radius:8px;border:none;}
-input{width:200px;}
-button{width:220px;background:#2563eb;color:white;}
+button{padding:12px;margin:10px;border-radius:8px;border:none;width:220px;background:#2563eb;color:white;}
 #main{display:none;flex-direction:column;align-items:center;}
-#chat{display:none;flex-direction:column;width:90%;max-width:400px;}
-.message{background:#1e293b;margin:5px;padding:8px;border-radius:6px;}
 </style>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
 
 <h1>DICETOK</h1>
 
 <div id="auth">
-  <input id="email" placeholder="Email">
-  <input id="password" placeholder="Пароль" type="password">
-  <input id="name" placeholder="Никнейм">
-  <input id="username" placeholder="@username">
-  <button onclick="register()">Зарегистрироваться</button>
-  <button onclick="showLogin()">У меня есть аккаунт</button>
-</div>
-
-<div id="loginDiv" style="display:none;">
-  <input id="loginEmail" placeholder="Email">
-  <input id="loginPass" placeholder="Пароль" type="password">
-  <button onclick="login()">Войти</button>
-  <button onclick="showRegister()">Назад</button>
+  <button onclick="googleLogin()">Войти через Google</button>
 </div>
 
 <div id="main">
   <h2>Добро пожаловать, <span id="userNameDisplay"></span></h2>
-  <input id="searchUser" placeholder="Поиск по юзернейму">
-  <button onclick="searchFriend()">Найти друга</button>
-  <div id="friendsList"></div>
-  <div id="chat">
-    <h3>Чат с <span id="chatWith"></span></h3>
-    <div id="messages"></div>
-    <input id="msgInput" placeholder="Написать сообщение">
-    <button onclick="sendMessage()">Отправить</button>
-    <button onclick="closeChat()">Закрыть чат</button>
-  </div>
+  <p>Ваш ник: <span id="userNick"></span></p>
+  <img id="userAvatar" src="" width="80" style="border-radius:50%;">
 </div>
 
 <script>
 // ===== Firebase Config =====
 firebase.initializeApp({
-  apiKey: "AIzaSyCY2Mvp63vJs05xBQhr8yPW1Hr3gRcCyBA",
-  authDomain: "dicegtam.firebaseapp.com",
-  projectId: "dicegtam",
-  storageBucket: "dicegtam.firebasestorage.app",
-  messagingSenderId: "538553809201",
-  appId: "1:538553809201:web:7e109f28c92529f7229810",
-  measurementId: "G-C8RHEHWRF4"
+  apiKey: "AIzaSyA8slPm58rciKbNbGAqA97VP2rWiENC9_k",
+  authDomain: "flikyfloky-61eed.firebaseapp.com",
+  projectId: "flikyfloky-61eed",
+  storageBucket: "flikyfloky-61eed.firebasestorage.app",
+  messagingSenderId: "167396726913",
+  appId: "1:167396726913:web:dd012abf884a768c09d580",
+  measurementId: "G-7YMLFXSKG3"
 });
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let currentUser = null;
-let currentChatFriend = null;
+// ===== Google Login =====
+function googleLogin(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then(result => {
+      const user = result.user;
+      // сохраняем данные в Firestore
+      db.collection("users").doc(user.uid).set({
+        name: user.displayName,
+        email: user.email,
+        avatar: user.photoURL,
+        created: Date.now()
+      }, {merge:true});
+      
+      // показываем профиль
+      document.getElementById("auth").style.display="none";
+      document.getElementById("main").style.display="flex";
+      document.getElementById("userNameDisplay").innerText = user.displayName;
+      document.getElementById("userNick").innerText = user.email.split('@')[0];
+      document.getElementById("userAvatar").src = user.photoURL;
+    })
+    .catch(e => alert(e.message));
+}
 
-// ===== Регистрация =====
-function register(){
-  let email=document.getElementById("email").value;
-  let pass=document.getElementById("password").value;
-  let name=document.getElementById("name").value;
-  let username=document.getElementById("username").value;
-
-  if(pass.length<6){alert("Пароль минимум 6 символов");return;}
-  auth.createUserWithEmailAndPassword(email,pass)
-  .then(userCred=>{
-    currentUser=userCred.user;
-    db.collection("users").doc(currentUser.uid).set({
-      name:name,
-      username:username,
-      email:email,
-      avatar:"https://i.imgur.com/4M34hi2.png",
-      created:Date.now()
+// ===== Автологин =====
+auth.onAuthStateChanged(user=>{
+  if(user){
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      document.getElementById("auth").style.display="none";
+      document.getElementById("main").style.display="flex";
+      document.getElementById("userNameDisplay").innerText = doc.data().name;
+      document.getElementById("userNick").innerText = doc.data().email.split('@')[0];
+      document.getElementById("userAvatar").src = doc.data().avatar;
     });
-    alert("Аккаунт создан! @"+username);
-    showMain(name);
-  })
-  .catch(e=>alert(e.message));
-}
-
-// ===== Вход =====
-function login(){
-  let email=document.getElementById("loginEmail").value;
-  let pass=document.getElementById("loginPass").value;
-  auth.signInWithEmailAndPassword(email,pass)
-  .then(userCred=>{
-    currentUser=userCred.user;
-    db.collection("users").doc(currentUser.uid).get().then(doc=>{
-      showMain(doc.data().name);
-    });
-  })
-  .catch(e=>alert(e.message));
-}
-
-// ===== UI =====
-function showLogin(){
-  document.getElementById("auth").style.display="none";
-  document.getElementById("loginDiv").style.display="flex";
-}
-function showRegister(){
-  document.getElementById("loginDiv").style.display="none";
-  document.getElementById("auth").style.display="flex";
-}
-function showMain(name){
-  document.getElementById("auth").style.display="none";
-  document.getElementById("loginDiv").style.display="none";
-  document.getElementById("main").style.display="flex";
-  document.getElementById("userNameDisplay").innerText=name;
-}
-
-// ===== Поиск друга =====
-function searchFriend(){
-  let search=document.getElementById("searchUser").value;
-  db.collection("users").where("username","==",search).get()
-  .then(snapshot=>{
-    let html="";
-    snapshot.forEach(doc=>{
-      html+=`<div>${doc.data().username} <button onclick="openChat('${doc.id}','${doc.data().username}')">Написать</button></div>`;
-    });
-    document.getElementById("friendsList").innerHTML=html;
-  });
-}
-
-// ===== Чат =====
-function openChat(friendUid,friendUsername){
-  currentChatFriend=friendUid;
-  document.getElementById("chat").style.display="flex";
-  document.getElementById("chatWith").innerText=friendUsername;
-  loadMessages();
-}
-
-function closeChat(){
-  document.getElementById("chat").style.display="none";
-  currentChatFriend=null;
-  document.getElementById("messages").innerHTML="";
-}
-
-function sendMessage(){
-  let text=document.getElementById("msgInput").value;
-  if(!text||!currentChatFriend)return;
-  db.collection("chats").add({
-    from: currentUser.uid,
-    to: currentChatFriend,
-    text:text,
-    timestamp:Date.now()
-  });
-  document.getElementById("msgInput").value="";
-  loadMessages();
-}
-
-function loadMessages(){
-  if(!currentChatFriend)return;
-  db.collection("chats")
-    .where("from","in",[currentUser.uid,currentChatFriend])
-    .where("to","in",[currentUser.uid,currentChatFriend])
-    .orderBy("timestamp")
-    .onSnapshot(snapshot=>{
-      let html="";
-      snapshot.forEach(doc=>{
-        let m=doc.data();
-        html+=`<div class="message"><b>${m.from===currentUser.uid?"Ты":m.from}:</b> ${m.text}</div>`;
-      });
-      document.getElementById("messages").innerHTML=html;
-    });
-}
+  }
+});
 </script>
 
 </body>

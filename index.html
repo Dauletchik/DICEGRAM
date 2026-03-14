@@ -3,421 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DICEGRAM</title>
-
+<title>DICETOK</title>
 <style>
-
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial;
-background:#0f172a;
-color:white;
-}
-
-/* старт */
-
-.start{
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-height:100vh;
-gap:15px;
-}
-
-.logo{
-font-size:32px;
-font-weight:bold;
-}
-
-.btn{
-width:220px;
-padding:14px;
-border:none;
-border-radius:12px;
-background:#2563eb;
-color:white;
-font-size:16px;
-}
-
-input{
-width:220px;
-padding:12px;
-border:none;
-border-radius:10px;
-}
-
-.hidden{
-display:none;
-}
-
-/* чат лист */
-
-.header{
-background:#1e293b;
-padding:14px;
-font-size:18px;
-}
-
-.search{
-width:100%;
-padding:10px;
-border:none;
-background:#0f172a;
-color:white;
-}
-
-.chatlist{
-height:90vh;
-overflow:auto;
-}
-
-.chatitem{
-display:flex;
-gap:10px;
-padding:14px;
-border-bottom:1px solid #1e293b;
-cursor:pointer;
-}
-
-.chatitem img{
-width:42px;
-height:42px;
-border-radius:50%;
-}
-
-/* чат */
-
-.chat{
-display:flex;
-flex-direction:column;
-height:100vh;
-}
-
-.messages{
-flex:1;
-overflow:auto;
-padding:10px;
-}
-
-.msg{
-display:flex;
-gap:8px;
-margin:8px 0;
-}
-
-.msg img{
-width:30px;
-height:30px;
-border-radius:50%;
-}
-
-.time{
-font-size:10px;
-color:#aaa;
-}
-
-.inputbox{
-display:flex;
-padding:10px;
-background:#1e293b;
-}
-
-.inputbox input{
-flex:1;
-margin-right:6px;
-}
-
-.send{
-padding:10px;
-border:none;
-border-radius:10px;
-background:#2563eb;
-color:white;
-}
-
+body{font-family:Arial,sans-serif;background:#0f172a;color:white;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;}
+h1{margin:20px;}
+input,button{padding:12px;margin:5px;border-radius:8px;border:none;}
+input{width:200px;}
+button{width:220px;background:#2563eb;color:white;}
+#main{display:none;flex-direction:column;align-items:center;}
+#chat{display:none;flex-direction:column;width:90%;max-width:400px;}
+.message{background:#1e293b;margin:5px;padding:8px;border-radius:6px;}
 </style>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-
 <body>
 
-<!-- старт -->
+<h1>DICETOK</h1>
 
-<div id="start" class="start">
-
-<div class="logo">DICEGRAM</div>
-
-<button class="btn" onclick="showRegister()">Зарегистрироваться</button>
-<button class="btn" onclick="showLogin()">Войти</button>
-
+<div id="auth">
+  <input id="email" placeholder="Email">
+  <input id="password" placeholder="Пароль" type="password">
+  <input id="name" placeholder="Никнейм">
+  <input id="username" placeholder="@username">
+  <button onclick="register()">Зарегистрироваться</button>
+  <button onclick="showLogin()">У меня есть аккаунт</button>
 </div>
 
-<!-- регистрация -->
-
-<div id="register" class="start hidden">
-
-<h3>Регистрация</h3>
-
-<input id="r_name" placeholder="Никнейм">
-<input id="r_user" placeholder="@username">
-<input id="r_pass" placeholder="Пароль">
-
-<button class="btn" onclick="register()">Создать</button>
-
+<div id="loginDiv" style="display:none;">
+  <input id="loginEmail" placeholder="Email">
+  <input id="loginPass" placeholder="Пароль" type="password">
+  <button onclick="login()">Войти</button>
+  <button onclick="showRegister()">Назад</button>
 </div>
 
-<!-- вход -->
-
-<div id="login" class="start hidden">
-
-<h3>Вход</h3>
-
-<input id="l_user" placeholder="@username">
-<input id="l_pass" placeholder="Пароль">
-
-<button class="btn" onclick="login()">Войти</button>
-
-</div>
-
-<!-- список -->
-
-<div id="main" class="hidden">
-
-<div class="header">
-<input id="search" class="search" placeholder="Поиск @username" oninput="searchUser()">
-</div>
-
-<div id="chatlist" class="chatlist"></div>
-
-</div>
-
-<!-- чат -->
-
-<div id="chatpage" class="chat hidden">
-
-<div class="header" onclick="back()">← Назад</div>
-
-<div id="messages" class="messages"></div>
-
-<div class="inputbox">
-<input id="msg">
-<button class="send" onclick="sendMsg()">Отправить</button>
-</div>
-
+<div id="main">
+  <h2>Добро пожаловать, <span id="userNameDisplay"></span></h2>
+  <input id="searchUser" placeholder="Поиск по юзернейму">
+  <button onclick="searchFriend()">Найти друга</button>
+  <div id="friendsList"></div>
+  <div id="chat">
+    <h3>Чат с <span id="chatWith"></span></h3>
+    <div id="messages"></div>
+    <input id="msgInput" placeholder="Написать сообщение">
+    <button onclick="sendMessage()">Отправить</button>
+    <button onclick="closeChat()">Закрыть чат</button>
+  </div>
 </div>
 
 <script>
+// ===== Firebase Config =====
+firebase.initializeApp({
+  apiKey: "AIzaSyCY2Mvp63vJs05xBQhr8yPW1Hr3gRcCyBA",
+  authDomain: "dicegtam.firebaseapp.com",
+  projectId: "dicegtam",
+  storageBucket: "dicegtam.firebasestorage.app",
+  messagingSenderId: "538553809201",
+  appId: "1:538553809201:web:7e109f28c92529f7229810",
+  measurementId: "G-C8RHEHWRF4"
+});
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-let users=JSON.parse(localStorage.getItem("dice_users"))||[]
-let chats=JSON.parse(localStorage.getItem("dice_chats"))||{}
+let currentUser = null;
+let currentChatFriend = null;
 
-let me=null
-let currentChat=null
-
-function save(){
-localStorage.setItem("dice_users",JSON.stringify(users))
-localStorage.setItem("dice_chats",JSON.stringify(chats))
-}
-
-function showRegister(){
-start.classList.add("hidden")
-register.classList.remove("hidden")
-}
-
-function showLogin(){
-start.classList.add("hidden")
-login.classList.remove("hidden")
-}
-
+// ===== Регистрация =====
 function register(){
+  let email=document.getElementById("email").value;
+  let pass=document.getElementById("password").value;
+  let name=document.getElementById("name").value;
+  let username=document.getElementById("username").value;
 
-let name=r_name.value
-let username=r_user.value.replace("@","")
-let pass=r_pass.value
-
-let check=/^[a-zA-Z0-9]{6,18}$/
-
-if(!check.test(pass)){
-alert("Пароль 6-18 латиница или цифры")
-return
+  if(pass.length<6){alert("Пароль минимум 6 символов");return;}
+  auth.createUserWithEmailAndPassword(email,pass)
+  .then(userCred=>{
+    currentUser=userCred.user;
+    db.collection("users").doc(currentUser.uid).set({
+      name:name,
+      username:username,
+      email:email,
+      avatar:"https://i.imgur.com/4M34hi2.png",
+      created:Date.now()
+    });
+    alert("Аккаунт создан! @"+username);
+    showMain(name);
+  })
+  .catch(e=>alert(e.message));
 }
 
-if(users.find(u=>u.username==username)){
-alert("username занят")
-return
-}
-
-let user={
-id:Date.now(),
-name:name,
-username:username,
-pass:pass,
-avatar:"https://i.imgur.com/4M34hi2.png"
-}
-
-users.push(user)
-
-if(!users.find(x=>x.bot)){
-users.push({
-id:1,
-name:"DICEGRAM",
-username:"dicegram",
-avatar:"https://i.imgur.com/Q8QZQ9B.png",
-bot:true
-})
-}
-
-save()
-
-let chatId=[user.id,1].sort().join("_")
-
-chats[chatId]=[
-{
-text:"Вы успешно зарегистрировали аккаунт @"+username,
-time:new Date().toLocaleTimeString().slice(0,5),
-avatar:"https://i.imgur.com/Q8QZQ9B.png"
-}
-]
-
-save()
-
-alert("Аккаунт создан")
-
-}
-
+// ===== Вход =====
 function login(){
-
-let username=l_user.value.replace("@","")
-let pass=l_pass.value
-
-let user=users.find(u=>u.username==username && u.pass==pass)
-
-if(!user){
-alert("Неверный логин")
-return
+  let email=document.getElementById("loginEmail").value;
+  let pass=document.getElementById("loginPass").value;
+  auth.signInWithEmailAndPassword(email,pass)
+  .then(userCred=>{
+    currentUser=userCred.user;
+    db.collection("users").doc(currentUser.uid).get().then(doc=>{
+      showMain(doc.data().name);
+    });
+  })
+  .catch(e=>alert(e.message));
 }
 
-me=user
-
-login.classList.add("hidden")
-main.classList.remove("hidden")
-
-renderChats()
-
+// ===== UI =====
+function showLogin(){
+  document.getElementById("auth").style.display="none";
+  document.getElementById("loginDiv").style.display="flex";
+}
+function showRegister(){
+  document.getElementById("loginDiv").style.display="none";
+  document.getElementById("auth").style.display="flex";
+}
+function showMain(name){
+  document.getElementById("auth").style.display="none";
+  document.getElementById("loginDiv").style.display="none";
+  document.getElementById("main").style.display="flex";
+  document.getElementById("userNameDisplay").innerText=name;
 }
 
-function renderChats(){
-
-chatlist.innerHTML=""
-
-users.forEach(u=>{
-
-if(u.id==me.id)return
-
-chatlist.innerHTML+=`
-<div class="chatitem" onclick="openChat('${u.id}')">
-<img src="${u.avatar}">
-<div>
-<div>${u.name}</div>
-<div style="font-size:12px;color:gray">@${u.username}</div>
-</div>
-</div>
-`
-
-})
-
+// ===== Поиск друга =====
+function searchFriend(){
+  let search=document.getElementById("searchUser").value;
+  db.collection("users").where("username","==",search).get()
+  .then(snapshot=>{
+    let html="";
+    snapshot.forEach(doc=>{
+      html+=`<div>${doc.data().username} <button onclick="openChat('${doc.id}','${doc.data().username}')">Написать</button></div>`;
+    });
+    document.getElementById("friendsList").innerHTML=html;
+  });
 }
 
-function openChat(id){
-
-currentChat=id
-
-main.classList.add("hidden")
-chatpage.classList.remove("hidden")
-
-renderMessages()
-
+// ===== Чат =====
+function openChat(friendUid,friendUsername){
+  currentChatFriend=friendUid;
+  document.getElementById("chat").style.display="flex";
+  document.getElementById("chatWith").innerText=friendUsername;
+  loadMessages();
 }
 
-function renderMessages(){
-
-let chatId=[me.id,currentChat].sort().join("_")
-
-let m=chats[chatId]||[]
-
-messages.innerHTML=""
-
-m.forEach(x=>{
-
-messages.innerHTML+=`
-<div class="msg">
-<img src="${x.avatar}">
-<div>
-<div>${x.text}</div>
-<div class="time">${x.time}</div>
-</div>
-</div>
-`
-
-})
-
+function closeChat(){
+  document.getElementById("chat").style.display="none";
+  currentChatFriend=null;
+  document.getElementById("messages").innerHTML="";
 }
 
-function sendMsg(){
-
-let text=msg.value
-
-if(!text)return
-
-let chatId=[me.id,currentChat].sort().join("_")
-
-if(!chats[chatId])chats[chatId]=[]
-
-chats[chatId].push({
-text:text,
-time:new Date().toLocaleTimeString().slice(0,5),
-avatar:me.avatar
-})
-
-save()
-
-msg.value=""
-
-renderMessages()
-
+function sendMessage(){
+  let text=document.getElementById("msgInput").value;
+  if(!text||!currentChatFriend)return;
+  db.collection("chats").add({
+    from: currentUser.uid,
+    to: currentChatFriend,
+    text:text,
+    timestamp:Date.now()
+  });
+  document.getElementById("msgInput").value="";
+  loadMessages();
 }
 
-function back(){
-chatpage.classList.add("hidden")
-main.classList.remove("hidden")
+function loadMessages(){
+  if(!currentChatFriend)return;
+  db.collection("chats")
+    .where("from","in",[currentUser.uid,currentChatFriend])
+    .where("to","in",[currentUser.uid,currentChatFriend])
+    .orderBy("timestamp")
+    .onSnapshot(snapshot=>{
+      let html="";
+      snapshot.forEach(doc=>{
+        let m=doc.data();
+        html+=`<div class="message"><b>${m.from===currentUser.uid?"Ты":m.from}:</b> ${m.text}</div>`;
+      });
+      document.getElementById("messages").innerHTML=html;
+    });
 }
-
-function searchUser(){
-
-let v=search.value.replace("@","")
-
-let u=users.find(x=>x.username==v)
-
-if(u && u.id!=me.id){
-
-chatlist.innerHTML=`
-<div class="chatitem" onclick="openChat('${u.id}')">
-<img src="${u.avatar}">
-<div>
-<div>${u.name}</div>
-<div>@${u.username}</div>
-</div>
-</div>
-`
-
-}else{
-renderChats()
-}
-
-}
-
 </script>
 
 </body>

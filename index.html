@@ -6,6 +6,7 @@
 <title>DICEGRAM</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -15,59 +16,57 @@ color:white;
 
 .header{
 background:#1e293b;
-padding:15px;
-font-size:20px;
+padding:14px;
+font-size:18px;
 display:flex;
-justify-content:space-between;
 align-items:center;
 }
 
-.container{
-padding:15px;
-}
-
-input{
+.search{
 width:100%;
 padding:10px;
-margin:5px 0;
 border:none;
-border-radius:8px;
-}
-
-button{
-padding:10px;
-border:none;
-border-radius:8px;
-background:#3b82f6;
+outline:none;
+background:#1e293b;
 color:white;
-cursor:pointer;
 }
 
-.user{
-display:flex;
-align-items:center;
-gap:10px;
-padding:10px;
-border-bottom:1px solid #334155;
-cursor:pointer;
-}
-
-.avatar{
-width:40px;
-height:40px;
-border-radius:50%;
-background:#555;
-}
-
-.chat{
-height:60vh;
+.chatlist{
+height:90vh;
 overflow:auto;
 }
 
+.chatitem{
+display:flex;
+gap:10px;
+padding:12px;
+border-bottom:1px solid #1e293b;
+cursor:pointer;
+}
+
+.chatitem img{
+width:45px;
+height:45px;
+border-radius:50%;
+}
+
+.chat{
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+.messages{
+flex:1;
+overflow:auto;
+padding:10px;
+}
+
 .msg{
+margin:6px 0;
 display:flex;
 gap:8px;
-margin:5px 0;
+align-items:flex-end;
 }
 
 .msg img{
@@ -76,248 +75,271 @@ height:30px;
 border-radius:50%;
 }
 
+.time{
+font-size:10px;
+color:#aaa;
+}
+
+.input{
+display:flex;
+padding:10px;
+background:#1e293b;
+}
+
+.input input{
+flex:1;
+padding:10px;
+border:none;
+border-radius:10px;
+}
+
+.input button{
+margin-left:6px;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#3b82f6;
+color:white;
+}
+
+.center{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+gap:10px;
+}
+
+input.reg{
+padding:12px;
+width:200px;
+border:none;
+border-radius:10px;
+}
+
 .hidden{
 display:none;
 }
 
-.profile{
-text-align:center;
-}
-
-.profile img{
-width:80px;
-height:80px;
-border-radius:50%;
-}
 </style>
 </head>
 
 <body>
 
+<div id="register" class="center">
+
+<h2>DICEGRAM</h2>
+
+<input id="name" class="reg" placeholder="Имя">
+
+<input id="username" class="reg" placeholder="@username">
+
+<button onclick="createAccount()">Далее</button>
+
+</div>
+
+<div id="main" class="hidden">
+
 <div class="header">
-DICEGRAM
-<span onclick="openSettings()">⚙️</span>
+<input id="search" class="search" placeholder="Поиск по @username" oninput="searchUser()">
 </div>
 
-<div class="container">
-
-<div id="login">
-<h3>Регистрация</h3>
-<input id="name" placeholder="Имя">
-<input id="avatar" placeholder="Ссылка на аватар">
-<button onclick="register()">Создать аккаунт</button>
-<div id="accounts"></div>
-</div>
-
-<div id="app" class="hidden">
-
-<h3>Друзья</h3>
-<div id="friends"></div>
-
-<button onclick="openProfile()">Профиль</button>
+<div id="chatlist" class="chatlist"></div>
 
 </div>
 
-<div id="chatPage" class="hidden">
+<div id="chatpage" class="hidden chat">
 
-<h3 id="chatName"></h3>
+<div class="header" onclick="back()">← Назад</div>
 
-<div class="chat" id="chat"></div>
+<div id="messages" class="messages"></div>
 
-<input id="msgInput" placeholder="Сообщение">
-<button onclick="sendMsg()">Отправить</button>
-
-</div>
-
-<div id="profilePage" class="hidden profile">
-
-<img id="profileAvatar">
-<h3 id="profileName"></h3>
-
-<input id="newAvatar" placeholder="Новая аватарка">
-<button onclick="changeAvatar()">Сменить аву</button>
-
-<button onclick="back()">Назад</button>
-
+<div class="input">
+<input id="msg">
+<button onclick="sendMsg()">➤</button>
 </div>
 
 </div>
 
 <script>
 
-let accounts = JSON.parse(localStorage.getItem("dice_accounts")) || [];
-let currentUser = null;
-let chats = JSON.parse(localStorage.getItem("dice_chats")) || {};
+let users=JSON.parse(localStorage.getItem("dice_users"))||[]
+let chats=JSON.parse(localStorage.getItem("dice_chats"))||{}
+
+let me=null
+let currentChat=null
 
 function save(){
-localStorage.setItem("dice_accounts",JSON.stringify(accounts));
-localStorage.setItem("dice_chats",JSON.stringify(chats));
+localStorage.setItem("dice_users",JSON.stringify(users))
+localStorage.setItem("dice_chats",JSON.stringify(chats))
 }
 
-function register(){
+function createAccount(){
 
-if(accounts.length>=2){
-alert("Можно только 2 аккаунта");
-return;
-}
+let name=document.getElementById("name").value
+let username=document.getElementById("username").value.replace("@","")
 
-let name=document.getElementById("name").value;
-let avatar=document.getElementById("avatar").value;
+if(!name||!username)return alert("Введите имя и username")
 
-let acc={
+if(users.find(u=>u.username==username))
+return alert("username занят")
+
+me={
 id:Date.now(),
 name:name,
-avatar:avatar,
-friends:[]
-};
+username:username,
+avatar:"https://i.imgur.com/4M34hi2.png"
+}
 
-accounts.push(acc);
-save();
-renderAccounts();
+users.push(me)
+
+users.push({
+id:1,
+name:"DICEGRAM",
+username:"dicegram",
+avatar:"https://i.imgur.com/Q8QZQ9B.png",
+bot:true
+})
+
+save()
+
+let chatId=me.id+"_1"
+
+chats[chatId]=[
+{
+text:"Вы успешно зарегистрировали аккаунт @"+username,
+time:new Date().toLocaleTimeString().slice(0,5),
+avatar:"https://i.imgur.com/Q8QZQ9B.png"
+}
+]
+
+save()
+
+document.getElementById("register").classList.add("hidden")
+document.getElementById("main").classList.remove("hidden")
+
+renderChats()
 
 }
 
-function renderAccounts(){
+function renderChats(){
 
-let div=document.getElementById("accounts");
-div.innerHTML="";
+let list=document.getElementById("chatlist")
 
-accounts.forEach(a=>{
-div.innerHTML+=`
-<div class="user" onclick="login(${a.id})">
-<img class="avatar" src="${a.avatar}">
-${a.name}
+list.innerHTML=""
+
+users.forEach(u=>{
+
+if(u.id==me.id)return
+
+list.innerHTML+=`
+<div class="chatitem" onclick="openChat('${u.id}')">
+<img src="${u.avatar}">
+<div>
+<div>${u.name}</div>
+<div style="font-size:12px;color:#aaa">@${u.username}</div>
 </div>
-`;
-});
-
-}
-
-function login(id){
-
-currentUser=accounts.find(a=>a.id==id);
-
-document.getElementById("login").classList.add("hidden");
-document.getElementById("app").classList.remove("hidden");
-
-renderFriends();
-
-}
-
-function renderFriends(){
-
-let div=document.getElementById("friends");
-div.innerHTML="";
-
-accounts.forEach(a=>{
-
-if(a.id!==currentUser.id){
-
-div.innerHTML+=`
-<div class="user" onclick="openChat(${a.id})">
-<img class="avatar" src="${a.avatar}">
-${a.name}
 </div>
-`;
+`
+
+})
 
 }
-
-});
-
-}
-
-let chatUser=null;
 
 function openChat(id){
 
-chatUser=accounts.find(a=>a.id==id);
+currentChat=id
 
-document.getElementById("app").classList.add("hidden");
-document.getElementById("chatPage").classList.remove("hidden");
+document.getElementById("main").classList.add("hidden")
+document.getElementById("chatpage").classList.remove("hidden")
 
-document.getElementById("chatName").innerText=chatUser.name;
-
-renderChat();
+renderMessages()
 
 }
 
-function renderChat(){
+function renderMessages(){
 
-let chatId=[currentUser.id,chatUser.id].sort().join("_");
+let box=document.getElementById("messages")
 
-let messages=chats[chatId]||[];
+box.innerHTML=""
 
-let div=document.getElementById("chat");
+let chatId=[me.id,currentChat].sort().join("_")
 
-div.innerHTML="";
+let m=chats[chatId]||[]
 
-messages.forEach(m=>{
+m.forEach(x=>{
 
-div.innerHTML+=`
+box.innerHTML+=`
 <div class="msg">
-<img src="${m.avatar}">
-<div>${m.text}</div>
+<img src="${x.avatar}">
+<div>
+<div>${x.text}</div>
+<div class="time">${x.time}</div>
 </div>
-`;
+</div>
+`
 
-});
+})
 
 }
 
 function sendMsg(){
 
-let text=document.getElementById("msgInput").value;
+let text=document.getElementById("msg").value
 
-let chatId=[currentUser.id,chatUser.id].sort().join("_");
+if(!text)return
 
-if(!chats[chatId])chats[chatId]=[];
+let chatId=[me.id,currentChat].sort().join("_")
+
+if(!chats[chatId])chats[chatId]=[]
 
 chats[chatId].push({
 text:text,
-avatar:currentUser.avatar
-});
+time:new Date().toLocaleTimeString().slice(0,5),
+avatar:me.avatar
+})
 
-save();
-renderChat();
+save()
 
-document.getElementById("msgInput").value="";
+document.getElementById("msg").value=""
 
-}
-
-function openProfile(){
-
-document.getElementById("app").classList.add("hidden");
-document.getElementById("profilePage").classList.remove("hidden");
-
-document.getElementById("profileAvatar").src=currentUser.avatar;
-document.getElementById("profileName").innerText=currentUser.name;
-
-}
-
-function changeAvatar(){
-
-let newAva=document.getElementById("newAvatar").value;
-
-currentUser.avatar=newAva;
-
-save();
-
-document.getElementById("profileAvatar").src=newAva;
+renderMessages()
 
 }
 
 function back(){
 
-document.getElementById("profilePage").classList.add("hidden");
-document.getElementById("app").classList.remove("hidden");
+document.getElementById("chatpage").classList.add("hidden")
+document.getElementById("main").classList.remove("hidden")
 
 }
 
-function openSettings(){
-alert("Настройки скоро будут");
+function searchUser(){
+
+let v=document.getElementById("search").value.replace("@","")
+
+let u=users.find(x=>x.username==v)
+
+if(u && u.id!=me.id){
+
+document.getElementById("chatlist").innerHTML=`
+<div class="chatitem" onclick="openChat('${u.id}')">
+<img src="${u.avatar}">
+<div>
+<div>${u.name}</div>
+<div>@${u.username}</div>
+</div>
+</div>
+`
+
+}else{
+
+renderChats()
+
 }
 
-renderAccounts();
+}
 
 </script>
 

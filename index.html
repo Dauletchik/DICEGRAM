@@ -14,20 +14,46 @@ background:#0f172a;
 color:white;
 }
 
+.center{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
+gap:10px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+background:#3b82f6;
+color:white;
+font-size:14px;
+}
+
+input{
+padding:12px;
+border:none;
+border-radius:10px;
+width:220px;
+}
+
+.hidden{
+display:none;
+}
+
 .header{
 background:#1e293b;
-padding:14px;
+padding:12px;
 font-size:18px;
-display:flex;
-align-items:center;
 }
 
 .search{
 width:100%;
 padding:10px;
 border:none;
-outline:none;
-background:#1e293b;
+background:#0f172a;
 color:white;
 }
 
@@ -38,6 +64,7 @@ overflow:auto;
 
 .chatitem{
 display:flex;
+align-items:center;
 gap:10px;
 padding:12px;
 border-bottom:1px solid #1e293b;
@@ -45,8 +72,8 @@ cursor:pointer;
 }
 
 .chatitem img{
-width:45px;
-height:45px;
+width:40px;
+height:40px;
 border-radius:50%;
 }
 
@@ -65,8 +92,7 @@ padding:10px;
 .msg{
 margin:6px 0;
 display:flex;
-gap:8px;
-align-items:flex-end;
+gap:6px;
 }
 
 .msg img{
@@ -80,46 +106,15 @@ font-size:10px;
 color:#aaa;
 }
 
-.input{
+.inputbox{
 display:flex;
 padding:10px;
 background:#1e293b;
 }
 
-.input input{
+.inputbox input{
 flex:1;
-padding:10px;
-border:none;
-border-radius:10px;
-}
-
-.input button{
-margin-left:6px;
-padding:10px;
-border:none;
-border-radius:10px;
-background:#3b82f6;
-color:white;
-}
-
-.center{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-height:100vh;
-gap:10px;
-}
-
-input.reg{
-padding:12px;
-width:200px;
-border:none;
-border-radius:10px;
-}
-
-.hidden{
-display:none;
+margin-right:6px;
 }
 
 </style>
@@ -127,37 +122,57 @@ display:none;
 
 <body>
 
-<div id="register" class="center">
-
+<div id="start" class="center">
 <h2>DICEGRAM</h2>
+<button onclick="openRegister()">Зарегистрироваться</button>
+<button onclick="openLogin()">Войти</button>
+</div>
 
-<input id="name" class="reg" placeholder="Имя">
+<div id="register" class="center hidden">
 
-<input id="username" class="reg" placeholder="@username">
+<h3>Регистрация</h3>
 
-<button onclick="createAccount()">Далее</button>
+<input id="reg_name" placeholder="Никнейм">
+
+<input id="reg_user" placeholder="@username">
+
+<input id="reg_pass" placeholder="Пароль">
+
+<button onclick="register()">Создать аккаунт</button>
+
+</div>
+
+<div id="login" class="center hidden">
+
+<h3>Вход</h3>
+
+<input id="log_user" placeholder="@username">
+
+<input id="log_pass" placeholder="Пароль">
+
+<button onclick="login()">Войти</button>
 
 </div>
 
 <div id="main" class="hidden">
 
 <div class="header">
-<input id="search" class="search" placeholder="Поиск по @username" oninput="searchUser()">
+<input id="search" class="search" placeholder="Поиск @username" oninput="searchUser()">
 </div>
 
 <div id="chatlist" class="chatlist"></div>
 
 </div>
 
-<div id="chatpage" class="hidden chat">
+<div id="chatpage" class="chat hidden">
 
 <div class="header" onclick="back()">← Назад</div>
 
 <div id="messages" class="messages"></div>
 
-<div class="input">
+<div class="inputbox">
 <input id="msg">
-<button onclick="sendMsg()">➤</button>
+<button onclick="sendMsg()">Отправить</button>
 </div>
 
 </div>
@@ -166,7 +181,6 @@ display:none;
 
 let users=JSON.parse(localStorage.getItem("dice_users"))||[]
 let chats=JSON.parse(localStorage.getItem("dice_chats"))||{}
-
 let me=null
 let currentChat=null
 
@@ -175,36 +189,57 @@ localStorage.setItem("dice_users",JSON.stringify(users))
 localStorage.setItem("dice_chats",JSON.stringify(chats))
 }
 
-function createAccount(){
+function openRegister(){
+start.classList.add("hidden")
+register.classList.remove("hidden")
+}
 
-let name=document.getElementById("name").value
-let username=document.getElementById("username").value.replace("@","")
+function openLogin(){
+start.classList.add("hidden")
+login.classList.remove("hidden")
+}
 
-if(!name||!username)return alert("Введите имя и username")
+function register(){
 
-if(users.find(u=>u.username==username))
-return alert("username занят")
+let name=reg_name.value
+let username=reg_user.value.replace("@","")
+let pass=reg_pass.value
 
-me={
+let passCheck=/^[a-zA-Z0-9]{6,18}$/
+
+if(!passCheck.test(pass)){
+alert("Пароль 6-18 латиница или цифры")
+return
+}
+
+if(users.find(u=>u.username==username)){
+alert("username занят")
+return
+}
+
+let user={
 id:Date.now(),
 name:name,
 username:username,
+pass:pass,
 avatar:"https://i.imgur.com/4M34hi2.png"
 }
 
-users.push(me)
+users.push(user)
 
+if(!users.find(x=>x.bot)){
 users.push({
 id:1,
 name:"DICEGRAM",
 username:"dicegram",
-avatar:"https://i.imgur.com/Q8QZQ9B.png",
-bot:true
+bot:true,
+avatar:"https://i.imgur.com/Q8QZQ9B.png"
 })
+}
 
 save()
 
-let chatId=me.id+"_1"
+let chatId=[user.id,1].sort().join("_")
 
 chats[chatId]=[
 {
@@ -216,8 +251,26 @@ avatar:"https://i.imgur.com/Q8QZQ9B.png"
 
 save()
 
-document.getElementById("register").classList.add("hidden")
-document.getElementById("main").classList.remove("hidden")
+alert("Аккаунт создан")
+
+}
+
+function login(){
+
+let username=log_user.value.replace("@","")
+let pass=log_pass.value
+
+let user=users.find(u=>u.username==username && u.pass==pass)
+
+if(!user){
+alert("Неверный логин")
+return
+}
+
+me=user
+
+login.classList.add("hidden")
+main.classList.remove("hidden")
 
 renderChats()
 
@@ -225,20 +278,18 @@ renderChats()
 
 function renderChats(){
 
-let list=document.getElementById("chatlist")
-
-list.innerHTML=""
+chatlist.innerHTML=""
 
 users.forEach(u=>{
 
 if(u.id==me.id)return
 
-list.innerHTML+=`
+chatlist.innerHTML+=`
 <div class="chatitem" onclick="openChat('${u.id}')">
 <img src="${u.avatar}">
 <div>
 <div>${u.name}</div>
-<div style="font-size:12px;color:#aaa">@${u.username}</div>
+<div style="font-size:12px;color:gray">@${u.username}</div>
 </div>
 </div>
 `
@@ -251,8 +302,8 @@ function openChat(id){
 
 currentChat=id
 
-document.getElementById("main").classList.add("hidden")
-document.getElementById("chatpage").classList.remove("hidden")
+main.classList.add("hidden")
+chatpage.classList.remove("hidden")
 
 renderMessages()
 
@@ -260,17 +311,15 @@ renderMessages()
 
 function renderMessages(){
 
-let box=document.getElementById("messages")
-
-box.innerHTML=""
-
 let chatId=[me.id,currentChat].sort().join("_")
 
 let m=chats[chatId]||[]
 
+messages.innerHTML=""
+
 m.forEach(x=>{
 
-box.innerHTML+=`
+messages.innerHTML+=`
 <div class="msg">
 <img src="${x.avatar}">
 <div>
@@ -286,7 +335,7 @@ box.innerHTML+=`
 
 function sendMsg(){
 
-let text=document.getElementById("msg").value
+let text=msg.value
 
 if(!text)return
 
@@ -302,7 +351,7 @@ avatar:me.avatar
 
 save()
 
-document.getElementById("msg").value=""
+msg.value=""
 
 renderMessages()
 
@@ -310,20 +359,20 @@ renderMessages()
 
 function back(){
 
-document.getElementById("chatpage").classList.add("hidden")
-document.getElementById("main").classList.remove("hidden")
+chatpage.classList.add("hidden")
+main.classList.remove("hidden")
 
 }
 
 function searchUser(){
 
-let v=document.getElementById("search").value.replace("@","")
+let v=search.value.replace("@","")
 
 let u=users.find(x=>x.username==v)
 
 if(u && u.id!=me.id){
 
-document.getElementById("chatlist").innerHTML=`
+chatlist.innerHTML=`
 <div class="chatitem" onclick="openChat('${u.id}')">
 <img src="${u.avatar}">
 <div>

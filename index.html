@@ -3,56 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DICETOK Mini-TikTok</title>
+<title>DICETOK Game Platform</title>
 <style>
-body{margin:0;padding:0;font-family:Arial,sans-serif;background:#0f172a;color:white;}
-#auth,#main{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;}
-button{padding:12px 20px;margin:5px;border:none;border-radius:8px;background:#2563eb;color:white;font-weight:bold;}
-input{padding:10px;margin:5px;border-radius:6px;border:none;width:200px;}
+body{margin:0;padding:0;font-family:Arial,sans-serif;background:#0f172a;color:white;display:flex;flex-direction:column;align-items:center;}
+h1{margin:20px;}
+button{padding:12px 20px;margin:5px;border:none;border-radius:8px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;}
+#auth,#main,#profile,#games,#chat{display:flex;flex-direction:column;align-items:center;width:100%;}
+#main,#profile,#games,#chat{display:none;}
 #bottomNav{position:fixed;bottom:0;left:0;width:100%;display:flex;justify-content:space-around;background:#1e293b;padding:10px 0;}
-#videoFeed{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;overflow-y:auto;height:80vh;}
-video{width:100%;border-radius:10px;margin:10px 0;}
-#profile img{border-radius:50%;width:80px;height:80px;}
-#uploadSection{display:none;flex-direction:column;align-items:center;}
+#gameCards{display:flex;flex-wrap:wrap;justify-content:center;width:100%;}
+.card{background:#1e293b;margin:10px;padding:15px;border-radius:10px;width:150px;text-align:center;}
+input,textarea{padding:8px;margin:5px;border-radius:6px;border:none;width:90%;}
+#messages{width:90%;max-width:400px;max-height:300px;overflow-y:auto;background:#1e293b;padding:10px;border-radius:10px;margin-bottom:10px;}
+.message{margin:5px;padding:5px;border-radius:5px;background:#374151;}
 </style>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 
 <div id="auth">
-  <h1>DICETOK</h1>
+  <h1>DICETOK Games</h1>
   <button onclick="googleLogin()">Войти через Google</button>
 </div>
 
-<div id="main" style="display:none;flex-direction:column;align-items:center;">
-  <div id="videoFeed"></div>
+<div id="main">
+  <h2>Привет, <span id="userNameDisplay"></span></h2>
+  <p>Уровень: <span id="userLevel">1</span> | Очки: <span id="userScore">0</span> | Монеты: <span id="userCoins">0</span></p>
 </div>
 
-<div id="uploadSection">
-  <input type="file" id="videoFile">
-  <button onclick="uploadVideo()">Загрузить видео</button>
-  <button onclick="showFeed()">Назад</button>
+<div id="games">
+  <h2>Мини-Игры</h2>
+  <div id="gameCards">
+    <div class="card"><h3>Кликер</h3><button onclick="playClicker()">Играть</button></div>
+    <div class="card"><h3>Викторина</h3><button onclick="playQuiz()">Играть</button></div>
+    <div class="card"><h3>RPG Квест</h3><button onclick="playRPG()">Играть</button></div>
+  </div>
 </div>
 
-<div id="profile" style="display:none;flex-direction:column;align-items:center;">
-  <img id="userAvatar" src="">
-  <h2 id="userNameDisplay"></h2>
-  <p>Подписки: <span id="followingCount">0</span></p>
-  <p>Подписчики: <span id="followersCount">0</span></p>
-  <p>Общее количество лайков: <span id="totalLikes">0</span></p>
-  <div id="userVideos"></div>
-  <button onclick="showFeed()">Назад</button>
+<div id="chat">
+  <h2>Мировой чат</h2>
+  <div id="messages"></div>
+  <input id="msgInput" placeholder="Написать сообщение">
+  <button onclick="sendMessage()">Отправить</button>
 </div>
 
-<div id="bottomNav" style="display:none;">
-  <button onclick="showFeed()">Главная</button>
-  <button onclick="showUpload()">+</button>
-  <button onclick="showProfile()">Профиль</button>
+<div id="bottomNav">
+  <button onclick="showMainUI()">Главная</button>
+  <button onclick="showGames()">Игры</button>
+  <button onclick="showChat()">Чат</button>
 </div>
 
 <script>
@@ -69,7 +71,6 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
 
 let currentUser = null;
 
@@ -82,100 +83,119 @@ function googleLogin(){
       db.collection("users").doc(currentUser.uid).set({
         name: currentUser.displayName,
         email: currentUser.email,
-        avatar: currentUser.photoURL,
-        created: Date.now(),
-        followers:0,
-        following:0,
-        totalLikes:0
+        coins:0,
+        score:0,
+        level:1,
+        created:Date.now()
       }, {merge:true});
-      showFeed();
+      showMainUI();
     }).catch(e=>alert(e.message));
 }
 
 // ===== UI Functions =====
-function showFeed(){
-  document.getElementById("auth").style.display="none";
-  document.getElementById("uploadSection").style.display="none";
-  document.getElementById("profile").style.display="none";
+function showMainUI(){
+  hideAll();
   document.getElementById("main").style.display="flex";
   document.getElementById("bottomNav").style.display="flex";
-  loadFeed();
+  loadStats();
 }
-
-function showUpload(){
+function showGames(){
+  hideAll();
+  document.getElementById("games").style.display="flex";
+  document.getElementById("bottomNav").style.display="flex";
+}
+function showChat(){
+  hideAll();
+  document.getElementById("chat").style.display="flex";
+  document.getElementById("bottomNav").style.display="flex";
+  loadChat();
+}
+function hideAll(){
   document.getElementById("main").style.display="none";
-  document.getElementById("profile").style.display="none";
-  document.getElementById("uploadSection").style.display="flex";
+  document.getElementById("games").style.display="none";
+  document.getElementById("chat").style.display="none";
 }
 
-function showProfile(){
-  document.getElementById("main").style.display="none";
-  document.getElementById("uploadSection").style.display="none";
-  document.getElementById("profile").style.display="flex";
-  loadProfile();
-}
-
-// ===== Load Feed =====
-function loadFeed(){
-  const feed = document.getElementById("videoFeed");
-  feed.innerHTML="";
-  db.collection("videos").orderBy("timestamp","desc").get().then(snapshot=>{
-    snapshot.forEach(doc=>{
-      const v = doc.data();
-      const video = document.createElement("video");
-      video.src = v.url;
-      video.controls = true;
-      feed.appendChild(video);
-    });
-  });
-}
-
-// ===== Upload Video =====
-function uploadVideo(){
-  const file = document.getElementById("videoFile").files[0];
-  if(!file){alert("Выберите видео"); return;}
-  const storageRef = storage.ref(`videos/${currentUser.uid}_${Date.now()}`);
-  storageRef.put(file).then(snapshot=>{
-    snapshot.ref.getDownloadURL().then(url=>{
-      db.collection("videos").add({
-        uid: currentUser.uid,
-        url: url,
-        timestamp:Date.now(),
-        likes:0
-      }).then(()=>{alert("Видео загружено!"); showFeed();});
-    });
-  });
-}
-
-// ===== Load Profile =====
-function loadProfile(){
+// ===== Load Stats =====
+function loadStats(){
   db.collection("users").doc(currentUser.uid).get().then(doc=>{
     const data = doc.data();
-    document.getElementById("userAvatar").src = data.avatar;
     document.getElementById("userNameDisplay").innerText = data.name;
-    document.getElementById("followersCount").innerText = data.followers || 0;
-    document.getElementById("followingCount").innerText = data.following || 0;
-    document.getElementById("totalLikes").innerText = data.totalLikes || 0;
-    // user videos
-    const userVideos = document.getElementById("userVideos");
-    userVideos.innerHTML="";
-    db.collection("videos").where("uid","==",currentUser.uid).orderBy("timestamp","desc").get().then(snapshot=>{
-      snapshot.forEach(doc=>{
-        const v = doc.data();
-        const video = document.createElement("video");
-        video.src = v.url;
-        video.controls = true;
-        userVideos.appendChild(video);
-      });
-    });
+    document.getElementById("userLevel").innerText = data.level;
+    document.getElementById("userScore").innerText = data.score;
+    document.getElementById("userCoins").innerText = data.coins;
   });
 }
 
-// ===== Auto login =====
+// ===== Chat =====
+function loadChat(){
+  const messagesDiv = document.getElementById("messages");
+  messagesDiv.innerHTML="";
+  db.collection("chat").orderBy("timestamp","asc").onSnapshot(snapshot=>{
+    messagesDiv.innerHTML="";
+    snapshot.forEach(doc=>{
+      const m = doc.data();
+      const div = document.createElement("div");
+      div.className="message";
+      div.innerText = m.name+": "+m.text;
+      messagesDiv.appendChild(div);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+}
+function sendMessage(){
+  const text = document.getElementById("msgInput").value;
+  if(!text) return;
+  db.collection("chat").add({
+    uid: currentUser.uid,
+    name: currentUser.displayName,
+    text:text,
+    timestamp:Date.now()
+  });
+  document.getElementById("msgInput").value="";
+}
+
+// ===== Mini-Games =====
+function playClicker(){
+  let count = 0;
+  const clicks = prompt("Кликер: сколько раз вы хотите кликнуть? (число)");
+  if(clicks && !isNaN(clicks)){
+    count = parseInt(clicks);
+    const coinsEarned = count;
+    alert("Вы заработали "+coinsEarned+" монет!");
+    db.collection("users").doc(currentUser.uid).update({
+      coins: firebase.firestore.FieldValue.increment(coinsEarned),
+      score: firebase.firestore.FieldValue.increment(coinsEarned)
+    });
+    loadStats();
+  }
+}
+
+function playQuiz(){
+  const q = prompt("Вопрос: Сколько будет 2+2?");
+  if(q=="4"){
+    alert("Правильно! +10 очков");
+    db.collection("users").doc(currentUser.uid).update({
+      score: firebase.firestore.FieldValue.increment(10)
+    });
+    loadStats();
+  } else alert("Неправильно!");
+}
+
+function playRPG(){
+  const dmg = Math.floor(Math.random()*20)+1;
+  alert("RPG Квест: Вы нанесли "+dmg+" урона и получили "+dmg+" очков!");
+  db.collection("users").doc(currentUser.uid).update({
+    score: firebase.firestore.FieldValue.increment(dmg)
+  });
+  loadStats();
+}
+
+// ===== Auto Login =====
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUser=user;
-    showFeed();
+    showMainUI();
   }
 });
 </script>

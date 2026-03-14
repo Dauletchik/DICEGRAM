@@ -7,6 +7,8 @@
 
 <style>
 
+*{box-sizing:border-box}
+
 body{
 margin:0;
 font-family:Arial;
@@ -14,38 +16,48 @@ background:#0f172a;
 color:white;
 }
 
-.center{
+/* старт */
+
+.start{
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 height:100vh;
-gap:10px;
+gap:15px;
 }
 
-button{
-padding:12px 20px;
+.logo{
+font-size:32px;
+font-weight:bold;
+}
+
+.btn{
+width:220px;
+padding:14px;
 border:none;
-border-radius:10px;
-background:#3b82f6;
+border-radius:12px;
+background:#2563eb;
 color:white;
-font-size:14px;
+font-size:16px;
 }
 
 input{
+width:220px;
 padding:12px;
 border:none;
 border-radius:10px;
-width:220px;
 }
 
 .hidden{
 display:none;
 }
 
+/* чат лист */
+
 .header{
 background:#1e293b;
-padding:12px;
+padding:14px;
 font-size:18px;
 }
 
@@ -64,18 +76,19 @@ overflow:auto;
 
 .chatitem{
 display:flex;
-align-items:center;
 gap:10px;
-padding:12px;
+padding:14px;
 border-bottom:1px solid #1e293b;
 cursor:pointer;
 }
 
 .chatitem img{
-width:40px;
-height:40px;
+width:42px;
+height:42px;
 border-radius:50%;
 }
+
+/* чат */
 
 .chat{
 display:flex;
@@ -90,9 +103,9 @@ padding:10px;
 }
 
 .msg{
-margin:6px 0;
 display:flex;
-gap:6px;
+gap:8px;
+margin:8px 0;
 }
 
 .msg img{
@@ -117,42 +130,58 @@ flex:1;
 margin-right:6px;
 }
 
+.send{
+padding:10px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="start" class="center">
-<h2>DICEGRAM</h2>
-<button onclick="openRegister()">Зарегистрироваться</button>
-<button onclick="openLogin()">Войти</button>
+<!-- старт -->
+
+<div id="start" class="start">
+
+<div class="logo">DICEGRAM</div>
+
+<button class="btn" onclick="showRegister()">Зарегистрироваться</button>
+<button class="btn" onclick="showLogin()">Войти</button>
+
 </div>
 
-<div id="register" class="center hidden">
+<!-- регистрация -->
+
+<div id="register" class="start hidden">
 
 <h3>Регистрация</h3>
 
-<input id="reg_name" placeholder="Никнейм">
+<input id="r_name" placeholder="Никнейм">
+<input id="r_user" placeholder="@username">
+<input id="r_pass" placeholder="Пароль">
 
-<input id="reg_user" placeholder="@username">
-
-<input id="reg_pass" placeholder="Пароль">
-
-<button onclick="register()">Создать аккаунт</button>
+<button class="btn" onclick="register()">Создать</button>
 
 </div>
 
-<div id="login" class="center hidden">
+<!-- вход -->
+
+<div id="login" class="start hidden">
 
 <h3>Вход</h3>
 
-<input id="log_user" placeholder="@username">
+<input id="l_user" placeholder="@username">
+<input id="l_pass" placeholder="Пароль">
 
-<input id="log_pass" placeholder="Пароль">
-
-<button onclick="login()">Войти</button>
+<button class="btn" onclick="login()">Войти</button>
 
 </div>
+
+<!-- список -->
 
 <div id="main" class="hidden">
 
@@ -164,6 +193,8 @@ margin-right:6px;
 
 </div>
 
+<!-- чат -->
+
 <div id="chatpage" class="chat hidden">
 
 <div class="header" onclick="back()">← Назад</div>
@@ -172,7 +203,7 @@ margin-right:6px;
 
 <div class="inputbox">
 <input id="msg">
-<button onclick="sendMsg()">Отправить</button>
+<button class="send" onclick="sendMsg()">Отправить</button>
 </div>
 
 </div>
@@ -181,6 +212,7 @@ margin-right:6px;
 
 let users=JSON.parse(localStorage.getItem("dice_users"))||[]
 let chats=JSON.parse(localStorage.getItem("dice_chats"))||{}
+
 let me=null
 let currentChat=null
 
@@ -189,25 +221,25 @@ localStorage.setItem("dice_users",JSON.stringify(users))
 localStorage.setItem("dice_chats",JSON.stringify(chats))
 }
 
-function openRegister(){
+function showRegister(){
 start.classList.add("hidden")
 register.classList.remove("hidden")
 }
 
-function openLogin(){
+function showLogin(){
 start.classList.add("hidden")
 login.classList.remove("hidden")
 }
 
 function register(){
 
-let name=reg_name.value
-let username=reg_user.value.replace("@","")
-let pass=reg_pass.value
+let name=r_name.value
+let username=r_user.value.replace("@","")
+let pass=r_pass.value
 
-let passCheck=/^[a-zA-Z0-9]{6,18}$/
+let check=/^[a-zA-Z0-9]{6,18}$/
 
-if(!passCheck.test(pass)){
+if(!check.test(pass)){
 alert("Пароль 6-18 латиница или цифры")
 return
 }
@@ -232,8 +264,8 @@ users.push({
 id:1,
 name:"DICEGRAM",
 username:"dicegram",
-bot:true,
-avatar:"https://i.imgur.com/Q8QZQ9B.png"
+avatar:"https://i.imgur.com/Q8QZQ9B.png",
+bot:true
 })
 }
 
@@ -257,8 +289,8 @@ alert("Аккаунт создан")
 
 function login(){
 
-let username=log_user.value.replace("@","")
-let pass=log_pass.value
+let username=l_user.value.replace("@","")
+let pass=l_pass.value
 
 let user=users.find(u=>u.username==username && u.pass==pass)
 
@@ -358,10 +390,8 @@ renderMessages()
 }
 
 function back(){
-
 chatpage.classList.add("hidden")
 main.classList.remove("hidden")
-
 }
 
 function searchUser(){
@@ -383,9 +413,7 @@ chatlist.innerHTML=`
 `
 
 }else{
-
 renderChats()
-
 }
 
 }

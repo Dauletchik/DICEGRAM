@@ -3,302 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICE MESSAGE</title>
+    <title>DICE GRAM - Desktop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --side-bar-bg: #ffffff;
-            --accent-color: #0088cc; /* Telegram-like blue */
-            --text-main: #000000;
-            --text-muted: #666666;
-            --message-out: #effdde;
-            --message-in: #ffffff;
-            --border-color: #e0e0e0;
+            --dark-bg: #0f1621;
+            --sidebar-bg: #17212b;
+            --header-bg: #17212b;
+            --active-chat: #2b5278;
+            --text-main: #f5f5f5;
+            --text-muted: #708499;
+            --accent: #5288c1;
+            --msg-in: #182533;
+            --msg-out: #2b5278;
+            --border: #0e1621;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--dark-bg);
             height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 1400px;
-            height: 95vh;
-            background: #fff;
-            display: flex;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            color: var(--text-main);
             overflow: hidden;
         }
 
-        /* Боковая панель */
+        /* --- Sidebar --- */
         .sidebar {
-            width: 350px;
-            border-right: 1px solid var(--border-color);
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            background: var(--side-bar-bg);
+            z-index: 10;
         }
 
         .sidebar-header {
-            padding: 20px;
-            font-size: 20px;
+            padding: 15px;
+            font-size: 18px;
             font-weight: bold;
-            color: var(--accent-color);
-            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-        }
+        .chat-list { flex: 1; overflow-y: auto; }
 
         .chat-item {
             display: flex;
-            padding: 15px;
+            padding: 12px 15px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s ease;
             align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
 
-        .chat-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .chat-item.active {
-            background-color: #e7f3ff;
-        }
+        .chat-item:hover { background: #232e3c; }
+        .chat-item.active { background: var(--active-chat); }
 
         .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #ccc;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            flex-shrink: 0;
+            width: 48px; height: 48px; border-radius: 50%;
+            margin-right: 12px; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; color: white;
+            flex-shrink: 0; font-size: 18px;
         }
 
-        .chat-info {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-        }
+        .chat-meta { flex: 1; overflow: hidden; }
+        .chat-name { font-weight: 500; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .chat-sub { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-item.active .chat-sub { color: #d1d1d1; }
 
-        .chat-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .last-message {
-            font-size: 0.9em;
-            color: var(--text-muted);
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        /* Основное окно чата */
+        /* --- Main Chat --- */
         .main-chat {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* Типовой фон мессенджера */
-            background-color: #e5ddd5;
+            background: #0e1621;
+            position: relative;
         }
 
         .chat-header {
-            padding: 10px 20px;
-            background: #fff;
+            height: 56px;
+            background: var(--header-bg);
             display: flex;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 10;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 5;
         }
 
-        .messages-area {
+        .header-info { margin-left: 15px; }
+        .header-status { font-size: 13px; color: var(--accent); }
+
+        .messages-container {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+            background-size: cover;
         }
 
-        .message {
-            max-width: 70%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.95em;
-            line-height: 1.4;
-            position: relative;
-            word-wrap: break-word;
+        .msg {
+            max-width: 80%;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 14.5px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .message.sent {
-            align-self: flex-end;
-            background-color: var(--message-out);
-            border-bottom-right-radius: 2px;
-        }
+        .msg.in { align-self: flex-start; background: var(--msg-in); border-bottom-left-radius: 4px; }
+        .msg.out { align-self: flex-end; background: var(--msg-out); border-bottom-right-radius: 4px; }
 
-        .message.received {
-            align-self: flex-start;
-            background-color: var(--message-in);
-            border-bottom-left-radius: 2px;
-        }
+        pre { background: #000; padding: 10px; border-radius: 5px; color: #00ff00; font-family: monospace; overflow-x: auto; margin-top: 5px; }
 
-        /* Поле ввода */
-        .input-area {
-            padding: 15px 20px;
-            background: #fff;
+        /* --- Input --- */
+        .input-bar {
+            padding: 10px 20px 20px;
+            background: var(--dark-bg);
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .input-area input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            outline: none;
-            font-size: 1em;
+        .input-wrapper {
+            flex: 1; background: var(--sidebar-bg);
+            border-radius: 10px; display: flex; align-items: center; padding: 5px 15px;
         }
 
-        .btn-icon {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.4em;
-            cursor: pointer;
-            transition: color 0.2s;
+        .input-wrapper input {
+            flex: 1; background: none; border: none; color: white;
+            padding: 10px 0; outline: none; font-size: 15px;
         }
 
-        .btn-icon:hover {
-            color: var(--accent-color);
-        }
+        .action-btn { color: var(--text-muted); font-size: 20px; cursor: pointer; transition: 0.2s; border: none; background: none; }
+        .action-btn:hover { color: var(--accent); }
 
-        .btn-send {
-            color: var(--accent-color);
-        }
-
-        /* Кастомизация скроллбара */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        /* --- Typing Indicator --- */
+        .typing { font-style: italic; color: var(--accent); display: none; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
     <aside class="sidebar">
-        <div class="sidebar-header">DICE MESSAGE</div>
-        <div class="chat-list">
-            <div class="chat-item active">
-                <div class="avatar" style="background: #f39c12;">JS</div>
-                <div class="chat-info">
-                    <div class="chat-name">JavaScript Бот</div>
-                    <div class="last-message">Напиши мне что-нибудь!</div>
-                </div>
-            </div>
-            <div class="chat-item">
-                <div class="avatar" style="background: #3498db;">D</div>
-                <div class="chat-info">
-                    <div class="chat-name">Dice Support</div>
-                    <div class="last-message">Ваша заявка принята в работу</div>
-                </div>
-            </div>
+        <div class="sidebar-header">
+            <i class="fa-solid fa-bars"></i>
+            <span>DICE GRAM</span>
         </div>
+        <div class="chat-list" id="chatList"></div>
     </aside>
 
     <main class="main-chat">
         <header class="chat-header">
-            <div class="avatar" style="background: #f39c12; width: 40px; height: 40px; font-size: 14px;">JS</div>
-            <div class="chat-name">JavaScript Бот</div>
+            <div class="avatar" id="headerAvatar" style="width: 40px; height: 40px;"></div>
+            <div class="header-info">
+                <div class="chat-name" id="headerName">Выберите чат</div>
+                <div class="header-status" id="headerStatus"></div>
+            </div>
         </header>
 
-        <div class="messages-area" id="messagesArea">
-            <div class="message received">Привет! Я ваш помощник в DICE MESSAGE. Как я могу вам помочь?</div>
+        <div class="messages-container" id="chatWindow">
+            <div style="text-align: center; color: var(--text-muted); margin-top: 50px;">Выберите контакт для начала общения</div>
         </div>
 
-        <div class="input-area">
-            <button class="btn-icon"><i class="fa-solid fa-paperclip"></i></button>
-            <input type="text" id="messageInput" placeholder="Напишите сообщение..." autocomplete="off">
-            <button class="btn-icon btn-send" id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+        <div class="input-bar">
+            <button class="action-btn"><i class="fa-solid fa-paperclip"></i></button>
+            <div class="input-wrapper">
+                <input type="text" id="userInput" placeholder="Написать сообщение..." disabled>
+            </div>
+            <button class="action-btn" id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </main>
-</div>
 
 <script>
-    const messagesArea = document.getElementById('messagesArea');
-    const messageInput = document.getElementById('messageInput');
+    // Данные приложения
+    const contacts = [
+        { id: 1, name: "JavaScript Bot", sub: "DICE GRAM Official Bot", color: "#f39c12", initials: "JS", history: [{t: "Привет! Я официальный бот. Пришли мне название технологии, и я выдам код.", type: "in"}] },
+        { id: 2, name: "Иван Иванов", sub: "был(а) недавно", color: "#e74c3c", initials: "ИИ", history: [{t: "Привет, когда планируешь зайти в игру?", type: "in"}] },
+        { id: 3, name: "Техподдержка", sub: "онлайн", color: "#2ecc71", initials: "ТП", history: [{t: "Здравствуйте! Опишите вашу проблему.", type: "in"}] }
+    ];
+
+    let activeChatId = null;
+
+    const chatListEl = document.getElementById('chatList');
+    const chatWindow = document.getElementById('chatWindow');
+    const headerName = document.getElementById('headerName');
+    const headerStatus = document.getElementById('headerStatus');
+    const headerAvatar = document.getElementById('headerAvatar');
+    const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
 
-    // Функция добавления сообщения в интерфейс
-    function addMessage(text, type) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', type);
-        messageDiv.textContent = text;
-        messagesArea.appendChild(messageDiv);
-        
-        // Автоматическая прокрутка вниз
-        messagesArea.scrollTop = messagesArea.scrollHeight;
+    // Отрисовка списка контактов
+    function renderContacts() {
+        chatListEl.innerHTML = '';
+        contacts.forEach(c => {
+            const lastMsg = c.history[c.history.length - 1].t.substring(0, 30);
+            const div = document.createElement('div');
+            div.className = `chat-item ${activeChatId === c.id ? 'active' : ''}`;
+            div.innerHTML = `
+                <div class="avatar" style="background: ${c.color}">${c.initials}</div>
+                <div class="chat-meta">
+                    <div class="chat-name">${c.name}</div>
+                    <div class="chat-sub">${lastMsg}...</div>
+                </div>
+            `;
+            div.onclick = () => selectChat(c.id);
+            chatListEl.appendChild(div);
+        });
     }
 
-    // Логика отправки
-    function handleSendMessage() {
-        const text = messageInput.value.trim();
-        if (text !== "") {
-            addMessage(text, 'sent');
-            messageInput.value = "";
+    // Переключение чата
+    function selectChat(id) {
+        activeChatId = id;
+        const contact = contacts.find(c => c.id === id);
+        
+        // Обновление шапки
+        headerName.textContent = contact.name;
+        headerStatus.textContent = contact.sub;
+        headerAvatar.textContent = contact.initials;
+        headerAvatar.style.background = contact.color;
+        
+        userInput.disabled = false;
+        userInput.focus();
+
+        renderMessages();
+        renderContacts();
+    }
+
+    // Отрисовка сообщений
+    function renderMessages() {
+        const contact = contacts.find(c => c.id === activeChatId);
+        chatWindow.innerHTML = '';
+        contact.history.forEach(m => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${m.type}`;
+            // Если в сообщении есть код (помечено спец-тегом)
+            if (m.isCode) {
+                msgDiv.innerHTML = `Вот пример кода:<pre>${m.t}</pre>`;
+            } else {
+                msgDiv.textContent = m.t;
+            }
+            chatWindow.appendChild(msgDiv);
+        });
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // Логика бота
+    function handleBotResponse(text, contactId) {
+        const contact = contacts.find(c => c.id === contactId);
+        
+        if (contact.name === "JavaScript Bot") {
+            headerStatus.textContent = "печатает...";
+            headerStatus.classList.add('typing');
             
-            // Имитация ответа бота через 1.5 секунды
             setTimeout(() => {
-                botReply(text);
+                let response = { t: "Я поддерживаю DICE GRAM. Попробуйте написать 'HTML' или 'CSS'.", type: "in" };
+                
+                if (text.toLowerCase().includes('html')) {
+                    response = { t: "<div class='dice'>Hello World</div>", type: "in", isCode: true };
+                } else if (text.toLowerCase().includes('css')) {
+                    response = { t: ".dice { color: gold; }", type: "in", isCode: true };
+                }
+
+                contact.history.push(response);
+                if (activeChatId === contactId) {
+                    renderMessages();
+                    headerStatus.textContent = contact.sub;
+                }
+                renderContacts();
+            }, 1000);
+        } else {
+            // Обычное эхо для других чатов
+            setTimeout(() => {
+                contact.history.push({ t: "Принято!", type: "in" });
+                if (activeChatId === contactId) renderMessages();
+                renderContacts();
             }, 1500);
         }
     }
 
-    // Имитация "умного" ответа
-    function botReply(userText) {
-        const replies = [
-            "Интересная мысль! Расскажите подробнее.",
-            "Я получил ваше сообщение в DICE MESSAGE.",
-            "Понял вас. Нужно время, чтобы это обдумать.",
-            "DICE MESSAGE работает стабильно. Есть еще вопросы?",
-            "Это звучит круто!"
-        ];
-        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-        addMessage(randomReply, 'received');
+    // Отправка
+    function sendMessage() {
+        const val = userInput.value.trim();
+        if (!val || activeChatId === null) return;
+
+        const contact = contacts.find(c => c.id === activeChatId);
+        contact.history.push({ t: val, type: "out" });
+        
+        userInput.value = '';
+        renderMessages();
+        renderContacts();
+        handleBotResponse(val, activeChatId);
     }
 
-    // Слушатели событий
-    sendBtn.addEventListener('click', handleSendMessage);
+    sendBtn.onclick = sendMessage;
+    userInput.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
 
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            handleSendMessage();
-        }
-    });
-
-    // Фокус на поле ввода при загрузке
-    window.onload = () => messageInput.focus();
+    // Инициализация
+    renderContacts();
 </script>
-
 </body>
 </html>
 

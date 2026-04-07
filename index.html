@@ -3,324 +3,507 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICE GRAM Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>DICE GRAM | Pro Desktop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --dark-bg: #0f1621;
-            --sidebar-bg: #17212b;
-            --active-chat: #2b5278;
-            --text-main: #f5f5f5;
-            --text-muted: #708499;
+            --bg-main: #0e1621;
+            --bg-sidebar: #17212b;
+            --bg-item-active: #2b5278;
+            --bg-item-hover: #232e3c;
+            --text-primary: #f5f5f5;
+            --text-secondary: #708499;
             --accent: #5288c1;
             --msg-in: #182533;
             --msg-out: #2b5278;
-            --status-green: #4ade80;
-            --danger: #ef4444;
+            --status-online: #4ade80;
+            --border: #0e1621;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: var(--dark-bg); height: 100vh; display: flex; color: var(--text-main); overflow: hidden; }
-
-        /* --- UI Notifications --- */
-        #toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--active-chat); padding: 10px 20px; border-radius: 20px;
-            z-index: 1000; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            animation: slideDown 0.3s ease;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
         }
 
-        /* --- Settings & Sidebar --- */
-        .settings-drawer {
-            position: absolute; left: -300px; top: 0; width: 300px; height: 100%;
-            background: var(--sidebar-bg); z-index: 100; transition: 0.3s;
-            border-right: 1px solid #0e1621; padding: 20px;
+        /* --- LAYOUT --- */
+        .sidebar {
+            width: 350px;
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            z-index: 10;
         }
-        .settings-drawer.open { left: 0; }
 
-        .sidebar { width: 320px; background: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid #0e1621; }
-        .search-container { padding: 10px; position: relative; }
-        .search-container input { width: 100%; background: #242f3d; border: none; padding: 10px 10px 10px 35px; border-radius: 8px; color: white; outline: none; }
-        .search-container i { position: absolute; left: 22px; top: 22px; color: var(--text-muted); }
+        .chat-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-main);
+            position: relative;
+        }
+
+        /* --- SIDEBAR COMPONENTS --- */
+        .sidebar-header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            background: #242f3d;
+            border: 2px solid transparent;
+            padding: 8px 12px 8px 35px;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .search-bar input:focus { border-color: var(--accent); }
+        .search-bar i { position: absolute; left: 12px; top: 10px; color: var(--text-secondary); }
 
         .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { display: flex; padding: 12px 15px; cursor: pointer; align-items: center; gap: 12px; transition: 0.2s; position: relative; }
-        .chat-item:hover { background: #232e3c; }
-        .chat-item.active { background: var(--active-chat); }
 
-        .avatar-wrapper { position: relative; }
-        .online-dot { width: 12px; height: 12px; background: var(--status-green); border: 2px solid var(--sidebar-bg); border-radius: 50%; position: absolute; bottom: 0; right: 0; }
-        .avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-
-        /* --- Main Chat --- */
-        .main-chat { flex: 1; display: flex; flex-direction: column; background: #0e1621; }
-        .chat-header { height: 60px; background: var(--sidebar-bg); display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #0e1621; }
-        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; }
-
-        .msg-bubble { 
-            max-width: 75%; padding: 8px 14px; border-radius: 12px; position: relative; font-size: 14.5px;
-            cursor: context-menu; transition: transform 0.1s;
+        .chat-item {
+            display: flex;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            align-items: center;
+            gap: 12px;
         }
-        .msg-bubble:active { transform: scale(0.98); }
-        .msg-bubble.out { align-self: flex-end; background: var(--msg-out); border-bottom-right-radius: 4px; }
-        .msg-bubble.in { align-self: flex-start; background: var(--msg-in); border-bottom-left-radius: 4px; }
 
-        .msg-info { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 11px; color: #a0acba; margin-top: 4px; }
-        .typing-text { color: var(--accent); font-size: 12px; font-style: italic; display: none; }
+        .chat-item:hover { background: var(--bg-item-hover); }
+        .chat-item.active { background: var(--bg-item-active); }
 
-        /* --- Input Area --- */
-        .input-area { padding: 10px 20px 20px; background: var(--dark-bg); display: flex; gap: 15px; align-items: center; }
-        .input-box { flex: 1; background: var(--sidebar-bg); border-radius: 20px; padding: 8px 18px; display: flex; }
-        .input-box input { flex: 1; background: none; border: none; color: white; outline: none; font-size: 15px; }
-
-        /* --- Context Menu --- */
-        #contextMenu {
-            position: fixed; background: #1c242f; border: 1px solid #2b3744; 
-            border-radius: 8px; display: none; z-index: 1000; overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        .avatar {
+            width: 54px; height: 54px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: bold; color: white; flex-shrink: 0;
+            background-size: cover; background-position: center;
         }
-        .menu-item { padding: 10px 20px; cursor: pointer; color: white; font-size: 14px; }
-        .menu-item:hover { background: var(--danger); }
 
-        @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .chat-name { font-weight: 600; font-size: 15px; }
+        .chat-time { font-size: 12px; color: var(--text-secondary); }
+        .chat-msg { 
+            font-size: 14px; color: var(--text-secondary); 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+
+        /* --- CHAT WINDOW COMPONENTS --- */
+        .chat-header {
+            height: 60px;
+            background: var(--bg-sidebar);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-meta { margin-left: 15px; }
+        .status { font-size: 13px; color: var(--accent); }
+        .typing { font-style: italic; color: var(--status-online); display: none; }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+        }
+
+        /* --- MESSAGE BUBBLES --- */
+        .msg-row { display: flex; width: 100%; margin-bottom: 2px; }
+        .msg-row.sent { justify-content: flex-end; }
+        .msg-row.received { justify-content: flex-start; }
+
+        .bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            position: relative;
+            font-size: 14.5px;
+            line-height: 1.4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } }
+
+        .sent .bubble { background: var(--msg-out); border-bottom-right-radius: 4px; }
+        .received .bubble { background: var(--msg-in); border-bottom-left-radius: 4px; }
+
+        .msg-meta {
+            display: flex; align-items: center; justify-content: flex-end;
+            gap: 4px; font-size: 11px; color: #a0acba; margin-top: 3px;
+        }
+
+        .check-mark { color: #40ebff; font-size: 10px; }
+
+        /* --- INPUT AREA --- */
+        .input-area {
+            padding: 10px 20px 15px;
+            background: var(--bg-main);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            background: var(--bg-sidebar);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            padding: 12px 0;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .icon-btn { color: var(--text-secondary); cursor: pointer; font-size: 20px; transition: 0.2s; }
+        .icon-btn:hover { color: var(--accent); }
+
+        /* --- SETTINGS MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center;
+            align-items: center; z-index: 1000;
+        }
+
+        .modal {
+            background: var(--bg-sidebar);
+            width: 400px; padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal h2 { margin-bottom: 20px; color: var(--accent); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
+        .form-group input { 
+            width: 100%; padding: 10px; background: var(--bg-main); 
+            border: 1px solid #333; border-radius: 5px; color: white; outline: none;
+        }
+
+        .btn-save {
+            width: 100%; padding: 12px; background: var(--accent);
+            border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;
+        }
+
+        /* --- UTILS --- */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #3d4b59; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="toast">Новое сообщение!</div>
-    <div id="contextMenu">
-        <div class="menu-item" onclick="deleteMessage()">Удалить сообщение</div>
-    </div>
-
-    <div class="settings-drawer" id="settingsDrawer">
-        <h3 style="margin-bottom:20px"><i class="fa-solid fa-gear"></i> Настройки</h3>
-        <div style="margin-bottom:15px">
-            <label style="font-size:12px; color:var(--accent)">Имя</label>
-            <input type="text" id="prefName" style="width:100%; padding:8px; background:#242f3d; border:none; color:white; border-radius:5px;">
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>Настройки профиля</h2>
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" id="set-name" placeholder="Введите имя">
+            </div>
+            <div class="form-group">
+                <label>Имя пользователя (@username)</label>
+                <input type="text" id="set-user" placeholder="@dice_gram">
+            </div>
+            <div class="form-group">
+                <label>URL аватарки</label>
+                <input type="text" id="set-avatar" placeholder="https://...">
+            </div>
+            <button class="btn-save" onclick="DiceEngine.saveSettings()">Сохранить изменения</button>
+            <p onclick="DiceEngine.toggleModal()" style="text-align:center; margin-top:15px; cursor:pointer; font-size:14px; color:var(--text-secondary)">Закрыть</p>
         </div>
-        <div style="margin-bottom:15px">
-            <label style="font-size:12px; color:var(--accent)">@Username</label>
-            <input type="text" id="prefUser" style="width:100%; padding:8px; background:#242f3d; border:none; color:white; border-radius:5px;">
-        </div>
-        <button onclick="saveProfile()" style="width:100%; padding:10px; background:var(--accent); border:none; color:white; border-radius:5px; cursor:pointer">Сохранить</button>
-        <button onclick="toggleSettings()" style="width:100%; margin-top:10px; background:none; border:1px solid #444; color:white; padding:10px; border-radius:5px; cursor:pointer">Закрыть</button>
     </div>
 
     <aside class="sidebar">
-        <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-            <i class="fa-solid fa-bars" style="cursor:pointer" onclick="toggleSettings()"></i>
-            <span style="font-weight: bold; color: var(--accent); letter-spacing: 1px;">DICE GRAM</span>
+        <div class="sidebar-header">
+            <i class="fa-solid fa-bars icon-btn" onclick="DiceEngine.toggleModal()"></i>
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Поиск по @username...">
+            </div>
         </div>
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Поиск или @username...">
-        </div>
-        <div class="chat-list" id="chatList"></div>
+        <div class="chat-list" id="chatList">
+            </div>
     </aside>
 
-    <main class="main-chat">
+    <main class="chat-window">
         <header class="chat-header">
-            <div class="avatar-wrapper">
-                <div class="avatar" id="activeAvatar" style="background:#444">?</div>
-                <div class="online-dot" id="activeDot" style="display:none"></div>
-            </div>
-            <div style="margin-left: 15px;">
-                <div id="activeName" style="font-weight: 500;">Выберите чат</div>
-                <div id="activeStatus" style="font-size: 12px; color: var(--text-muted);"></div>
-                <div id="typingIndicator" class="typing-text">печатает...</div>
+            <div class="avatar" id="h-avatar" style="width:42px; height:42px; font-size:14px;">?</div>
+            <div class="header-meta">
+                <div class="chat-name" id="h-name">Выберите чат</div>
+                <div class="status" id="h-status"></div>
+                <div class="typing" id="h-typing">печатает...</div>
             </div>
         </header>
 
-        <div class="messages-area" id="msgArea"></div>
+        <div class="messages-container" id="msgBox">
+            </div>
 
         <div class="input-area">
-            <i class="fa-solid fa-face-smile" style="color:var(--text-muted); cursor:pointer"></i>
-            <div class="input-box">
-                <input type="text" id="messageInput" placeholder="Написать сообщение..." disabled>
+            <i class="fa-solid fa-paperclip icon-btn"></i>
+            <div class="input-wrapper">
+                <input type="text" id="msgInput" placeholder="Написать сообщение..." disabled autocomplete="off">
+                <i class="fa-regular fa-face-smile icon-btn" style="font-size:18px"></i>
             </div>
-            <i class="fa-solid fa-paper-plane" id="sendBtn" style="color:var(--accent); cursor:pointer"></i>
+            <i class="fa-solid fa-microphone icon-btn" id="actionIcon"></i>
         </div>
     </main>
 
 <script>
-    let chats = JSON.parse(localStorage.getItem('dice_v4_chats')) || [
-        { id: 'dice_official', name: 'JavaScript Bot', username: '@dice_official', color: '#f39c12', online: true, history: [{id: 1, text: 'DICE GRAM v4.0 готов к работе. Напиши "код" для теста.', time: '12:00', type: 'in', status: 2}] }
-    ];
-    let activeChatId = null;
-    let msgToDelete = null;
+    /**
+     * DICE GRAM ENGINE v5.0
+     * Модульная структура: State, UI, Logic
+     */
 
-    // --- Core UI ---
-    function toggleSettings() { document.getElementById('settingsDrawer').classList.toggle('open'); }
-    
-    function showToast(text) {
-        const t = document.getElementById('toast');
-        t.textContent = text;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 3000);
-    }
-
-    // --- Message Logic ---
-    function renderMessages() {
-        const area = document.getElementById('msgArea');
-        area.innerHTML = '';
-        const chat = chats.find(c => c.id === activeChatId);
-        if(!chat) return;
-
-        chat.history.forEach(m => {
-            const bubble = document.createElement('div');
-            bubble.className = `msg-bubble ${m.type}`;
-            bubble.oncontextmenu = (e) => {
-                if(m.type === 'out') {
-                    e.preventDefault();
-                    showContextMenu(e.pageX, e.pageY, m.id);
+    const DiceEngine = (() => {
+        // --- СОСТОЯНИЕ (STATE) ---
+        let state = {
+            currentUser: JSON.parse(localStorage.getItem('dice_profile')) || { name: 'User', user: '@username', avatar: '' },
+            activeChatId: null,
+            chats: JSON.parse(localStorage.getItem('dice_data')) || [
+                {
+                    id: 'official_bot',
+                    name: 'MESSAGE OFFICIAL',
+                    user: '@dice_official',
+                    color: '#f39c12',
+                    isOnline: true,
+                    history: [
+                        { text: 'Добро пожаловать в DICE GRAM! Я ваш ассистент.', time: '12:00', type: 'received', status: 2 }
+                    ]
                 }
-            };
-
-            let status = m.type === 'out' ? `<i class="fa-solid fa-check ${m.status==2?'status-read':''}"></i>` : '';
-            bubble.innerHTML = `
-                <div>${m.text}</div>
-                <div class="msg-info"><span>${m.time}</span> ${status}</div>
-            `;
-            area.appendChild(bubble);
-        });
-        area.scrollTop = area.scrollHeight;
-    }
-
-    function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if(!text || !activeChatId) return;
-
-        const chat = chats.find(c => c.id === activeChatId);
-        const msg = {
-            id: Date.now(),
-            text: text,
-            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            type: 'out',
-            status: 1
+            ]
         };
 
-        chat.history.push(msg);
-        input.value = '';
-        renderMessages();
-        save();
+        const botPhrases = [
+            "Чистый код — это не то, что вы пишете, а то, как вы думаете.",
+            "JavaScript — единственный язык, где [] + [] это пустая строка.",
+            "Ошибка на строке 42? Попробуйте просто перезагрузить сервер.",
+            "Программирование — это магия, превращающая кофе в код.",
+            "DICE GRAM работает на чистом JS. Это ли не чудо?"
+        ];
 
-        if(activeChatId === 'dice_official') botReply(text);
-    }
-
-    function botReply(text) {
-        const indicator = document.getElementById('typingIndicator');
-        indicator.style.display = 'block';
-        
-        setTimeout(() => {
-            const chat = chats.find(c => c.id === 'dice_official');
-            let replyText = "Сообщение доставлено на сервер.";
-            if(text.toLowerCase().includes('код')) replyText = "Лови сниппет: <pre>console.log('Dice Gram');</pre>";
-            
-            chat.history.push({
-                id: Date.now(),
-                text: replyText,
-                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                type: 'in'
+        // --- UI RENDERERS ---
+        const renderChatList = () => {
+            const list = document.getElementById('chatList');
+            list.innerHTML = '';
+            state.chats.forEach(chat => {
+                const lastMsg = chat.history.length > 0 ? chat.history[chat.history.length - 1] : { text: 'Нет сообщений', time: '' };
+                const isActive = state.activeChatId === chat.id;
+                
+                const item = document.createElement('div');
+                item.className = `chat-item ${isActive ? 'active' : ''}`;
+                item.innerHTML = `
+                    <div class="avatar" style="background:${chat.color}; background-image:url('${chat.avatar || ''}')">${chat.avatar ? '' : chat.name[0]}</div>
+                    <div class="chat-info">
+                        <div class="chat-top">
+                            <span class="chat-name">${chat.name}</span>
+                            <span class="chat-time">${lastMsg.time}</span>
+                        </div>
+                        <div class="chat-msg">${lastMsg.text}</div>
+                    </div>
+                `;
+                item.onclick = () => selectChat(chat.id);
+                list.appendChild(item);
             });
+        };
 
-            indicator.style.display = 'none';
-            if(activeChatId !== 'dice_official') showToast("Новое от JavaScript Bot");
+        const renderMessages = () => {
+            const box = document.getElementById('msgBox');
+            box.innerHTML = '';
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            if (!chat) return;
+
+            chat.history.forEach(m => {
+                const row = document.createElement('div');
+                row.className = `msg-row ${m.type}`;
+                
+                const statusHtml = m.type === 'sent' ? `
+                    <span class="check-mark">
+                        <i class="fa-solid fa-check"></i>${m.status === 2 ? '<i class="fa-solid fa-check" style="margin-left:-4px"></i>' : ''}
+                    </span>` : '';
+
+                row.innerHTML = `
+                    <div class="bubble">
+                        ${m.text}
+                        <div class="msg-meta">
+                            <span>${m.time}</span>
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+                box.appendChild(row);
+            });
+            box.scrollTop = box.scrollHeight;
+        };
+
+        // --- CORE LOGIC ---
+        const selectChat = (id) => {
+            state.activeChatId = id;
+            const chat = state.chats.find(c => c.id === id);
+            
+            document.getElementById('h-name').textContent = chat.name;
+            document.getElementById('h-status').textContent = chat.isOnline ? 'в сети' : 'был недавно';
+            document.getElementById('h-avatar').textContent = chat.avatar ? '' : chat.name[0];
+            document.getElementById('h-avatar').style.background = chat.color;
+            document.getElementById('h-avatar').style.backgroundImage = `url('${chat.avatar || ''}')`;
+            
+            document.getElementById('msgInput').disabled = false;
+            document.getElementById('msgInput').focus();
+
+            renderChatList();
             renderMessages();
+        };
+
+        const handleSend = () => {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if (!text || !state.activeChatId) return;
+
+            const now = new Date();
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            const msg = { text, time, type: 'sent', status: 1 };
+            
+            chat.history.push(msg);
+            input.value = '';
+            renderMessages();
+            renderChatList();
             save();
-        }, 2000);
-    }
 
-    // --- Context Menu & Delete ---
-    function showContextMenu(x, y, msgId) {
-        const menu = document.getElementById('contextMenu');
-        menu.style.display = 'block';
-        menu.style.left = x + 'px';
-        menu.style.top = y + 'px';
-        msgToDelete = msgId;
-    }
+            // Эффект прочтения
+            setTimeout(() => { msg.status = 2; renderMessages(); }, 1000);
 
-    window.onclick = () => document.getElementById('contextMenu').style.display = 'none';
+            // Бот логика
+            if (state.activeChatId === 'official_bot') triggerBot();
+        };
 
-    function deleteMessage() {
-        const chat = chats.find(c => c.id === activeChatId);
-        chat.history = chat.history.filter(m => m.id !== msgToDelete);
-        save();
-        renderMessages();
-    }
+        const triggerBot = () => {
+            const typ = document.getElementById('h-typing');
+            const stat = document.getElementById('h-status');
+            
+            stat.style.display = 'none';
+            typ.style.display = 'block';
 
-    // --- Sidebar & Search ---
-    function renderChatList() {
-        const list = document.getElementById('chatList');
-        list.innerHTML = '';
-        chats.forEach(c => {
-            const item = document.createElement('div');
-            item.className = `chat-item ${activeChatId === c.id ? 'active' : ''}`;
-            item.innerHTML = `
-                <div class="avatar-wrapper">
-                    <div class="avatar" style="background:${c.color}">${c.name[0]}</div>
-                    ${c.online ? '<div class="online-dot"></div>' : ''}
-                </div>
-                <div style="flex:1; overflow:hidden">
-                    <div style="display:flex; justify-content:space-between">
-                        <span style="font-weight:500">${c.name}</span>
-                        <span style="font-size:11px; color:var(--text-muted)">${c.history.length ? c.history[c.history.length-1].time : ''}</span>
-                    </div>
-                    <div style="font-size:13px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap">
-                        ${c.history.length ? c.history[c.history.length-1].text : 'Нет сообщений'}
-                    </div>
-                </div>
-            `;
-            item.onclick = () => selectChat(c.id);
-            list.appendChild(item);
-        });
-    }
+            setTimeout(() => {
+                const chat = state.chats.find(c => c.id === 'official_bot');
+                const reply = botPhrases[Math.floor(Math.random() * botPhrases.length)];
+                
+                chat.history.push({
+                    text: reply,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    type: 'received',
+                    status: 2
+                });
 
-    function selectChat(id) {
-        activeChatId = id;
-        const chat = chats.find(c => c.id === id);
-        document.getElementById('activeName').textContent = chat.name;
-        document.getElementById('activeStatus').textContent = chat.username;
-        document.getElementById('activeAvatar').textContent = chat.name[0];
-        document.getElementById('activeAvatar').style.background = chat.color;
-        document.getElementById('activeDot').style.display = chat.online ? 'block' : 'none';
-        document.getElementById('messageInput').disabled = false;
-        renderMessages();
-        renderChatList();
-    }
+                typ.style.display = 'none';
+                stat.style.display = 'block';
+                
+                if (state.activeChatId === 'official_bot') renderMessages();
+                renderChatList();
+                save();
+            }, 2500);
+        };
+
+        const addNewContact = (username) => {
+            const name = username.replace('@', '');
+            const newChat = {
+                id: Date.now().toString(),
+                name: name.charAt(0).toUpperCase() + name.slice(1),
+                user: username,
+                color: '#' + Math.floor(Math.random()*16777215).toString(16),
+                isOnline: false,
+                history: []
+            };
+            state.chats.push(newChat);
+            save();
+            renderChatList();
+            selectChat(newChat.id);
+        };
+
+        const save = () => localStorage.setItem('dice_data', JSON.stringify(state.chats));
+
+        // --- PUBLIC API ---
+        return {
+            init: () => {
+                renderChatList();
+                // Подгрузка настроек в инпуты
+                document.getElementById('set-name').value = state.currentUser.name;
+                document.getElementById('set-user').value = state.currentUser.user;
+                document.getElementById('set-avatar').value = state.currentUser.avatar;
+            },
+            toggleModal: () => {
+                const m = document.getElementById('modalOverlay');
+                m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+            },
+            saveSettings: () => {
+                state.currentUser = {
+                    name: document.getElementById('set-name').value,
+                    user: document.getElementById('set-user').value,
+                    avatar: document.getElementById('set-avatar').value
+                };
+                localStorage.setItem('dice_profile', JSON.stringify(state.currentUser));
+                alert('Профиль сохранен!');
+                DiceEngine.toggleModal();
+            },
+            handleSend,
+            addNewContact
+        };
+    })();
+
+    // --- EVENT LISTENERS ---
+    document.getElementById('msgInput').onkeypress = (e) => {
+        if (e.key === 'Enter') DiceEngine.handleSend();
+    };
 
     document.getElementById('searchInput').onkeypress = (e) => {
-        if(e.key === 'Enter' && e.target.value.startsWith('@')) {
-            const user = e.target.value;
-            if(!chats.find(c => c.username === user)) {
-                chats.push({
-                    id: Date.now().toString(),
-                    name: user.replace('@',''),
-                    username: user,
-                    color: '#'+Math.floor(Math.random()*16777215).toString(16),
-                    online: false,
-                    history: []
-                });
-                save();
-                renderChatList();
-            }
+        if (e.key === 'Enter' && e.target.value.startsWith('@')) {
+            DiceEngine.addNewContact(e.target.value);
             e.target.value = '';
         }
     };
 
-    // --- Initialization ---
-    function save() { localStorage.setItem('dice_v4_chats', JSON.stringify(chats)); }
-    function saveProfile() {
-        const p = {name: document.getElementById('prefName').value, user: document.getElementById('prefUser').value};
-        localStorage.setItem('dice_v4_profile', JSON.stringify(p));
-        toggleSettings();
-    }
+    document.getElementById('msgInput').oninput = (e) => {
+        const icon = document.getElementById('actionIcon');
+        if (e.target.value.length > 0) {
+            icon.className = 'fa-solid fa-paper-plane icon-btn';
+            icon.onclick = DiceEngine.handleSend;
+        } else {
+            icon.className = 'fa-solid fa-microphone icon-btn';
+            icon.onclick = null;
+        }
+    };
 
-    document.getElementById('sendBtn').onclick = sendMessage;
-    document.getElementById('messageInput').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-
-    renderChatList();
+    // Запуск приложения
+    window.onload = DiceEngine.init;
 </script>
 </body>
 </html>
-

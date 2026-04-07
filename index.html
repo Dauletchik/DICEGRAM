@@ -2,251 +2,532 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DICE TOK | Ultimate</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BLACK RUSHA RP - RED SERVER</title>
     <style>
-        :root {
-            --black: #010101;
-            --white: #ffffff;
-            --accent: #fe2c55;
-            --gray: #888;
-            --dark-gray: #252525;
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--black); color: var(--white); height: 100vh; overflow: hidden; }
-
-        .page { display: none; height: calc(100vh - 60px); width: 100%; position: relative; }
-        .page.active { display: block; }
-
-        /* --- ЛЕНТА --- */
-        #feedPage { overflow-y: scroll; snap-type: y mandatory; scrollbar-width: none; height: 100vh; }
-        .video-card { height: 100vh; width: 100%; snap-align: start; position: relative; background: #000; overflow: hidden; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Анимация лайка по центру */
-        .heart-animation {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            color: var(--accent); font-size: 100px; opacity: 0; pointer-events: none; z-index: 10;
-        }
-        .heart-animation.animate { animation: heartPop 0.8s ease-out; }
-        @keyframes heartPop { 
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            30% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        body {
+            background: linear-gradient(145deg, #0a0c12 0%, #030507 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Impact', system-ui, -apple-system, 'Arial Black', sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
-        /* UI Видео */
-        .video-ui { position: absolute; bottom: 80px; left: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 5; }
-        .side-bar { display: flex; flex-direction: column; gap: 20px; align-items: center; }
-        .action-item { text-align: center; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .action-item i { font-size: 35px; margin-bottom: 5px; transition: 0.2s; }
-        .action-item i.liked { color: var(--accent); }
-
-        /* --- КОММЕНТАРИИ (Sheet) --- */
-        #commentSheet {
-            position: fixed; bottom: -70%; left: 0; width: 100%; height: 70%;
-            background: var(--dark-gray); border-radius: 15px 15px 0 0; z-index: 300;
-            transition: bottom 0.3s ease; padding: 20px; display: flex; flex-direction: column;
+        /* Главный контейнер игры */
+        .game-container {
+            width: 100%;
+            max-width: 550px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(3px);
+            border-radius: 58px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1);
+            border: 1px solid rgba(220, 40, 40, 0.5);
+            overflow: hidden;
+            transition: all 0.2s;
         }
-        #commentSheet.open { bottom: 0; }
-        .comment-list { flex: 1; overflow-y: auto; margin-top: 15px; }
-        .comment-item { margin-bottom: 15px; font-size: 14px; }
-        .comment-input-area { display: flex; gap: 10px; padding-top: 10px; }
-        .comment-input-area input { flex: 1; background: #333; border: none; color: white; padding: 10px; border-radius: 20px; outline: none; }
 
-        /* --- ПРОФИЛЬ --- */
-        .profile-info { padding: 30px 20px; text-align: center; position: relative; }
-        .edit-btn { position: absolute; top: 10px; right: 10px; font-size: 20px; color: var(--gray); cursor: pointer; }
-        .avatar { width: 90px; height: 90px; border-radius: 50%; background: var(--accent); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 35px; }
-        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-        .grid-item { aspect-ratio: 3/4; background: #222; }
-        .grid-item video { width: 100%; height: 100%; object-fit: cover; }
+        /* Верхняя панель с сервером */
+        .server-header {
+            background: #0f0f14;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #e32;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .server-name {
+            font-size: 1.7rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ff3a3a, #b00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 6px rgba(255,0,0,0.3);
+        }
+        .balance-panel {
+            background: #1e1e24;
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #ffd966;
+            border: 1px solid #ffaa33;
+            font-family: monospace;
+        }
 
-        /* --- МОДАЛКА НАСТРОЕК --- */
-        #editModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 400; display: none; padding: 20px; }
+        /* экран входа / лобби */
+        .lobby-screen, .game-screen {
+            padding: 24px 20px 30px;
+            transition: 0.2s;
+        }
+        .hidden {
+            display: none;
+        }
 
-        /* --- НАВИГАЦИЯ --- */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: var(--black); border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-item { color: var(--gray); font-size: 24px; cursor: pointer; }
-        .nav-item.active { color: white; }
+        /* стиль для вокзала, магазина, гаража */
+        .location-card {
+            background: rgba(20, 20, 28, 0.9);
+            border-radius: 36px;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-left: 6px solid #e32;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .location-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff2d0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .location-title span {
+            font-size: 2rem;
+        }
+        .inventory {
+            background: #00000066;
+            border-radius: 28px;
+            padding: 12px 18px;
+            margin: 15px 0;
+            font-size: 1rem;
+            color: #ccc;
+        }
+        button {
+            background: #2c2c34;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.1s linear;
+            font-family: inherit;
+            margin: 6px 8px 6px 0;
+            box-shadow: 0 2px 4px black;
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        .btn-danger {
+            background: #a1221a;
+            box-shadow: 0 0 8px #ff5533;
+        }
+        .btn-success {
+            background: #2a7a3b;
+        }
+        .btn-warning {
+            background: #c97e0a;
+        }
+        .car-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .car-card {
+            background: #26222c;
+            border-radius: 28px;
+            padding: 12px 18px;
+            flex: 1;
+            min-width: 130px;
+            text-align: center;
+            border: 1px solid #ff7b2c;
+        }
+        .car-name {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        .car-price {
+            color: gold;
+        }
+        hr {
+            border-color: #e32;
+            margin: 16px 0;
+        }
+        .status-text {
+            background: black;
+            padding: 8px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 10px;
+            color: #ffb347;
+        }
+        .select-server-btn {
+            background: #e32;
+            font-size: 1.6rem;
+            padding: 18px;
+            width: 100%;
+            font-weight: bold;
+            letter-spacing: 4px;
+            margin-top: 20px;
+        }
+        h2 {
+            margin: 0 0 12px;
+            color: #ffae70;
+        }
+        .footer-note {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #aaa;
+            margin-top: 15px;
+        }
+        .my-car {
+            background: #2a241e;
+            border-radius: 28px;
+            padding: 10px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
-
-    <div id="feedPage" class="page active"></div>
-
-    <div id="profilePage" class="page">
-        <div class="profile-info">
-            <i class="fa-solid fa-gear edit-btn" onclick="toggleEdit(true)"></i>
-            <div class="avatar" id="p-avatar">U</div>
-            <h2 id="p-name">@username</h2>
-            <p id="p-bio" style="color:var(--gray); font-size:14px; margin-top:5px">Нет описания</p>
-        </div>
-        <div class="video-grid" id="profileGrid"></div>
+<div class="game-container" id="gameRoot">
+    <div class="server-header">
+        <div class="server-name">🔥 RED SERVER 🔥</div>
+        <div class="balance-panel" id="moneyDisplay">💰 0 ₽</div>
     </div>
 
-    <div id="editModal">
-        <h2 style="margin-bottom:20px">Изменить профиль</h2>
-        <input type="text" id="edit-name" placeholder="Новый ник" style="width:100%; padding:15px; background:#222; border:none; color:white; border-radius:10px; margin-bottom:15px;">
-        <textarea id="edit-bio" placeholder="О себе" style="width:100%; padding:15px; background:#222; border:none; color:white; border-radius:10px; margin-bottom:15px;"></textarea>
-        <button onclick="saveProfile()" style="width:100%; padding:15px; background:var(--accent); border:none; color:white; border-radius:10px; font-weight:bold">Сохранить</button>
-        <p onclick="toggleEdit(false)" style="text-align:center; margin-top:20px; color:var(--gray)">Отмена</p>
-    </div>
-
-    <div id="commentSheet">
-        <div style="display:flex; justify-content:space-between">
-            <b id="commentCount">0 комментариев</b>
-            <i class="fa-solid fa-xmark" onclick="toggleComments(false)"></i>
-        </div>
-        <div class="comment-list" id="commentList"></div>
-        <div class="comment-input-area">
-            <input type="text" id="cInput" placeholder="Добавить комментарий...">
-            <i class="fa-solid fa-paper-plane" onclick="addComment()" style="color:var(--accent); margin-top:10px"></i>
+    <!-- Экран выбора сервера (только RED, но с кнопкой) -->
+    <div id="lobbyScreen" class="lobby-screen">
+        <div class="location-card" style="text-align: center;">
+            <div class="location-title">
+                <span>🚂</span> ВОКЗАЛ ПРИБЫТИЯ
+            </div>
+            <p style="margin-bottom: 24px; color:#ffd9a5;">Добро пожаловать на рейс в криминальный мир.<br> <strong style="color:#ff4444;">ЕДИНСТВЕННЫЙ СЕРВЕР: RED</strong></p>
+            <button id="enterRedServerBtn" class="select-server-btn">⚡ ЗАЙТИ НА RED ⚡</button>
+            <div class="footer-note">● Ролевой проект Black Rusha ● Жесткий вокзал ●</div>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="showPage('feed')"><i class="fa-solid fa-house"></i></div>
-        <div class="nav-item" onclick="alert('Поиск скоро будет!')"><i class="fa-solid fa-magnifying-glass"></i></div>
-        <div class="nav-item" onclick="alert('Загрузка видео была в прошлом коде, добавьте её сюда!')"><i class="fa-solid fa-plus-square"></i></div>
-        <div class="nav-item" onclick="showPage('profile')"><i class="fa-solid fa-user"></i></div>
-    </nav>
+    <!-- Основной игровой экран (после входа) ВОКЗАЛ + МАШИНЫ -->
+    <div id="gameScreen" class="game-screen hidden">
+        <div class="location-card">
+            <div class="location-title">
+                <span>🚉</span> Ж/Д ВОКЗАЛ | РОСТОВ-БАТОН
+            </div>
+            <div class="inventory">
+                👤 Игрок: <strong id="playerName">Бродяга</strong><br>
+                🚗 Транспорт: <span id="carOwnedSpan">— нет —</span>
+            </div>
+            <button id="workBtn" class="btn-warning">💼 РАБОТА (ГРУЗЧИК) +300₽</button>
+            <button id="robBtn" class="btn-danger">🔪 РАЗБОЙ (РИСК) +0-700₽</button>
+            <hr>
+            <div class="location-title" style="font-size:1.3rem;">
+                <span>🏎️</span> АВТОСАЛОН НА ВОКЗАЛЕ
+            </div>
+            <div id="shopCarsList" class="car-list">
+                <!-- динамические машины -->
+            </div>
+            <div id="messageArea" class="status-text">💬 Вокзал встречает барыгой... Купи тачку!</div>
+        </div>
+        <div class="location-card" id="garageCard">
+            <div class="location-title">
+                <span>🅿️</span> МОЙ ГАРАЖ
+            </div>
+            <div id="ownedCarDisplay">Нет машины</div>
+            <button id="sellCarBtn" class="btn-danger" style="margin-top:12px;">💰 ПРОДАТЬ МАШИНУ (50% цены)</button>
+        </div>
+        <div class="footer-note" style="margin-top:6px;">● RED SERVER | RP законы: работай, покупай авто, стань королем вокзала ●</div>
+    </div>
+</div>
 
 <script>
-    // --- ДАННЫЕ ---
-    let state = {
-        user: JSON.parse(localStorage.getItem('dt_user')) || { name: '@dice_fan', bio: 'Люблю кодить', avatar: 'D' },
-        videos: JSON.parse(localStorage.getItem('dt_videos')) || [
-            { id: 1, src: 'https://www.w3schools.com/html/mov_bbb.mp4', desc: 'Первое видео! #тест', likes: 0, comments: [], isLiked: false }
-        ]
+    // ------------------- ИГРОВОЕ СОСТОЯНИЕ -------------------
+    let gameState = {
+        loggedIn: false,        // зашел ли на сервер
+        money: 1200,            // стартовый капитал для веселья
+        ownedCar: null,         // { id, name, price }
     };
 
-    let activeVideoId = null;
+    // Каталог машин (цены и названия)
+    const CARS_CATALOG = [
+        { id: "lada", name: "🚗 LADA PRIORA", price: 4800, emoji: "🚗" },
+        { id: "bmw", name: "🐉 BMW M5 E60", price: 12500, emoji: "🐉" },
+        { id: "merc", name: "⭐ MERCEDES W140", price: 21000, emoji: "⭐" },
+        { id: "sport", name: "🔥 NISSAN GT-R", price: 34500, emoji: "🔥" }
+    ];
 
-    // --- ЛОГИКА СТРАНИЦ ---
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId + 'Page').classList.add('active');
-        if(pageId === 'feed') renderFeed();
-        if(pageId === 'profile') renderProfile();
+    // DOM элементы
+    const lobbyDiv = document.getElementById('lobbyScreen');
+    const gameDiv = document.getElementById('gameScreen');
+    const moneySpan = document.getElementById('moneyDisplay');
+    const carOwnedSpan = document.getElementById('carOwnedSpan');
+    const ownedCarDisplayDiv = document.getElementById('ownedCarDisplay');
+    const messageDiv = document.getElementById('messageArea');
+    const shopContainer = document.getElementById('shopCarsList');
+
+    // Обновление интерфейса денег и машин
+    function updateUI() {
+        // деньги
+        moneySpan.innerText = `💰 ${gameState.money} ₽`;
+        // машина владельца
+        if (gameState.ownedCar) {
+            const carData = CARS_CATALOG.find(c => c.id === gameState.ownedCar.id);
+            const displayName = carData ? `${carData.emoji} ${carData.name}` : gameState.ownedCar.name;
+            carOwnedSpan.innerText = `${displayName}`;
+            ownedCarDisplayDiv.innerHTML = `<div class="my-car">✅ Ваш автомобиль: <strong>${displayName}</strong><br>💰 Стоимость при покупке: ${gameState.ownedCar.price}₽</div>`;
+        } else {
+            carOwnedSpan.innerText = '— нет —';
+            ownedCarDisplayDiv.innerHTML = `<div class="my-car">🚫 В гараже пусто. Купи тачку в автосалоне!</div>`;
+        }
+        // обновляем витрину магазина (чтобы кнопки покупки были актуальны)
+        renderShop();
     }
 
-    // --- РЕНДЕР ЛЕНТЫ ---
-    function renderFeed() {
-        const feed = document.getElementById('feedPage');
-        feed.innerHTML = state.videos.map(v => `
-            <div class="video-card" data-id="${v.id}" ondblclick="handleDoubleTap(${v.id}, this)">
-                <video loop src="${v.src}" playsinline onclick="this.paused ? this.play() : this.pause()"></video>
-                <i class="fa-solid fa-heart heart-animation"></i>
-                <div class="video-ui">
-                    <div>
-                        <div style="font-weight:bold; margin-bottom:5px">${state.user.name}</div>
-                        <div style="font-size:14px">${v.desc}</div>
-                    </div>
-                    <div class="side-bar">
-                        <div class="action-item" onclick="toggleLike(${v.id}, this)">
-                            <i class="fa-solid fa-heart ${v.isLiked ? 'liked' : ''}"></i>
-                            <p>${v.likes}</p>
-                        </div>
-                        <div class="action-item" onclick="openComments(${v.id})">
-                            <i class="fa-solid fa-comment-dots"></i>
-                            <p>${v.comments.length}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-
-        const obs = new IntersectionObserver(es => es.forEach(e => {
-            const v = e.target.querySelector('video');
-            e.isIntersecting ? v.play() : v.pause();
-        }), {threshold: 0.7});
-        document.querySelectorAll('.video-card').forEach(c => obs.observe(c));
-    }
-
-    // --- ЛАЙКИ ---
-    function toggleLike(id, el) {
-        const vid = state.videos.find(v => v.id === id);
-        vid.isLiked = !vid.isLiked;
-        vid.likes += vid.isLiked ? 1 : -1;
-        save();
-        renderFeed();
-    }
-
-    function handleDoubleTap(id, card) {
-        const heart = card.querySelector('.heart-animation');
-        heart.classList.add('animate');
-        setTimeout(() => heart.classList.remove('animate'), 800);
-        
-        const vid = state.videos.find(v => v.id === id);
-        if(!vid.isLiked) {
-            vid.isLiked = true;
-            vid.likes += 1;
-            save();
-            renderFeed();
+    // Отображение машин в магазине
+    function renderShop() {
+        if (!shopContainer) return;
+        shopContainer.innerHTML = '';
+        for (let car of CARS_CATALOG) {
+            const isOwned = (gameState.ownedCar && gameState.ownedCar.id === car.id);
+            const card = document.createElement('div');
+            card.className = 'car-card';
+            card.innerHTML = `
+                <div class="car-name">${car.emoji} ${car.name}</div>
+                <div class="car-price">💰 ${car.price} ₽</div>
+                ${isOwned ? '<span style="color:#5f9;font-size:0.8rem;">✔ УЖЕ В ГАРАЖЕ</span>' : ''}
+            `;
+            if (!isOwned) {
+                const buyBtn = document.createElement('button');
+                buyBtn.innerText = 'КУПИТЬ';
+                buyBtn.style.marginTop = '8px';
+                buyBtn.style.background = '#3c6e47';
+                buyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    buyCar(car);
+                };
+                card.appendChild(buyBtn);
+            } else {
+                const ownedLabel = document.createElement('div');
+                ownedLabel.innerText = '✅ Владелец';
+                ownedLabel.style.marginTop = '8px';
+                ownedLabel.style.fontSize = '0.8rem';
+                ownedLabel.style.color = '#aaffaa';
+                card.appendChild(ownedLabel);
+            }
+            shopContainer.appendChild(card);
         }
     }
 
-    // --- КОММЕНТАРИИ ---
-    function openComments(id) {
-        activeVideoId = id;
-        const vid = state.videos.find(v => v.id === id);
-        document.getElementById('commentCount').innerText = `${vid.comments.length} комментариев`;
-        document.getElementById('commentList').innerHTML = vid.comments.map(c => `
-            <div class="comment-item"><b>${state.user.name}</b>: ${c}</div>
-        `).join('');
-        document.getElementById('commentSheet').classList.add('open');
-    }
-
-    function toggleComments(show) {
-        if(!show) document.getElementById('commentSheet').classList.remove('open');
-    }
-
-    function addComment() {
-        const input = document.getElementById('cInput');
-        if(!input.value) return;
-        const vid = state.videos.find(v => v.id === activeVideoId);
-        vid.comments.push(input.value);
-        input.value = '';
-        save();
-        openComments(activeVideoId);
-        renderFeed();
-    }
-
-    // --- ПРОФИЛЬ ---
-    function renderProfile() {
-        document.getElementById('p-name').innerText = state.user.name;
-        document.getElementById('p-bio').innerText = state.user.bio;
-        document.getElementById('p-avatar').innerText = state.user.name[1].toUpperCase();
-        
-        const grid = document.getElementById('profileGrid');
-        grid.innerHTML = state.videos.map(v => `
-            <div class="grid-item"><video src="${v.src}"></video></div>
-        `).join('');
-    }
-
-    function toggleEdit(show) {
-        document.getElementById('editModal').style.display = show ? 'block' : 'none';
-        if(show) {
-            document.getElementById('edit-name').value = state.user.name;
-            document.getElementById('edit-bio').value = state.user.bio;
+    // Покупка машины
+    function buyCar(car) {
+        if (gameState.ownedCar) {
+            showMessage(`❌ У вас уже есть машина! Продайте текущую (${gameState.ownedCar.name}) в гараже, чтобы купить новую.`, 'error');
+            return;
+        }
+        if (gameState.money >= car.price) {
+            gameState.money -= car.price;
+            gameState.ownedCar = { id: car.id, name: car.name, price: car.price };
+            updateUI();
+            showMessage(`✅ Поздравляем! Вы купили ${car.name} за ${car.price}₽. Теперь вы на колёсах, бандит!`, 'success');
+        } else {
+            showMessage(`💸 Не хватает денег! Нужно ${car.price}₽. Подработай на вокзале.`, 'error');
         }
     }
 
-    function saveProfile() {
-        state.user.name = document.getElementById('edit-name').value || '@user';
-        state.user.bio = document.getElementById('edit-bio').value || '';
-        save();
-        toggleEdit(false);
-        renderProfile();
+    // Продажа машины
+    function sellCar() {
+        if (!gameState.ownedCar) {
+            showMessage(`Нет машины для продажи...`, 'error');
+            return;
+        }
+        const sellPrice = Math.floor(gameState.ownedCar.price * 0.5);
+        gameState.money += sellPrice;
+        const soldCarName = gameState.ownedCar.name;
+        gameState.ownedCar = null;
+        updateUI();
+        showMessage(`🔁 Вы продали ${soldCarName} за ${sellPrice}₽ (50% цены). Бабки в кармане!`, 'success');
     }
 
-    function save() { localStorage.setItem('dt_user', JSON.stringify(state.user)); localStorage.setItem('dt_videos', JSON.stringify(state.videos)); }
+    // Работа (грузчик)
+    function doWork() {
+        const earn = 300;
+        gameState.money += earn;
+        updateUI();
+        showMessage(`💪 Вы поработали грузчиком на вокзале +${earn}₽. Чистый кэш.`, 'info');
+        randomEventMessage();
+    }
 
-    renderFeed();
+    // Рискованный разбой (RP элемент)
+    function doRobbery() {
+        // шанс 55% на успех, иначе потеря
+        const successChance = 0.55;
+        const isSuccess = Math.random() < successChance;
+        if (isSuccess) {
+            const loot = Math.floor(Math.random() * 701) + 100; // от 100 до 800
+            gameState.money += loot;
+            updateUI();
+            showMessage(`🔫 Ограбление прошло успешно! Вы отжали у барыг ${loot}₽. Будь осторожен, мент может приехать...`, 'success');
+        } else {
+            const penalty = Math.floor(Math.random() * 401) + 150; // 150-550
+            const finalPenalty = Math.min(penalty, gameState.money);
+            gameState.money -= finalPenalty;
+            updateUI();
+            showMessage(`😭 Ограбление провалилось! Вас поймали и отобрали ${finalPenalty}₽. Вокзал не прощает ошибок.`, 'error');
+        }
+        randomEventMessage();
+    }
+
+    // случайная атмосферная фраза
+    function randomEventMessage() {
+        const events = [
+            "🚂 Мимо проехал товарняк с углём...",
+            "👮 Полицейский патруль окинул взглядом, но прошел мимо.",
+            "🍺 Местный бомж предлагает купить 'секретную' карту города.",
+            "🎲 На вокзале играют в карты, кто-то проиграл жигули.",
+            "💨 Чёрная Волга остановилась, смотрят братки."
+        ];
+        const rand = events[Math.floor(Math.random() * events.length)];
+        // добавим в сообщение дополнительный флер, но не перезатирая основное сообщение
+        const currMsg = messageDiv.innerText;
+        setTimeout(() => {
+            if (messageDiv.innerText === currMsg) {
+                // если сообщение не поменялось за 2 сек, то покажем атмосферу
+                if (messageDiv.innerText === currMsg) {
+                    showMessage(`✨ ${rand}`, 'info');
+                }
+            }
+        }, 2000);
+    }
+
+    function showMessage(msg, type = 'info') {
+        let color = '#ffd966';
+        if (type === 'error') color = '#ff8866';
+        if (type === 'success') color = '#aaffaa';
+        if (type === 'info') color = '#88ccff';
+        messageDiv.innerHTML = `💬 ${msg}`;
+        messageDiv.style.borderLeft = `4px solid ${color}`;
+        messageDiv.style.backgroundColor = '#1a1a1f';
+        // автоочистка через 3.5 сек, но оставляем последнее важное
+        setTimeout(() => {
+            if (messageDiv.innerHTML === `💬 ${msg}`) {
+                // не стираем, если было новое сообщение
+                // оставляем но с легким изменением
+                if (messageDiv.innerHTML === `💬 ${msg}`) {
+                    // ничего не делаем, пусть останется последнее, но можно оставить
+                }
+            }
+        }, 4000);
+    }
+
+    // Вход на сервер RED (переход из лобби в игру)
+    function enterRedServer() {
+        if (gameState.loggedIn) return;
+        gameState.loggedIn = true;
+        // сбросим стартовые параметры для нового "захода", но если уже есть сохранение, то норм, но по задумке: первый вход
+        // для чистоты, но можно сохранить если игрок перезаходил бы, но у нас только один вход. Дадим небольшой бонусный респект
+        if (gameState.money === undefined) gameState.money = 1200;
+        if (!gameState.ownedCar) gameState.ownedCar = null;
+        // скрыть лобби, показать игру
+        lobbyDiv.classList.add('hidden');
+        gameDiv.classList.remove('hidden');
+        updateUI();
+        showMessage(`🔴 ВЫ ВОШЛИ НА RED SERVER | ВОКЗАЛ РОСТОВА-ПАПА | Добро пожаловать, бандит!`, 'success');
+        // дополнительная атмосфера
+        setTimeout(() => {
+            showMessage(`🚬 На вокзале пахнет дешёвым табаком и свободой. Доступны: работа, разбой, покупка авто.`, 'info');
+        }, 1500);
+    }
+
+    // функция полного сброса (если нужно, но не используется напрямую, но для красоты)
+    function resetGameFromLobby() {
+        // если заново зайти нельзя, но мы можем дать кнопку выхода? сделаем неявно, но по логике если человек перезагрузит страницу,
+        // но внутри игры можно "выйти"? добавим скрытый ресет? не требуется по ТЗ. Но для удобства реализуем "выйти с сервера"?
+        // не просили, но лучше добавить маленькую кнопку дисконнект? Чтобы можно было вернуться в выбор сервера (но сервер всего один).
+        // Сделаем кнопку в гараже "Покинуть RED" для эстетики? Добавим внизу экрана игры.
+        // добавим новую кнопку в footer.
+        const footerGame = document.querySelector('#gameScreen .footer-note');
+        if (footerGame && !document.getElementById('exitServerBtn')) {
+            const exitBtn = document.createElement('button');
+            exitBtn.id = 'exitServerBtn';
+            exitBtn.innerText = '🚪 ПОКИНУТЬ СЕРВЕР';
+            exitBtn.style.background = '#4a2a2a';
+            exitBtn.style.fontSize = '0.75rem';
+            exitBtn.style.padding = '6px 12px';
+            exitBtn.style.marginTop = '10px';
+            exitBtn.style.display = 'inline-block';
+            exitBtn.onclick = () => {
+                gameState.loggedIn = false;
+                gameDiv.classList.add('hidden');
+                lobbyDiv.classList.remove('hidden');
+                // не сбрасываем деньги и машину, но по логике при новом заходе сохраним прогресс? Это же рп, можно оставить.
+                // но чтобы не было конфликта, просто заново войти с теми же деньгами.
+                showMessageOnLobby("Вы покинули RED сервер. Чтобы вернуться нажмите ЗАЙТИ.");
+            };
+            footerGame.appendChild(exitBtn);
+        }
+    }
+
+    function showMessageOnLobby(msg) {
+        const lobbyMsg = document.querySelector('#lobbyScreen .status-text');
+        if (lobbyMsg) {
+            lobbyMsg.innerHTML = `💬 ${msg}`;
+        } else {
+            const locCard = document.querySelector('#lobbyScreen .location-card');
+            if (locCard) {
+                const newDiv = document.createElement('div');
+                newDiv.className = 'status-text';
+                newDiv.style.marginTop = '15px';
+                newDiv.innerHTML = `💬 ${msg}`;
+                locCard.appendChild(newDiv);
+            }
+        }
+    }
+
+    // привязка событий и инициализация
+    function bindEvents() {
+        const enterBtn = document.getElementById('enterRedServerBtn');
+        if (enterBtn) enterBtn.onclick = () => enterRedServer();
+
+        const workBtn = document.getElementById('workBtn');
+        if (workBtn) workBtn.onclick = () => doWork();
+
+        const robBtn = document.getElementById('robBtn');
+        if (robBtn) robBtn.onclick = () => doRobbery();
+
+        const sellBtn = document.getElementById('sellCarBtn');
+        if (sellBtn) sellBtn.onclick = () => sellCar();
+
+        // дополнительно создание кнопки выхода с сервера
+        resetGameFromLobby();
+    }
+
+    // Начальная инициализация
+    function init() {
+        // задаем дефолтные значения
+        gameState.money = 1200;
+        gameState.ownedCar = null;
+        gameState.loggedIn = false;
+        updateUI();
+        bindEvents();
+        // убедимся что лобби видно, игра скрыта
+        lobbyDiv.classList.remove('hidden');
+        gameDiv.classList.add('hidden');
+        // добавим случайные картинки в лобби
+        const lobbyCard = document.querySelector('#lobbyScreen .location-card');
+        if (lobbyCard && !document.querySelector('#lobbyScreen .status-text')) {
+            const statusLobby = document.createElement('div');
+            statusLobby.className = 'status-text';
+            statusLobby.style.marginTop = '18px';
+            statusLobby.innerHTML = '💬 Нажми "ЗАЙТИ НА RED", чтобы окунуться в чёрный рп мир вокзала.';
+            lobbyCard.appendChild(statusLobby);
+        }
+        renderShop(); // отрисовать магазин
+    }
+
+    init();
 </script>
 </body>
 </html>
-

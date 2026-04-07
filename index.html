@@ -3,218 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DICE TOK | Full Clone</title>
+    <title>DICE TOK | Creator Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --black: #010101;
             --white: #ffffff;
-            --accent: #fe2c55; /* TikTok Red */
-            --cyan: #25f4ee;
+            --accent: #fe2c55;
+            --dark-gray: #121212;
+            --gray: #888;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'ProximaNova', sans-serif; }
-        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--black); color: var(--white); height: 100vh; overflow: hidden; }
 
-        /* --- ЛЕНТА (REELS CONTAINER) --- */
-        .feed-container {
-            height: 100vh;
-            width: 100%;
-            overflow-y: scroll;
-            snap-type: y mandatory; /* Магия свайпа как в ТТ */
-            scrollbar-width: none;
-        }
-        .feed-container::-webkit-scrollbar { display: none; }
+        /* --- СКРЫТЫЕ СЕКЦИИ --- */
+        .page { display: none; height: calc(100vh - 60px); width: 100%; overflow-y: auto; }
+        .page.active { display: block; }
 
-        .video-card {
-            height: 100vh;
-            width: 100%;
-            snap-align: start;
-            position: relative;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* --- ЛЕНТА (FEED) --- */
+        #feedPage { overflow-y: scroll; snap-type: y mandatory; scrollbar-width: none; height: 100vh; }
+        .video-card { height: 100vh; width: 100%; snap-align: start; position: relative; background: #000; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        .empty-state {
+            height: 100%; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: var(--gray);
+            text-align: center; padding: 20px;
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        /* --- ОВЕРЛЕЙ ВИДЕО --- */
+        .video-ui {
+            position: absolute; bottom: 80px; left: 0; width: 100%;
+            padding: 20px; display: flex; justify-content: space-between; align-items: flex-end;
+            pointer-events: none;
+        }
+        .video-ui * { pointer-events: auto; }
+        .side-bar { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+
+        /* --- МОДАЛКА ЗАГРУЗКИ --- */
+        #uploadModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--black); z-index: 200; display: none; padding: 20px;
+        }
+        .upload-header { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 18px; }
+        .upload-form input, .upload-form textarea {
+            width: 100%; background: #222; border: none; color: white;
+            padding: 15px; border-radius: 8px; margin-bottom: 15px; outline: none;
+        }
+        .btn-publish {
+            background: var(--accent); color: white; width: 100%; padding: 15px;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
 
-        /* --- ИНТЕРФЕЙС ПОВЕРХ ВИДЕО --- */
-        .ui-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-bottom: 80px; /* Место для меню */
-        }
+        /* --- ПРОФИЛЬ --- */
+        .profile-header { padding: 40px 20px; text-align: center; }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--accent); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+        .grid-item { aspect-ratio: 3/4; background: #333; position: relative; }
+        .grid-item video { width: 100%; height: 100%; object-fit: cover; }
 
-        .video-info { flex: 1; margin-right: 50px; }
-        .author-name { font-weight: bold; font-size: 18px; margin-bottom: 8px; display: block; }
-        .video-desc { font-size: 14px; line-height: 1.3; margin-bottom: 10px; }
-        .music-info { font-size: 13px; display: flex; align-items: center; gap: 8px; }
-        .music-info i { animation: rotate 3s linear infinite; }
-
-        /* Боковые кнопки */
-        .side-bar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .action-item { text-align: center; cursor: pointer; }
-        .action-item i { font-size: 32px; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .action-item span { font-size: 12px; font-weight: 600; }
-        .action-item .fa-heart.active { color: var(--accent); }
-
-        .author-avatar {
-            width: 45px; height: 45px; border-radius: 50%;
-            border: 2px solid white; margin-bottom: 10px;
-            position: relative;
-        }
-        .follow-btn {
-            position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); border-radius: 50%; width: 18px; height: 18px;
-            display: flex; align-items: center; justify-content: center; font-size: 10px;
-        }
-
-        /* --- НИЖНЕЕ МЕНЮ --- */
+        /* --- НАВИГАЦИЯ --- */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%; height: 60px;
             background: var(--black); border-top: 0.5px solid #333;
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 100;
+            display: flex; justify-content: space-around; align-items: center; z-index: 100;
         }
-
-        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; gap: 4px; color: #888; }
+        .nav-item { color: var(--gray); text-align: center; cursor: pointer; transition: 0.2s; }
         .nav-item.active { color: white; }
-        .nav-item i { font-size: 20px; }
-
-        .create-btn {
-            background: linear-gradient(90deg, var(--cyan) 0%, var(--accent) 100%);
-            width: 45px; height: 28px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; color: black;
+        .create-btn { 
+            background: linear-gradient(90deg, #25f4ee 0%, #fe2c55 100%);
+            width: 45px; height: 30px; border-radius: 8px; color: black;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div class="feed-container" id="feed">
+    <div id="feedPage" class="page active"></div>
+
+    <div id="profilePage" class="page">
+        <div class="profile-header">
+            <div class="profile-avatar">D</div>
+            <h2 id="profName">@dice_user</h2>
+            <p style="color:var(--gray)">0 Лайков • 0 Подписок</p>
         </div>
+        <div class="video-grid" id="myVideosGrid"></div>
+    </div>
+
+    <div id="uploadModal">
+        <div class="upload-header">
+            <span onclick="toggleUpload(false)">Отмена</span>
+            <span style="font-weight:bold">Новое видео</span>
+            <span></span>
+        </div>
+        <div class="upload-form">
+            <label style="display:block; margin-bottom:10px; color:var(--gray)">Выберите файл видео:</label>
+            <input type="file" id="videoFile" accept="video/*">
+            <textarea id="videoDesc" placeholder="Напишите описание..." rows="4"></textarea>
+            <button class="btn-publish" onclick="publishVideo()">Опубликовать</button>
+        </div>
+    </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item active"><i class="fa-solid fa-house"></i><span>Главная</span></div>
-        <div class="nav-item"><i class="fa-solid fa-compass"></i><span>Интересное</span></div>
-        <div class="nav-item"><div class="create-btn"><i class="fa-solid fa-plus"></i></div></div>
-        <div class="nav-item"><i class="fa-solid fa-message"></i><span>Входящие</span></div>
-        <div class="nav-item"><i class="fa-solid fa-user"></i><span>Профиль</span></div>
+        <div class="nav-item active" onclick="showPage('feed')"><i class="fa-solid fa-house"></i></div>
+        <div class="nav-item" onclick="showPage('discover')"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="nav-item" onclick="toggleUpload(true)"><div class="create-btn"><i class="fa-solid fa-plus"></i></div></div>
+        <div class="nav-item"><i class="fa-solid fa-message"></i></div>
+        <div class="nav-item" onclick="showPage('profile')"><i class="fa-solid fa-user"></i></div>
     </nav>
 
 <script>
-    // Массив с данными (в реальности это прилетит с сервера)
-    const videoData = [
-        {
-            id: 1,
-            author: "@dice_dev",
-            desc: "Создаю клон TikTok на чистом JS! #coding #dicegram #web",
-            music: "Dice Records - Original Audio",
-            url: "https://v16-webapp-prime.tiktok.com/video/example1.mp4", // Нужна прямая ссылка на видео
-            likes: "12.5K",
-            comments: "432"
-        },
-        {
-            id: 2,
-            author: "@vibe_russia",
-            desc: "Обнова на сервере! Залетай в игру #crmp #blackrussia",
-            music: "Vibe Russia Theme",
-            url: "https://www.w3schools.com/html/mov_bbb.mp4", 
-            likes: "45K",
-            comments: "1.2K"
+    let db = JSON.parse(localStorage.getItem('dice_tok_db')) || [];
+
+    // --- ЛОГИКА СТРАНИЦ ---
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        
+        const target = document.getElementById(pageId + 'Page');
+        if(target) target.classList.add('active');
+        
+        if(pageId === 'feed') renderFeed();
+        if(pageId === 'profile') renderProfile();
+    }
+
+    // --- РЕНДЕР ЛЕНТЫ ---
+    function renderFeed() {
+        const feed = document.getElementById('feedPage');
+        if (db.length === 0) {
+            feed.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-clapperboard" style="font-size: 50px; margin-bottom: 15px;"></i>
+                    <p>Тут пока пусто.<br>Будь первым, кто выложит видео!</p>
+                </div>`;
+            return;
         }
-    ];
 
-    const feed = document.getElementById('feed');
-
-    // Функция создания карточки видео
-    function createVideoCard(data) {
-        const card = document.createElement('div');
-        card.className = 'video-card';
-        card.innerHTML = `
-            <video loop src="${data.url}" playsinline onclick="togglePlay(this)"></video>
-            <div class="ui-overlay">
-                <div class="video-info">
-                    <span class="author-name">${data.author}</span>
-                    <p class="video-desc">${data.desc}</p>
-                    <div class="music-info">
-                        <i class="fa-solid fa-music"></i>
-                        <span>${data.music}</span>
+        feed.innerHTML = db.map(vid => `
+            <div class="video-card">
+                <video loop src="${vid.src}" playsinline onclick="this.paused ? this.play() : this.pause()"></video>
+                <div class="video-ui">
+                    <div style="flex:1">
+                        <div style="font-weight:bold; margin-bottom:10px">@You</div>
+                        <div style="font-size:14px">${vid.desc}</div>
                     </div>
-                </div>
-                <div class="side-bar">
-                    <div class="author-avatar">
-                        <div class="follow-btn"><i class="fa-solid fa-plus"></i></div>
-                    </div>
-                    <div class="action-item" onclick="toggleLike(this)">
-                        <i class="fa-solid fa-heart"></i>
-                        <span>${data.likes}</span>
-                    </div>
-                    <div class="action-item">
-                        <i class="fa-solid fa-comment-dots"></i>
-                        <span>${data.comments}</span>
-                    </div>
-                    <div class="action-item">
-                        <i class="fa-solid fa-share"></i>
-                        <span>Поделиться</span>
+                    <div class="side-bar">
+                        <div class="action-item"><i class="fa-solid fa-heart"></i><br><small>0</small></div>
+                        <div class="action-item"><i class="fa-solid fa-comment"></i><br><small>0</small></div>
+                        <div class="action-item"><i class="fa-solid fa-share"></i></div>
                     </div>
                 </div>
             </div>
-        `;
-        return card;
+        `).join('');
+
+        // Авто-плей для первого видео
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                const v = e.target.querySelector('video');
+                if(e.isIntersecting) v.play(); else v.pause();
+            });
+        }, {threshold: 0.6});
+        document.querySelectorAll('.video-card').forEach(c => observer.observe(c));
     }
 
-    // Рендер ленты
-    videoData.forEach(item => {
-        feed.appendChild(createVideoCard(item));
-    });
-
-    // Логика воспроизведения при скролле (Intersection Observer)
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const video = entry.target.querySelector('video');
-            if (entry.isIntersecting) {
-                video.play();
-            } else {
-                video.pause();
-                video.currentTime = 0;
-            }
-        });
-    }, { threshold: 0.7 });
-
-    document.querySelectorAll('.video-card').forEach(card => observer.observe(card));
-
-    // Функции взаимодействия
-    function togglePlay(v) {
-        if (v.paused) v.play();
-        else v.pause();
+    // --- РЕНДЕР ПРОФИЛЯ ---
+    function renderProfile() {
+        const grid = document.getElementById('myVideosGrid');
+        grid.innerHTML = db.map(vid => `
+            <div class="grid-item">
+                <video src="${vid.src}"></video>
+            </div>
+        `).join('');
     }
 
-    function toggleLike(el) {
-        const icon = el.querySelector('i');
-        icon.classList.toggle('active');
-        // Добавь анимацию "взрыва" лайка
+    // --- ЗАГРУЗКА ---
+    function toggleUpload(show) {
+        document.getElementById('uploadModal').style.display = show ? 'block' : 'none';
     }
+
+    function publishVideo() {
+        const fileInput = document.getElementById('videoFile');
+        const descInput = document.getElementById('videoDesc');
+
+        if(fileInput.files.length === 0) return alert('Выберите видео!');
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const newVideo = {
+                id: Date.now(),
+                src: e.target.result,
+                desc: descInput.value || "Без описания",
+                likes: 0
+            };
+            db.unshift(newVideo);
+            localStorage.setItem('dice_tok_db', JSON.stringify(db));
+            
+            // Сброс и возврат
+            fileInput.value = '';
+            descInput.value = '';
+            toggleUpload(false);
+            showPage('feed');
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+
+    // Инициализация
+    showPage('feed');
 </script>
 </body>
 </html>

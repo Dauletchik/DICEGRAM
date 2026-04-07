@@ -2,438 +2,639 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>GTA стиль - свободное перемещение</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GTA SAN ANDREAS STYLE - Открытый мир</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: #0a0f1e;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: #000;
+            overflow: hidden;
             font-family: 'Courier New', monospace;
+            touch-action: none;
         }
 
-        .game-container {
-            position: relative;
-            border: 4px solid #2c3e2f;
-            border-radius: 12px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
-            background: #1e2a1e;
-        }
-
-        canvas {
+        #gameCanvas {
             display: block;
-            margin: 0 auto;
-            cursor: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #1a2a1a;
         }
 
-        .hud {
+        /* Джойстик для телефона */
+        .joystick-container {
+            position: fixed;
+            bottom: 80px;
+            left: 80px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(30,30,40,0.75);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(255,255,255,0.3);
+            z-index: 100;
+            touch-action: none;
+        }
+
+        .joystick-base {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            transition: transform 0.05s linear;
+            pointer-events: none;
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            position: fixed;
+            bottom: 80px;
+            right: 80px;
+            display: flex;
+            gap: 25px;
+            z-index: 100;
+        }
+
+        .action-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(30,30,40,0.75);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            font-family: monospace;
+            cursor: pointer;
+            transition: 0.05s linear;
+            touch-action: manipulation;
+        }
+
+        .action-btn:active {
+            transform: scale(0.92);
+            background: rgba(200,50,50,0.8);
+        }
+
+        /* HUD */
+        .hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
             background: rgba(0,0,0,0.7);
-            color: #0f0;
+            backdrop-filter: blur(5px);
             padding: 8px 16px;
-            border-radius: 20px;
+            border-radius: 12px;
+            color: #0f0;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 100;
+            font-family: monospace;
+            pointer-events: none;
+        }
+
+        .health-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 24px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #ff4444;
+            z-index: 100;
+        }
+
+        .health-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff8888);
+            transition: width 0.2s;
+        }
+
+        .money {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: gold;
             font-weight: bold;
             font-size: 18px;
-            backdrop-filter: blur(4px);
-            pointer-events: none;
-            z-index: 10;
             font-family: monospace;
-            letter-spacing: 1px;
+            z-index: 100;
         }
 
-        .controls-info {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            background: rgba(0,0,0,0.6);
-            color: #ccc;
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            pointer-events: none;
-            font-family: monospace;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
+        @media (max-width: 768px) {
+            .joystick-container { width: 120px; height: 120px; bottom: 50px; left: 50px; }
+            .action-buttons { bottom: 50px; right: 50px; gap: 15px; }
+            .action-btn { width: 60px; height: 60px; font-size: 24px; }
+            .hud { font-size: 10px; }
+            .health-bar { width: 150px; height: 20px; }
         }
     </style>
 </head>
 <body>
-<div>
-    <div class="game-container">
-        <canvas id="gameCanvas" width="1000" height="600"></canvas>
-        <div class="hud" id="coordDisplay">ПОЗИЦИЯ: 0, 0</div>
-        <div class="controls-info">W/A/S/D — ДВИЖЕНИЕ | ОБХОДИ ПРЕПЯТСТВИЯ</div>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div class="hud" id="locationName">LOS SANTOS</div>
+    <div class="health-bar"><div class="health-fill" id="healthFill"></div></div>
+    <div class="money" id="money">$ 12500</div>
+    
+    <!-- Джойстик для телефона -->
+    <div class="joystick-container" id="joystickContainer">
+        <div class="joystick-base" id="joystickBase"></div>
     </div>
-</div>
+    
+    <div class="action-buttons">
+        <div class="action-btn" id="actionBtn">🔫</div>
+        <div class="action-btn" id="jumpBtn">🦵</div>
+    </div>
 
-<script>
-    (function(){
-        // ----- КАНВАС И КОНТЕКСТ -----
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // ----- РАЗМЕРЫ КАРТЫ (большой открытый мир) -----
-        const WORLD_WIDTH = 3000;
-        const WORLD_HEIGHT = 3000;
-
-        // ----- ИГРОК -----
-        const PLAYER_SIZE = 28;       // размер персонажа (квадрат)
-        let player = {
-            x: WORLD_WIDTH/2,
-            y: WORLD_HEIGHT/2,
-            speed: 4.8
-        };
-
-        // ----- ФЛАГИ ДВИЖЕНИЯ (клавиши) -----
-        const keys = {
-            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
-            w: false, s: false, a: false, d: false
-        };
-
-        // ----- ПРЕПЯТСТВИЯ (стены, здания, деревья) в стиле городского ландшафта -----
-        // каждый объект: {x, y, w, h, color}
-        const obstacles = [];
-
-        // Функция добавления препятствия (для удобства)
-        function addObstacle(x, y, w, h, color = '#3a4a3a') {
-            obstacles.push({ x, y, w, h, color });
-        }
-
-        // --- ГЕНЕРАЦИЯ ИНТЕРЕСНОЙ КАРТЫ (как мини-GTA мир) ---
-        // 1. Границы карты - невидимые стены, но для красоты добавим визуальные края
-        //    но лучше добавить реальные препятствия по краям, чтобы игрок не уходил в бесконечность
-        //    Сделаем "водную" зону или просто невидимую стену. Я сделаю стену по периметру через препятствия.
-        
-        // РАМКА по краям (толстые стены)
-        const borderThick = 40;
-        addObstacle(0, 0, WORLD_WIDTH, borderThick, '#2c2e2a'); // верх
-        addObstacle(0, WORLD_HEIGHT - borderThick, WORLD_WIDTH, borderThick, '#2c2e2a'); // низ
-        addObstacle(0, 0, borderThick, WORLD_HEIGHT, '#2c2e2a'); // лево
-        addObstacle(WORLD_WIDTH - borderThick, 0, borderThick, WORLD_HEIGHT, '#2c2e2a'); // право
-
-        // --- КВАРТАЛЫ / ДОМА (различные здания) ---
-        // Район 1 (левый верх)
-        addObstacle(200, 150, 120, 100, '#5a4a3a');
-        addObstacle(360, 140, 90, 130, '#6a5a4a');
-        addObstacle(520, 180, 110, 80, '#4e6a3e');
-        addObstacle(700, 120, 140, 110, '#3e6a6a');
-        addObstacle(900, 200, 80, 90, '#7a5a4a');
-        
-        // Район 2 (центр)
-        addObstacle(1100, 500, 130, 100, '#5a6e4a');
-        addObstacle(1300, 450, 100, 140, '#4a5a6e');
-        addObstacle(1500, 550, 115, 95, '#6e5a4a');
-        addObstacle(1700, 400, 95, 120, '#3a6a5a');
-        addObstacle(1900, 480, 140, 85, '#7a6a4a');
-        
-        // Район 3 (юг)
-        addObstacle(500, 2200, 180, 100, '#5e5a4a');
-        addObstacle(750, 2400, 110, 130, '#4e5a6e');
-        addObstacle(1000, 2300, 130, 90, '#6a5e4a');
-        addObstacle(1250, 2500, 100, 120, '#4a6e5a');
-        addObstacle(1500, 2350, 160, 110, '#5a4e6e');
-        
-        // Район 4 (восток)
-        addObstacle(2400, 800, 120, 140, '#6a5a4e');
-        addObstacle(2600, 950, 90, 100, '#4e6a5a');
-        addObstacle(2300, 1100, 140, 85, '#5a6a4e');
-        addObstacle(2500, 1250, 110, 130, '#6e5a4a');
-        addObstacle(2700, 1400, 100, 120, '#4a5e6e');
-        
-        // Добавим деревья/парковки (маленькие объекты)
-        for(let i=0; i<70; i++){
-            let randX = 200 + Math.random() * (WORLD_WIDTH - 400);
-            let randY = 200 + Math.random() * (WORLD_HEIGHT - 400);
-            // проверка чтобы не перекрывать основные здания слишком часто
-            let tooClose = false;
-            for(let obs of obstacles){
-                const dx = obs.x + obs.w/2 - randX;
-                const dy = obs.y + obs.h/2 - randY;
-                if(Math.abs(dx) < (obs.w/2 + 15) && Math.abs(dy) < (obs.h/2 + 15)){
-                    tooClose = true;
-                    break;
-                }
-            }
-            if(!tooClose){
-                let size = 12 + Math.random() * 14;
-                addObstacle(randX, randY, size, size, '#3f754a');
-            }
-        }
-        
-        // Несколько длинных заборов или дорожных блоков
-        addObstacle(1800, 1800, 250, 25, '#6a5a4a');
-        addObstacle(2200, 1900, 30, 200, '#5a5a4a');
-        addObstacle(800, 1700, 30, 180, '#5a5a4a');
-        addObstacle(2800, 2200, 100, 30, '#7a6a5a');
-        
-        // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ КОЛЛИЗИИ (AABB) -----
-        function collisionRect(r1, r2) {
-            return !(r2.x > r1.x + r1.w ||
-                r2.x + r2.w < r1.x ||
-                r2.y > r1.y + r1.h ||
-                r2.y + r2.h < r1.y);
-        }
-
-        // Проверка столкновения игрока с препятствиями (игрок - квадрат)
-        function isCollidingWithObstacles(playerRect, ignoreObstacle = null) {
-            for(let obs of obstacles) {
-                if(ignoreObstacle === obs) continue;
-                if(collisionRect(playerRect, {x: obs.x, y: obs.y, w: obs.w, h: obs.h})) {
-                    return obs;
-                }
-            }
-            return false;
-        }
-
-        // Движение с обработкой коллизий (по осям отдельно)
-        function tryMove(deltaX, deltaY) {
-            // Движение по X
-            if(deltaX !== 0) {
-                let newX = player.x + deltaX;
-                let playerRect = { x: newX, y: player.y, w: PLAYER_SIZE, h: PLAYER_SIZE };
-                if(!isCollidingWithObstacles(playerRect)) {
-                    player.x = newX;
-                } else {
-                    // дополнительная попытка: шаг поменьше (для плавности)
-                    let step = Math.sign(deltaX) * Math.min(Math.abs(deltaX), 3);
-                    newX = player.x + step;
-                    playerRect.x = newX;
-                    if(!isCollidingWithObstacles(playerRect)) {
-                        player.x = newX;
-                    }
-                }
-            }
-            // Движение по Y
-            if(deltaY !== 0) {
-                let newY = player.y + deltaY;
-                let playerRect = { x: player.x, y: newY, w: PLAYER_SIZE, h: PLAYER_SIZE };
-                if(!isCollidingWithObstacles(playerRect)) {
-                    player.y = newY;
-                } else {
-                    let step = Math.sign(deltaY) * Math.min(Math.abs(deltaY), 3);
-                    newY = player.y + step;
-                    playerRect.y = newY;
-                    if(!isCollidingWithObstacles(playerRect)) {
-                        player.y = newY;
-                    }
-                }
-            }
-        }
-
-        // --- ОБНОВЛЕНИЕ ДВИЖЕНИЯ НА ОСНОВЕ НАЖАТЫХ КЛАВИШ ---
-        function updateMovement() {
+    <script>
+        (function() {
+            const canvas = document.getElementById('gameCanvas');
+            let ctx = canvas.getContext('2d');
+            
+            // Размеры мира
+            const WORLD_W = 4000;
+            const WORLD_H = 4000;
+            
+            // Игрок
+            let player = {
+                x: WORLD_W/2,
+                y: WORLD_H/2,
+                size: 32,
+                speed: 5.5,
+                health: 100,
+                maxHealth: 100,
+                money: 12500,
+                direction: 'down',
+                animFrame: 0
+            };
+            
+            // Управление
             let moveX = 0, moveY = 0;
-            if(keys.w || keys.ArrowUp) moveY -= 1;
-            if(keys.s || keys.ArrowDown) moveY += 1;
-            if(keys.a || keys.ArrowLeft) moveX -= 1;
-            if(keys.d || keys.ArrowRight) moveX += 1;
+            let touchActive = false;
             
-            if(moveX !== 0 || moveY !== 0) {
-                const len = Math.hypot(moveX, moveY);
-                moveX = moveX / len;
-                moveY = moveY / len;
-                const deltaX = moveX * player.speed;
-                const deltaY = moveY * player.speed;
-                tryMove(deltaX, deltaY);
-            }
-        }
-
-        // --- КАМЕРА (следит за игроком, с ограничениями) ---
-        let camera = { x: 0, y: 0 };
-        function updateCamera() {
-            // Центрируем камеру на игроке
-            let targetCamX = player.x + PLAYER_SIZE/2 - canvas.width/2;
-            let targetCamY = player.y + PLAYER_SIZE/2 - canvas.height/2;
+            // Препятствия (здания, деревья, машины)
+            let obstacles = [];
             
-            // Ограничения, чтобы камера не выходила за мир
-            targetCamX = Math.min(Math.max(targetCamX, 0), WORLD_WIDTH - canvas.width);
-            targetCamY = Math.min(Math.max(targetCamY, 0), WORLD_HEIGHT - canvas.height);
+            // NPC
+            let npcs = [];
             
-            // Плавное следование (легкий эффект, для комфорта)
-            camera.x += (targetCamX - camera.x) * 0.12;
-            camera.y += (targetCamY - camera.y) * 0.12;
+            // Сборка предметов (деньги, аптечки)
+            let pickups = [];
             
-            // финальная привязка к границам
-            camera.x = Math.min(Math.max(camera.x, 0), WORLD_WIDTH - canvas.width);
-            camera.y = Math.min(Math.max(camera.y, 0), WORLD_HEIGHT - canvas.height);
-        }
-        
-        // ---- ОТРИСОВКА ВСЕГО МИРА (с учётом камеры) ----
-        function draw() {
-            if(!ctx) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Камера
+            let camera = { x: 0, y: 0 };
             
-            // 1. Рисуем фон (асфальт/газон)
-            ctx.fillStyle = '#2b3a2a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Текущая локация
+            let currentZone = "LOS SANTOS";
             
-            // Сетка "дорог" для атмосферы (линии относительно камеры)
-            ctx.beginPath();
-            ctx.strokeStyle = '#6a7a5a';
-            ctx.lineWidth = 1.5;
-            const startXGrid = Math.floor(camera.x / 60) * 60;
-            const startYGrid = Math.floor(camera.y / 60) * 60;
-            for(let x = startXGrid; x < camera.x + canvas.width + 60; x += 60){
-                ctx.beginPath();
-                ctx.moveTo(x - camera.x, 0);
-                ctx.lineTo(x - camera.x, canvas.height);
-                ctx.stroke();
-            }
-            for(let y = startYGrid; y < camera.y + canvas.height + 60; y += 60){
-                ctx.beginPath();
-                ctx.moveTo(0, y - camera.y);
-                ctx.lineTo(canvas.width, y - camera.y);
-                ctx.stroke();
-            }
-            
-            // 2. Рисуем все препятствия (здания, деревья, стены)
-            for(let obs of obstacles) {
-                const screenX = obs.x - camera.x;
-                const screenY = obs.y - camera.y;
-                // проверка видимости (оптимизация)
-                if(screenX + obs.w > 0 && screenX < canvas.width && screenY + obs.h > 0 && screenY < canvas.height) {
-                    // тень для объёма
-                    ctx.shadowColor = "rgba(0,0,0,0.5)";
-                    ctx.shadowBlur = 8;
-                    ctx.fillStyle = obs.color;
-                    ctx.fillRect(screenX, screenY, obs.w, obs.h);
-                    // обводка
-                    ctx.strokeStyle = '#1e2a1a';
-                    ctx.lineWidth = 1.5;
-                    ctx.strokeRect(screenX, screenY, obs.w, obs.h);
-                    // детали: окна на больших зданиях
-                    if(obs.w > 50 && obs.h > 50){
-                        ctx.fillStyle = '#cab97a';
-                        ctx.shadowBlur = 2;
-                        for(let i = 0; i < 3; i++){
-                            let wx = screenX + 12 + i*20;
-                            let wy = screenY + 15;
-                            if(wx + 10 < screenX+obs.w) {
-                                ctx.fillRect(wx, wy, 8, 12);
-                                ctx.fillRect(wx, wy+30, 8, 12);
-                            }
+            // Генерация мира в стиле GTA
+            function generateWorld() {
+                // Границы
+                addObstacle(0, 0, WORLD_W, 50, '#2a2a2a');
+                addObstacle(0, WORLD_H-50, WORLD_W, 50, '#2a2a2a');
+                addObstacle(0, 0, 50, WORLD_H, '#2a2a2a');
+                addObstacle(WORLD_W-50, 0, 50, WORLD_H, '#2a2a2a');
+                
+                // Здания (районы)
+                // Downtown
+                for(let i = 0; i < 45; i++) {
+                    let x = 500 + Math.random() * 800;
+                    let y = 500 + Math.random() * 800;
+                    let w = 40 + Math.random() * 60;
+                    let h = 40 + Math.random() * 60;
+                    addObstacle(x, y, w, h, '#4a4a6a');
+                }
+                
+                // Жилой район
+                for(let i = 0; i < 60; i++) {
+                    let x = 1600 + Math.random() * 1000;
+                    let y = 1200 + Math.random() * 800;
+                    let w = 35 + Math.random() * 45;
+                    let h = 35 + Math.random() * 45;
+                    addObstacle(x, y, w, h, '#5a5a4a');
+                }
+                
+                // Промзона
+                for(let i = 0; i < 40; i++) {
+                    let x = 2800 + Math.random() * 900;
+                    let y = 2500 + Math.random() * 1000;
+                    let w = 60 + Math.random() * 80;
+                    let h = 50 + Math.random() * 70;
+                    addObstacle(x, y, w, h, '#6a4a3a');
+                }
+                
+                // Деревья
+                for(let i = 0; i < 200; i++) {
+                    let x = 100 + Math.random() * (WORLD_W - 200);
+                    let y = 100 + Math.random() * (WORLD_H - 200);
+                    let ok = true;
+                    for(let obs of obstacles) {
+                        if(Math.abs(x - obs.x) < 50 && Math.abs(y - obs.y) < 50) {
+                            ok = false;
+                            break;
                         }
                     }
+                    if(ok) addObstacle(x, y, 18, 18, '#2d6a2d');
+                }
+                
+                // Машины (маленькие препятствия)
+                for(let i = 0; i < 80; i++) {
+                    let x = 200 + Math.random() * (WORLD_W - 400);
+                    let y = 200 + Math.random() * (WORLD_H - 400);
+                    addObstacle(x, y, 28, 14, '#8b4513');
                 }
             }
-            ctx.shadowBlur = 0;
             
-            // 3. Рисуем персонажа (стильный "герой" с тенью)
-            const playerScreenX = player.x - camera.x;
-            const playerScreenY = player.y - camera.y;
+            function addObstacle(x, y, w, h, color) {
+                obstacles.push({ x, y, w, h, color });
+            }
             
-            // Градиент для игрока
-            const grad = ctx.createLinearGradient(playerScreenX, playerScreenY, playerScreenX+PLAYER_SIZE, playerScreenY+PLAYER_SIZE);
-            grad.addColorStop(0, '#e34d3a');
-            grad.addColorStop(1, '#b52e1a');
-            ctx.fillStyle = grad;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = "black";
-            ctx.fillRect(playerScreenX, playerScreenY, PLAYER_SIZE, PLAYER_SIZE);
-            // лицо/стиль
-            ctx.fillStyle = '#fff6d0';
-            ctx.fillRect(playerScreenX + 6, playerScreenY + 7, 5, 5);
-            ctx.fillRect(playerScreenX + PLAYER_SIZE-11, playerScreenY + 7, 5, 5);
-            ctx.fillStyle = '#1f1f1f';
-            ctx.fillRect(playerScreenX + 7, playerScreenY + 18, PLAYER_SIZE-14, 4);
-            ctx.fillStyle = '#f0f0f0';
-            ctx.beginPath();
-            ctx.arc(playerScreenX + PLAYER_SIZE/2, playerScreenY+PLAYER_SIZE-6, 5, 0, Math.PI*2);
-            ctx.fill();
-            ctx.fillStyle = '#555';
-            ctx.beginPath();
-            ctx.arc(playerScreenX + PLAYER_SIZE/2-3, playerScreenY+PLAYER_SIZE-7, 1.5, 0, Math.PI*2);
-            ctx.arc(playerScreenX + PLAYER_SIZE/2+3, playerScreenY+PLAYER_SIZE-7, 1.5, 0, Math.PI*2);
-            ctx.fill();
+            // NPC генерация
+            function generateNPCs() {
+                for(let i = 0; i < 35; i++) {
+                    npcs.push({
+                        x: 200 + Math.random() * (WORLD_W - 400),
+                        y: 200 + Math.random() * (WORLD_H - 400),
+                        size: 28,
+                        speed: 0.8,
+                        dirX: (Math.random() - 0.5) * 2,
+                        dirY: (Math.random() - 0.5) * 2,
+                        color: `hsl(${Math.random() * 360}, 50%, 45%)`
+                    });
+                }
+            }
             
-            // восстанавливаем тень
-            ctx.shadowBlur = 0;
+            // Предметы для сбора
+            function generatePickups() {
+                for(let i = 0; i < 60; i++) {
+                    pickups.push({
+                        x: 100 + Math.random() * (WORLD_W - 200),
+                        y: 100 + Math.random() * (WORLD_H - 200),
+                        size: 12,
+                        type: Math.random() > 0.7 ? 'health' : 'money',
+                        value: Math.random() > 0.7 ? 25 : 100
+                    });
+                }
+            }
             
-            // 4. Рисуем "туман" войны? нет, но добавим индикатор направления (маленький компас)
-            ctx.font = "bold 14 monospace";
-            ctx.fillStyle = "#fff5cc";
-            ctx.shadowBlur = 0;
-            ctx.fillText("⚡ СВОБОДНЫЙ РЕЖИМ", canvas.width-140, 30);
+            // Коллизии
+            function checkCollision(rect) {
+                for(let obs of obstacles) {
+                    if(rect.x < obs.x + obs.w &&
+                       rect.x + rect.w > obs.x &&
+                       rect.y < obs.y + obs.h &&
+                       rect.y + rect.h > obs.y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
             
-            // обновляем HUD координаты
-            document.getElementById('coordDisplay').innerHTML = `🚗 X:${Math.floor(player.x)} Y:${Math.floor(player.y)} | скорость: ${player.speed}`;
-        }
-        
-        // ---- ЦИКЛ АНИМАЦИИ (Game Loop) ----
-        function gameLoop() {
-            updateMovement();    // обработка ввода
-            updateCamera();      // камера следует
-            draw();              // рендер
-            requestAnimationFrame(gameLoop);
-        }
-        
-        // --- УПРАВЛЕНИЕ КЛАВИАТУРОЙ ---
-        function handleKeyDown(e) {
-            const key = e.key;
-            if(keys.hasOwnProperty(key)) {
-                keys[key] = true;
+            function movePlayer(dx, dy) {
+                let newX = player.x + dx;
+                let newY = player.y + dy;
+                
+                // Движение по X
+                let playerRect = { x: newX, y: player.y, w: player.size, h: player.size };
+                if(!checkCollision(playerRect)) {
+                    player.x = newX;
+                }
+                
+                // Движение по Y
+                playerRect = { x: player.x, y: newY, w: player.size, h: player.size };
+                if(!checkCollision(playerRect)) {
+                    player.y = newY;
+                }
+                
+                // Обновление направления для анимации
+                if(dx > 0) player.direction = 'right';
+                else if(dx < 0) player.direction = 'left';
+                if(dy > 0) player.direction = 'down';
+                else if(dy < 0) player.direction = 'up';
+                
+                // Анимация
+                if(dx !== 0 || dy !== 0) player.animFrame = (player.animFrame + 0.3) % 4;
+            }
+            
+            // Сбор предметов
+            function collectPickups() {
+                for(let i = 0; i < pickups.length; i++) {
+                    let p = pickups[i];
+                    if(Math.abs(player.x - p.x) < player.size/2 + p.size/2 &&
+                       Math.abs(player.y - p.y) < player.size/2 + p.size/2) {
+                        if(p.type === 'money') {
+                            player.money += p.value;
+                        } else if(p.type === 'health') {
+                            player.health = Math.min(player.maxHealth, player.health + p.value);
+                        }
+                        pickups.splice(i,1);
+                        i--;
+                    }
+                }
+            }
+            
+            // Движение NPC
+            function updateNPCs() {
+                for(let npc of npcs) {
+                    let newX = npc.x + npc.dirX * npc.speed;
+                    let newY = npc.y + npc.dirY * npc.speed;
+                    let npcRect = { x: newX, y: newY, w: npc.size, h: npc.size };
+                    
+                    if(!checkCollision(npcRect)) {
+                        npc.x = newX;
+                        npc.y = newY;
+                    } else {
+                        npc.dirX = (Math.random() - 0.5) * 2;
+                        npc.dirY = (Math.random() - 0.5) * 2;
+                    }
+                    
+                    // Границы
+                    if(npc.x < 60 || npc.x > WORLD_W - npc.size - 60) npc.dirX *= -1;
+                    if(npc.y < 60 || npc.y > WORLD_H - npc.size - 60) npc.dirY *= -1;
+                }
+            }
+            
+            // Обновление зон
+            function updateZone() {
+                if(player.x < 1500 && player.y < 1500) currentZone = "LOS SANTOS";
+                else if(player.x > 2500 && player.y > 2500) currentZone = "SAN FIERRO";
+                else if(player.x > 3000 || player.y > 3000) currentZone = "DESERT";
+                else currentZone = "COUNTRYSIDE";
+            }
+            
+            // Камера
+            function updateCamera() {
+                let targetX = player.x + player.size/2 - canvas.width/2;
+                let targetY = player.y + player.size/2 - canvas.height/2;
+                targetX = Math.min(Math.max(targetX, 0), WORLD_W - canvas.width);
+                targetY = Math.min(Math.max(targetY, 0), WORLD_H - canvas.height);
+                camera.x += (targetX - camera.x) * 0.1;
+                camera.y += (targetY - camera.y) * 0.1;
+            }
+            
+            // Отрисовка
+            function draw() {
+                if(!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Фон (трава/асфальт)
+                let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#2d5a2d');
+                grad.addColorStop(1, '#3a6a3a');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Дороги
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 6;
+                for(let i = 0; i < 20; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(100 + i*200 - camera.x, 0);
+                    ctx.lineTo(100 + i*200 - camera.x, canvas.height);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(0, 100 + i*200 - camera.y);
+                    ctx.lineTo(canvas.width, 100 + i*200 - camera.y);
+                    ctx.stroke();
+                }
+                
+                // Препятствия
+                for(let obs of obstacles) {
+                    let screenX = obs.x - camera.x;
+                    let screenY = obs.y - camera.y;
+                    if(screenX + obs.w > 0 && screenX < canvas.width && screenY + obs.h > 0 && screenY < canvas.height) {
+                        ctx.fillStyle = obs.color;
+                        ctx.shadowBlur = 4;
+                        ctx.fillRect(screenX, screenY, obs.w, obs.h);
+                        ctx.strokeStyle = '#000';
+                        ctx.strokeRect(screenX, screenY, obs.w, obs.h);
+                    }
+                }
+                
+                // Предметы
+                for(let p of pickups) {
+                    let screenX = p.x - camera.x;
+                    let screenY = p.y - camera.y;
+                    ctx.fillStyle = p.type === 'money' ? '#FFD700' : '#ff4444';
+                    ctx.shadowBlur = 6;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, p.size/2, 0, Math.PI*2);
+                    ctx.fill();
+                    if(p.type === 'money') {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = 'bold 12px monospace';
+                        ctx.fillText('$', screenX-3, screenY+4);
+                    }
+                }
+                
+                // NPC
+                for(let npc of npcs) {
+                    let screenX = npc.x - camera.x;
+                    let screenY = npc.y - camera.y;
+                    ctx.fillStyle = npc.color;
+                    ctx.fillRect(screenX, screenY, npc.size, npc.size);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(screenX+5, screenY+6, 6, 6);
+                    ctx.fillRect(screenX+npc.size-11, screenY+6, 6, 6);
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(screenX+7, screenY+18, npc.size-14, 3);
+                }
+                
+                // Игрок (стиль CJ)
+                let px = player.x - camera.x;
+                let py = player.y - camera.y;
+                ctx.fillStyle = '#c97e5a';
+                ctx.shadowBlur = 8;
+                ctx.fillRect(px, py, player.size, player.size);
+                // Белая футболка
+                ctx.fillStyle = '#eee';
+                ctx.fillRect(px+4, py+8, player.size-8, 12);
+                // Голова
+                ctx.fillStyle = '#d4a574';
+                ctx.fillRect(px+6, py+2, 8, 8);
+                ctx.fillRect(px+player.size-14, py+2, 8, 8);
+                // Кепка
+                ctx.fillStyle = '#2a2a2a';
+                ctx.fillRect(px+4, py, player.size-8, 6);
+                // Оружие в руке
+                if(moveX !== 0 || moveY !== 0) {
+                    ctx.fillStyle = '#666';
+                    ctx.fillRect(px+player.size-8, py+player.size-10, 12, 5);
+                }
+                
+                ctx.shadowBlur = 0;
+                
+                // Эффекты здоровья
+                if(player.health < 30) {
+                    ctx.fillStyle = 'rgba(255,0,0,0.3)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            
+            // Обновление HUD
+            function updateHUD() {
+                document.getElementById('locationName').innerHTML = `📍 ${currentZone}`;
+                document.getElementById('healthFill').style.width = `${(player.health/player.maxHealth)*100}%`;
+                document.getElementById('money').innerHTML = `$${player.money}`;
+            }
+            
+            // Джойстик для телефона
+            const joystickContainer = document.getElementById('joystickContainer');
+            const joystickBase = document.getElementById('joystickBase');
+            let joystickActive = false;
+            let joystickCenter = { x: 0, y: 0 };
+            
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const rect = joystickContainer.getBoundingClientRect();
+                const touch = e.touches[0];
+                joystickCenter = {
+                    x: rect.left + rect.width/2,
+                    y: rect.top + rect.height/2
+                };
+                joystickActive = true;
+                handleTouchMove(e);
+            }
+            
+            function handleTouchMove(e) {
+                if(!joystickActive) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                let dx = touch.clientX - joystickCenter.x;
+                let dy = touch.clientY - joystickCenter.y;
+                let distance = Math.hypot(dx, dy);
+                let maxDist = 50;
+                if(distance > maxDist) {
+                    dx = dx * maxDist / distance;
+                    dy = dy * maxDist / distance;
+                    distance = maxDist;
+                }
+                joystickBase.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+                moveX = dx / maxDist;
+                moveY = dy / maxDist;
+            }
+            
+            function handleTouchEnd(e) {
+                joystickActive = false;
+                joystickBase.style.transform = 'translate(-50%, -50%)';
+                moveX = 0;
+                moveY = 0;
                 e.preventDefault();
             }
-            // Доп: можно регулировать скорость (shift ускорение)
-            if(key === 'Shift') {
-                player.speed = 8.5;
-                e.preventDefault();
+            
+            joystickContainer.addEventListener('touchstart', handleTouchStart);
+            joystickContainer.addEventListener('touchmove', handleTouchMove);
+            joystickContainer.addEventListener('touchend', handleTouchEnd);
+            
+            // Кнопки действий
+            document.getElementById('actionBtn').addEventListener('click', () => {
+                // Эффект выстрела
+                player.speed = 7;
+                setTimeout(() => player.speed = 5.5, 200);
+            });
+            
+            document.getElementById('jumpBtn').addEventListener('click', () => {
+                // Прыжок (ускорение)
+                moveY = -1.5;
+                setTimeout(() => { if(!joystickActive) moveY = 0; }, 150);
+            });
+            
+            // Управление с клавиатуры (ПК)
+            let keys = { w: false, s: false, a: false, d: false };
+            window.addEventListener('keydown', (e) => {
+                let k = e.key.toLowerCase();
+                if(keys.hasOwnProperty(k)) keys[k] = true;
+                if(k === 'arrowup') keys.w = true;
+                if(k === 'arrowdown') keys.s = true;
+                if(k === 'arrowleft') keys.a = true;
+                if(k === 'arrowright') keys.d = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                let k = e.key.toLowerCase();
+                if(keys.hasOwnProperty(k)) keys[k] = false;
+                if(k === 'arrowup') keys.w = false;
+                if(k === 'arrowdown') keys.s = false;
+                if(k === 'arrowleft') keys.a = false;
+                if(k === 'arrowright') keys.d = false;
+            });
+            
+            function updateKeyboardMove() {
+                if(joystickActive) return;
+                let mx = 0, my = 0;
+                if(keys.w) my = -1;
+                if(keys.s) my = 1;
+                if(keys.a) mx = -1;
+                if(keys.d) mx = 1;
+                let len = Math.hypot(mx, my);
+                if(len > 0) {
+                    mx /= len;
+                    my /= len;
+                }
+                moveX = mx;
+                moveY = my;
             }
-            if(key === 'Control') {
-                player.speed = 2.2;
-                e.preventDefault();
+            
+            // Основной цикл
+            function gameLoop() {
+                updateKeyboardMove();
+                
+                if(moveX !== 0 || moveY !== 0) {
+                    let len = Math.hypot(moveX, moveY);
+                    let dx = moveX / len * player.speed;
+                    let dy = moveY / len * player.speed;
+                    movePlayer(dx, dy);
+                }
+                
+                updateNPCs();
+                collectPickups();
+                updateZone();
+                updateCamera();
+                updateHUD();
+                draw();
+                
+                requestAnimationFrame(gameLoop);
             }
-        }
-        
-        function handleKeyUp(e) {
-            const key = e.key;
-            if(keys.hasOwnProperty(key)) {
-                keys[key] = false;
-                e.preventDefault();
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                ctx = canvas.getContext('2d');
+                updateCamera();
             }
-            if(key === 'Shift') {
-                player.speed = 4.8;
-                e.preventDefault();
-            }
-            if(key === 'Control') {
-                player.speed = 4.8;
-                e.preventDefault();
-            }
-        }
-        
-        // блокировка контекстного меню на канвасе
-        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-        
-        // начальная позиция камеры
-        camera.x = player.x + PLAYER_SIZE/2 - canvas.width/2;
-        camera.y = player.y + PLAYER_SIZE/2 - canvas.height/2;
-        // ограничим стартовую камеру
-        camera.x = Math.min(Math.max(camera.x, 0), WORLD_WIDTH - canvas.width);
-        camera.y = Math.min(Math.max(camera.y, 0), WORLD_HEIGHT - canvas.height);
-        
-        // Запуск игры
-        gameLoop();
-        
-        // небольшая инструкция в консоль
-        console.log('Игра запущена! Используй W/A/S/D для движения, SHIFT - ускорение, CTRL - замедление');
-    })();
-</script>
+            
+            // Инициализация
+            generateWorld();
+            generateNPCs();
+            generatePickups();
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            gameLoop();
+        })();
+    </script>
 </body>
 </html>

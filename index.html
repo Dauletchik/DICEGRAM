@@ -3,691 +3,437 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>GRAM SERVER | Мультиплеерный чат и профиль</title>
+    <title>GTA стиль - свободное перемещение</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* легкий геймплейный стиль */
+            user-select: none;
         }
 
         body {
-            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
-            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Roboto', monospace;
+            background: #0a0f1e;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            font-family: 'Courier New', monospace;
         }
 
-        /* главный контейнер - стиль "серверной комнаты" */
-        .server-container {
-            max-width: 1400px;
-            width: 100%;
-            background: rgba(10, 20, 30, 0.65);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            border: 1px solid rgba(72, 187, 255, 0.2);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 255, 0.1);
-            overflow: hidden;
-            transition: all 0.2s;
+        .game-container {
+            position: relative;
+            border: 4px solid #2c3e2f;
+            border-radius: 12px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            background: #1e2a1e;
         }
 
-        /* шапка сервера */
-        .server-header {
-            background: #07111ecc;
-            padding: 1rem 2rem;
-            border-bottom: 2px solid #2c3e66;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 12px;
+        canvas {
+            display: block;
+            margin: 0 auto;
+            cursor: none;
         }
-        .server-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #BEF0FF, #3B82F6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+
+        .hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            z-index: 10;
+            font-family: monospace;
             letter-spacing: 1px;
-            text-shadow: 0 0 5px #00a6ff40;
-        }
-        .server-badge {
-            background: #1e2a3e;
-            padding: 6px 14px;
-            border-radius: 60px;
-            font-size: 0.8rem;
-            color: #8bb9fe;
-            font-weight: 600;
-            backdrop-filter: blur(4px);
         }
 
-        /* основная сетка: левая часть (игроки+чат) и правая (профиль) */
-        .main-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        /* ЛЕВАЯ ЗОНА: список игроков + чат */
-        .left-zone {
-            flex: 2;
-            min-width: 260px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* карточка игроков (все кто в сервере) */
-        .players-card {
-            background: #0e1622e6;
-            border-radius: 1.5rem;
-            border: 1px solid #2d3a5e;
-            backdrop-filter: blur(4px);
-            overflow: hidden;
-        }
-        .card-header {
-            background: #101826;
-            padding: 12px 20px;
-            font-weight: bold;
-            border-bottom: 1px solid #2c3e66;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        .card-header h3 {
-            color: #c0e0ff;
-            font-size: 1.2rem;
-        }
-        .online-count {
-            background: #00b37e30;
-            padding: 2px 10px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            color: #7effcf;
-        }
-        .players-list {
-            max-height: 280px;
-            overflow-y: auto;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .player-item {
-            background: #0a0f1c;
-            border-radius: 60px;
-            padding: 6px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: 0.1s;
-            border: 1px solid #28344e;
-        }
-        .player-name {
-            font-weight: 600;
-            color: #d6e6ff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .prime-badge {
-            background: linear-gradient(145deg, #ffb347, #ff8c00);
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #1e1a0c;
-        }
-        .player-status {
-            font-size: 0.75rem;
-            color: #7b8ba3;
-        }
-
-        /* ЧАТ-БЛОК (бот GRAM) */
-        .chat-card {
-            background: #0e1622e6;
-            border-radius: 1.5rem;
-            border: 1px solid #2d3a5e;
-            display: flex;
-            flex-direction: column;
-            height: 380px;
-        }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .message {
-            background: #101826aa;
-            border-radius: 18px;
-            padding: 8px 14px;
-            max-width: 90%;
-            width: fit-content;
-            font-size: 0.9rem;
-            border-left: 3px solid #3b82f6;
-        }
-        .message strong {
-            color: #ffd966;
-        }
-        .message-bot {
-            border-left-color: #34d399;
-            background: #0b1a1faa;
-            color: #bfffc7;
-        }
-        .chat-input-area {
-            display: flex;
-            gap: 8px;
-            padding: 12px;
-            border-top: 1px solid #2a3452;
-            background: #070c16;
-        }
-        .chat-input-area input {
-            flex: 1;
-            background: #101826;
-            border: 1px solid #2c4468;
-            border-radius: 60px;
-            padding: 10px 16px;
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
-        }
-        .chat-input-area button {
-            background: #3b82f6;
-            border: none;
-            border-radius: 40px;
-            padding: 0 18px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .chat-input-area button:hover {
-            background: #2563eb;
-            transform: scale(0.97);
-        }
-
-        /* ПРАВАЯ ЗОНА: профиль текущего игрока */
-        .profile-card {
-            flex: 1;
-            min-width: 280px;
-            background: #0e1622e6;
-            border-radius: 1.5rem;
-            border: 1px solid #2d3a5e;
-            backdrop-filter: blur(4px);
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border-bottom: 1px dashed #2f4168;
-            padding-bottom: 12px;
-        }
-        .avatar-placeholder {
-            background: linear-gradient(145deg, #1f2a46, #0f172a);
-            width: 60px;
-            height: 60px;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 0 0 2px #3b82f6;
-        }
-        .nick-prof {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #eef5ff;
-        }
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            background: #070c1a;
-            padding: 10px 14px;
-            border-radius: 1rem;
-            font-weight: 500;
-        }
-        .stat-label {
-            color: #8d9bc0;
-        }
-        .stat-value {
-            color: #ffd966;
-            font-weight: bold;
-        }
-        .gram-value {
-            color: #4cffb0;
-            text-shadow: 0 0 2px #00ffaa;
-        }
-        .fps-ping {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .metric {
-            background: #030617;
-            border-radius: 20px;
-            padding: 8px;
-            text-align: center;
-            flex: 1;
-        }
-        .boost-toggle {
-            background: #1f2b3c;
-            border-radius: 40px;
+        .controls-info {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            color: #ccc;
             padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .toggle-switch {
-            width: 40px;
-            background: #334155;
-            border-radius: 30px;
-            padding: 4px;
-            display: inline-block;
-        }
-        button.action-btn {
-            background: #2c3e66;
-            border: none;
-            padding: 8px;
-            border-radius: 40px;
-            color: white;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 6px;
+            pointer-events: none;
+            font-family: monospace;
         }
-        hr {
-            border-color: #2a3a55;
-        }
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0f1c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 10px;
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
-<div class="server-container" id="app">
-    <div class="server-header">
-        <div class="server-title">⚡ GRAM SERVER [MULTI-ROOM]</div>
-        <div class="server-badge">🤖 Бот GRAM активен | /help</div>
-    </div>
-
-    <div class="main-grid">
-        <!-- ЛЕВАЯ часть: все игроки и групповой чат -->
-        <div class="left-zone">
-            <div class="players-card">
-                <div class="card-header">
-                    <h3>👥 Игроки сервера</h3>
-                    <span class="online-count" id="onlineCounter">0</span>
-                </div>
-                <div class="players-list" id="playersListContainer">
-                    <!-- динамический список всех игроков -->
-                </div>
-            </div>
-            <div class="chat-card">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message message-bot">🤖 Бот GRAM: Добро пожаловать! Пиши в чат, общайся. Команда: /prime /stars /help</div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" placeholder="Сообщение или @упоминание..." autocomplete="off">
-                    <button id="sendBtn">📨 Отправить</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ПРАВАЯ часть: профиль текущего пользователя (никнейм, прайм, одежда, баланс, звезды, FPS/Ping) -->
-        <div class="profile-card" id="profilePanel">
-            <!-- заполняется динамически через JS -->
-        </div>
+<div>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="1000" height="600"></canvas>
+        <div class="hud" id="coordDisplay">ПОЗИЦИЯ: 0, 0</div>
+        <div class="controls-info">W/A/S/D — ДВИЖЕНИЕ | ОБХОДИ ПРЕПЯТСТВИЯ</div>
     </div>
 </div>
 
 <script>
-    // ---------- Глобальное состояние "сервера" ----------
-    // База всех игроков (изначально 4 демо-игрока + текущий)
-    let players = [
-        { id: "p1", nickname: "CyberKnight", prime: 5, clothes: "Обычная одежда", balance: 100000000000, stars: 124, isOnline: true },
-        { id: "p2", nickname: "LunaWave", prime: 8, clothes: "Обычная одежда", balance: 100000000000, stars: 890, isOnline: true },
-        { id: "p3", nickname: "GhostRider", prime: 2, clothes: "Обычная одежда", balance: 100000000000, stars: 45, isOnline: true },
-        { id: "p4", nickname: "Starlight", prime: 6, clothes: "Обычная одежда", balance: 100000000000, stars: 320, isOnline: true }
-    ];
+    (function(){
+        // ----- КАНВАС И КОНТЕКСТ -----
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-    // Текущий активный игрок (вы - главный пользователь)
-    let currentPlayer = {
-        id: "currentUser",
-        nickname: "👤 GRAMMER",
-        prime: 3,
-        clothes: "Обычная одежда",
-        balance: 100000000000,
-        stars: 0,
-        isOnline: true
-    };
-    players.push(currentPlayer);
+        // ----- РАЗМЕРЫ КАРТЫ (большой открытый мир) -----
+        const WORLD_WIDTH = 3000;
+        const WORLD_HEIGHT = 3000;
 
-    // История чата (храним + отрисовываем)
-    let chatHistory = [];
-
-    // Симуляция FPS и Ping (обновляется каждую секунду)
-    let currentFPS = 51;
-    let currentPing = 14;
-    let boostEnabled = false;   // Boost: OFF / ON
-    let fpsInterval = null;
-    let pingInterval = null;
-
-    // DOM элементы
-    const playersListDiv = document.getElementById("playersListContainer");
-    const onlineCounterSpan = document.getElementById("onlineCounter");
-    const chatMessagesDiv = document.getElementById("chatMessages");
-    const chatInput = document.getElementById("chatInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const profilePanel = document.getElementById("profilePanel");
-
-    // ---- Вспомогательные функции ----
-    function formatNumber(num) {
-        if (num >= 1e12) return (num / 1e12).toFixed(1) + "T";
-        if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
-        if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
-        return num.toString();
-    }
-
-    // Обновить список игроков (всех онлайн)
-    function renderPlayersList() {
-        const onlinePlayers = players.filter(p => p.isOnline);
-        onlineCounterSpan.innerText = onlinePlayers.length;
-        if (onlinePlayers.length === 0) {
-            playersListDiv.innerHTML = `<div style="padding: 12px; text-align:center; color:#6c7a9e;">Никого нет :(</div>`;
-            return;
-        }
-        playersListDiv.innerHTML = onlinePlayers.map(p => `
-            <div class="player-item">
-                <div class="player-name">
-                    ${p.nickname} 
-                    <span class="prime-badge">🎖 Прайм: ${p.prime}</span>
-                </div>
-                <div class="player-status">👕 ${p.clothes}</div>
-            </div>
-        `).join('');
-    }
-
-    // Добавить системное сообщение или бота
-    function addSystemMessage(text, isBot = true) {
-        const msg = {
-            id: Date.now() + Math.random(),
-            sender: isBot ? "🤖 GRAM" : "⚙️ Система",
-            text: text,
-            isBot: true,
-            timestamp: new Date().toLocaleTimeString()
+        // ----- ИГРОК -----
+        const PLAYER_SIZE = 28;       // размер персонажа (квадрат)
+        let player = {
+            x: WORLD_WIDTH/2,
+            y: WORLD_HEIGHT/2,
+            speed: 4.8
         };
-        chatHistory.push(msg);
-        renderChat();
-    }
 
-    // Добавить сообщение от игрока (обычный чат)
-    function addPlayerMessage(senderNick, text) {
-        const msg = {
-            id: Date.now() + Math.random(),
-            sender: senderNick,
-            text: text,
-            isBot: false,
-            timestamp: new Date().toLocaleTimeString()
+        // ----- ФЛАГИ ДВИЖЕНИЯ (клавиши) -----
+        const keys = {
+            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
+            w: false, s: false, a: false, d: false
         };
-        chatHistory.push(msg);
-        renderChat();
 
-        // 🔥 БОТ GRAM отвечает на ключевые слова / команды / приветствия
-        processBotCommands(senderNick, text);
-    }
+        // ----- ПРЕПЯТСТВИЯ (стены, здания, деревья) в стиле городского ландшафта -----
+        // каждый объект: {x, y, w, h, color}
+        const obstacles = [];
 
-    // Обработка команд бота GRAM
-    function processBotCommands(senderNick, message) {
-        const lowerMsg = message.toLowerCase().trim();
-        // если начинается с "/" или содержит ключевые слова
-        if (lowerMsg === "/prime" || lowerMsg === "прайм") {
-            addSystemMessage(`${senderNick}, твой уровень прайма: ${currentPlayer.prime} из 8. Улучшай через звёзды!`, true);
+        // Функция добавления препятствия (для удобства)
+        function addObstacle(x, y, w, h, color = '#3a4a3a') {
+            obstacles.push({ x, y, w, h, color });
         }
-        else if (lowerMsg === "/stars" || lowerMsg === "звёзды") {
-            addSystemMessage(`${senderNick}, у тебя ⭐ Звезды: ${currentPlayer.stars}. Зарабатывай в активностях!`, true);
-        }
-        else if (lowerMsg === "/help" || lowerMsg === "помощь") {
-            addSystemMessage(`📜 Команды GRAM: /prime , /stars , /boost , /give [ник] [сумма] (демо). Напиши "Привет GRAM" для бонуса.`, true);
-        }
-        else if (lowerMsg === "/boost" || lowerMsg === "буст") {
-            boostEnabled = !boostEnabled;
-            const status = boostEnabled ? "ON" : "OFF";
-            addSystemMessage(`⚡ Режим Boost: ${status}. FPS и Ping изменятся динамически!`, true);
-            updateMetricsByBoost();
-        }
-        else if (lowerMsg.includes("привет gram") || lowerMsg.includes("hello gram")) {
-            addSystemMessage(`Привет, ${senderNick}! Держи бонус 5000 GRAM 💰 и +1 к звёздам!`, true);
-            // награда
-            currentPlayer.balance += 5000;
-            currentPlayer.stars += 1;
-            if (currentPlayer.stars >= 10 && currentPlayer.prime < 8) {
-                // легкий шанс повысить прайм (для атмосферы)
-                if(currentPlayer.stars % 10 === 0 && currentPlayer.prime < 8) {
-                    currentPlayer.prime = Math.min(currentPlayer.prime + 1, 8);
-                    addSystemMessage(`🎉 Поздравляю! Твой Прайм повышен до ${currentPlayer.prime} благодаря звездам!`, true);
+
+        // --- ГЕНЕРАЦИЯ ИНТЕРЕСНОЙ КАРТЫ (как мини-GTA мир) ---
+        // 1. Границы карты - невидимые стены, но для красоты добавим визуальные края
+        //    но лучше добавить реальные препятствия по краям, чтобы игрок не уходил в бесконечность
+        //    Сделаем "водную" зону или просто невидимую стену. Я сделаю стену по периметру через препятствия.
+        
+        // РАМКА по краям (толстые стены)
+        const borderThick = 40;
+        addObstacle(0, 0, WORLD_WIDTH, borderThick, '#2c2e2a'); // верх
+        addObstacle(0, WORLD_HEIGHT - borderThick, WORLD_WIDTH, borderThick, '#2c2e2a'); // низ
+        addObstacle(0, 0, borderThick, WORLD_HEIGHT, '#2c2e2a'); // лево
+        addObstacle(WORLD_WIDTH - borderThick, 0, borderThick, WORLD_HEIGHT, '#2c2e2a'); // право
+
+        // --- КВАРТАЛЫ / ДОМА (различные здания) ---
+        // Район 1 (левый верх)
+        addObstacle(200, 150, 120, 100, '#5a4a3a');
+        addObstacle(360, 140, 90, 130, '#6a5a4a');
+        addObstacle(520, 180, 110, 80, '#4e6a3e');
+        addObstacle(700, 120, 140, 110, '#3e6a6a');
+        addObstacle(900, 200, 80, 90, '#7a5a4a');
+        
+        // Район 2 (центр)
+        addObstacle(1100, 500, 130, 100, '#5a6e4a');
+        addObstacle(1300, 450, 100, 140, '#4a5a6e');
+        addObstacle(1500, 550, 115, 95, '#6e5a4a');
+        addObstacle(1700, 400, 95, 120, '#3a6a5a');
+        addObstacle(1900, 480, 140, 85, '#7a6a4a');
+        
+        // Район 3 (юг)
+        addObstacle(500, 2200, 180, 100, '#5e5a4a');
+        addObstacle(750, 2400, 110, 130, '#4e5a6e');
+        addObstacle(1000, 2300, 130, 90, '#6a5e4a');
+        addObstacle(1250, 2500, 100, 120, '#4a6e5a');
+        addObstacle(1500, 2350, 160, 110, '#5a4e6e');
+        
+        // Район 4 (восток)
+        addObstacle(2400, 800, 120, 140, '#6a5a4e');
+        addObstacle(2600, 950, 90, 100, '#4e6a5a');
+        addObstacle(2300, 1100, 140, 85, '#5a6a4e');
+        addObstacle(2500, 1250, 110, 130, '#6e5a4a');
+        addObstacle(2700, 1400, 100, 120, '#4a5e6e');
+        
+        // Добавим деревья/парковки (маленькие объекты)
+        for(let i=0; i<70; i++){
+            let randX = 200 + Math.random() * (WORLD_WIDTH - 400);
+            let randY = 200 + Math.random() * (WORLD_HEIGHT - 400);
+            // проверка чтобы не перекрывать основные здания слишком часто
+            let tooClose = false;
+            for(let obs of obstacles){
+                const dx = obs.x + obs.w/2 - randX;
+                const dy = obs.y + obs.h/2 - randY;
+                if(Math.abs(dx) < (obs.w/2 + 15) && Math.abs(dy) < (obs.h/2 + 15)){
+                    tooClose = true;
+                    break;
                 }
             }
-            updateProfileUI();
-            renderPlayersList(); // обновить прайм в списке
+            if(!tooClose){
+                let size = 12 + Math.random() * 14;
+                addObstacle(randX, randY, size, size, '#3f754a');
+            }
         }
-        else if (lowerMsg.startsWith("/give")) {
-            // простейшая команда демо: /give ник сумма
-            const parts = message.split(' ');
-            if (parts.length >= 3) {
-                const targetName = parts[1];
-                const amount = parseInt(parts[2]);
-                if (!isNaN(amount) && amount > 0 && currentPlayer.balance >= amount) {
-                    const targetPlayer = players.find(p => p.nickname.toLowerCase() === targetName.toLowerCase() && p.isOnline);
-                    if (targetPlayer && targetPlayer.id !== currentPlayer.id) {
-                        currentPlayer.balance -= amount;
-                        targetPlayer.balance += amount;
-                        addSystemMessage(`✅ ${currentPlayer.nickname} перевел ${amount} GRAM игроку ${targetPlayer.nickname}.`, true);
-                        updateProfileUI();
-                        renderPlayersList(); // обновить баланс в будущем, но в списке не показываем баланс, но для порядка
-                    } else {
-                        addSystemMessage(`❌ Игрок ${targetName} не найден или это вы сами.`, true);
-                    }
+        
+        // Несколько длинных заборов или дорожных блоков
+        addObstacle(1800, 1800, 250, 25, '#6a5a4a');
+        addObstacle(2200, 1900, 30, 200, '#5a5a4a');
+        addObstacle(800, 1700, 30, 180, '#5a5a4a');
+        addObstacle(2800, 2200, 100, 30, '#7a6a5a');
+        
+        // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ КОЛЛИЗИИ (AABB) -----
+        function collisionRect(r1, r2) {
+            return !(r2.x > r1.x + r1.w ||
+                r2.x + r2.w < r1.x ||
+                r2.y > r1.y + r1.h ||
+                r2.y + r2.h < r1.y);
+        }
+
+        // Проверка столкновения игрока с препятствиями (игрок - квадрат)
+        function isCollidingWithObstacles(playerRect, ignoreObstacle = null) {
+            for(let obs of obstacles) {
+                if(ignoreObstacle === obs) continue;
+                if(collisionRect(playerRect, {x: obs.x, y: obs.y, w: obs.w, h: obs.h})) {
+                    return obs;
+                }
+            }
+            return false;
+        }
+
+        // Движение с обработкой коллизий (по осям отдельно)
+        function tryMove(deltaX, deltaY) {
+            // Движение по X
+            if(deltaX !== 0) {
+                let newX = player.x + deltaX;
+                let playerRect = { x: newX, y: player.y, w: PLAYER_SIZE, h: PLAYER_SIZE };
+                if(!isCollidingWithObstacles(playerRect)) {
+                    player.x = newX;
                 } else {
-                    addSystemMessage(`⚠️ Недостаточно GRAM или неверная сумма.`, true);
+                    // дополнительная попытка: шаг поменьше (для плавности)
+                    let step = Math.sign(deltaX) * Math.min(Math.abs(deltaX), 3);
+                    newX = player.x + step;
+                    playerRect.x = newX;
+                    if(!isCollidingWithObstacles(playerRect)) {
+                        player.x = newX;
+                    }
                 }
-            } else {
-                addSystemMessage(`Использование: /give [ник] [сумма]`, true);
+            }
+            // Движение по Y
+            if(deltaY !== 0) {
+                let newY = player.y + deltaY;
+                let playerRect = { x: player.x, y: newY, w: PLAYER_SIZE, h: PLAYER_SIZE };
+                if(!isCollidingWithObstacles(playerRect)) {
+                    player.y = newY;
+                } else {
+                    let step = Math.sign(deltaY) * Math.min(Math.abs(deltaY), 3);
+                    newY = player.y + step;
+                    playerRect.y = newY;
+                    if(!isCollidingWithObstacles(playerRect)) {
+                        player.y = newY;
+                    }
+                }
             }
         }
-        else if (message.includes("GRAM") && message.length < 30) {
-            // фан реакция
-            addSystemMessage(`💰 GRAM - главная валюта сервера! У вас ${formatNumber(currentPlayer.balance)} GRAM.`, true);
+
+        // --- ОБНОВЛЕНИЕ ДВИЖЕНИЯ НА ОСНОВЕ НАЖАТЫХ КЛАВИШ ---
+        function updateMovement() {
+            let moveX = 0, moveY = 0;
+            if(keys.w || keys.ArrowUp) moveY -= 1;
+            if(keys.s || keys.ArrowDown) moveY += 1;
+            if(keys.a || keys.ArrowLeft) moveX -= 1;
+            if(keys.d || keys.ArrowRight) moveX += 1;
+            
+            if(moveX !== 0 || moveY !== 0) {
+                const len = Math.hypot(moveX, moveY);
+                moveX = moveX / len;
+                moveY = moveY / len;
+                const deltaX = moveX * player.speed;
+                const deltaY = moveY * player.speed;
+                tryMove(deltaX, deltaY);
+            }
         }
-    }
 
-    // отрисовка чата
-    function renderChat() {
-        chatMessagesDiv.innerHTML = chatHistory.slice(-40).map(msg => `
-            <div class="message ${msg.isBot ? 'message-bot' : ''}" style="${!msg.isBot ? 'border-left-color: #ffaa33;' : ''}">
-                <strong>${msg.sender}</strong> <span style="font-size:0.7rem; color:#7e8aa2;">${msg.timestamp}</span><br>
-                ${escapeHtml(msg.text)}
-            </div>
-        `).join('');
-        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
-        });
-    }
-
-    // Обновить профиль (правая панель)
-    function updateProfileUI() {
-        profilePanel.innerHTML = `
-            <div class="profile-header">
-                <div class="avatar-placeholder">👤</div>
-                <div class="nick-prof">${currentPlayer.nickname}</div>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">🎖 Прайм:</span>
-                <span class="stat-value">[${currentPlayer.prime} / 8]</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">👕 Одежда:</span>
-                <span class="stat-value">${currentPlayer.clothes}</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">💰 Баланс:</span>
-                <span class="stat-value gram-value">${formatNumber(currentPlayer.balance)} GRAM</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">⭐ Звезды:</span>
-                <span class="stat-value">${currentPlayer.stars}</span>
-            </div>
-            <div class="fps-ping">
-                <div class="metric">📊 FPS: <span id="fpsValue">${currentFPS}</span> <span id="boostIcon">🐢</span> [Boost: ${boostEnabled ? "ON" : "OFF"}]</div>
-                <div class="metric">📶 Ping: <span id="pingValue">${currentPing}</span> ms</div>
-            </div>
-            <div class="boost-toggle" id="boostToggleBtn">
-                <span>⚡ Ускорение (Boost)</span>
-                <span style="background:${boostEnabled ? '#22c55e' : '#475569'}; padding:2px 12px; border-radius:30px;">${boostEnabled ? "ВКЛ" : "ВЫКЛ"}</span>
-            </div>
-            <button class="action-btn" id="earnBonusBtn">🎁 Получить бонус 1000 GRAM</button>
-            <button class="action-btn" id="upgradeClothesBtn">👚 Сменить одежду (Премиум)</button>
-            <hr>
-            <div style="font-size:12px; text-align:center; color:#6c86a3;">🤖 Бот GRAM онлайн. Используй /help</div>
-        `;
-
-        // Добавляем обработчики для кнопок профиля
-        const boostBtn = document.getElementById("boostToggleBtn");
-        if (boostBtn) boostBtn.onclick = () => {
-            boostEnabled = !boostEnabled;
-            updateMetricsByBoost();
-            updateProfileUI();
-            addSystemMessage(`Boost ${boostEnabled ? "Активирован" : "Деактивирован"}. Производительность изменилась.`, true);
-        };
-        const earnBtn = document.getElementById("earnBonusBtn");
-        if (earnBtn) earnBtn.onclick = () => {
-            currentPlayer.balance += 1000;
-            updateProfileUI();
-            addSystemMessage(`🎁 +1000 GRAM начислено на счёт! Баланс: ${formatNumber(currentPlayer.balance)} GRAM`, true);
-            renderPlayersList();
-        };
-        const upgradeBtn = document.getElementById("upgradeClothesBtn");
-        if (upgradeBtn) upgradeBtn.onclick = () => {
-            if (currentPlayer.balance >= 50000) {
-                currentPlayer.balance -= 50000;
-                currentPlayer.clothes = "🔥 Премиум костюм";
-                addSystemMessage(`✨ ${currentPlayer.nickname}, теперь ты носишь 🔥 Премиум костюм! -50000 GRAM`, true);
-                updateProfileUI();
-                renderPlayersList();
-            } else {
-                addSystemMessage(`❌ Не хватает GRAM для смены одежды. Нужно 50,000 GRAM.`, true);
-            }
-        };
-        // обновить счетчики FPS / Ping на лету
-        const fpsSpan = document.getElementById("fpsValue");
-        const pingSpan = document.getElementById("pingValue");
-        if (fpsSpan) fpsSpan.innerText = currentFPS;
-        if (pingSpan) pingSpan.innerText = currentPing;
-        const boostIconSpan = document.getElementById("boostIcon");
-        if (boostIconSpan) boostIconSpan.innerText = boostEnabled ? "🚀" : "🐢";
-    }
-
-    // влияет ли буст на метрики
-    function updateMetricsByBoost() {
-        if (boostEnabled) {
-            currentFPS = Math.min(144, currentFPS + 25);
-            if (currentPing > 5) currentPing = Math.max(5, currentPing - 3);
-            if (currentFPS < 60) currentFPS = 72;
-        } else {
-            currentFPS = 51;
-            currentPing = 14;
+        // --- КАМЕРА (следит за игроком, с ограничениями) ---
+        let camera = { x: 0, y: 0 };
+        function updateCamera() {
+            // Центрируем камеру на игроке
+            let targetCamX = player.x + PLAYER_SIZE/2 - canvas.width/2;
+            let targetCamY = player.y + PLAYER_SIZE/2 - canvas.height/2;
+            
+            // Ограничения, чтобы камера не выходила за мир
+            targetCamX = Math.min(Math.max(targetCamX, 0), WORLD_WIDTH - canvas.width);
+            targetCamY = Math.min(Math.max(targetCamY, 0), WORLD_HEIGHT - canvas.height);
+            
+            // Плавное следование (легкий эффект, для комфорта)
+            camera.x += (targetCamX - camera.x) * 0.12;
+            camera.y += (targetCamY - camera.y) * 0.12;
+            
+            // финальная привязка к границам
+            camera.x = Math.min(Math.max(camera.x, 0), WORLD_WIDTH - canvas.width);
+            camera.y = Math.min(Math.max(camera.y, 0), WORLD_HEIGHT - canvas.height);
         }
-        const fpsSpan = document.getElementById("fpsValue");
-        const pingSpan = document.getElementById("pingValue");
-        if (fpsSpan) fpsSpan.innerText = currentFPS;
-        if (pingSpan) pingSpan.innerText = currentPing;
-    }
-
-    // симуляция изменения FPS/Ping как реальная игра (без буста колеблется)
-    function startPerformanceSimulation() {
-        setInterval(() => {
-            if (!boostEnabled) {
-                // легкие колебания
-                currentFPS = 48 + Math.floor(Math.random() * 12);
-                currentPing = 12 + Math.floor(Math.random() * 8);
-            } else {
-                currentFPS = 90 + Math.floor(Math.random() * 35);
-                currentPing = 6 + Math.floor(Math.random() * 8);
-                if (currentFPS > 144) currentFPS = 144;
+        
+        // ---- ОТРИСОВКА ВСЕГО МИРА (с учётом камеры) ----
+        function draw() {
+            if(!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 1. Рисуем фон (асфальт/газон)
+            ctx.fillStyle = '#2b3a2a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Сетка "дорог" для атмосферы (линии относительно камеры)
+            ctx.beginPath();
+            ctx.strokeStyle = '#6a7a5a';
+            ctx.lineWidth = 1.5;
+            const startXGrid = Math.floor(camera.x / 60) * 60;
+            const startYGrid = Math.floor(camera.y / 60) * 60;
+            for(let x = startXGrid; x < camera.x + canvas.width + 60; x += 60){
+                ctx.beginPath();
+                ctx.moveTo(x - camera.x, 0);
+                ctx.lineTo(x - camera.x, canvas.height);
+                ctx.stroke();
             }
-            const fpsSpan = document.getElementById("fpsValue");
-            const pingSpan = document.getElementById("pingValue");
-            if (fpsSpan) fpsSpan.innerText = currentFPS;
-            if (pingSpan) pingSpan.innerText = currentPing;
-            const boostIconSpan = document.getElementById("boostIcon");
-            if (boostIconSpan) boostIconSpan.innerText = boostEnabled ? "🚀" : "🐢";
-        }, 1800);
-    }
-
-    // Отправка сообщения из чата
-    function sendChatMessage() {
-        const rawText = chatInput.value.trim();
-        if (rawText === "") return;
-        // добавить от текущего игрока
-        addPlayerMessage(currentPlayer.nickname, rawText);
-        chatInput.value = "";
-        chatInput.focus();
-    }
-
-    // Инициализация приложения
-    function init() {
-        renderPlayersList();
-        updateProfileUI();
-        // Стартовое приветствие
-        addSystemMessage(`🌟 Добро пожаловать, ${currentPlayer.nickname}! Твой бонус: 100,000,000,000 GRAM уже на счету. Прайм: ${currentPlayer.prime}. Играй и общайся!`, true);
-        addSystemMessage(`💬 В чате доступны команды бота GRAM: /prime, /stars, /boost, /give ник сумма`, true);
-        // Добавляем слушатели
-        sendBtn.addEventListener("click", sendChatMessage);
-        chatInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") sendChatMessage();
-        });
-        startPerformanceSimulation();
-        // Каждые 10 секунд - небольшое событие от бота для активности (дружелюбие)
-        setInterval(() => {
-            if (Math.random() > 0.6) {
-                addSystemMessage(`💡 Совет от GRAM: пиши /help, чтобы узнать все команды!`, true);
+            for(let y = startYGrid; y < camera.y + canvas.height + 60; y += 60){
+                ctx.beginPath();
+                ctx.moveTo(0, y - camera.y);
+                ctx.lineTo(canvas.width, y - camera.y);
+                ctx.stroke();
             }
-        }, 25000);
-        // также если кто-то новый "зашел" имитация? но игроки уже есть, добавим возможность создать "нового" по желанию? не обязательно
-        // в задании "крч в index.html делай смотри когда открылось там будеть 1 сервер там будеть все игроки" все игроки уже отображаются
-    }
-
-    init();
+            
+            // 2. Рисуем все препятствия (здания, деревья, стены)
+            for(let obs of obstacles) {
+                const screenX = obs.x - camera.x;
+                const screenY = obs.y - camera.y;
+                // проверка видимости (оптимизация)
+                if(screenX + obs.w > 0 && screenX < canvas.width && screenY + obs.h > 0 && screenY < canvas.height) {
+                    // тень для объёма
+                    ctx.shadowColor = "rgba(0,0,0,0.5)";
+                    ctx.shadowBlur = 8;
+                    ctx.fillStyle = obs.color;
+                    ctx.fillRect(screenX, screenY, obs.w, obs.h);
+                    // обводка
+                    ctx.strokeStyle = '#1e2a1a';
+                    ctx.lineWidth = 1.5;
+                    ctx.strokeRect(screenX, screenY, obs.w, obs.h);
+                    // детали: окна на больших зданиях
+                    if(obs.w > 50 && obs.h > 50){
+                        ctx.fillStyle = '#cab97a';
+                        ctx.shadowBlur = 2;
+                        for(let i = 0; i < 3; i++){
+                            let wx = screenX + 12 + i*20;
+                            let wy = screenY + 15;
+                            if(wx + 10 < screenX+obs.w) {
+                                ctx.fillRect(wx, wy, 8, 12);
+                                ctx.fillRect(wx, wy+30, 8, 12);
+                            }
+                        }
+                    }
+                }
+            }
+            ctx.shadowBlur = 0;
+            
+            // 3. Рисуем персонажа (стильный "герой" с тенью)
+            const playerScreenX = player.x - camera.x;
+            const playerScreenY = player.y - camera.y;
+            
+            // Градиент для игрока
+            const grad = ctx.createLinearGradient(playerScreenX, playerScreenY, playerScreenX+PLAYER_SIZE, playerScreenY+PLAYER_SIZE);
+            grad.addColorStop(0, '#e34d3a');
+            grad.addColorStop(1, '#b52e1a');
+            ctx.fillStyle = grad;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "black";
+            ctx.fillRect(playerScreenX, playerScreenY, PLAYER_SIZE, PLAYER_SIZE);
+            // лицо/стиль
+            ctx.fillStyle = '#fff6d0';
+            ctx.fillRect(playerScreenX + 6, playerScreenY + 7, 5, 5);
+            ctx.fillRect(playerScreenX + PLAYER_SIZE-11, playerScreenY + 7, 5, 5);
+            ctx.fillStyle = '#1f1f1f';
+            ctx.fillRect(playerScreenX + 7, playerScreenY + 18, PLAYER_SIZE-14, 4);
+            ctx.fillStyle = '#f0f0f0';
+            ctx.beginPath();
+            ctx.arc(playerScreenX + PLAYER_SIZE/2, playerScreenY+PLAYER_SIZE-6, 5, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#555';
+            ctx.beginPath();
+            ctx.arc(playerScreenX + PLAYER_SIZE/2-3, playerScreenY+PLAYER_SIZE-7, 1.5, 0, Math.PI*2);
+            ctx.arc(playerScreenX + PLAYER_SIZE/2+3, playerScreenY+PLAYER_SIZE-7, 1.5, 0, Math.PI*2);
+            ctx.fill();
+            
+            // восстанавливаем тень
+            ctx.shadowBlur = 0;
+            
+            // 4. Рисуем "туман" войны? нет, но добавим индикатор направления (маленький компас)
+            ctx.font = "bold 14 monospace";
+            ctx.fillStyle = "#fff5cc";
+            ctx.shadowBlur = 0;
+            ctx.fillText("⚡ СВОБОДНЫЙ РЕЖИМ", canvas.width-140, 30);
+            
+            // обновляем HUD координаты
+            document.getElementById('coordDisplay').innerHTML = `🚗 X:${Math.floor(player.x)} Y:${Math.floor(player.y)} | скорость: ${player.speed}`;
+        }
+        
+        // ---- ЦИКЛ АНИМАЦИИ (Game Loop) ----
+        function gameLoop() {
+            updateMovement();    // обработка ввода
+            updateCamera();      // камера следует
+            draw();              // рендер
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // --- УПРАВЛЕНИЕ КЛАВИАТУРОЙ ---
+        function handleKeyDown(e) {
+            const key = e.key;
+            if(keys.hasOwnProperty(key)) {
+                keys[key] = true;
+                e.preventDefault();
+            }
+            // Доп: можно регулировать скорость (shift ускорение)
+            if(key === 'Shift') {
+                player.speed = 8.5;
+                e.preventDefault();
+            }
+            if(key === 'Control') {
+                player.speed = 2.2;
+                e.preventDefault();
+            }
+        }
+        
+        function handleKeyUp(e) {
+            const key = e.key;
+            if(keys.hasOwnProperty(key)) {
+                keys[key] = false;
+                e.preventDefault();
+            }
+            if(key === 'Shift') {
+                player.speed = 4.8;
+                e.preventDefault();
+            }
+            if(key === 'Control') {
+                player.speed = 4.8;
+                e.preventDefault();
+            }
+        }
+        
+        // блокировка контекстного меню на канвасе
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        
+        // начальная позиция камеры
+        camera.x = player.x + PLAYER_SIZE/2 - canvas.width/2;
+        camera.y = player.y + PLAYER_SIZE/2 - canvas.height/2;
+        // ограничим стартовую камеру
+        camera.x = Math.min(Math.max(camera.x, 0), WORLD_WIDTH - canvas.width);
+        camera.y = Math.min(Math.max(camera.y, 0), WORLD_HEIGHT - canvas.height);
+        
+        // Запуск игры
+        gameLoop();
+        
+        // небольшая инструкция в консоль
+        console.log('Игра запущена! Используй W/A/S/D для движения, SHIFT - ускорение, CTRL - замедление');
+    })();
 </script>
 </body>
 </html>

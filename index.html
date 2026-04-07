@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICE GRAM v3.0</title>
+    <title>DICE GRAM Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -16,156 +16,259 @@
             --msg-in: #182533;
             --msg-out: #2b5278;
             --status-green: #4ade80;
+            --danger: #ef4444;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background-color: var(--dark-bg); height: 100vh; display: flex; color: var(--text-main); overflow: hidden; }
 
-        /* --- Settings Drawer --- */
+        /* --- UI Notifications --- */
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--active-chat); padding: 10px 20px; border-radius: 20px;
+            z-index: 1000; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            animation: slideDown 0.3s ease;
+        }
+
+        /* --- Settings & Sidebar --- */
         .settings-drawer {
             position: absolute; left: -300px; top: 0; width: 300px; height: 100%;
             background: var(--sidebar-bg); z-index: 100; transition: 0.3s;
             border-right: 1px solid #0e1621; padding: 20px;
         }
         .settings-drawer.open { left: 0; }
-        .drawer-header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; cursor: pointer; }
-        .setting-item { margin-bottom: 20px; }
-        .setting-item label { display: block; font-size: 12px; color: var(--accent); margin-bottom: 5px; }
-        .setting-item input { width: 100%; background: #242f3d; border: none; padding: 10px; color: white; border-radius: 5px; outline: none; }
 
-        /* --- Sidebar --- */
-        .sidebar { width: 300px; background: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid #0e1621; }
+        .sidebar { width: 320px; background: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid #0e1621; }
         .search-container { padding: 10px; position: relative; }
         .search-container input { width: 100%; background: #242f3d; border: none; padding: 10px 10px 10px 35px; border-radius: 8px; color: white; outline: none; }
         .search-container i { position: absolute; left: 22px; top: 22px; color: var(--text-muted); }
 
         .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { display: flex; padding: 10px 15px; cursor: pointer; align-items: center; gap: 12px; transition: 0.2s; }
+        .chat-item { display: flex; padding: 12px 15px; cursor: pointer; align-items: center; gap: 12px; transition: 0.2s; position: relative; }
         .chat-item:hover { background: #232e3c; }
         .chat-item.active { background: var(--active-chat); }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+
+        .avatar-wrapper { position: relative; }
+        .online-dot { width: 12px; height: 12px; background: var(--status-green); border: 2px solid var(--sidebar-bg); border-radius: 50%; position: absolute; bottom: 0; right: 0; }
+        .avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         /* --- Main Chat --- */
-        .main-chat { flex: 1; display: flex; flex-direction: column; background: #0e1621; position: relative; }
-        .chat-header { height: 56px; background: var(--sidebar-bg); display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #0e1621; }
-        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; }
+        .main-chat { flex: 1; display: flex; flex-direction: column; background: #0e1621; }
+        .chat-header { height: 60px; background: var(--sidebar-bg); display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #0e1621; }
+        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; }
 
         .msg-bubble { 
-            max-width: 70%; padding: 6px 12px; border-radius: 10px; position: relative; font-size: 14.5px; line-height: 1.4;
-            animation: slideUp 0.2s ease;
+            max-width: 75%; padding: 8px 14px; border-radius: 12px; position: relative; font-size: 14.5px;
+            cursor: context-menu; transition: transform 0.1s;
         }
-        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } }
-        
-        .msg-bubble.out { align-self: flex-end; background: var(--msg-out); border-bottom-right-radius: 2px; }
-        .msg-bubble.in { align-self: flex-start; background: var(--msg-in); border-bottom-left-radius: 2px; }
+        .msg-bubble:active { transform: scale(0.98); }
+        .msg-bubble.out { align-self: flex-end; background: var(--msg-out); border-bottom-right-radius: 4px; }
+        .msg-bubble.in { align-self: flex-start; background: var(--msg-in); border-bottom-left-radius: 4px; }
 
-        .msg-info { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 11px; color: #a0acba; margin-top: 2px; }
-        .status-icon { font-size: 10px; }
-        .status-read { color: #40ebff; }
+        .msg-info { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 11px; color: #a0acba; margin-top: 4px; }
+        .typing-text { color: var(--accent); font-size: 12px; font-style: italic; display: none; }
 
         /* --- Input Area --- */
-        .input-area { padding: 10px 20px 15px; background: var(--dark-bg); display: flex; gap: 15px; align-items: center; }
-        .input-box { flex: 1; background: var(--sidebar-bg); border-radius: 20px; padding: 5px 15px; display: flex; }
-        .input-box input { flex: 1; background: none; border: none; color: white; padding: 8px 0; outline: none; }
+        .input-area { padding: 10px 20px 20px; background: var(--dark-bg); display: flex; gap: 15px; align-items: center; }
+        .input-box { flex: 1; background: var(--sidebar-bg); border-radius: 20px; padding: 8px 18px; display: flex; }
+        .input-box input { flex: 1; background: none; border: none; color: white; outline: none; font-size: 15px; }
 
-        /* --- Utils --- */
-        .hide { display: none; }
-        pre { background: #000; padding: 8px; border-radius: 4px; color: #4ade80; margin-top: 5px; font-size: 13px; }
+        /* --- Context Menu --- */
+        #contextMenu {
+            position: fixed; background: #1c242f; border: 1px solid #2b3744; 
+            border-radius: 8px; display: none; z-index: 1000; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .menu-item { padding: 10px 20px; cursor: pointer; color: white; font-size: 14px; }
+        .menu-item:hover { background: var(--danger); }
+
+        @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
     </style>
 </head>
 <body>
 
+    <div id="toast">Новое сообщение!</div>
+    <div id="contextMenu">
+        <div class="menu-item" onclick="deleteMessage()">Удалить сообщение</div>
+    </div>
+
     <div class="settings-drawer" id="settingsDrawer">
-        <div class="drawer-header" onclick="toggleSettings()">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>Настройки профиля</span>
+        <h3 style="margin-bottom:20px"><i class="fa-solid fa-gear"></i> Настройки</h3>
+        <div style="margin-bottom:15px">
+            <label style="font-size:12px; color:var(--accent)">Имя</label>
+            <input type="text" id="prefName" style="width:100%; padding:8px; background:#242f3d; border:none; color:white; border-radius:5px;">
         </div>
-        <div class="setting-item">
-            <label>Ваше имя</label>
-            <input type="text" id="prefName" placeholder="Введите имя">
+        <div style="margin-bottom:15px">
+            <label style="font-size:12px; color:var(--accent)">@Username</label>
+            <input type="text" id="prefUser" style="width:100%; padding:8px; background:#242f3d; border:none; color:white; border-radius:5px;">
         </div>
-        <div class="setting-item">
-            <label>Имя пользователя (@username)</label>
-            <input type="text" id="prefUser" placeholder="@username">
-        </div>
-        <button onclick="saveProfile()" style="width:100%; padding:10px; background:var(--accent); border:none; color:white; border-radius:5px; cursor:pointer;">Сохранить</button>
+        <button onclick="saveProfile()" style="width:100%; padding:10px; background:var(--accent); border:none; color:white; border-radius:5px; cursor:pointer">Сохранить</button>
+        <button onclick="toggleSettings()" style="width:100%; margin-top:10px; background:none; border:1px solid #444; color:white; padding:10px; border-radius:5px; cursor:pointer">Закрыть</button>
     </div>
 
     <aside class="sidebar">
         <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
             <i class="fa-solid fa-bars" style="cursor:pointer" onclick="toggleSettings()"></i>
-            <span style="font-weight: bold; color: var(--accent);">DICE GRAM</span>
+            <span style="font-weight: bold; color: var(--accent); letter-spacing: 1px;">DICE GRAM</span>
         </div>
         <div class="search-container">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Поиск по @username...">
+            <input type="text" id="searchInput" placeholder="Поиск или @username...">
         </div>
         <div class="chat-list" id="chatList"></div>
     </aside>
 
     <main class="main-chat">
-        <header class="chat-header" id="chatHeader">
-            <div class="avatar" id="activeAvatar" style="background:var(--accent)">?</div>
+        <header class="chat-header">
+            <div class="avatar-wrapper">
+                <div class="avatar" id="activeAvatar" style="background:#444">?</div>
+                <div class="online-dot" id="activeDot" style="display:none"></div>
+            </div>
             <div style="margin-left: 15px;">
                 <div id="activeName" style="font-weight: 500;">Выберите чат</div>
-                <div id="activeStatus" style="font-size: 12px; color: var(--accent);"></div>
+                <div id="activeStatus" style="font-size: 12px; color: var(--text-muted);"></div>
+                <div id="typingIndicator" class="typing-text">печатает...</div>
             </div>
         </header>
 
         <div class="messages-area" id="msgArea"></div>
 
         <div class="input-area">
-            <i class="fa-solid fa-paperclip" style="color:var(--text-muted); cursor:pointer"></i>
+            <i class="fa-solid fa-face-smile" style="color:var(--text-muted); cursor:pointer"></i>
             <div class="input-box">
-                <input type="text" id="messageInput" placeholder="Сообщение..." disabled>
+                <input type="text" id="messageInput" placeholder="Написать сообщение..." disabled>
             </div>
             <i class="fa-solid fa-paper-plane" id="sendBtn" style="color:var(--accent); cursor:pointer"></i>
         </div>
     </main>
 
 <script>
-    // --- Инициализация данных ---
-    const defaultContacts = [
-        { id: 'dice_official', name: 'JavaScript Bot', username: '@dice_official', color: '#f39c12', history: [{text: 'Добро пожаловать в DICE GRAM! Используйте поиск, чтобы найти новых друзей.', time: '12:00', type: 'in', status: 2}] }
+    let chats = JSON.parse(localStorage.getItem('dice_v4_chats')) || [
+        { id: 'dice_official', name: 'JavaScript Bot', username: '@dice_official', color: '#f39c12', online: true, history: [{id: 1, text: 'DICE GRAM v4.0 готов к работе. Напиши "код" для теста.', time: '12:00', type: 'in', status: 2}] }
     ];
-
-    let chats = JSON.parse(localStorage.getItem('dice_chats')) || defaultContacts;
     let activeChatId = null;
+    let msgToDelete = null;
 
-    // --- Профиль ---
+    // --- Core UI ---
     function toggleSettings() { document.getElementById('settingsDrawer').classList.toggle('open'); }
-
-    function saveProfile() {
-        const name = document.getElementById('prefName').value;
-        const user = document.getElementById('prefUser').value;
-        localStorage.setItem('dice_profile', JSON.stringify({name, user}));
-        toggleSettings();
+    
+    function showToast(text) {
+        const t = document.getElementById('toast');
+        t.textContent = text;
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
     }
 
-    function loadProfile() {
-        const prof = JSON.parse(localStorage.getItem('dice_profile'));
-        if(prof) {
-            document.getElementById('prefName').value = prof.name || '';
-            document.getElementById('prefUser').value = prof.user || '';
-        }
+    // --- Message Logic ---
+    function renderMessages() {
+        const area = document.getElementById('msgArea');
+        area.innerHTML = '';
+        const chat = chats.find(c => c.id === activeChatId);
+        if(!chat) return;
+
+        chat.history.forEach(m => {
+            const bubble = document.createElement('div');
+            bubble.className = `msg-bubble ${m.type}`;
+            bubble.oncontextmenu = (e) => {
+                if(m.type === 'out') {
+                    e.preventDefault();
+                    showContextMenu(e.pageX, e.pageY, m.id);
+                }
+            };
+
+            let status = m.type === 'out' ? `<i class="fa-solid fa-check ${m.status==2?'status-read':''}"></i>` : '';
+            bubble.innerHTML = `
+                <div>${m.text}</div>
+                <div class="msg-info"><span>${m.time}</span> ${status}</div>
+            `;
+            area.appendChild(bubble);
+        });
+        area.scrollTop = area.scrollHeight;
     }
 
-    // --- Логика чатов ---
-    function renderChatList(filter = '') {
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if(!text || !activeChatId) return;
+
+        const chat = chats.find(c => c.id === activeChatId);
+        const msg = {
+            id: Date.now(),
+            text: text,
+            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            type: 'out',
+            status: 1
+        };
+
+        chat.history.push(msg);
+        input.value = '';
+        renderMessages();
+        save();
+
+        if(activeChatId === 'dice_official') botReply(text);
+    }
+
+    function botReply(text) {
+        const indicator = document.getElementById('typingIndicator');
+        indicator.style.display = 'block';
+        
+        setTimeout(() => {
+            const chat = chats.find(c => c.id === 'dice_official');
+            let replyText = "Сообщение доставлено на сервер.";
+            if(text.toLowerCase().includes('код')) replyText = "Лови сниппет: <pre>console.log('Dice Gram');</pre>";
+            
+            chat.history.push({
+                id: Date.now(),
+                text: replyText,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                type: 'in'
+            });
+
+            indicator.style.display = 'none';
+            if(activeChatId !== 'dice_official') showToast("Новое от JavaScript Bot");
+            renderMessages();
+            save();
+        }, 2000);
+    }
+
+    // --- Context Menu & Delete ---
+    function showContextMenu(x, y, msgId) {
+        const menu = document.getElementById('contextMenu');
+        menu.style.display = 'block';
+        menu.style.left = x + 'px';
+        menu.style.top = y + 'px';
+        msgToDelete = msgId;
+    }
+
+    window.onclick = () => document.getElementById('contextMenu').style.display = 'none';
+
+    function deleteMessage() {
+        const chat = chats.find(c => c.id === activeChatId);
+        chat.history = chat.history.filter(m => m.id !== msgToDelete);
+        save();
+        renderMessages();
+    }
+
+    // --- Sidebar & Search ---
+    function renderChatList() {
         const list = document.getElementById('chatList');
         list.innerHTML = '';
-        chats.filter(c => c.username.toLowerCase().includes(filter.toLowerCase())).forEach(c => {
-            const lastMsg = c.history.length > 0 ? c.history[c.history.length-1].text : '';
+        chats.forEach(c => {
             const item = document.createElement('div');
             item.className = `chat-item ${activeChatId === c.id ? 'active' : ''}`;
             item.innerHTML = `
-                <div class="avatar" style="background:${c.color}">${c.name[0]}</div>
+                <div class="avatar-wrapper">
+                    <div class="avatar" style="background:${c.color}">${c.name[0]}</div>
+                    ${c.online ? '<div class="online-dot"></div>' : ''}
+                </div>
                 <div style="flex:1; overflow:hidden">
                     <div style="display:flex; justify-content:space-between">
                         <span style="font-weight:500">${c.name}</span>
-                        <span style="font-size:11px; color:var(--text-muted)">${c.history[c.history.length-1]?.time || ''}</span>
+                        <span style="font-size:11px; color:var(--text-muted)">${c.history.length ? c.history[c.history.length-1].time : ''}</span>
                     </div>
-                    <div style="font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${lastMsg}</div>
+                    <div style="font-size:13px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap">
+                        ${c.history.length ? c.history[c.history.length-1].text : 'Нет сообщений'}
+                    </div>
                 </div>
             `;
             item.onclick = () => selectChat(c.id);
@@ -180,109 +283,42 @@
         document.getElementById('activeStatus').textContent = chat.username;
         document.getElementById('activeAvatar').textContent = chat.name[0];
         document.getElementById('activeAvatar').style.background = chat.color;
+        document.getElementById('activeDot').style.display = chat.online ? 'block' : 'none';
         document.getElementById('messageInput').disabled = false;
-        document.getElementById('messageInput').focus();
         renderMessages();
         renderChatList();
     }
 
-    function renderMessages() {
-        const area = document.getElementById('msgArea');
-        area.innerHTML = '';
-        const chat = chats.find(c => c.id === activeChatId);
-        chat.history.forEach(m => {
-            const bubble = document.createElement('div');
-            bubble.className = `msg-bubble ${m.type}`;
-            
-            let statusHtml = m.type === 'out' ? `
-                <span class="status-icon ${m.status === 2 ? 'status-read' : ''}">
-                    <i class="fa-solid fa-check"></i>${m.status === 2 ? '<i class="fa-solid fa-check" style="margin-left:-4px"></i>' : ''}
-                </span>` : '';
-
-            bubble.innerHTML = `
-                <div>${m.text}</div>
-                <div class="msg-info"><span>${m.time}</span> ${statusHtml}</div>
-            `;
-            area.appendChild(bubble);
-        });
-        area.scrollTop = area.scrollHeight;
-    }
-
-    // --- Отправка и Бот ---
-    function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if(!text || !activeChatId) return;
-
-        const now = new Date();
-        const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-        
-        const chat = chats.find(c => c.id === activeChatId);
-        const newMsg = { text, time: timeStr, type: 'out', status: 1 };
-        chat.history.push(newMsg);
-        
-        input.value = '';
-        renderMessages();
-        saveToLocal();
-
-        // Симуляция прочтения
-        setTimeout(() => {
-            newMsg.status = 2;
-            renderMessages();
-        }, 1000);
-
-        if(activeChatId === 'dice_official') {
-            botLogic(text);
-        }
-    }
-
-    function botLogic(query) {
-        document.getElementById('activeStatus').textContent = 'печатает...';
-        setTimeout(() => {
-            let reply = "Я получил ваш запрос. Команда обработана успешно.";
-            if(query.toLowerCase().includes('код')) reply = "Вот ваш шаблон:<pre>const dice = () => 'Gram';</pre>";
-            
-            const chat = chats.find(c => c.id === 'dice_official');
-            chat.history.push({ text: reply, time: 'сейчас', type: 'in' });
-            if(activeChatId === 'dice_official') renderMessages();
-            document.getElementById('activeStatus').textContent = '@dice_official';
-            saveToLocal();
-        }, 1500);
-    }
-
-    // --- Поиск / Создание чата ---
     document.getElementById('searchInput').onkeypress = (e) => {
-        if(e.key === 'Enter') {
-            const val = e.target.value.trim();
-            if(val.startsWith('@')) {
-                const existing = chats.find(c => c.username === val);
-                if(!existing) {
-                    const newContact = { 
-                        id: Date.now().toString(), 
-                        name: val.replace('@', ''), 
-                        username: val, 
-                        color: '#'+Math.floor(Math.random()*16777215).toString(16),
-                        history: [] 
-                    };
-                    chats.push(newContact);
-                    saveToLocal();
-                    renderChatList();
-                    selectChat(newContact.id);
-                } else {
-                    selectChat(existing.id);
-                }
-                e.target.value = '';
+        if(e.key === 'Enter' && e.target.value.startsWith('@')) {
+            const user = e.target.value;
+            if(!chats.find(c => c.username === user)) {
+                chats.push({
+                    id: Date.now().toString(),
+                    name: user.replace('@',''),
+                    username: user,
+                    color: '#'+Math.floor(Math.random()*16777215).toString(16),
+                    online: false,
+                    history: []
+                });
+                save();
+                renderChatList();
             }
+            e.target.value = '';
         }
     };
 
-    function saveToLocal() { localStorage.setItem('dice_chats', JSON.stringify(chats)); }
+    // --- Initialization ---
+    function save() { localStorage.setItem('dice_v4_chats', JSON.stringify(chats)); }
+    function saveProfile() {
+        const p = {name: document.getElementById('prefName').value, user: document.getElementById('prefUser').value};
+        localStorage.setItem('dice_v4_profile', JSON.stringify(p));
+        toggleSettings();
+    }
 
     document.getElementById('sendBtn').onclick = sendMessage;
     document.getElementById('messageInput').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-    
-    // Инит
-    loadProfile();
+
     renderChatList();
 </script>
 </body>

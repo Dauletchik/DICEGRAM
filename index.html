@@ -3,507 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICE GRAM | Pro Desktop</title>
+    <title>DICE GRAM Mobile Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --bg-main: #0e1621;
             --bg-sidebar: #17212b;
             --bg-item-active: #2b5278;
-            --bg-item-hover: #232e3c;
+            --accent: #5288c1;
             --text-primary: #f5f5f5;
             --text-secondary: #708499;
-            --accent: #5288c1;
             --msg-in: #182533;
             --msg-out: #2b5278;
-            --status-online: #4ade80;
-            --border: #0e1621;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
+        body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; }
 
-        /* --- LAYOUT --- */
+        /* --- АДАПТИВНЫЙ LAYOUT --- */
+        .app-container { display: flex; width: 100%; height: 100%; position: relative; }
+
         .sidebar {
-            width: 350px;
-            background: var(--bg-sidebar);
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-            z-index: 10;
+            width: 350px; background: var(--bg-sidebar); display: flex; flex-direction: column;
+            border-right: 1px solid #0e1621; transition: transform 0.3s ease;
         }
 
         .chat-window {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-main);
-            position: relative;
+            flex: 1; display: flex; flex-direction: column; background: var(--bg-main);
+            transition: transform 0.3s ease; position: relative;
         }
 
-        /* --- SIDEBAR COMPONENTS --- */
-        .sidebar-header {
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        /* Мобильная логика */
+        @media (max-width: 768px) {
+            .sidebar { position: absolute; width: 100%; height: 100%; z-index: 10; }
+            .chat-window { position: absolute; width: 100%; height: 100%; z-index: 5; transform: translateX(100%); }
+            
+            /* Классы для переключения состояния на мобилках */
+            body.chat-open .sidebar { transform: translateX(-100%); }
+            body.chat-open .chat-window { transform: translateX(0); z-index: 20; }
         }
 
-        .search-bar {
-            flex: 1;
-            position: relative;
-        }
+        /* --- UI ЭЛЕМЕНТЫ --- */
+        .header { height: 60px; background: var(--bg-sidebar); display: flex; align-items: center; padding: 0 15px; gap: 15px; }
+        .back-btn { display: none; cursor: pointer; font-size: 20px; color: var(--accent); }
+        
+        @media (max-width: 768px) { .back-btn { display: block; } }
 
-        .search-bar input {
-            width: 100%;
-            background: #242f3d;
-            border: 2px solid transparent;
-            padding: 8px 12px 8px 35px;
-            border-radius: 8px;
-            color: white;
-            outline: none;
-            transition: border 0.2s;
+        .search-container { padding: 10px; background: var(--bg-sidebar); }
+        .search-container input {
+            width: 100%; background: #242f3d; border: none; padding: 10px 15px;
+            border-radius: 8px; color: white; outline: none;
         }
-
-        .search-bar input:focus { border-color: var(--accent); }
-        .search-bar i { position: absolute; left: 12px; top: 10px; color: var(--text-secondary); }
 
         .chat-list { flex: 1; overflow-y: auto; }
-
         .chat-item {
-            display: flex;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background 0.2s;
-            align-items: center;
-            gap: 12px;
+            display: flex; padding: 12px 15px; cursor: pointer; gap: 12px; align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
-
-        .chat-item:hover { background: var(--bg-item-hover); }
+        .chat-item:hover { background: #232e3c; }
         .chat-item.active { background: var(--bg-item-active); }
 
         .avatar {
-            width: 54px; height: 54px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; font-weight: bold; color: white; flex-shrink: 0;
-            background-size: cover; background-position: center;
+            width: 48px; height: 48px; border-radius: 50%; background: var(--accent);
+            display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;
         }
 
-        .chat-info { flex: 1; overflow: hidden; }
-        .chat-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .chat-name { font-weight: 600; font-size: 15px; }
-        .chat-time { font-size: 12px; color: var(--text-secondary); }
-        .chat-msg { 
-            font-size: 14px; color: var(--text-secondary); 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        }
-
-        /* --- CHAT WINDOW COMPONENTS --- */
-        .chat-header {
-            height: 60px;
-            background: var(--bg-sidebar);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .header-meta { margin-left: 15px; }
-        .status { font-size: 13px; color: var(--accent); }
-        .typing { font-style: italic; color: var(--status-online); display: none; }
-
-        .messages-container {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        /* --- СООБЩЕНИЯ И ССЫЛКИ --- */
+        .messages-area {
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
             background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
             background-blend-mode: overlay;
         }
 
-        /* --- MESSAGE BUBBLES --- */
-        .msg-row { display: flex; width: 100%; margin-bottom: 2px; }
-        .msg-row.sent { justify-content: flex-end; }
-        .msg-row.received { justify-content: flex-start; }
-
         .bubble {
-            max-width: 70%;
-            padding: 8px 12px;
-            border-radius: 12px;
-            position: relative;
-            font-size: 14.5px;
-            line-height: 1.4;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            animation: fadeIn 0.2s ease;
+            max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 14.5px; line-height: 1.4;
+            position: relative; word-wrap: break-word;
         }
+        .bubble.out { align-self: flex-end; background: var(--msg-out); border-bottom-right-radius: 2px; }
+        .bubble.in { align-self: flex-start; background: var(--msg-in); border-bottom-left-radius: 2px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } }
+        /* Стиль для @username ссылок */
+        .mention { color: #82b1ff; cursor: pointer; font-weight: 500; text-decoration: none; }
+        .mention:hover { text-decoration: underline; }
 
-        .sent .bubble { background: var(--msg-out); border-bottom-right-radius: 4px; }
-        .received .bubble { background: var(--msg-in); border-bottom-left-radius: 4px; }
-
-        .msg-meta {
-            display: flex; align-items: center; justify-content: flex-end;
-            gap: 4px; font-size: 11px; color: #a0acba; margin-top: 3px;
-        }
-
-        .check-mark { color: #40ebff; font-size: 10px; }
-
-        /* --- INPUT AREA --- */
-        .input-area {
-            padding: 10px 20px 15px;
-            background: var(--bg-main);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .input-wrapper {
-            flex: 1;
-            background: var(--bg-sidebar);
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-        }
-
-        .input-wrapper input {
-            flex: 1;
-            background: none;
-            border: none;
-            color: white;
-            padding: 12px 0;
-            outline: none;
-            font-size: 15px;
-        }
-
-        .icon-btn { color: var(--text-secondary); cursor: pointer; font-size: 20px; transition: 0.2s; }
-        .icon-btn:hover { color: var(--accent); }
-
-        /* --- SETTINGS MODAL --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: none; justify-content: center;
-            align-items: center; z-index: 1000;
-        }
-
-        .modal {
-            background: var(--bg-sidebar);
-            width: 400px; padding: 30px; border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .modal h2 { margin-bottom: 20px; color: var(--accent); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
-        .form-group input { 
-            width: 100%; padding: 10px; background: var(--bg-main); 
-            border: 1px solid #333; border-radius: 5px; color: white; outline: none;
-        }
-
-        .btn-save {
-            width: 100%; padding: 12px; background: var(--accent);
-            border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;
-        }
-
-        /* --- UTILS --- */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #3d4b59; border-radius: 10px; }
+        .input-area { padding: 10px 15px 20px; background: var(--bg-main); display: flex; gap: 10px; align-items: center; }
+        .input-box { flex: 1; background: var(--bg-sidebar); border-radius: 20px; padding: 10px 15px; }
+        .input-box input { width: 100%; background: none; border: none; color: white; outline: none; }
+        
+        .send-btn { color: var(--accent); font-size: 22px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <h2>Настройки профиля</h2>
-            <div class="form-group">
-                <label>Ваше имя</label>
-                <input type="text" id="set-name" placeholder="Введите имя">
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="header">
+                <i class="fa-solid fa-bars" style="color: var(--text-secondary)"></i>
+                <span style="font-weight: bold; color: var(--accent)">DICE GRAM</span>
             </div>
-            <div class="form-group">
-                <label>Имя пользователя (@username)</label>
-                <input type="text" id="set-user" placeholder="@dice_gram">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Поиск @username...">
             </div>
-            <div class="form-group">
-                <label>URL аватарки</label>
-                <input type="text" id="set-avatar" placeholder="https://...">
+            <div class="chat-list" id="chatList"></div>
+        </aside>
+
+        <main class="chat-window" id="chatWindow">
+            <header class="header">
+                <i class="fa-solid fa-arrow-left back-btn" onclick="closeChat()"></i>
+                <div class="avatar" id="headerAvatar" style="width: 40px; height: 40px; font-size: 14px;">?</div>
+                <div class="header-info">
+                    <div id="headerName" style="font-weight: 500;">Выберите чат</div>
+                    <div id="headerStatus" style="font-size: 12px; color: var(--text-secondary);"></div>
+                </div>
+            </header>
+
+            <div class="messages-area" id="msgArea">
+                <div style="text-align: center; margin-top: 50px; color: var(--text-secondary);">Выберите, кому написать</div>
             </div>
-            <button class="btn-save" onclick="DiceEngine.saveSettings()">Сохранить изменения</button>
-            <p onclick="DiceEngine.toggleModal()" style="text-align:center; margin-top:15px; cursor:pointer; font-size:14px; color:var(--text-secondary)">Закрыть</p>
-        </div>
+
+            <div class="input-area">
+                <div class="input-box">
+                    <input type="text" id="msgInput" placeholder="Сообщение..." disabled autocomplete="off">
+                </div>
+                <i class="fa-solid fa-paper-plane send-btn" id="sendBtn"></i>
+            </div>
+        </main>
     </div>
 
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <i class="fa-solid fa-bars icon-btn" onclick="DiceEngine.toggleModal()"></i>
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Поиск по @username...">
-            </div>
-        </div>
-        <div class="chat-list" id="chatList">
-            </div>
-    </aside>
-
-    <main class="chat-window">
-        <header class="chat-header">
-            <div class="avatar" id="h-avatar" style="width:42px; height:42px; font-size:14px;">?</div>
-            <div class="header-meta">
-                <div class="chat-name" id="h-name">Выберите чат</div>
-                <div class="status" id="h-status"></div>
-                <div class="typing" id="h-typing">печатает...</div>
-            </div>
-        </header>
-
-        <div class="messages-container" id="msgBox">
-            </div>
-
-        <div class="input-area">
-            <i class="fa-solid fa-paperclip icon-btn"></i>
-            <div class="input-wrapper">
-                <input type="text" id="msgInput" placeholder="Написать сообщение..." disabled autocomplete="off">
-                <i class="fa-regular fa-face-smile icon-btn" style="font-size:18px"></i>
-            </div>
-            <i class="fa-solid fa-microphone icon-btn" id="actionIcon"></i>
-        </div>
-    </main>
-
 <script>
-    /**
-     * DICE GRAM ENGINE v5.0
-     * Модульная структура: State, UI, Logic
-     */
+    // --- ДАННЫЕ ПРИЛОЖЕНИЯ ---
+    let state = {
+        activeChatId: null,
+        chats: JSON.parse(localStorage.getItem('dg_v6_data')) || [
+            { id: 'dice_official', name: 'JavaScript Bot', user: '@dice_official', color: '#f39c12', history: [{text: 'Привет! Напиши мне @admin или любое другое @имя.', type: 'in'}] }
+        ]
+    };
 
-    const DiceEngine = (() => {
-        // --- СОСТОЯНИЕ (STATE) ---
-        let state = {
-            currentUser: JSON.parse(localStorage.getItem('dice_profile')) || { name: 'User', user: '@username', avatar: '' },
-            activeChatId: null,
-            chats: JSON.parse(localStorage.getItem('dice_data')) || [
-                {
-                    id: 'official_bot',
-                    name: 'MESSAGE OFFICIAL',
-                    user: '@dice_official',
-                    color: '#f39c12',
-                    isOnline: true,
-                    history: [
-                        { text: 'Добро пожаловать в DICE GRAM! Я ваш ассистент.', time: '12:00', type: 'received', status: 2 }
-                    ]
-                }
-            ]
-        };
+    // --- ЛОГИКА ССЫЛОК @USERNAME ---
+    function parseMentions(text) {
+        // Регулярное выражение ищет слова начинающиеся с @
+        return text.replace(/@(\w+)/g, '<span class="mention" onclick="handleMentionClick(\'@$1\', event)">@$1</span>');
+    }
 
-        const botPhrases = [
-            "Чистый код — это не то, что вы пишете, а то, как вы думаете.",
-            "JavaScript — единственный язык, где [] + [] это пустая строка.",
-            "Ошибка на строке 42? Попробуйте просто перезагрузить сервер.",
-            "Программирование — это магия, превращающая кофе в код.",
-            "DICE GRAM работает на чистом JS. Это ли не чудо?"
-        ];
-
-        // --- UI RENDERERS ---
-        const renderChatList = () => {
-            const list = document.getElementById('chatList');
-            list.innerHTML = '';
-            state.chats.forEach(chat => {
-                const lastMsg = chat.history.length > 0 ? chat.history[chat.history.length - 1] : { text: 'Нет сообщений', time: '' };
-                const isActive = state.activeChatId === chat.id;
-                
-                const item = document.createElement('div');
-                item.className = `chat-item ${isActive ? 'active' : ''}`;
-                item.innerHTML = `
-                    <div class="avatar" style="background:${chat.color}; background-image:url('${chat.avatar || ''}')">${chat.avatar ? '' : chat.name[0]}</div>
-                    <div class="chat-info">
-                        <div class="chat-top">
-                            <span class="chat-name">${chat.name}</span>
-                            <span class="chat-time">${lastMsg.time}</span>
-                        </div>
-                        <div class="chat-msg">${lastMsg.text}</div>
-                    </div>
-                `;
-                item.onclick = () => selectChat(chat.id);
-                list.appendChild(item);
-            });
-        };
-
-        const renderMessages = () => {
-            const box = document.getElementById('msgBox');
-            box.innerHTML = '';
-            const chat = state.chats.find(c => c.id === state.activeChatId);
-            if (!chat) return;
-
-            chat.history.forEach(m => {
-                const row = document.createElement('div');
-                row.className = `msg-row ${m.type}`;
-                
-                const statusHtml = m.type === 'sent' ? `
-                    <span class="check-mark">
-                        <i class="fa-solid fa-check"></i>${m.status === 2 ? '<i class="fa-solid fa-check" style="margin-left:-4px"></i>' : ''}
-                    </span>` : '';
-
-                row.innerHTML = `
-                    <div class="bubble">
-                        ${m.text}
-                        <div class="msg-meta">
-                            <span>${m.time}</span>
-                            ${statusHtml}
-                        </div>
-                    </div>
-                `;
-                box.appendChild(row);
-            });
-            box.scrollTop = box.scrollHeight;
-        };
-
-        // --- CORE LOGIC ---
-        const selectChat = (id) => {
-            state.activeChatId = id;
-            const chat = state.chats.find(c => c.id === id);
-            
-            document.getElementById('h-name').textContent = chat.name;
-            document.getElementById('h-status').textContent = chat.isOnline ? 'в сети' : 'был недавно';
-            document.getElementById('h-avatar').textContent = chat.avatar ? '' : chat.name[0];
-            document.getElementById('h-avatar').style.background = chat.color;
-            document.getElementById('h-avatar').style.backgroundImage = `url('${chat.avatar || ''}')`;
-            
-            document.getElementById('msgInput').disabled = false;
-            document.getElementById('msgInput').focus();
-
-            renderChatList();
-            renderMessages();
-        };
-
-        const handleSend = () => {
-            const input = document.getElementById('msgInput');
-            const text = input.value.trim();
-            if (!text || !state.activeChatId) return;
-
-            const now = new Date();
-            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            const chat = state.chats.find(c => c.id === state.activeChatId);
-            const msg = { text, time, type: 'sent', status: 1 };
-            
-            chat.history.push(msg);
-            input.value = '';
-            renderMessages();
-            renderChatList();
-            save();
-
-            // Эффект прочтения
-            setTimeout(() => { msg.status = 2; renderMessages(); }, 1000);
-
-            // Бот логика
-            if (state.activeChatId === 'official_bot') triggerBot();
-        };
-
-        const triggerBot = () => {
-            const typ = document.getElementById('h-typing');
-            const stat = document.getElementById('h-status');
-            
-            stat.style.display = 'none';
-            typ.style.display = 'block';
-
-            setTimeout(() => {
-                const chat = state.chats.find(c => c.id === 'official_bot');
-                const reply = botPhrases[Math.floor(Math.random() * botPhrases.length)];
-                
-                chat.history.push({
-                    text: reply,
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    type: 'received',
-                    status: 2
-                });
-
-                typ.style.display = 'none';
-                stat.style.display = 'block';
-                
-                if (state.activeChatId === 'official_bot') renderMessages();
-                renderChatList();
-                save();
-            }, 2500);
-        };
-
-        const addNewContact = (username) => {
-            const name = username.replace('@', '');
+    function handleMentionClick(username, event) {
+        event.stopPropagation();
+        const existing = state.chats.find(c => c.user.toLowerCase() === username.toLowerCase());
+        
+        if (existing) {
+            selectChat(existing.id);
+        } else {
+            // Если юзера нет, создаем его
+            const newId = 'chat_' + Date.now();
             const newChat = {
-                id: Date.now().toString(),
-                name: name.charAt(0).toUpperCase() + name.slice(1),
+                id: newId,
+                name: username.replace('@', ''),
                 user: username,
                 color: '#' + Math.floor(Math.random()*16777215).toString(16),
-                isOnline: false,
                 history: []
             };
             state.chats.push(newChat);
             save();
             renderChatList();
-            selectChat(newChat.id);
-        };
+            selectChat(newId);
+        }
+    }
 
-        const save = () => localStorage.setItem('dice_data', JSON.stringify(state.chats));
+    // --- UI ФУНКЦИИ ---
+    function renderChatList(filter = '') {
+        const list = document.getElementById('chatList');
+        list.innerHTML = '';
+        
+        state.chats.filter(c => c.user.includes(filter)).forEach(chat => {
+            const lastMsg = chat.history.length > 0 ? chat.history[chat.history.length-1].text : 'Нет сообщений';
+            const item = document.createElement('div');
+            item.className = `chat-item ${state.activeChatId === chat.id ? 'active' : ''}`;
+            item.innerHTML = `
+                <div class="avatar" style="background:${chat.color}">${chat.name[0]}</div>
+                <div style="flex:1; overflow:hidden">
+                    <div style="font-weight:500">${chat.name}</div>
+                    <div style="font-size:13px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${lastMsg}</div>
+                </div>
+            `;
+            item.onclick = () => selectChat(chat.id);
+            list.appendChild(item);
+        });
+    }
 
-        // --- PUBLIC API ---
-        return {
-            init: () => {
+    function selectChat(id) {
+        state.activeChatId = id;
+        const chat = state.chats.find(c => c.id === id);
+        
+        // Mobile: Открываем окно чата
+        document.body.classList.add('chat-open');
+
+        document.getElementById('headerName').textContent = chat.name;
+        document.getElementById('headerStatus').textContent = chat.user;
+        document.getElementById('headerAvatar').textContent = chat.name[0];
+        document.getElementById('headerAvatar').style.background = chat.color;
+        
+        document.getElementById('msgInput').disabled = false;
+        document.getElementById('msgInput').focus();
+
+        renderMessages();
+        renderChatList();
+    }
+
+    function closeChat() {
+        document.body.classList.remove('chat-open');
+    }
+
+    function renderMessages() {
+        const area = document.getElementById('msgArea');
+        area.innerHTML = '';
+        const chat = state.chats.find(c => c.id === state.activeChatId);
+        
+        chat.history.forEach(m => {
+            const bubble = document.createElement('div');
+            bubble.className = `bubble ${m.type}`;
+            // Применяем парсинг меншенов при отрисовке
+            bubble.innerHTML = parseMentions(m.text);
+            area.appendChild(bubble);
+        });
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if (!text || !state.activeChatId) return;
+
+        const chat = state.chats.find(c => c.id === state.activeChatId);
+        chat.history.push({ text: text, type: 'out' });
+        
+        input.value = '';
+        renderMessages();
+        save();
+        renderChatList();
+
+        // Простая имитация ответа для бота
+        if (state.activeChatId === 'dice_official') {
+            setTimeout(() => {
+                chat.history.push({ text: 'Принято! Попробуй нажать на @admin в твоем сообщении.', type: 'in' });
+                renderMessages();
+                save();
                 renderChatList();
-                // Подгрузка настроек в инпуты
-                document.getElementById('set-name').value = state.currentUser.name;
-                document.getElementById('set-user').value = state.currentUser.user;
-                document.getElementById('set-avatar').value = state.currentUser.avatar;
-            },
-            toggleModal: () => {
-                const m = document.getElementById('modalOverlay');
-                m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
-            },
-            saveSettings: () => {
-                state.currentUser = {
-                    name: document.getElementById('set-name').value,
-                    user: document.getElementById('set-user').value,
-                    avatar: document.getElementById('set-avatar').value
-                };
-                localStorage.setItem('dice_profile', JSON.stringify(state.currentUser));
-                alert('Профиль сохранен!');
-                DiceEngine.toggleModal();
-            },
-            handleSend,
-            addNewContact
-        };
-    })();
-
-    // --- EVENT LISTENERS ---
-    document.getElementById('msgInput').onkeypress = (e) => {
-        if (e.key === 'Enter') DiceEngine.handleSend();
-    };
-
-    document.getElementById('searchInput').onkeypress = (e) => {
-        if (e.key === 'Enter' && e.target.value.startsWith('@')) {
-            DiceEngine.addNewContact(e.target.value);
-            e.target.value = '';
+            }, 1000);
         }
+    }
+
+    // --- ПОИСК ---
+    document.getElementById('searchInput').oninput = (e) => {
+        renderChatList(e.target.value);
     };
 
-    document.getElementById('msgInput').oninput = (e) => {
-        const icon = document.getElementById('actionIcon');
-        if (e.target.value.length > 0) {
-            icon.className = 'fa-solid fa-paper-plane icon-btn';
-            icon.onclick = DiceEngine.handleSend;
-        } else {
-            icon.className = 'fa-solid fa-microphone icon-btn';
-            icon.onclick = null;
-        }
-    };
+    // --- УПРАВЛЕНИЕ ---
+    function save() { localStorage.setItem('dg_v6_data', JSON.stringify(state.chats)); }
 
-    // Запуск приложения
-    window.onload = DiceEngine.init;
+    document.getElementById('sendBtn').onclick = sendMessage;
+    document.getElementById('msgInput').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+
+    // Запуск
+    renderChatList();
 </script>
 </body>
 </html>
+

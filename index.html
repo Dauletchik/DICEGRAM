@@ -2,800 +2,655 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GTA SAN ANDREAS - Открытый мир 3D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DICEGRAM — твой мессенджер</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background: #000;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            touch-action: none;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-        }
-
-        canvas {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            touch-action: none;
-        }
-
-        /* Миникарта */
-        .minimap {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 180px;
-            height: 180px;
-            background: rgba(0,0,0,0.8);
-            border-radius: 50%;
-            border: 3px solid #fff;
-            z-index: 200;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        #minimapCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        /* Джойстик */
-        .joystick-container {
-            position: fixed;
-            bottom: 80px;
-            left: 80px;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            border: 3px solid rgba(255,255,255,0.4);
-            z-index: 200;
-            touch-action: none;
-        }
-
-        .joystick-base {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.8);
-            transition: transform 0.02s linear;
-            pointer-events: none;
-        }
-
-        /* Кнопки */
-        .action-buttons {
-            position: fixed;
-            bottom: 80px;
-            right: 80px;
+            background: linear-gradient(145deg, #0f172a 0%, #111827 100%);
+            min-height: 100vh;
             display: flex;
-            gap: 15px;
-            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
         }
 
-        .action-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            border: 3px solid rgba(255,255,255,0.4);
+        /* Главный контейнер */
+        .app {
+            width: 100%;
+            max-width: 500px;
+            height: 85vh;
+            background: #1e293b;
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        /* Шапка */
+        .header {
+            background: #0f172a;
+            padding: 20px 20px 12px;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c084fc, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            background: none;
+            color: #facc15;
+            -webkit-background-clip: unset;
+        }
+
+        /* Экраны */
+        .screen {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .hide {
+            display: none !important;
+        }
+
+        /* Регистрация */
+        .reg-card {
+            background: #334155;
+            border-radius: 28px;
+            padding: 28px 20px;
+            text-align: center;
+            margin: auto;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .reg-card h2 {
+            color: #facc15;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+        .reg-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 60px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+            margin-bottom: 20px;
+        }
+        .reg-input:focus {
+            border-color: #c084fc;
+        }
+        .btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: #8b5cf6;
+            box-shadow: 0 4px 12px #8b5cf670;
+        }
+        .btn-primary:hover {
+            background: #a78bfa;
+            transform: scale(0.97);
+        }
+        .error-msg {
+            color: #f87171;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Список чатов / личек */
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-item {
+            background: #334155;
+            padding: 14px 18px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #475569;
+        }
+        .chat-item:active {
+            background: #475569;
+        }
+        .chat-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 18px;
+        }
+        .chat-badge {
+            background: #8b5cf6;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+        }
+
+        /* Поиск */
+        .search-box {
+            background: #0f172a;
+            border-radius: 60px;
+            padding: 8px 16px;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-box button {
+            background: #6366f1;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 16px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Окно диалога */
+        .chat-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
+            gap: 12px;
+            padding: 8px 4px;
+            border-bottom: 1px solid #475569;
+            margin-bottom: 12px;
+        }
+        .back-btn {
+            background: none;
+            border: none;
             font-size: 28px;
-            font-weight: bold;
             cursor: pointer;
-            transition: 0.05s linear;
+            color: #94a3b8;
         }
-
-        .action-btn:active {
-            transform: scale(0.9);
-            background: rgba(255,50,50,0.8);
+        .messages-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            max-height: 55vh;
         }
-
-        /* HUD */
-        .hud {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            padding: 10px 15px;
-            border-radius: 10px;
-            color: #0f0;
-            font-weight: bold;
-            font-size: 14px;
-            z-index: 200;
-            font-family: monospace;
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 24px;
+            font-size: 15px;
+            word-wrap: break-word;
         }
-
-        .health-bar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 220px;
-            height: 25px;
-            background: rgba(0,0,0,0.8);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #ff4444;
-            z-index: 200;
-        }
-
-        .health-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff4444, #ff8888);
-            transition: width 0.2s;
-        }
-
-        .money {
-            position: fixed;
-            top: 60px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            padding: 6px 12px;
-            border-radius: 8px;
-            color: #ffd700;
-            font-weight: bold;
-            font-size: 18px;
-            z-index: 200;
-        }
-
-        .zone-name {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            padding: 6px 15px;
-            border-radius: 20px;
+        .my-msg {
+            background: #8b5cf6;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
             color: white;
+        }
+        .their-msg {
+            background: #334155;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            color: #e2e8f0;
+        }
+        .input-area {
+            display: flex;
+            gap: 10px;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 60px;
+        }
+        .input-area input {
+            flex: 1;
+            background: #1e293b;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 16px;
+            color: white;
+        }
+        .send-btn {
+            background: #facc15;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 20px;
             font-weight: bold;
-            font-size: 14px;
-            z-index: 200;
-            white-space: nowrap;
+            color: #0f172a;
         }
 
-        @media (max-width: 768px) {
-            .joystick-container { width: 120px; height: 120px; bottom: 50px; left: 50px; }
-            .action-btn { width: 60px; height: 60px; font-size: 24px; }
-            .minimap { width: 130px; height: 130px; bottom: 15px; right: 15px; }
-            .health-bar { width: 160px; height: 20px; }
+        /* Нижняя навигация */
+        .bottom-nav {
+            display: flex;
+            background: #0f172a;
+            padding: 10px 20px;
+            justify-content: space-around;
+            border-top: 1px solid #334155;
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .nav-active {
+            background: #334155;
+            color: #facc15;
+        }
+
+        /* настройки */
+        .settings-card {
+            background: #334155;
+            border-radius: 28px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .settings-item {
+            background: #1e293b;
+            padding: 14px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div class="minimap">
-        <canvas id="minimapCanvas" width="180" height="180"></canvas>
-    </div>
-    
-    <div class="hud" id="locationName">🏙️ LOS SANTOS</div>
-    <div class="health-bar"><div class="health-fill" id="healthFill"></div></div>
-    <div class="money" id="money">💰 $ 0</div>
-    <div class="zone-name" id="zoneName">GROVE STREET</div>
-    
-    <div class="joystick-container" id="joystickContainer">
-        <div class="joystick-base" id="joystickBase"></div>
-    </div>
-    
-    <div class="action-buttons">
-        <div class="action-btn" id="actionBtn">⚡</div>
-        <div class="action-btn" id="jumpBtn">🦵</div>
+<div class="app" id="app">
+    <div class="header">
+        <div class="logo">DICE<span>GRAM</span></div>
+        <div style="font-size: 12px; color:#94a3b8;">бросай кубик — общайся</div>
     </div>
 
-    <script>
-        (function() {
-            const canvas = document.getElementById('gameCanvas');
-            const minimapCanvas = document.getElementById('minimapCanvas');
-            let ctx = canvas.getContext('2d');
-            let minimapCtx = minimapCanvas.getContext('2d');
-            
-            // Размер мира (оптимизирован)
-            const WORLD_SIZE = 4000;
-            
-            // Игрок (нормальный человек)
-            let player = {
-                x: WORLD_SIZE/2,
-                z: WORLD_SIZE/2,
-                angle: 0,
-                speed: 0,
-                maxSpeed: 5.5,
-                health: 100,
-                money: 0,
-                wanted: 0
+    <!-- экран регистрации -->
+    <div id="regScreen" class="screen">
+        <div class="reg-card">
+            <h2>✨ DICEGRAM ✨</h2>
+            <input type="text" id="regUsername" class="reg-input" placeholder="придумай юзернейм... например: dice_master" autocomplete="off">
+            <button id="registerBtn" class="btn btn-primary">Войти в DICEGRAM</button>
+            <div id="regError" class="error-msg"></div>
+            <div style="margin-top: 24px; font-size:12px; color:#94a3b8;">🔥 твой уникальный мир общения</div>
+        </div>
+    </div>
+
+    <!-- основной интерфейс после логина -->
+    <div id="mainScreen" class="screen hide">
+        <!-- список диалогов (вкладка Чаты) -->
+        <div id="chatsPanel">
+            <div class="search-box">
+                <input type="text" id="searchUserInput" placeholder="Поиск по юзернейму... например: @alice">
+                <button id="searchUserBtn">Найти</button>
+            </div>
+            <div id="chatsListContainer" class="chat-list">
+                <!-- динамические лички -->
+            </div>
+            <div style="text-align: center; margin-top: 12px;">
+                <button id="createGroupBtn" class="btn" style="background:#475569;">➕ Создать группу (бета)</button>
+            </div>
+        </div>
+
+        <!-- панель сообщений (открытый диалог) -->
+        <div id="chatPanel" class="hide">
+            <div class="chat-header">
+                <button id="backToListBtn" class="back-btn">←</button>
+                <div style="font-weight: bold; font-size: 20px; color:#facc15;" id="currentChatTitle">@user</div>
+            </div>
+            <div id="messagesContainer" class="messages-area"></div>
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Напиши сообщение...">
+                <button id="sendMsgBtn" class="send-btn">📨</button>
+            </div>
+        </div>
+
+        <!-- настройки -->
+        <div id="settingsPanel" class="hide">
+            <div class="settings-card">
+                <div class="settings-item">
+                    <span>🆔 Мой юзернейм</span>
+                    <span style="color:#c084fc;" id="myUsernameDisplay">@user</span>
+                </div>
+                <div class="settings-item" id="logoutBtn">
+                    <span>🚪 Выйти из аккаунта</span>
+                    <span>→</span>
+                </div>
+                <div class="settings-item">
+                    <span>🤖 DICEGRAM | официальное бот</span>
+                    <span>✅</span>
+                </div>
+                <div style="font-size: 12px; color:#94a3b8; text-align: center;">версия 1.0 — твой мессенджер</div>
+            </div>
+        </div>
+
+        <!-- нижнее меню -->
+        <div class="bottom-nav">
+            <button class="nav-btn" data-nav="chats">💬 Чаты</button>
+            <button class="nav-btn" data-nav="settings">⚙️ Настройки</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- СИСТЕМА ХРАНЕНИЯ ----------
+    let currentUser = null;        // { username }
+    let usersDB = [];              // массив зарегистрированных юзернеймов
+    let messagesDB = [];           // { from, to, text, timestamp, isGroup? (пока лс) }
+
+    // Загрузка из localStorage
+    function loadData() {
+        const storedUsers = localStorage.getItem('dicegram_users');
+        if(storedUsers) usersDB = JSON.parse(storedUsers);
+        else usersDB = [];
+
+        const storedMessages = localStorage.getItem('dicegram_messages');
+        if(storedMessages) messagesDB = JSON.parse(storedMessages);
+        else messagesDB = [];
+
+        const savedSession = localStorage.getItem('dicegram_session');
+        if(savedSession) {
+            const sessionUser = JSON.parse(savedSession);
+            if(usersDB.find(u => u.username === sessionUser.username)) {
+                currentUser = sessionUser;
+            }
+        }
+    }
+
+    function saveUsers() {
+        localStorage.setItem('dicegram_users', JSON.stringify(usersDB));
+    }
+    function saveMessages() {
+        localStorage.setItem('dicegram_messages', JSON.stringify(messagesDB));
+    }
+    function saveSession() {
+        if(currentUser) localStorage.setItem('dicegram_session', JSON.stringify(currentUser));
+        else localStorage.removeItem('dicegram_session');
+    }
+
+    // Регистрация нового пользователя
+    function registerUser(username) {
+        username = username.trim().toLowerCase();
+        if(username === "") return { ok: false, error: "Введите юзернейм" };
+        if(username.length < 3) return { ok: false, error: "Минимум 3 символа" };
+        const exists = usersDB.some(u => u.username === username);
+        if(exists) return { ok: false, error: "Уже существует такой юзернейм ❌" };
+        // регистрируем
+        usersDB.push({ username: username, createdAt: Date.now() });
+        saveUsers();
+        return { ok: true, username };
+    }
+
+    // вход / автосохранение после регистрации
+    function loginUser(username) {
+        currentUser = { username: username };
+        saveSession();
+        renderMainUI();
+        // имитация бота: при регистрации высылаем сообщение от бота DICEGRAM
+        const botMsgExists = messagesDB.some(m => m.from === "dicegram_bot" && m.to === username && m.text.includes("успешшно зарегситроовалти"));
+        if(!botMsgExists) {
+            const welcomeText = `🎲 вы успешшно ззаарегситроовалли аккауньа в дикеграам со юзер @${username}!\nДобро пожаловать в DICEGRAM! 🎉`;
+            messagesDB.push({
+                from: "dicegram_bot",
+                to: username,
+                text: welcomeText,
+                timestamp: Date.now()
+            });
+            saveMessages();
+        }
+    }
+
+    // отправка сообщения (личка)
+    function sendMessage(toUsername, text) {
+        if(!text.trim()) return;
+        const msg = {
+            from: currentUser.username,
+            to: toUsername,
+            text: text.trim(),
+            timestamp: Date.now()
+        };
+        messagesDB.push(msg);
+        saveMessages();
+    }
+
+    // получить диалог между двумя пользователями (сортировка)
+    function getDialog(userA, userB) {
+        return messagesDB.filter(m => 
+            (m.from === userA && m.to === userB) || (m.from === userB && m.to === userA)
+        ).sort((a,b) => a.timestamp - b.timestamp);
+    }
+
+    // получить список всех чатов (уникальные собеседники + бот)
+    function getChatsList() {
+        if(!currentUser) return [];
+        const set = new Set();
+        messagesDB.forEach(m => {
+            if(m.from === currentUser.username) set.add(m.to);
+            if(m.to === currentUser.username) set.add(m.from);
+        });
+        // также добавим всех зарегистрированных пользователей, кроме себя, чтобы можно было начать диалог
+        usersDB.forEach(u => {
+            if(u.username !== currentUser.username) set.add(u.username);
+        });
+        // добавим бота если нет
+        if(!set.has("dicegram_bot")) set.add("dicegram_bot");
+        
+        return Array.from(set).sort();
+    }
+
+    // поиск юзера и открытие чата
+    function findAndOpenChat(searchUsername) {
+        let target = searchUsername.trim().toLowerCase().replace('@','');
+        if(target === currentUser.username) {
+            alert("Нельзя открыть чат с самим собой 🤡");
+            return false;
+        }
+        const userExists = usersDB.some(u => u.username === target);
+        if(!target || (!userExists && target !== "dicegram_bot")) {
+            alert(`Пользователь @${target} не найден 😢`);
+            return false;
+        }
+        openChatWith(target);
+        return true;
+    }
+
+    // открыть личку
+    let activeChatPartner = null;
+    function openChatWith(partner) {
+        activeChatPartner = partner;
+        document.getElementById('chatsPanel').classList.add('hide');
+        document.getElementById('chatPanel').classList.remove('hide');
+        document.getElementById('settingsPanel').classList.add('hide');
+        document.getElementById('currentChatTitle').innerText = `@${partner}`;
+        renderMessages();
+        // подсветка навигации (чаты)
+        setActiveNav('chats');
+    }
+
+    function renderMessages() {
+        const container = document.getElementById('messagesContainer');
+        if(!activeChatPartner) return;
+        const dialog = getDialog(currentUser.username, activeChatPartner);
+        container.innerHTML = '';
+        dialog.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = `message ${msg.from === currentUser.username ? 'my-msg' : 'their-msg'}`;
+            let senderName = msg.from === currentUser.username ? 'Вы' : `@${msg.from}`;
+            if(msg.from === 'dicegram_bot') senderName = '🤖 DICEGRAM Bot';
+            div.innerHTML = `<strong style="font-size:12px;">${senderName}</strong><br>${msg.text}`;
+            container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function renderChatsList() {
+        const container = document.getElementById('chatsListContainer');
+        if(!container) return;
+        const chats = getChatsList();
+        if(chats.length === 0) {
+            container.innerHTML = '<div style="text-align:center;color:#94a3b8;">Начни диалог через поиск 🔍</div>';
+            return;
+        }
+        container.innerHTML = '';
+        chats.forEach(chat => {
+            const chatDiv = document.createElement('div');
+            chatDiv.className = 'chat-item';
+            let displayName = chat === 'dicegram_bot' ? '🤖 DICEGRAM Bot' : `@${chat}`;
+            chatDiv.innerHTML = `<div class="chat-name">${displayName}</div><div class="chat-badge">💬</div>`;
+            chatDiv.addEventListener('click', () => openChatWith(chat));
+            container.appendChild(chatDiv);
+        });
+    }
+
+    // отрисовка главного экрана (после логина)
+    function renderMainUI() {
+        document.getElementById('regScreen').classList.add('hide');
+        document.getElementById('mainScreen').classList.remove('hide');
+        document.getElementById('myUsernameDisplay').innerText = `@${currentUser.username}`;
+        // показать панель чатов по умолчанию
+        showPanel('chats');
+        renderChatsList();
+        // если чат был открыт, обновим
+        if(activeChatPartner) renderMessages();
+    }
+
+    function showPanel(panel) {
+        document.getElementById('chatsPanel').classList.add('hide');
+        document.getElementById('chatPanel').classList.add('hide');
+        document.getElementById('settingsPanel').classList.add('hide');
+        if(panel === 'chats') {
+            document.getElementById('chatsPanel').classList.remove('hide');
+            renderChatsList();
+            activeChatPartner = null;
+        } else if(panel === 'settings') {
+            document.getElementById('settingsPanel').classList.remove('hide');
+        }
+    }
+
+    function setActiveNav(active) {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('nav-active');
+        });
+        if(active === 'chats') document.querySelector('[data-nav="chats"]').classList.add('nav-active');
+        if(active === 'settings') document.querySelector('[data-nav="settings"]').classList.add('nav-active');
+    }
+
+    // ---------- инициализация событий ----------
+    function bindEvents() {
+        // Регистрация
+        const regBtn = document.getElementById('registerBtn');
+        const regInput = document.getElementById('regUsername');
+        const regError = document.getElementById('regError');
+        regBtn.onclick = () => {
+            const username = regInput.value;
+            const result = registerUser(username);
+            if(result.ok) {
+                loginUser(result.username);
+                // после успеха: бот присылает письмо (уже сделано в loginUser)
+            } else {
+                regError.innerText = result.error;
+            }
+        };
+        // Навигация
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.onclick = () => {
+                const navTo = btn.getAttribute('data-nav');
+                if(navTo === 'chats') { showPanel('chats'); setActiveNav('chats'); }
+                if(navTo === 'settings') { showPanel('settings'); setActiveNav('settings'); }
             };
-            
-            // Управление
-            let moveForward = false, moveBack = false, moveLeft = false, moveRight = false;
-            let touchMoveX = 0, touchMoveY = 0;
-            
-            // Объекты мира
-            let buildings = [];
-            let trees = [];
-            let cars = [];
-            let npcs = [];
-            let pickups = [];
-            
-            // Автовокзал
-            let busStation = null;
-            
-            // Камера
-            let camera = { x: 0, z: 0, y: 1.8 };
-            
-            // Оптимизация: видимые объекты
-            let visibleDistance = 800;
-            
-            // Генерация мира
-            function generateWorld() {
-                // Автовокзал (центр карты)
-                busStation = {
-                    x: WORLD_SIZE/2,
-                    z: WORLD_SIZE/2,
-                    w: 120,
-                    h: 60,
-                    d: 120,
-                    color: '#8a7a6a'
-                };
-                buildings.push(busStation);
-                
-                // Здания вокруг автовокзала
-                for(let i = 0; i < 60; i++) {
-                    let angle = Math.random() * Math.PI * 2;
-                    let dist = 200 + Math.random() * 500;
-                    let x = WORLD_SIZE/2 + Math.cos(angle) * dist;
-                    let z = WORLD_SIZE/2 + Math.sin(angle) * dist;
-                    let w = 35 + Math.random() * 45;
-                    let h = 40 + Math.random() * 60;
-                    let d = 35 + Math.random() * 45;
-                    buildings.push({ x, z, w, h, d, color: `hsl(${30 + Math.random() * 40}, 40%, 35%)` });
-                }
-                
-                // Жилые дома
-                for(let i = 0; i < 80; i++) {
-                    let x = 500 + Math.random() * 3000;
-                    let z = 500 + Math.random() * 3000;
-                    let w = 30 + Math.random() * 35;
-                    let h = 25 + Math.random() * 30;
-                    let d = 30 + Math.random() * 35;
-                    buildings.push({ x, z, w, h, d, color: '#9a8a7a' });
-                }
-                
-                // Деревья
-                for(let i = 0; i < 200; i++) {
-                    let x = 100 + Math.random() * (WORLD_SIZE - 200);
-                    let z = 100 + Math.random() * (WORLD_SIZE - 200);
-                    trees.push({ x, z, size: 12 + Math.random() * 10 });
-                }
-                
-                // Машины на дорогах
-                for(let i = 0; i < 45; i++) {
-                    let angle = Math.random() * Math.PI * 2;
-                    let dist = 100 + Math.random() * 1800;
-                    let x = WORLD_SIZE/2 + Math.cos(angle) * dist;
-                    let z = WORLD_SIZE/2 + Math.sin(angle) * dist;
-                    cars.push({
-                        x, z,
-                        angle: Math.random() * Math.PI * 2,
-                        speed: 1 + Math.random() * 2.5,
-                        color: `hsl(${Math.random() * 360}, 60%, 45%)`
-                    });
-                }
-                
-                // NPC на улицах
-                for(let i = 0; i < 60; i++) {
-                    let x = 200 + Math.random() * (WORLD_SIZE - 400);
-                    let z = 200 + Math.random() * (WORLD_SIZE - 400);
-                    npcs.push({
-                        x, z,
-                        angle: Math.random() * Math.PI * 2,
-                        speed: 0.6 + Math.random() * 0.8,
-                        color: `hsl(${Math.random() * 360}, 40%, 50%)`
-                    });
-                }
-                
-                // Предметы (деньги и аптечки)
-                for(let i = 0; i < 80; i++) {
-                    let x = 150 + Math.random() * (WORLD_SIZE - 300);
-                    let z = 150 + Math.random() * (WORLD_SIZE - 300);
-                    pickups.push({
-                        x, z,
-                        type: Math.random() > 0.7 ? 'health' : 'money',
-                        value: Math.random() > 0.7 ? 50 : 100
-                    });
-                }
+        });
+        // Поиск пользователя
+        document.getElementById('searchUserBtn').onclick = () => {
+            const searchVal = document.getElementById('searchUserInput').value;
+            if(findAndOpenChat(searchVal)) {
+                document.getElementById('searchUserInput').value = '';
             }
-            
-            // Оптимизированная проверка коллизий
-            function checkCollision(x, z, radius) {
-                // Проверка зданий
-                for(let b of buildings) {
-                    let dx = Math.abs(x - b.x);
-                    let dz = Math.abs(z - b.z);
-                    if(dx < b.w/2 + radius && dz < b.d/2 + radius) return true;
-                }
-                // Проверка деревьев
-                for(let t of trees) {
-                    let dx = x - t.x;
-                    let dz = z - t.z;
-                    if(Math.hypot(dx, dz) < radius + t.size/2) return true;
-                }
-                return false;
+        };
+        // Назад к списку чатов
+        document.getElementById('backToListBtn').onclick = () => {
+            showPanel('chats');
+            activeChatPartner = null;
+            setActiveNav('chats');
+        };
+        // Отправка сообщения
+        document.getElementById('sendMsgBtn').onclick = () => {
+            if(!activeChatPartner) return;
+            const input = document.getElementById('messageInput');
+            const text = input.value;
+            if(text.trim()) {
+                sendMessage(activeChatPartner, text);
+                input.value = '';
+                renderMessages();
             }
-            
-            // Движение игрока
-            function updateMovement() {
-                let moveX = touchMoveX;
-                let moveZ = touchMoveY;
-                
-                if(moveForward) moveZ = -1;
-                if(moveBack) moveZ = 1;
-                if(moveLeft) moveX = -1;
-                if(moveRight) moveX = 1;
-                
-                if(moveX !== 0 || moveZ !== 0) {
-                    let len = Math.hypot(moveX, moveZ);
-                    moveX /= len;
-                    moveZ /= len;
-                    
-                    let newX = player.x + moveX * player.maxSpeed;
-                    let newZ = player.z + moveZ * player.maxSpeed;
-                    
-                    if(!checkCollision(newX, player.z, 18)) player.x = newX;
-                    if(!checkCollision(player.x, newZ, 18)) player.z = newZ;
-                    
-                    player.angle = Math.atan2(moveX, moveZ);
-                }
-            }
-            
-            // Сбор предметов
-            function collectItems() {
-                for(let i = 0; i < pickups.length; i++) {
-                    let p = pickups[i];
-                    let dx = player.x - p.x;
-                    let dz = player.z - p.z;
-                    if(Math.hypot(dx, dz) < 25) {
-                        if(p.type === 'money') player.money += p.value;
-                        else player.health = Math.min(100, player.health + p.value);
-                        pickups.splice(i,1);
-                        i--;
-                    }
-                }
-            }
-            
-            // Движение машин
-            function updateCars() {
-                for(let car of cars) {
-                    let newX = car.x + Math.sin(car.angle) * car.speed;
-                    let newZ = car.z + Math.cos(car.angle) * car.speed;
-                    
-                    let collision = false;
-                    for(let b of buildings) {
-                        let dx = Math.abs(newX - b.x);
-                        let dz = Math.abs(newZ - b.z);
-                        if(dx < b.w/2 + 12 && dz < b.d/2 + 12) {
-                            collision = true;
-                            break;
-                        }
-                    }
-                    
-                    if(!collision && newX > 50 && newX < WORLD_SIZE - 50 && newZ > 50 && newZ < WORLD_SIZE - 50) {
-                        car.x = newX;
-                        car.z = newZ;
-                    } else {
-                        car.angle += (Math.random() - 0.5) * 1.5;
-                    }
-                    
-                    if(Math.random() < 0.02) car.angle += (Math.random() - 0.5) * 0.5;
-                }
-            }
-            
-            // Движение NPC
-            function updateNPCs() {
-                for(let npc of npcs) {
-                    let newX = npc.x + Math.sin(npc.angle) * npc.speed;
-                    let newZ = npc.z + Math.cos(npc.angle) * npc.speed;
-                    
-                    let collision = false;
-                    for(let b of buildings) {
-                        let dx = Math.abs(newX - b.x);
-                        let dz = Math.abs(newZ - b.z);
-                        if(dx < b.w/2 + 12 && dz < b.d/2 + 12) {
-                            collision = true;
-                            break;
-                        }
-                    }
-                    
-                    if(!collision && newX > 30 && newX < WORLD_SIZE - 30 && newZ > 30 && newZ < WORLD_SIZE - 30) {
-                        npc.x = newX;
-                        npc.z = newZ;
-                    } else {
-                        npc.angle += (Math.random() - 0.5) * 1.2;
-                    }
-                    
-                    if(Math.random() < 0.01) npc.angle += (Math.random() - 0.5) * 1;
-                }
-            }
-            
-            // 3D проекция (оптимизированная)
-            function project3D(x, z, y, height = 0) {
-                let dx = x - camera.x;
-                let dz = z - camera.z;
-                let dist = Math.hypot(dx, dz);
-                if(dist < 0.1) dist = 0.1;
-                
-                let angleToObj = Math.atan2(dz, dx);
-                let angleDiff = angleToObj - player.angle;
-                
-                let screenX = Math.tan(angleDiff) * 300;
-                let scale = 450 / dist;
-                let screenY = canvas.height/2 - (y + height - camera.y) * scale;
-                
-                return { x: canvas.width/2 + screenX, y: screenY, scale: scale, dist: dist };
-            }
-            
-            // Отрисовка 3D мира
-            function draw3D() {
-                // Небо
-                let grad = ctx.createLinearGradient(0, 0, 0, canvas.height/2);
-                grad.addColorStop(0, '#1a3a5a');
-                grad.addColorStop(1, '#4a8aba');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, canvas.width, canvas.height/2);
-                
-                // Земля
-                ctx.fillStyle = '#3a6a3a';
-                ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height/2);
-                
-                // Дороги
-                ctx.strokeStyle = '#555';
-                ctx.lineWidth = 6;
-                for(let i = -15; i < 15; i++) {
-                    let z = camera.z + i * 40;
-                    let x = camera.x;
-                    let proj = project3D(x, z, 0);
-                    if(proj.dist < visibleDistance && proj.dist > 0) {
-                        ctx.beginPath();
-                        ctx.moveTo(canvas.width/2 - 80/proj.scale, proj.y);
-                        ctx.lineTo(canvas.width/2 + 80/proj.scale, proj.y);
-                        ctx.stroke();
-                    }
-                }
-                
-                // Здания (сортировка по дальности)
-                let sorted = [...buildings].sort((a,b) => {
-                    let da = Math.hypot(a.x - camera.x, a.z - camera.z);
-                    let db = Math.hypot(b.x - camera.x, b.z - camera.z);
-                    return db - da;
-                });
-                
-                for(let b of sorted) {
-                    let proj = project3D(b.x, b.z, 0);
-                    if(proj.dist < visibleDistance && proj.dist > 0) {
-                        let width = b.w * proj.scale;
-                        let height = b.h * proj.scale;
-                        let x = proj.x - width/2;
-                        let y = proj.y - height;
-                        
-                        ctx.fillStyle = b.color;
-                        ctx.fillRect(x, y, width, height);
-                        
-                        // Окна
-                        ctx.fillStyle = '#ffcc88';
-                        for(let i = 0; i < 2; i++) {
-                            ctx.fillRect(x + width/4, y + height/4 + i*height/3, width/2, height/8);
-                        }
-                        
-                        // Крыша
-                        ctx.fillStyle = '#5a4a3a';
-                        ctx.fillRect(x - 3, y - 5, width + 6, 5);
-                    }
-                }
-                
-                // Деревья
-                for(let t of trees) {
-                    let proj = project3D(t.x, t.z, 0);
-                    if(proj.dist < 500 && proj.dist > 0) {
-                        let size = t.size * proj.scale;
-                        let x = proj.x - size/2;
-                        let y = proj.y - size;
-                        
-                        ctx.fillStyle = '#2d6a2d';
-                        ctx.fillRect(x, y, size, size);
-                        ctx.fillStyle = '#8B4513';
-                        ctx.fillRect(x + size/3, y + size/2, size/3, size/2);
-                    }
-                }
-                
-                // Машины
-                for(let car of cars) {
-                    let proj = project3D(car.x, car.z, 0);
-                    if(proj.dist < 500 && proj.dist > 0) {
-                        let w = 30 * proj.scale;
-                        let h = 15 * proj.scale;
-                        ctx.fillStyle = car.color;
-                        ctx.fillRect(proj.x - w/2, proj.y - h, w, h);
-                        ctx.fillStyle = '#aaa';
-                        ctx.fillRect(proj.x - w/4, proj.y - h - 3, w/2, 3);
-                    }
-                }
-                
-                // NPC (люди)
-                for(let npc of npcs) {
-                    let proj = project3D(npc.x, npc.z, 0);
-                    if(proj.dist < 400 && proj.dist > 0) {
-                        let size = 25 * proj.scale;
-                        let x = proj.x - size/2;
-                        let y = proj.y - size;
-                        
-                        ctx.fillStyle = npc.color;
-                        ctx.fillRect(x, y, size, size);
-                        ctx.fillStyle = '#f5d0a9';
-                        ctx.fillRect(x + size/4, y + size/6, size/6, size/6);
-                        ctx.fillRect(x + size*0.6, y + size/6, size/6, size/6);
-                        ctx.fillStyle = '#333';
-                        ctx.fillRect(x + size/3, y + size*0.6, size/3, size/5);
-                    }
-                }
-                
-                // Предметы
-                for(let p of pickups) {
-                    let proj = project3D(p.x, p.z, 0);
-                    if(proj.dist < 300 && proj.dist > 0) {
-                        let size = 12 * proj.scale;
-                        ctx.fillStyle = p.type === 'money' ? '#FFD700' : '#ff4444';
-                        ctx.beginPath();
-                        ctx.arc(proj.x, proj.y - size/2, size/2, 0, Math.PI*2);
-                        ctx.fill();
-                    }
-                }
-                
-                // Персонаж игрока (вид сзади)
-                let backX = player.x - Math.sin(player.angle) * 35;
-                let backZ = player.z - Math.cos(player.angle) * 35;
-                let playerProj = project3D(backX, backZ, 0);
-                if(playerProj.dist > 0) {
-                    let size = 28;
-                    let x = playerProj.x - size/2;
-                    let y = playerProj.y - size;
-                    
-                    // Тело
-                    ctx.fillStyle = '#3a7a3a';
-                    ctx.fillRect(x, y, size, size);
-                    // Голова
-                    ctx.fillStyle = '#f5d0a9';
-                    ctx.fillRect(x + size/4, y + size/8, size/2, size/4);
-                    // Волосы
-                    ctx.fillStyle = '#2a2a2a';
-                    ctx.fillRect(x + size/4, y + size/12, size/2, size/8);
-                    // Глаза
-                    ctx.fillStyle = '#fff';
-                    ctx.fillRect(x + size/3, y + size/5, size/8, size/8);
-                    ctx.fillRect(x + size*0.55, y + size/5, size/8, size/8);
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(x + size/3 + 2, y + size/5 + 2, 3, 3);
-                    ctx.fillRect(x + size*0.55 + 2, y + size/5 + 2, 3, 3);
-                    // Футболка
-                    ctx.fillStyle = '#fff';
-                    ctx.fillRect(x + size/4, y + size*0.45, size/2, size/3);
-                    // Штаны
-                    ctx.fillStyle = '#4a6a8a';
-                    ctx.fillRect(x + size/4, y + size*0.7, size/2, size/4);
-                }
-                
-                // Красный эффект при низком здоровье
-                if(player.health < 30) {
-                    ctx.fillStyle = `rgba(255,0,0,${0.3 - player.health/100})`;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                }
-            }
-            
-            // Миникарта
-            function drawMinimap() {
-                minimapCtx.fillStyle = '#1a2a1a';
-                minimapCtx.fillRect(0, 0, 180, 180);
-                
-                let scale = 180 / WORLD_SIZE;
-                let offsetX = player.x * scale;
-                let offsetY = player.z * scale;
-                
-                // Здания на миникарте
-                for(let b of buildings) {
-                    let x = b.x * scale - offsetX + 90;
-                    let z = b.z * scale - offsetY + 90;
-                    if(x > -20 && x < 200 && z > -20 && z < 200) {
-                        minimapCtx.fillStyle = '#666';
-                        minimapCtx.fillRect(x - b.w/2 * scale, z - b.d/2 * scale, b.w * scale, b.d * scale);
-                    }
-                }
-                
-                // Машины
-                for(let car of cars) {
-                    let x = car.x * scale - offsetX + 90;
-                    let z = car.z * scale - offsetY + 90;
-                    minimapCtx.fillStyle = '#f00';
-                    minimapCtx.fillRect(x-2, z-2, 4, 4);
-                }
-                
-                // NPC
-                for(let npc of npcs) {
-                    let x = npc.x * scale - offsetX + 90;
-                    let z = npc.z * scale - offsetY + 90;
-                    minimapCtx.fillStyle = '#0f0';
-                    minimapCtx.fillRect(x-2, z-2, 4, 4);
-                }
-                
-                // Предметы
-                for(let p of pickups) {
-                    let x = p.x * scale - offsetX + 90;
-                    let z = p.z * scale - offsetY + 90;
-                    minimapCtx.fillStyle = p.type === 'money' ? '#ff0' : '#f0f';
-                    minimapCtx.fillRect(x-2, z-2, 4, 4);
-                }
-                
-                // Игрок
-                minimapCtx.fillStyle = '#fff';
-                minimapCtx.beginPath();
-                minimapCtx.arc(90, 90, 5, 0, Math.PI*2);
-                minimapCtx.fill();
-                
-                // Направление игрока
-                minimapCtx.strokeStyle = '#fff';
-                minimapCtx.beginPath();
-                minimapCtx.moveTo(90, 90);
-                minimapCtx.lineTo(90 + Math.sin(player.angle)*15, 90 + Math.cos(player.angle)*15);
-                minimapCtx.stroke();
-            }
-            
-            // Обновление камеры
-            function updateCamera() {
-                camera.x = player.x;
-                camera.z = player.z;
-            }
-            
-            // Зоны
-            function getZone() {
-                let dx = Math.abs(player.x - WORLD_SIZE/2);
-                let dz = Math.abs(player.z - WORLD_SIZE/2);
-                if(dx < 300 && dz < 300) return "🚌 АВТОВОКЗАЛ";
-                if(player.x < 1500 && player.z < 1500) return "🏙️ LOS SANTOS";
-                if(player.x > 2500 && player.z > 2500) return "🌵 DESERT";
-                return "🌳 COUNTRYSIDE";
-            }
-            
-            // HUD
-            function updateHUD() {
-                document.getElementById('locationName').innerHTML = getZone();
-                document.getElementById('healthFill').style.width = `${player.health}%`;
-                document.getElementById('money').innerHTML = `💰 $ ${player.money}`;
-                
-                let zoneText = "GROVE STREET";
-                let dx = Math.abs(player.x - WORLD_SIZE/2);
-                let dz = Math.abs(player.z - WORLD_SIZE/2);
-                if(dx < 300 && dz < 300) zoneText = "AUTOBUS STATION";
-                else if(player.x < 1500) zoneText = "EAST LS";
-                else if(player.x > 2500) zoneText = "WEST LS";
-                document.getElementById('zoneName').innerHTML = zoneText;
-            }
-            
-            // Джойстик
-            const joystickContainer = document.getElementById('joystickContainer');
-            const joystickBase = document.getElementById('joystickBase');
-            let joystickActive = false;
-            let joystickCenter = { x: 0, y: 0 };
-            
-            function handleTouchStart(e) {
-                e.preventDefault();
-                const rect = joystickContainer.getBoundingClientRect();
-                joystickCenter = { x: rect.left + rect.width/2, y: rect.top + rect.height/2 };
-                joystickActive = true;
-                if(e.touches[0]) handleTouchMove(e);
-            }
-            
-            function handleTouchMove(e) {
-                if(!joystickActive) return;
-                e.preventDefault();
-                const touch = e.touches[0];
-                let dx = touch.clientX - joystickCenter.x;
-                let dy = touch.clientY - joystickCenter.y;
-                let maxDist = joystickContainer.offsetWidth/2;
-                let dist = Math.hypot(dx, dy);
-                if(dist > maxDist) { dx = dx * maxDist / dist; dy = dy * maxDist / dist; }
-                joystickBase.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-                touchMoveX = dx / maxDist;
-                touchMoveY = dy / maxDist;
-            }
-            
-            function handleTouchEnd(e) {
-                joystickActive = false;
-                joystickBase.style.transform = 'translate(-50%, -50%)';
-                touchMoveX = 0; touchMoveY = 0;
-                e.preventDefault();
-            }
-            
-            joystickContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
-            joystickContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-            joystickContainer.addEventListener('touchend', handleTouchEnd);
-            
-            // Кнопки
-            document.getElementById('actionBtn').addEventListener('click', () => {
-                player.maxSpeed = 9;
-                setTimeout(() => player.maxSpeed = 5.5, 300);
-            });
-            
-            document.getElementById('jumpBtn').addEventListener('click', () => {
-                touchMoveY = -1;
-                setTimeout(() => { if(!joystickActive) touchMoveY = 0; }, 150);
-            });
-            
-            // Клавиатура
-            window.addEventListener('keydown', (e) => {
-                let k = e.key.toLowerCase();
-                if(k === 'w' || k === 'arrowup') moveForward = true;
-                if(k === 's' || k === 'arrowdown') moveBack = true;
-                if(k === 'a' || k === 'arrowleft') moveLeft = true;
-                if(k === 'd' || k === 'arrowright') moveRight = true;
-                e.preventDefault();
-            });
-            
-            window.addEventListener('keyup', (e) => {
-                let k = e.key.toLowerCase();
-                if(k === 'w' || k === 'arrowup') moveForward = false;
-                if(k === 's' || k === 'arrowdown') moveBack = false;
-                if(k === 'a' || k === 'arrowleft') moveLeft = false;
-                if(k === 'd' || k === 'arrowright') moveRight = false;
-            });
-            
-            // Ресайз
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                ctx = canvas.getContext('2d');
-            }
-            
-            // Инициализация
-            generateWorld();
-            resize();
-            window.addEventListener('resize', resize);
-            
-            // Главный цикл
-            function gameLoop() {
-                updateMovement();
-                updateCars();
-                updateNPCs();
-                collectItems();
-                updateCamera();
-                draw3D();
-                drawMinimap();
-                updateHUD();
-                requestAnimationFrame(gameLoop);
-            }
-            
-            gameLoop();
-        })();
-    </script>
+        };
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') document.getElementById('sendMsgBtn').click();
+        });
+        // Выход
+        document.getElementById('logoutBtn').onclick = () => {
+            localStorage.removeItem('dicegram_session');
+            currentUser = null;
+            activeChatPartner = null;
+            document.getElementById('regScreen').classList.remove('hide');
+            document.getElementById('mainScreen').classList.add('hide');
+            document.getElementById('regUsername').value = '';
+            document.getElementById('regError').innerText = '';
+        };
+        // Создание группы (заглушка с функцией)
+        document.getElementById('createGroupBtn').onclick = () => {
+            alert("⚙️ Функция групп в разработке! Скоро вы сможете создавать группы и добавлять участников. DICEGRAM расширяется!");
+        };
+    }
+
+    // Запуск приложения
+    function init() {
+        loadData();
+        bindEvents();
+        if(currentUser && usersDB.some(u => u.username === currentUser.username)) {
+            renderMainUI();
+        } else {
+            document.getElementById('regScreen').classList.remove('hide');
+            document.getElementById('mainScreen').classList.add('hide');
+        }
+    }
+    init();
+</script>
 </body>
     </html>

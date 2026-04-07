@@ -3,79 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DICE TOK | Creator Edition</title>
+    <title>DICE TOK | Ultimate</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --black: #010101;
             --white: #ffffff;
             --accent: #fe2c55;
-            --dark-gray: #121212;
             --gray: #888;
+            --dark-gray: #252525;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--black); color: var(--white); height: 100vh; overflow: hidden; }
 
-        /* --- СКРЫТЫЕ СЕКЦИИ --- */
-        .page { display: none; height: calc(100vh - 60px); width: 100%; overflow-y: auto; }
+        .page { display: none; height: calc(100vh - 60px); width: 100%; position: relative; }
         .page.active { display: block; }
 
-        /* --- ЛЕНТА (FEED) --- */
+        /* --- ЛЕНТА --- */
         #feedPage { overflow-y: scroll; snap-type: y mandatory; scrollbar-width: none; height: 100vh; }
-        .video-card { height: 100vh; width: 100%; snap-align: start; position: relative; background: #000; }
+        .video-card { height: 100vh; width: 100%; snap-align: start; position: relative; background: #000; overflow: hidden; }
         video { width: 100%; height: 100%; object-fit: cover; }
 
-        .empty-state {
-            height: 100%; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; color: var(--gray);
-            text-align: center; padding: 20px;
+        /* Анимация лайка по центру */
+        .heart-animation {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            color: var(--accent); font-size: 100px; opacity: 0; pointer-events: none; z-index: 10;
+        }
+        .heart-animation.animate { animation: heartPop 0.8s ease-out; }
+        @keyframes heartPop { 
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
         }
 
-        /* --- ОВЕРЛЕЙ ВИДЕО --- */
-        .video-ui {
-            position: absolute; bottom: 80px; left: 0; width: 100%;
-            padding: 20px; display: flex; justify-content: space-between; align-items: flex-end;
-            pointer-events: none;
-        }
-        .video-ui * { pointer-events: auto; }
+        /* UI Видео */
+        .video-ui { position: absolute; bottom: 80px; left: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 5; }
         .side-bar { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .action-item { text-align: center; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .action-item i { font-size: 35px; margin-bottom: 5px; transition: 0.2s; }
+        .action-item i.liked { color: var(--accent); }
 
-        /* --- МОДАЛКА ЗАГРУЗКИ --- */
-        #uploadModal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--black); z-index: 200; display: none; padding: 20px;
+        /* --- КОММЕНТАРИИ (Sheet) --- */
+        #commentSheet {
+            position: fixed; bottom: -70%; left: 0; width: 100%; height: 70%;
+            background: var(--dark-gray); border-radius: 15px 15px 0 0; z-index: 300;
+            transition: bottom 0.3s ease; padding: 20px; display: flex; flex-direction: column;
         }
-        .upload-header { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 18px; }
-        .upload-form input, .upload-form textarea {
-            width: 100%; background: #222; border: none; color: white;
-            padding: 15px; border-radius: 8px; margin-bottom: 15px; outline: none;
-        }
-        .btn-publish {
-            background: var(--accent); color: white; width: 100%; padding: 15px;
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
-        }
+        #commentSheet.open { bottom: 0; }
+        .comment-list { flex: 1; overflow-y: auto; margin-top: 15px; }
+        .comment-item { margin-bottom: 15px; font-size: 14px; }
+        .comment-input-area { display: flex; gap: 10px; padding-top: 10px; }
+        .comment-input-area input { flex: 1; background: #333; border: none; color: white; padding: 10px; border-radius: 20px; outline: none; }
 
         /* --- ПРОФИЛЬ --- */
-        .profile-header { padding: 40px 20px; text-align: center; }
-        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--accent); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .profile-info { padding: 30px 20px; text-align: center; position: relative; }
+        .edit-btn { position: absolute; top: 10px; right: 10px; font-size: 20px; color: var(--gray); cursor: pointer; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; background: var(--accent); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 35px; }
         .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-        .grid-item { aspect-ratio: 3/4; background: #333; position: relative; }
+        .grid-item { aspect-ratio: 3/4; background: #222; }
         .grid-item video { width: 100%; height: 100%; object-fit: cover; }
 
+        /* --- МОДАЛКА НАСТРОЕК --- */
+        #editModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 400; display: none; padding: 20px; }
+
         /* --- НАВИГАЦИЯ --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; height: 60px;
-            background: var(--black); border-top: 0.5px solid #333;
-            display: flex; justify-content: space-around; align-items: center; z-index: 100;
-        }
-        .nav-item { color: var(--gray); text-align: center; cursor: pointer; transition: 0.2s; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: var(--black); border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .nav-item { color: var(--gray); font-size: 24px; cursor: pointer; }
         .nav-item.active { color: white; }
-        .create-btn { 
-            background: linear-gradient(90deg, #25f4ee 0%, #fe2c55 100%);
-            width: 45px; height: 30px; border-radius: 8px; color: black;
-            display: flex; align-items: center; justify-content: center;
-        }
     </style>
 </head>
 <body>
@@ -83,47 +78,57 @@
     <div id="feedPage" class="page active"></div>
 
     <div id="profilePage" class="page">
-        <div class="profile-header">
-            <div class="profile-avatar">D</div>
-            <h2 id="profName">@dice_user</h2>
-            <p style="color:var(--gray)">0 Лайков • 0 Подписок</p>
+        <div class="profile-info">
+            <i class="fa-solid fa-gear edit-btn" onclick="toggleEdit(true)"></i>
+            <div class="avatar" id="p-avatar">U</div>
+            <h2 id="p-name">@username</h2>
+            <p id="p-bio" style="color:var(--gray); font-size:14px; margin-top:5px">Нет описания</p>
         </div>
-        <div class="video-grid" id="myVideosGrid"></div>
+        <div class="video-grid" id="profileGrid"></div>
     </div>
 
-    <div id="uploadModal">
-        <div class="upload-header">
-            <span onclick="toggleUpload(false)">Отмена</span>
-            <span style="font-weight:bold">Новое видео</span>
-            <span></span>
+    <div id="editModal">
+        <h2 style="margin-bottom:20px">Изменить профиль</h2>
+        <input type="text" id="edit-name" placeholder="Новый ник" style="width:100%; padding:15px; background:#222; border:none; color:white; border-radius:10px; margin-bottom:15px;">
+        <textarea id="edit-bio" placeholder="О себе" style="width:100%; padding:15px; background:#222; border:none; color:white; border-radius:10px; margin-bottom:15px;"></textarea>
+        <button onclick="saveProfile()" style="width:100%; padding:15px; background:var(--accent); border:none; color:white; border-radius:10px; font-weight:bold">Сохранить</button>
+        <p onclick="toggleEdit(false)" style="text-align:center; margin-top:20px; color:var(--gray)">Отмена</p>
+    </div>
+
+    <div id="commentSheet">
+        <div style="display:flex; justify-content:space-between">
+            <b id="commentCount">0 комментариев</b>
+            <i class="fa-solid fa-xmark" onclick="toggleComments(false)"></i>
         </div>
-        <div class="upload-form">
-            <label style="display:block; margin-bottom:10px; color:var(--gray)">Выберите файл видео:</label>
-            <input type="file" id="videoFile" accept="video/*">
-            <textarea id="videoDesc" placeholder="Напишите описание..." rows="4"></textarea>
-            <button class="btn-publish" onclick="publishVideo()">Опубликовать</button>
+        <div class="comment-list" id="commentList"></div>
+        <div class="comment-input-area">
+            <input type="text" id="cInput" placeholder="Добавить комментарий...">
+            <i class="fa-solid fa-paper-plane" onclick="addComment()" style="color:var(--accent); margin-top:10px"></i>
         </div>
     </div>
 
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="showPage('feed')"><i class="fa-solid fa-house"></i></div>
-        <div class="nav-item" onclick="showPage('discover')"><i class="fa-solid fa-magnifying-glass"></i></div>
-        <div class="nav-item" onclick="toggleUpload(true)"><div class="create-btn"><i class="fa-solid fa-plus"></i></div></div>
-        <div class="nav-item"><i class="fa-solid fa-message"></i></div>
+        <div class="nav-item" onclick="alert('Поиск скоро будет!')"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="nav-item" onclick="alert('Загрузка видео была в прошлом коде, добавьте её сюда!')"><i class="fa-solid fa-plus-square"></i></div>
         <div class="nav-item" onclick="showPage('profile')"><i class="fa-solid fa-user"></i></div>
     </nav>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('dice_tok_db')) || [];
+    // --- ДАННЫЕ ---
+    let state = {
+        user: JSON.parse(localStorage.getItem('dt_user')) || { name: '@dice_fan', bio: 'Люблю кодить', avatar: 'D' },
+        videos: JSON.parse(localStorage.getItem('dt_videos')) || [
+            { id: 1, src: 'https://www.w3schools.com/html/mov_bbb.mp4', desc: 'Первое видео! #тест', likes: 0, comments: [], isLiked: false }
+        ]
+    };
+
+    let activeVideoId = null;
 
     // --- ЛОГИКА СТРАНИЦ ---
     function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        
-        const target = document.getElementById(pageId + 'Page');
-        if(target) target.classList.add('active');
-        
+        document.getElementById(pageId + 'Page').classList.add('active');
         if(pageId === 'feed') renderFeed();
         if(pageId === 'profile') renderProfile();
     }
@@ -131,85 +136,116 @@
     // --- РЕНДЕР ЛЕНТЫ ---
     function renderFeed() {
         const feed = document.getElementById('feedPage');
-        if (db.length === 0) {
-            feed.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-clapperboard" style="font-size: 50px; margin-bottom: 15px;"></i>
-                    <p>Тут пока пусто.<br>Будь первым, кто выложит видео!</p>
-                </div>`;
-            return;
-        }
-
-        feed.innerHTML = db.map(vid => `
-            <div class="video-card">
-                <video loop src="${vid.src}" playsinline onclick="this.paused ? this.play() : this.pause()"></video>
+        feed.innerHTML = state.videos.map(v => `
+            <div class="video-card" data-id="${v.id}" ondblclick="handleDoubleTap(${v.id}, this)">
+                <video loop src="${v.src}" playsinline onclick="this.paused ? this.play() : this.pause()"></video>
+                <i class="fa-solid fa-heart heart-animation"></i>
                 <div class="video-ui">
-                    <div style="flex:1">
-                        <div style="font-weight:bold; margin-bottom:10px">@You</div>
-                        <div style="font-size:14px">${vid.desc}</div>
+                    <div>
+                        <div style="font-weight:bold; margin-bottom:5px">${state.user.name}</div>
+                        <div style="font-size:14px">${v.desc}</div>
                     </div>
                     <div class="side-bar">
-                        <div class="action-item"><i class="fa-solid fa-heart"></i><br><small>0</small></div>
-                        <div class="action-item"><i class="fa-solid fa-comment"></i><br><small>0</small></div>
-                        <div class="action-item"><i class="fa-solid fa-share"></i></div>
+                        <div class="action-item" onclick="toggleLike(${v.id}, this)">
+                            <i class="fa-solid fa-heart ${v.isLiked ? 'liked' : ''}"></i>
+                            <p>${v.likes}</p>
+                        </div>
+                        <div class="action-item" onclick="openComments(${v.id})">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            <p>${v.comments.length}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         `).join('');
 
-        // Авто-плей для первого видео
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(e => {
-                const v = e.target.querySelector('video');
-                if(e.isIntersecting) v.play(); else v.pause();
-            });
-        }, {threshold: 0.6});
-        document.querySelectorAll('.video-card').forEach(c => observer.observe(c));
+        const obs = new IntersectionObserver(es => es.forEach(e => {
+            const v = e.target.querySelector('video');
+            e.isIntersecting ? v.play() : v.pause();
+        }), {threshold: 0.7});
+        document.querySelectorAll('.video-card').forEach(c => obs.observe(c));
     }
 
-    // --- РЕНДЕР ПРОФИЛЯ ---
+    // --- ЛАЙКИ ---
+    function toggleLike(id, el) {
+        const vid = state.videos.find(v => v.id === id);
+        vid.isLiked = !vid.isLiked;
+        vid.likes += vid.isLiked ? 1 : -1;
+        save();
+        renderFeed();
+    }
+
+    function handleDoubleTap(id, card) {
+        const heart = card.querySelector('.heart-animation');
+        heart.classList.add('animate');
+        setTimeout(() => heart.classList.remove('animate'), 800);
+        
+        const vid = state.videos.find(v => v.id === id);
+        if(!vid.isLiked) {
+            vid.isLiked = true;
+            vid.likes += 1;
+            save();
+            renderFeed();
+        }
+    }
+
+    // --- КОММЕНТАРИИ ---
+    function openComments(id) {
+        activeVideoId = id;
+        const vid = state.videos.find(v => v.id === id);
+        document.getElementById('commentCount').innerText = `${vid.comments.length} комментариев`;
+        document.getElementById('commentList').innerHTML = vid.comments.map(c => `
+            <div class="comment-item"><b>${state.user.name}</b>: ${c}</div>
+        `).join('');
+        document.getElementById('commentSheet').classList.add('open');
+    }
+
+    function toggleComments(show) {
+        if(!show) document.getElementById('commentSheet').classList.remove('open');
+    }
+
+    function addComment() {
+        const input = document.getElementById('cInput');
+        if(!input.value) return;
+        const vid = state.videos.find(v => v.id === activeVideoId);
+        vid.comments.push(input.value);
+        input.value = '';
+        save();
+        openComments(activeVideoId);
+        renderFeed();
+    }
+
+    // --- ПРОФИЛЬ ---
     function renderProfile() {
-        const grid = document.getElementById('myVideosGrid');
-        grid.innerHTML = db.map(vid => `
-            <div class="grid-item">
-                <video src="${vid.src}"></video>
-            </div>
+        document.getElementById('p-name').innerText = state.user.name;
+        document.getElementById('p-bio').innerText = state.user.bio;
+        document.getElementById('p-avatar').innerText = state.user.name[1].toUpperCase();
+        
+        const grid = document.getElementById('profileGrid');
+        grid.innerHTML = state.videos.map(v => `
+            <div class="grid-item"><video src="${v.src}"></video></div>
         `).join('');
     }
 
-    // --- ЗАГРУЗКА ---
-    function toggleUpload(show) {
-        document.getElementById('uploadModal').style.display = show ? 'block' : 'none';
+    function toggleEdit(show) {
+        document.getElementById('editModal').style.display = show ? 'block' : 'none';
+        if(show) {
+            document.getElementById('edit-name').value = state.user.name;
+            document.getElementById('edit-bio').value = state.user.bio;
+        }
     }
 
-    function publishVideo() {
-        const fileInput = document.getElementById('videoFile');
-        const descInput = document.getElementById('videoDesc');
-
-        if(fileInput.files.length === 0) return alert('Выберите видео!');
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const newVideo = {
-                id: Date.now(),
-                src: e.target.result,
-                desc: descInput.value || "Без описания",
-                likes: 0
-            };
-            db.unshift(newVideo);
-            localStorage.setItem('dice_tok_db', JSON.stringify(db));
-            
-            // Сброс и возврат
-            fileInput.value = '';
-            descInput.value = '';
-            toggleUpload(false);
-            showPage('feed');
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+    function saveProfile() {
+        state.user.name = document.getElementById('edit-name').value || '@user';
+        state.user.bio = document.getElementById('edit-bio').value || '';
+        save();
+        toggleEdit(false);
+        renderProfile();
     }
 
-    // Инициализация
-    showPage('feed');
+    function save() { localStorage.setItem('dt_user', JSON.stringify(state.user)); localStorage.setItem('dt_videos', JSON.stringify(state.videos)); }
+
+    renderFeed();
 </script>
 </body>
 </html>

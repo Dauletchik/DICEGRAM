@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GTA SAN ANDREAS STYLE - Открытый мир</title>
+    <title>GTA SAN ANDREAS 3D - Открытый мир</title>
     <style>
         * {
             margin: 0;
@@ -16,34 +16,37 @@
         body {
             background: #000;
             overflow: hidden;
-            font-family: 'Courier New', monospace;
+            font-family: 'Arial', sans-serif;
             touch-action: none;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
 
-        #gameCanvas {
+        canvas {
             display: block;
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            background: #1a2a1a;
+            touch-action: none;
         }
 
         /* Джойстик для телефона */
         .joystick-container {
             position: fixed;
-            bottom: 80px;
-            left: 80px;
-            width: 140px;
-            height: 140px;
+            bottom: 100px;
+            left: 100px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
-            background: rgba(30,30,40,0.75);
-            backdrop-filter: blur(8px);
-            border: 2px solid rgba(255,255,255,0.3);
-            z-index: 100;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.4);
+            z-index: 200;
             touch-action: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         .joystick-base {
@@ -51,47 +54,48 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.25);
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.3);
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.6);
-            transition: transform 0.05s linear;
+            border: 3px solid rgba(255,255,255,0.8);
+            transition: transform 0.02s linear;
             pointer-events: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
 
         /* Кнопки действий */
         .action-buttons {
             position: fixed;
-            bottom: 80px;
-            right: 80px;
+            bottom: 100px;
+            right: 100px;
             display: flex;
-            gap: 25px;
-            z-index: 100;
+            gap: 20px;
+            z-index: 200;
         }
 
         .action-btn {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: rgba(30,30,40,0.75);
-            backdrop-filter: blur(8px);
-            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            font-family: monospace;
             cursor: pointer;
             transition: 0.05s linear;
             touch-action: manipulation;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
         .action-btn:active {
-            transform: scale(0.92);
-            background: rgba(200,50,50,0.8);
+            transform: scale(0.9);
+            background: rgba(255,50,50,0.8);
         }
 
         /* HUD */
@@ -99,29 +103,30 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            padding: 8px 16px;
-            border-radius: 12px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            padding: 12px 20px;
+            border-radius: 15px;
             color: #0f0;
             font-weight: bold;
-            font-size: 14px;
-            z-index: 100;
+            font-size: 16px;
+            z-index: 200;
             font-family: monospace;
             pointer-events: none;
+            border-left: 4px solid #0f0;
         }
 
         .health-bar {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 200px;
-            height: 24px;
-            background: rgba(0,0,0,0.7);
-            border-radius: 12px;
+            width: 250px;
+            height: 30px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 15px;
             overflow: hidden;
-            border: 1px solid #ff4444;
-            z-index: 100;
+            border: 2px solid #ff4444;
+            z-index: 200;
         }
 
         .health-fill {
@@ -133,41 +138,58 @@
 
         .money {
             position: fixed;
-            top: 60px;
+            top: 70px;
             right: 20px;
-            background: rgba(0,0,0,0.7);
-            padding: 6px 12px;
-            border-radius: 8px;
-            color: gold;
+            background: rgba(0,0,0,0.8);
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 20px;
+            font-family: monospace;
+            z-index: 200;
+        }
+
+        .zone-name {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 8px 20px;
+            border-radius: 20px;
+            color: white;
             font-weight: bold;
             font-size: 18px;
-            font-family: monospace;
-            z-index: 100;
+            z-index: 200;
+            text-align: center;
+            white-space: nowrap;
         }
 
         @media (max-width: 768px) {
-            .joystick-container { width: 120px; height: 120px; bottom: 50px; left: 50px; }
-            .action-buttons { bottom: 50px; right: 50px; gap: 15px; }
-            .action-btn { width: 60px; height: 60px; font-size: 24px; }
-            .hud { font-size: 10px; }
-            .health-bar { width: 150px; height: 20px; }
+            .joystick-container { width: 130px; height: 130px; bottom: 60px; left: 60px; }
+            .action-btn { width: 65px; height: 65px; font-size: 28px; }
+            .hud { font-size: 12px; padding: 8px 12px; }
+            .health-bar { width: 180px; height: 24px; }
+            .money { font-size: 16px; top: 60px; }
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
     
-    <div class="hud" id="locationName">LOS SANTOS</div>
+    <div class="hud" id="locationName">🏙️ LOS SANTOS</div>
     <div class="health-bar"><div class="health-fill" id="healthFill"></div></div>
-    <div class="money" id="money">$ 12500</div>
+    <div class="money" id="money">💰 $ 12500</div>
+    <div class="zone-name" id="zoneName">GROVE STREET</div>
     
-    <!-- Джойстик для телефона -->
+    <!-- Джойстик -->
     <div class="joystick-container" id="joystickContainer">
         <div class="joystick-base" id="joystickBase"></div>
     </div>
     
     <div class="action-buttons">
-        <div class="action-btn" id="actionBtn">🔫</div>
+        <div class="action-btn" id="actionBtn">⚡</div>
         <div class="action-btn" id="jumpBtn">🦵</div>
     </div>
 
@@ -176,349 +198,389 @@
             const canvas = document.getElementById('gameCanvas');
             let ctx = canvas.getContext('2d');
             
-            // Размеры мира
-            const WORLD_W = 4000;
-            const WORLD_H = 4000;
+            // Размеры 3D мира
+            const WORLD_SIZE = 5000;
             
             // Игрок
             let player = {
-                x: WORLD_W/2,
-                y: WORLD_H/2,
-                size: 32,
-                speed: 5.5,
+                x: WORLD_SIZE/2,
+                z: WORLD_SIZE/2,
+                angle: 0,
+                speed: 0,
+                maxSpeed: 6,
                 health: 100,
-                maxHealth: 100,
                 money: 12500,
-                direction: 'down',
-                animFrame: 0
+                wanted: 0,
+                rotation: 0
             };
             
             // Управление
-            let moveX = 0, moveY = 0;
-            let touchActive = false;
+            let moveForward = false;
+            let moveBack = false;
+            let moveLeft = false;
+            let moveRight = false;
+            let touchMoveX = 0;
+            let touchMoveY = 0;
             
-            // Препятствия (здания, деревья, машины)
-            let obstacles = [];
-            
-            // NPC
+            // 3D мир (здания)
+            let buildings = [];
+            let trees = [];
+            let cars = [];
             let npcs = [];
-            
-            // Сборка предметов (деньги, аптечки)
             let pickups = [];
             
             // Камера
-            let camera = { x: 0, y: 0 };
+            let camera = {
+                x: 0,
+                z: 0,
+                y: 1.5
+            };
             
-            // Текущая локация
-            let currentZone = "LOS SANTOS";
-            
-            // Генерация мира в стиле GTA
-            function generateWorld() {
-                // Границы
-                addObstacle(0, 0, WORLD_W, 50, '#2a2a2a');
-                addObstacle(0, WORLD_H-50, WORLD_W, 50, '#2a2a2a');
-                addObstacle(0, 0, 50, WORLD_H, '#2a2a2a');
-                addObstacle(WORLD_W-50, 0, 50, WORLD_H, '#2a2a2a');
-                
-                // Здания (районы)
+            // Генерация 3D мира
+            function generate3DWorld() {
+                // Здания (разные районы)
                 // Downtown
-                for(let i = 0; i < 45; i++) {
-                    let x = 500 + Math.random() * 800;
-                    let y = 500 + Math.random() * 800;
-                    let w = 40 + Math.random() * 60;
-                    let h = 40 + Math.random() * 60;
-                    addObstacle(x, y, w, h, '#4a4a6a');
+                for(let i = 0; i < 80; i++) {
+                    let x = 800 + Math.random() * 1200;
+                    let z = 800 + Math.random() * 1200;
+                    let w = 40 + Math.random() * 50;
+                    let h = 60 + Math.random() * 80;
+                    let d = 40 + Math.random() * 50;
+                    buildings.push({ x, z, w, h, d, color: '#6a6a8a' });
                 }
                 
                 // Жилой район
-                for(let i = 0; i < 60; i++) {
-                    let x = 1600 + Math.random() * 1000;
-                    let y = 1200 + Math.random() * 800;
-                    let w = 35 + Math.random() * 45;
-                    let h = 35 + Math.random() * 45;
-                    addObstacle(x, y, w, h, '#5a5a4a');
+                for(let i = 0; i < 100; i++) {
+                    let x = 2200 + Math.random() * 1500;
+                    let z = 1500 + Math.random() * 1200;
+                    let w = 35 + Math.random() * 40;
+                    let h = 30 + Math.random() * 40;
+                    let d = 35 + Math.random() * 40;
+                    buildings.push({ x, z, w, h, d, color: '#8a7a6a' });
                 }
                 
                 // Промзона
-                for(let i = 0; i < 40; i++) {
-                    let x = 2800 + Math.random() * 900;
-                    let y = 2500 + Math.random() * 1000;
-                    let w = 60 + Math.random() * 80;
-                    let h = 50 + Math.random() * 70;
-                    addObstacle(x, y, w, h, '#6a4a3a');
+                for(let i = 0; i < 60; i++) {
+                    let x = 3500 + Math.random() * 1200;
+                    let z = 3000 + Math.random() * 1500;
+                    let w = 60 + Math.random() * 70;
+                    let h = 40 + Math.random() * 50;
+                    let d = 60 + Math.random() * 70;
+                    buildings.push({ x, z, w, h, d, color: '#6a5a4a' });
                 }
                 
                 // Деревья
-                for(let i = 0; i < 200; i++) {
-                    let x = 100 + Math.random() * (WORLD_W - 200);
-                    let y = 100 + Math.random() * (WORLD_H - 200);
-                    let ok = true;
-                    for(let obs of obstacles) {
-                        if(Math.abs(x - obs.x) < 50 && Math.abs(y - obs.y) < 50) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if(ok) addObstacle(x, y, 18, 18, '#2d6a2d');
+                for(let i = 0; i < 300; i++) {
+                    let x = 100 + Math.random() * (WORLD_SIZE - 200);
+                    let z = 100 + Math.random() * (WORLD_SIZE - 200);
+                    trees.push({ x, z, size: 15 + Math.random() * 10 });
                 }
                 
-                // Машины (маленькие препятствия)
-                for(let i = 0; i < 80; i++) {
-                    let x = 200 + Math.random() * (WORLD_W - 400);
-                    let y = 200 + Math.random() * (WORLD_H - 400);
-                    addObstacle(x, y, 28, 14, '#8b4513');
+                // Машины
+                for(let i = 0; i < 50; i++) {
+                    cars.push({
+                        x: 200 + Math.random() * (WORLD_SIZE - 400),
+                        z: 200 + Math.random() * (WORLD_SIZE - 400),
+                        angle: Math.random() * Math.PI * 2,
+                        speed: 0.5 + Math.random() * 1.5
+                    });
                 }
-            }
-            
-            function addObstacle(x, y, w, h, color) {
-                obstacles.push({ x, y, w, h, color });
-            }
-            
-            // NPC генерация
-            function generateNPCs() {
-                for(let i = 0; i < 35; i++) {
+                
+                // NPC
+                for(let i = 0; i < 40; i++) {
                     npcs.push({
-                        x: 200 + Math.random() * (WORLD_W - 400),
-                        y: 200 + Math.random() * (WORLD_H - 400),
-                        size: 28,
-                        speed: 0.8,
-                        dirX: (Math.random() - 0.5) * 2,
-                        dirY: (Math.random() - 0.5) * 2,
-                        color: `hsl(${Math.random() * 360}, 50%, 45%)`
+                        x: 300 + Math.random() * (WORLD_SIZE - 600),
+                        z: 300 + Math.random() * (WORLD_SIZE - 600),
+                        angle: Math.random() * Math.PI * 2,
+                        speed: 0.8 + Math.random() * 1
                     });
                 }
-            }
-            
-            // Предметы для сбора
-            function generatePickups() {
-                for(let i = 0; i < 60; i++) {
+                
+                // Предметы
+                for(let i = 0; i < 100; i++) {
                     pickups.push({
-                        x: 100 + Math.random() * (WORLD_W - 200),
-                        y: 100 + Math.random() * (WORLD_H - 200),
-                        size: 12,
+                        x: 150 + Math.random() * (WORLD_SIZE - 300),
+                        z: 150 + Math.random() * (WORLD_SIZE - 300),
                         type: Math.random() > 0.7 ? 'health' : 'money',
-                        value: Math.random() > 0.7 ? 25 : 100
+                        value: Math.random() > 0.7 ? 50 : 100
                     });
                 }
             }
             
-            // Коллизии
-            function checkCollision(rect) {
-                for(let obs of obstacles) {
-                    if(rect.x < obs.x + obs.w &&
-                       rect.x + rect.w > obs.x &&
-                       rect.y < obs.y + obs.h &&
-                       rect.y + rect.h > obs.y) {
+            // Проверка коллизий
+            function checkCollision(x, z, radius) {
+                for(let b of buildings) {
+                    if(x + radius > b.x - b.w/2 && x - radius < b.x + b.w/2 &&
+                       z + radius > b.z - b.d/2 && z - radius < b.z + b.d/2) {
                         return true;
                     }
+                }
+                for(let t of trees) {
+                    let dx = x - t.x;
+                    let dz = z - t.z;
+                    if(Math.hypot(dx, dz) < radius + t.size/2) return true;
                 }
                 return false;
             }
             
-            function movePlayer(dx, dy) {
-                let newX = player.x + dx;
-                let newY = player.y + dy;
+            // Движение игрока
+            function updateMovement() {
+                let moveX = 0;
+                let moveZ = 0;
                 
-                // Движение по X
-                let playerRect = { x: newX, y: player.y, w: player.size, h: player.size };
-                if(!checkCollision(playerRect)) {
-                    player.x = newX;
+                // Джойстик
+                if(touchMoveX !== 0 || touchMoveY !== 0) {
+                    moveX = touchMoveX;
+                    moveZ = touchMoveY;
                 }
                 
-                // Движение по Y
-                playerRect = { x: player.x, y: newY, w: player.size, h: player.size };
-                if(!checkCollision(playerRect)) {
-                    player.y = newY;
+                // Клавиатура
+                if(moveForward) moveZ = -1;
+                if(moveBack) moveZ = 1;
+                if(moveLeft) moveX = -1;
+                if(moveRight) moveX = 1;
+                
+                if(moveX !== 0 || moveZ !== 0) {
+                    let len = Math.hypot(moveX, moveZ);
+                    moveX /= len;
+                    moveZ /= len;
+                    
+                    let newX = player.x + moveX * player.maxSpeed;
+                    let newZ = player.z + moveZ * player.maxSpeed;
+                    
+                    if(!checkCollision(newX, player.z, 20)) player.x = newX;
+                    if(!checkCollision(player.x, newZ, 20)) player.z = newZ;
+                    
+                    player.angle = Math.atan2(moveX, moveZ);
+                    player.rotation = player.angle;
                 }
-                
-                // Обновление направления для анимации
-                if(dx > 0) player.direction = 'right';
-                else if(dx < 0) player.direction = 'left';
-                if(dy > 0) player.direction = 'down';
-                else if(dy < 0) player.direction = 'up';
-                
-                // Анимация
-                if(dx !== 0 || dy !== 0) player.animFrame = (player.animFrame + 0.3) % 4;
             }
             
             // Сбор предметов
-            function collectPickups() {
+            function collectItems() {
                 for(let i = 0; i < pickups.length; i++) {
                     let p = pickups[i];
-                    if(Math.abs(player.x - p.x) < player.size/2 + p.size/2 &&
-                       Math.abs(player.y - p.y) < player.size/2 + p.size/2) {
-                        if(p.type === 'money') {
-                            player.money += p.value;
-                        } else if(p.type === 'health') {
-                            player.health = Math.min(player.maxHealth, player.health + p.value);
-                        }
+                    let dx = player.x - p.x;
+                    let dz = player.z - p.z;
+                    if(Math.hypot(dx, dz) < 25) {
+                        if(p.type === 'money') player.money += p.value;
+                        else player.health = Math.min(100, player.health + p.value);
                         pickups.splice(i,1);
                         i--;
                     }
                 }
             }
             
-            // Движение NPC
-            function updateNPCs() {
-                for(let npc of npcs) {
-                    let newX = npc.x + npc.dirX * npc.speed;
-                    let newY = npc.y + npc.dirY * npc.speed;
-                    let npcRect = { x: newX, y: newY, w: npc.size, h: npc.size };
+            // Движение машин и NPC
+            function updateVehicles() {
+                for(let car of cars) {
+                    let newX = car.x + Math.sin(car.angle) * car.speed;
+                    let newZ = car.z + Math.cos(car.angle) * car.speed;
                     
-                    if(!checkCollision(npcRect)) {
-                        npc.x = newX;
-                        npc.y = newY;
+                    if(!checkCollision(newX, newZ, 15)) {
+                        car.x = newX;
+                        car.z = newZ;
                     } else {
-                        npc.dirX = (Math.random() - 0.5) * 2;
-                        npc.dirY = (Math.random() - 0.5) * 2;
+                        car.angle += Math.random() * 2 - 1;
                     }
                     
-                    // Границы
-                    if(npc.x < 60 || npc.x > WORLD_W - npc.size - 60) npc.dirX *= -1;
-                    if(npc.y < 60 || npc.y > WORLD_H - npc.size - 60) npc.dirY *= -1;
+                    if(car.x < 50 || car.x > WORLD_SIZE - 50) car.angle += Math.PI;
+                    if(car.z < 50 || car.z > WORLD_SIZE - 50) car.angle += Math.PI;
+                }
+                
+                for(let npc of npcs) {
+                    let newX = npc.x + Math.sin(npc.angle) * npc.speed;
+                    let newZ = npc.z + Math.cos(npc.angle) * npc.speed;
+                    
+                    if(!checkCollision(newX, newZ, 15)) {
+                        npc.x = newX;
+                        npc.z = newZ;
+                    } else {
+                        npc.angle += (Math.random() - 0.5) * 2;
+                    }
                 }
             }
             
-            // Обновление зон
-            function updateZone() {
-                if(player.x < 1500 && player.y < 1500) currentZone = "LOS SANTOS";
-                else if(player.x > 2500 && player.y > 2500) currentZone = "SAN FIERRO";
-                else if(player.x > 3000 || player.y > 3000) currentZone = "DESERT";
-                else currentZone = "COUNTRYSIDE";
-            }
-            
-            // Камера
-            function updateCamera() {
-                let targetX = player.x + player.size/2 - canvas.width/2;
-                let targetY = player.y + player.size/2 - canvas.height/2;
-                targetX = Math.min(Math.max(targetX, 0), WORLD_W - canvas.width);
-                targetY = Math.min(Math.max(targetY, 0), WORLD_H - canvas.height);
-                camera.x += (targetX - camera.x) * 0.1;
-                camera.y += (targetY - camera.y) * 0.1;
-            }
-            
-            // Отрисовка
-            function draw() {
-                if(!ctx) return;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 3D проекция
+            function project3D(x, z, y) {
+                let dx = x - camera.x;
+                let dz = z - camera.z;
+                let angle = Math.atan2(dz, dx);
+                let dist = Math.hypot(dx, dz);
                 
-                // Фон (трава/асфальт)
-                let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                grad.addColorStop(0, '#2d5a2d');
-                grad.addColorStop(1, '#3a6a3a');
-                ctx.fillStyle = grad;
+                let screenX = Math.tan(angle - player.angle) * 300;
+                let scale = 400 / (dist + 0.1);
+                let screenY = canvas.height/2 - (y - camera.y) * scale;
+                
+                return { x: canvas.width/2 + screenX, y: screenY, scale: scale, dist: dist };
+            }
+            
+            // Отрисовка 3D мира
+            function draw3D() {
+                ctx.fillStyle = '#87CEEB';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Земля
+                ctx.fillStyle = '#3a6a3a';
+                ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height/2);
                 
                 // Дороги
                 ctx.strokeStyle = '#555';
-                ctx.lineWidth = 6;
-                for(let i = 0; i < 20; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(100 + i*200 - camera.x, 0);
-                    ctx.lineTo(100 + i*200 - camera.x, canvas.height);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(0, 100 + i*200 - camera.y);
-                    ctx.lineTo(canvas.width, 100 + i*200 - camera.y);
-                    ctx.stroke();
-                }
-                
-                // Препятствия
-                for(let obs of obstacles) {
-                    let screenX = obs.x - camera.x;
-                    let screenY = obs.y - camera.y;
-                    if(screenX + obs.w > 0 && screenX < canvas.width && screenY + obs.h > 0 && screenY < canvas.height) {
-                        ctx.fillStyle = obs.color;
-                        ctx.shadowBlur = 4;
-                        ctx.fillRect(screenX, screenY, obs.w, obs.h);
-                        ctx.strokeStyle = '#000';
-                        ctx.strokeRect(screenX, screenY, obs.w, obs.h);
+                ctx.lineWidth = 8;
+                for(let i = -10; i < 10; i++) {
+                    let z = camera.z + i * 50;
+                    let x = camera.x;
+                    let proj = project3D(x, z, 0);
+                    if(proj.dist > 0 && proj.dist < 500) {
+                        ctx.beginPath();
+                        ctx.moveTo(canvas.width/2 - 100/proj.scale, proj.y);
+                        ctx.lineTo(canvas.width/2 + 100/proj.scale, proj.y);
+                        ctx.stroke();
                     }
                 }
                 
-                // Предметы
-                for(let p of pickups) {
-                    let screenX = p.x - camera.x;
-                    let screenY = p.y - camera.y;
-                    ctx.fillStyle = p.type === 'money' ? '#FFD700' : '#ff4444';
-                    ctx.shadowBlur = 6;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, p.size/2, 0, Math.PI*2);
-                    ctx.fill();
-                    if(p.type === 'money') {
-                        ctx.fillStyle = '#fff';
-                        ctx.font = 'bold 12px monospace';
-                        ctx.fillText('$', screenX-3, screenY+4);
+                // Здания
+                let sortedBuildings = [...buildings].sort((a,b) => {
+                    let distA = Math.hypot(a.x - camera.x, a.z - camera.z);
+                    let distB = Math.hypot(b.x - camera.x, b.z - camera.z);
+                    return distB - distA;
+                });
+                
+                for(let b of sortedBuildings) {
+                    let proj = project3D(b.x, b.z, 0);
+                    if(proj.dist > 0 && proj.dist < 800) {
+                        let width = b.w * proj.scale;
+                        let height = b.h * proj.scale;
+                        let x = proj.x - width/2;
+                        let y = proj.y - height;
+                        
+                        ctx.fillStyle = b.color;
+                        ctx.fillRect(x, y, width, height);
+                        ctx.fillStyle = '#aaa';
+                        for(let i = 0; i < 3; i++) {
+                            ctx.fillRect(x + width/4, y + height/4 + i*height/4, width/2, height/8);
+                        }
+                    }
+                }
+                
+                // Деревья
+                for(let t of trees) {
+                    let proj = project3D(t.x, t.z, 0);
+                    if(proj.dist > 0 && proj.dist < 600) {
+                        let size = t.size * proj.scale;
+                        let x = proj.x - size/2;
+                        let y = proj.y - size;
+                        
+                        ctx.fillStyle = '#2d6a2d';
+                        ctx.fillRect(x, y, size, size);
+                        ctx.fillStyle = '#8B4513';
+                        ctx.fillRect(x + size/3, y + size/2, size/3, size/2);
+                    }
+                }
+                
+                // Машины
+                for(let car of cars) {
+                    let proj = project3D(car.x, car.z, 0);
+                    if(proj.dist > 0 && proj.dist < 500) {
+                        let w = 30 * proj.scale;
+                        let h = 15 * proj.scale;
+                        ctx.fillStyle = '#cc3333';
+                        ctx.fillRect(proj.x - w/2, proj.y - h, w, h);
                     }
                 }
                 
                 // NPC
                 for(let npc of npcs) {
-                    let screenX = npc.x - camera.x;
-                    let screenY = npc.y - camera.y;
-                    ctx.fillStyle = npc.color;
-                    ctx.fillRect(screenX, screenY, npc.size, npc.size);
-                    ctx.fillStyle = '#fff';
-                    ctx.fillRect(screenX+5, screenY+6, 6, 6);
-                    ctx.fillRect(screenX+npc.size-11, screenY+6, 6, 6);
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(screenX+7, screenY+18, npc.size-14, 3);
+                    let proj = project3D(npc.x, npc.z, 0);
+                    if(proj.dist > 0 && proj.dist < 400) {
+                        let size = 25 * proj.scale;
+                        ctx.fillStyle = '#c97e5a';
+                        ctx.fillRect(proj.x - size/2, proj.y - size, size, size);
+                        ctx.fillStyle = '#fff';
+                        ctx.fillRect(proj.x - size/4, proj.y - size + size/4, size/6, size/6);
+                        ctx.fillRect(proj.x + size/8, proj.y - size + size/4, size/6, size/6);
+                    }
                 }
                 
-                // Игрок (стиль CJ)
-                let px = player.x - camera.x;
-                let py = player.y - camera.y;
-                ctx.fillStyle = '#c97e5a';
-                ctx.shadowBlur = 8;
-                ctx.fillRect(px, py, player.size, player.size);
-                // Белая футболка
-                ctx.fillStyle = '#eee';
-                ctx.fillRect(px+4, py+8, player.size-8, 12);
-                // Голова
-                ctx.fillStyle = '#d4a574';
-                ctx.fillRect(px+6, py+2, 8, 8);
-                ctx.fillRect(px+player.size-14, py+2, 8, 8);
-                // Кепка
-                ctx.fillStyle = '#2a2a2a';
-                ctx.fillRect(px+4, py, player.size-8, 6);
-                // Оружие в руке
-                if(moveX !== 0 || moveY !== 0) {
-                    ctx.fillStyle = '#666';
-                    ctx.fillRect(px+player.size-8, py+player.size-10, 12, 5);
+                // Предметы
+                for(let p of pickups) {
+                    let proj = project3D(p.x, p.z, 0);
+                    if(proj.dist > 0 && proj.dist < 300) {
+                        let size = 15 * proj.scale;
+                        ctx.fillStyle = p.type === 'money' ? '#FFD700' : '#ff4444';
+                        ctx.beginPath();
+                        ctx.arc(proj.x, proj.y - size/2, size/2, 0, Math.PI*2);
+                        ctx.fill();
+                    }
                 }
                 
-                ctx.shadowBlur = 0;
-                
-                // Эффекты здоровья
-                if(player.health < 30) {
-                    ctx.fillStyle = 'rgba(255,0,0,0.3)';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // Игрок (вид от третьего лица)
+                let playerProj = project3D(player.x - Math.sin(player.angle)*30, player.z - Math.cos(player.angle)*30, 0);
+                if(playerProj.dist > 0) {
+                    let size = 30;
+                    ctx.fillStyle = '#c97e5a';
+                    ctx.fillRect(playerProj.x - size/2, playerProj.y - size, size, size);
+                    ctx.fillStyle = '#2a2a2a';
+                    ctx.fillRect(playerProj.x - size/3, playerProj.y - size + size/5, size/3, size/5);
                 }
+                
+                // HUD эффекты
+                ctx.fillStyle = `rgba(255,0,0,${1 - player.health/100})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Обновление камеры
+            function updateCamera() {
+                camera.x = player.x;
+                camera.z = player.z;
+            }
+            
+            // Определение зоны
+            function getZone() {
+                if(player.x < 2000 && player.z < 2000) return "🏙️ LOS SANTOS";
+                if(player.x > 3000 && player.z > 3000) return "🌵 DESERT";
+                if(player.x > 3500 || player.z > 3500) return "🏭 INDUSTRIAL";
+                return "🌳 COUNTRYSIDE";
             }
             
             // Обновление HUD
             function updateHUD() {
-                document.getElementById('locationName').innerHTML = `📍 ${currentZone}`;
-                document.getElementById('healthFill').style.width = `${(player.health/player.maxHealth)*100}%`;
-                document.getElementById('money').innerHTML = `$${player.money}`;
+                document.getElementById('locationName').innerHTML = getZone();
+                document.getElementById('healthFill').style.width = `${player.health}%`;
+                document.getElementById('money').innerHTML = `💰 $ ${player.money}`;
+                let zoneText = player.x < 2000 && player.z < 2000 ? "GROVE STREET" :
+                              player.x > 3000 ? "LAS VENTURAS" : "SAN FIERRO";
+                document.getElementById('zoneName').innerHTML = zoneText;
             }
             
-            // Джойстик для телефона
+            // Джойстик
             const joystickContainer = document.getElementById('joystickContainer');
             const joystickBase = document.getElementById('joystickBase');
             let joystickActive = false;
             let joystickCenter = { x: 0, y: 0 };
             
+            function getTouchPos(touch) {
+                const rect = joystickContainer.getBoundingClientRect();
+                let x = (touch.clientX - rect.left) / rect.width * 2 - 1;
+                let y = (touch.clientY - rect.top) / rect.height * 2 - 1;
+                let dist = Math.hypot(x, y);
+                if(dist > 1) {
+                    x /= dist;
+                    y /= dist;
+                    dist = 1;
+                }
+                return { x, y, dist };
+            }
+            
             function handleTouchStart(e) {
                 e.preventDefault();
                 const rect = joystickContainer.getBoundingClientRect();
-                const touch = e.touches[0];
                 joystickCenter = {
                     x: rect.left + rect.width/2,
                     y: rect.top + rect.height/2
                 };
                 joystickActive = true;
-                handleTouchMove(e);
+                if(e.touches[0]) handleTouchMove(e);
             }
             
             function handleTouchMove(e) {
@@ -527,112 +589,82 @@
                 const touch = e.touches[0];
                 let dx = touch.clientX - joystickCenter.x;
                 let dy = touch.clientY - joystickCenter.y;
-                let distance = Math.hypot(dx, dy);
-                let maxDist = 50;
-                if(distance > maxDist) {
-                    dx = dx * maxDist / distance;
-                    dy = dy * maxDist / distance;
-                    distance = maxDist;
+                let maxDist = joystickContainer.offsetWidth/2;
+                let dist = Math.hypot(dx, dy);
+                if(dist > maxDist) {
+                    dx = dx * maxDist / dist;
+                    dy = dy * maxDist / dist;
+                    dist = maxDist;
                 }
                 joystickBase.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-                moveX = dx / maxDist;
-                moveY = dy / maxDist;
+                touchMoveX = dx / maxDist;
+                touchMoveY = dy / maxDist;
             }
             
             function handleTouchEnd(e) {
                 joystickActive = false;
                 joystickBase.style.transform = 'translate(-50%, -50%)';
-                moveX = 0;
-                moveY = 0;
+                touchMoveX = 0;
+                touchMoveY = 0;
                 e.preventDefault();
             }
             
-            joystickContainer.addEventListener('touchstart', handleTouchStart);
-            joystickContainer.addEventListener('touchmove', handleTouchMove);
+            joystickContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+            joystickContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
             joystickContainer.addEventListener('touchend', handleTouchEnd);
             
-            // Кнопки действий
+            // Кнопки
             document.getElementById('actionBtn').addEventListener('click', () => {
-                // Эффект выстрела
-                player.speed = 7;
-                setTimeout(() => player.speed = 5.5, 200);
+                player.maxSpeed = 9;
+                setTimeout(() => player.maxSpeed = 6, 300);
             });
             
             document.getElementById('jumpBtn').addEventListener('click', () => {
-                // Прыжок (ускорение)
-                moveY = -1.5;
-                setTimeout(() => { if(!joystickActive) moveY = 0; }, 150);
+                touchMoveY = -1;
+                setTimeout(() => { if(!joystickActive) touchMoveY = 0; }, 150);
             });
             
-            // Управление с клавиатуры (ПК)
-            let keys = { w: false, s: false, a: false, d: false };
+            // Клавиатура
             window.addEventListener('keydown', (e) => {
                 let k = e.key.toLowerCase();
-                if(keys.hasOwnProperty(k)) keys[k] = true;
-                if(k === 'arrowup') keys.w = true;
-                if(k === 'arrowdown') keys.s = true;
-                if(k === 'arrowleft') keys.a = true;
-                if(k === 'arrowright') keys.d = true;
+                if(k === 'w' || k === 'arrowup') moveForward = true;
+                if(k === 's' || k === 'arrowdown') moveBack = true;
+                if(k === 'a' || k === 'arrowleft') moveLeft = true;
+                if(k === 'd' || k === 'arrowright') moveRight = true;
+                e.preventDefault();
             });
+            
             window.addEventListener('keyup', (e) => {
                 let k = e.key.toLowerCase();
-                if(keys.hasOwnProperty(k)) keys[k] = false;
-                if(k === 'arrowup') keys.w = false;
-                if(k === 'arrowdown') keys.s = false;
-                if(k === 'arrowleft') keys.a = false;
-                if(k === 'arrowright') keys.d = false;
+                if(k === 'w' || k === 'arrowup') moveForward = false;
+                if(k === 's' || k === 'arrowdown') moveBack = false;
+                if(k === 'a' || k === 'arrowleft') moveLeft = false;
+                if(k === 'd' || k === 'arrowright') moveRight = false;
             });
             
-            function updateKeyboardMove() {
-                if(joystickActive) return;
-                let mx = 0, my = 0;
-                if(keys.w) my = -1;
-                if(keys.s) my = 1;
-                if(keys.a) mx = -1;
-                if(keys.d) mx = 1;
-                let len = Math.hypot(mx, my);
-                if(len > 0) {
-                    mx /= len;
-                    my /= len;
-                }
-                moveX = mx;
-                moveY = my;
-            }
-            
-            // Основной цикл
-            function gameLoop() {
-                updateKeyboardMove();
-                
-                if(moveX !== 0 || moveY !== 0) {
-                    let len = Math.hypot(moveX, moveY);
-                    let dx = moveX / len * player.speed;
-                    let dy = moveY / len * player.speed;
-                    movePlayer(dx, dy);
-                }
-                
-                updateNPCs();
-                collectPickups();
-                updateZone();
-                updateCamera();
-                updateHUD();
-                draw();
-                
-                requestAnimationFrame(gameLoop);
-            }
-            
-            function resizeCanvas() {
+            // Ресайз
+            function resize() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 ctx = canvas.getContext('2d');
-                updateCamera();
             }
             
             // Инициализация
-            generateWorld();
-            generateNPCs();
-            generatePickups();
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+            generate3DWorld();
+            resize();
+            window.addEventListener('resize', resize);
+            
+            // Главный цикл
+            function gameLoop() {
+                updateMovement();
+                updateVehicles();
+                collectItems();
+                updateCamera();
+                draw3D();
+                updateHUD();
+                requestAnimationFrame(gameLoop);
+            }
+            
             gameLoop();
         })();
     </script>

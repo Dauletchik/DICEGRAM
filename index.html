@@ -2,793 +2,318 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>DICEGRAM — мессенджер как Telegram</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор Telegram-ботов</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        .command-card {
+            transition: all 0.2s ease;
         }
-
-        body {
-            background: #0a0f16;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh;
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-        }
-
-        /* Основной контейнер — как Telegram */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            background: #0f1722;
-        }
-
-        /* Две колонки: список чатов и область чата */
-        .main-layout {
-            display: flex;
-            flex: 1;
-            min-height: 0;
-            overflow: hidden;
-        }
-
-        /* Боковая панель (список диалогов) */
-        .sidebar {
-            width: 300px;
-            background: #111b24;
-            border-right: 1px solid #25313d;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        /* Шапка сайдбара */
-        .sidebar-header {
-            padding: 20px 18px 12px;
-            background: #0e1620;
-        }
-
-        .logo {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFD966, #FFA559);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 16px;
-        }
-
-        .user-card {
-            background: #1a2a34;
-            border-radius: 28px;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: #e0edf5;
-            font-size: 15px;
-        }
-
-        .user-name span {
-            color: #FFB347;
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background: #2a3e4a;
-            border: none;
-            color: #ffaa66;
-            font-size: 13px;
-            padding: 6px 14px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        /* Поиск */
-        .search-box {
-            padding: 16px 16px 12px;
-        }
-
-        .search-wrapper {
-            display: flex;
-            gap: 8px;
-            background: #1f2e38;
-            border-radius: 30px;
-            padding: 4px 8px 4px 16px;
-            border: 1px solid #2f4555;
-        }
-
-        .search-wrapper input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 12px 0;
-            color: white;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .search-wrapper button {
-            background: #ffb347;
-            border: none;
-            border-radius: 30px;
-            padding: 8px 18px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .search-feedback {
-            font-size: 12px;
-            margin-top: 8px;
-            padding-left: 12px;
-            color: #ffaa77;
-            min-height: 28px;
-        }
-
-        /* Список чатов */
-        .dialogs-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 12px 20px;
-        }
-
-        .dialog-item {
-            background: #14222c;
-            border-radius: 18px;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid #2a3e4a;
-        }
-
-        .dialog-item.active {
-            background: #2a414f;
-            border-left: 4px solid #ffb347;
-        }
-
-        .dialog-name {
-            font-weight: bold;
-            color: #ffd58c;
-            font-size: 16px;
-        }
-
-        .dialog-preview {
-            font-size: 12px;
-            color: #8aaec2;
-            margin-top: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Чат область */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #0c141f;
-            min-height: 0;
-        }
-
-        .chat-header {
-            padding: 18px 24px;
-            background: #0e1620;
-            border-bottom: 1px solid #1e2d38;
-        }
-
-        .chat-header h3 {
-            color: #FFD966;
-            font-size: 20px;
-        }
-
-        .chat-header p {
-            color: #7d98ae;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        /* Контейнер сообщений */
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 10px 16px;
-            border-radius: 20px;
-            word-wrap: break-word;
-            font-size: 15px;
-        }
-
-        .message-outgoing {
-            background: #FFB347;
-            color: #1e2a2e;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message-incoming {
-            background: #1e2f3c;
-            color: #f0f4fa;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .message-time {
-            font-size: 10px;
-            opacity: 0.7;
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        /* Поле ввода */
-        .input-area {
-            padding: 14px 20px 22px;
-            background: #0e1620;
-            border-top: 1px solid #1e2d38;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .input-area input {
-            flex: 1;
-            background: #1f2e3a;
-            border: none;
-            padding: 14px 18px;
-            border-radius: 30px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .input-area button {
-            background: #ffb347;
-            border: none;
-            padding: 0 24px;
-            height: 50px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        /* Регистрационный экран */
-        .auth-screen {
-            position: fixed;
-            inset: 0;
-            background: rgba(8, 12, 20, 0.98);
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .auth-card {
-            background: #14222e;
-            max-width: 380px;
-            width: 100%;
-            padding: 40px 28px;
-            border-radius: 48px;
-            text-align: center;
-            border: 1px solid #ffb34766;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
-        }
-
-        .auth-card h1 {
-            font-size: 48px;
-            background: linear-gradient(135deg, #FFE0A3, #FFAA44);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .auth-card input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 60px;
-            background: #1e303e;
-            border: 1px solid #3b5b6e;
-            color: white;
-            font-size: 18px;
-            text-align: center;
-            margin: 24px 0 12px;
-        }
-
-        .auth-error {
-            color: #ff8a7a;
-            font-size: 14px;
-            min-height: 44px;
-            margin-bottom: 8px;
-        }
-
-        .auth-card button {
-            background: #ffb347;
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* Тосты от бота */
-        .bot-toast {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            max-width: 340px;
-            background: #1f2e3a;
-            border-left: 5px solid #ffb347;
-            padding: 14px 18px;
-            border-radius: 24px;
-            color: #f0f0f0;
-            font-size: 13px;
-            z-index: 2100;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            pointer-events: none;
-            backdrop-filter: blur(8px);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* Мобильная адаптация как в Telegram */
-        @media (max-width: 680px) {
-            .sidebar {
-                width: 260px;
-            }
-            .message {
-                max-width: 85%;
-            }
-        }
-
-        @media (max-width: 560px) {
-            .main-layout {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                height: 42%;
-                border-right: none;
-                border-bottom: 1px solid #25313d;
-            }
-            .chat-area {
-                height: 58%;
-            }
-            .sidebar-header {
-                padding: 14px 16px;
-            }
-            .logo {
-                font-size: 26px;
-                margin-bottom: 10px;
-            }
-        }
-
-        /* скролл */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1b2a33;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #ffb347;
-            border-radius: 10px;
+        .command-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
-<body>
-<div id="appRoot" class="app-container"></div>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                🤖 Конструктор Telegram-ботов
+            </h1>
+            <p class="text-gray-600">Создайте своего бота за пару минут</p>
+        </div>
 
-<script>
-    // ====================== ХРАНИЛИЩЕ (LocalStorage) ======================
-    let database = {
-        users: [],      // { username, registeredAt }
-        messages: []    // { fromUser, toUser, text, timestamp }
-    };
+        <!-- Main Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+            <!-- Token Input -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    🔑 API Токен бота
+                </label>
+                <input type="text" id="tokenInput" placeholder="Введите токен от @BotFather (например: 1234567890:ABCdefGHIJKlmnoPQRstUVwxyz)" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                <p class="text-xs text-gray-500 mt-1">Получить токен можно у @BotFather в Telegram</p>
+            </div>
 
-    function loadData() {
-        const savedUsers = localStorage.getItem('DICEGRAM_users');
-        const savedMessages = localStorage.getItem('DICEGRAM_messages');
-        if (savedUsers) database.users = JSON.parse(savedUsers);
-        if (savedMessages) database.messages = JSON.parse(savedMessages);
-        if (!Array.isArray(database.users)) database.users = [];
-        if (!Array.isArray(database.messages)) database.messages = [];
-    }
-
-    function saveUsers() { localStorage.setItem('DICEGRAM_users', JSON.stringify(database.users)); }
-    function saveMessages() { localStorage.setItem('DICEGRAM_messages', JSON.stringify(database.messages)); }
-
-    // Проверка существования юзернейма (регистронезависимая)
-    function isUserExists(username) {
-        return database.users.some(u => u.username.toLowerCase() === username.toLowerCase());
-    }
-
-    // Регистрация нового пользователя
-    function registerAccount(username) {
-        const cleanName = username.trim();
-        if (!cleanName) return { success: false, error: "Введите юзернейм" };
-        if (isUserExists(cleanName)) return { success: false, error: "уже существует такой юзернейм 😢" };
-        
-        const newUser = {
-            username: cleanName,
-            registeredAt: Date.now()
-        };
-        database.users.push(newUser);
-        saveUsers();
-        // Сохраняем сессию
-        localStorage.setItem('DICEGRAM_currentUser', cleanName);
-        
-        // Отправляем приветствие от официального бота DICEGRAM
-        const botMessage = {
-            fromUser: "DICEGRAM_official_bot",
-            toUser: cleanName,
-            text: `🎉 Вы успешно зарегистрировали аккаунт в DICEGRAM со юзером @${cleanName}. Добро пожаловать! ✨ Теперь вы можете общаться с друзьями.`,
-            timestamp: new Date().toISOString()
-        };
-        database.messages.push(botMessage);
-        saveMessages();
-        
-        // Показываем уведомление как в телеграм
-        showBotToast(`📩 DICEGRAM | официальное бот: Привет, @${cleanName}! Вы зарегистрированы.`);
-        
-        return { success: true };
-    }
-
-    function getCurrentSession() {
-        return localStorage.getItem('DICEGRAM_currentUser');
-    }
-
-    function logoutUser() {
-        localStorage.removeItem('DICEGRAM_currentUser');
-        renderFullApp();
-    }
-
-    function showBotToast(text) {
-        let toastEl = document.querySelector('.bot-toast');
-        if (!toastEl) {
-            toastEl = document.createElement('div');
-            toastEl.className = 'bot-toast';
-            document.body.appendChild(toastEl);
-        }
-        toastEl.innerHTML = `<span>🤖 ${text}</span>`;
-        toastEl.classList.remove('hidden');
-        setTimeout(() => toastEl.classList.add('hidden'), 4500);
-    }
-
-    // Отправка сообщения
-    function sendNewMessage(from, to, text) {
-        if (!text.trim()) return false;
-        const msg = {
-            fromUser: from,
-            toUser: to,
-            text: text.trim(),
-            timestamp: new Date().toISOString()
-        };
-        database.messages.push(msg);
-        saveMessages();
-        return true;
-    }
-
-    // Получить список диалогов (все пользователи, с которыми был контакт + все зарегистрированные кроме себя)
-    function getDialogsForUser(currentUser) {
-        // все зарегистрированные кроме меня
-        const allOthers = database.users.filter(u => u.username !== currentUser).map(u => u.username);
-        // собеседники по сообщениям
-        const relatedMsgs = database.messages.filter(m => m.fromUser === currentUser || m.toUser === currentUser);
-        const interlocutorsSet = new Set();
-        relatedMsgs.forEach(msg => {
-            if (msg.fromUser === currentUser) interlocutorsSet.add(msg.toUser);
-            if (msg.toUser === currentUser) interlocutorsSet.add(msg.fromUser);
-        });
-        allOthers.forEach(u => interlocutorsSet.add(u));
-        
-        let dialogsArray = Array.from(interlocutorsSet);
-        // сортировка по последнему сообщению
-        dialogsArray.sort((a,b) => {
-            const lastA = database.messages.filter(m => (m.fromUser === currentUser && m.toUser === a) || (m.fromUser === a && m.toUser === currentUser))
-                .sort((x,y) => new Date(y.timestamp) - new Date(x.timestamp))[0];
-            const lastB = database.messages.filter(m => (m.fromUser === currentUser && m.toUser === b) || (m.fromUser === b && m.toUser === currentUser))
-                .sort((x,y) => new Date(y.timestamp) - new Date(x.timestamp))[0];
-            if (!lastA && !lastB) return 0;
-            if (!lastA) return 1;
-            if (!lastB) return -1;
-            return new Date(lastB.timestamp) - new Date(lastA.timestamp);
-        });
-        return dialogsArray;
-    }
-
-    function getMessagesBetween(userA, userB) {
-        return database.messages.filter(m => 
-            (m.fromUser === userA && m.toUser === userB) || (m.fromUser === userB && m.toUser === userA)
-        ).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-    }
-
-    function getLastMessagePreview(currentUser, interlocutor) {
-        const relevant = database.messages.filter(m => 
-            (m.fromUser === currentUser && m.toUser === interlocutor) || (m.fromUser === interlocutor && m.toUser === currentUser)
-        ).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        if (relevant.length === 0) return "💬 Напишите первое сообщение";
-        const last = relevant[0];
-        const prefix = last.fromUser === currentUser ? "Вы: " : `@${last.fromUser}: `;
-        let preview = last.text.length > 38 ? last.text.slice(0,35)+"..." : last.text;
-        return prefix + preview;
-    }
-
-    let activeChatUser = null; // текущий открытый чат
-
-    // Экранирование HTML
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function scrollMessagesToBottom() {
-        setTimeout(() => {
-            const container = document.getElementById('messagesContainerDynamic');
-            if (container) container.scrollTop = container.scrollHeight;
-        }, 50);
-    }
-
-    // Основной рендер приложения
-    function renderFullApp() {
-        const currentUser = getCurrentSession();
-        const root = document.getElementById('appRoot');
-        
-        // ЭКРАН РЕГИСТРАЦИИ
-        if (!currentUser) {
-            root.innerHTML = `
-                <div class="auth-screen">
-                    <div class="auth-card">
-                        <h1>🎲 DICEGRAM</h1>
-                        <p style="color:#bdd4e8; margin:8px 0;">как Telegram, но твой</p>
-                        <input type="text" id="regUsernameField" placeholder="Напишите ваш юзернейм" autocomplete="off">
-                        <div class="auth-error" id="regErrorBlock"></div>
-                        <button id="registerButton">✨ Начать общение</button>
-                        <div style="margin-top:18px; font-size:13px; color:#ffbb77;">красиво будет написан ✨</div>
-                    </div>
-                </div>
-            `;
-            const regInput = document.getElementById('regUsernameField');
-            const regBtn = document.getElementById('registerButton');
-            const errorBlock = document.getElementById('regErrorBlock');
-            const attemptRegister = () => {
-                const username = regInput.value.trim();
-                const result = registerAccount(username);
-                if (result.success) {
-                    renderFullApp();
-                } else {
-                    errorBlock.innerText = result.error;
-                }
-            };
-            regBtn.addEventListener('click', attemptRegister);
-            regInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') attemptRegister(); });
-            return;
-        }
-        
-        // =========== ОСНОВНОЙ ИНТЕРФЕЙС ===========
-        const dialogs = getDialogsForUser(currentUser);
-        // Если активный чат не существует или удален — выбираем первый
-        if (activeChatUser && !dialogs.includes(activeChatUser) && activeChatUser !== currentUser) {
-            activeChatUser = dialogs.length > 0 ? dialogs[0] : null;
-        }
-        if (!activeChatUser && dialogs.length > 0) activeChatUser = dialogs[0];
-        
-        const messages = activeChatUser ? getMessagesBetween(currentUser, activeChatUser) : [];
-        
-        // Генерация HTML
-        root.innerHTML = `
-            <div class="main-layout">
-                <!-- Левая панель -->
-                <div class="sidebar">
-                    <div class="sidebar-header">
-                        <div class="logo">DICEGRAM</div>
-                        <div class="user-card">
-                            <div class="user-name">👤 <span>@${escapeHtml(currentUser)}</span></div>
-                            <button class="logout-btn" id="logoutButtonSide">🚪 Выйти</button>
-                        </div>
-                    </div>
-                    <div class="search-box">
-                        <div class="search-wrapper">
-                            <input type="text" id="searchUsernameInput" placeholder="🔍 Поиск @username..." autocomplete="off">
-                            <button id="searchUserActionBtn">Найти</button>
-                        </div>
-                        <div class="search-feedback" id="searchFeedbackMsg"></div>
-                    </div>
-                    <div class="dialogs-list" id="dialogsListSidebar">
-                        ${dialogs.map(d => `
-                            <div class="dialog-item ${activeChatUser === d ? 'active' : ''}" data-chat-user="${escapeHtml(d)}">
-                                <div class="dialog-name">@${escapeHtml(d)}</div>
-                                <div class="dialog-preview">${escapeHtml(getLastMessagePreview(currentUser, d))}</div>
-                            </div>
-                        `).join('')}
-                        ${dialogs.length === 0 ? '<div style="padding:20px;text-align:center;color:#7d9ab0;">🌟 Найдите друга через поиск</div>' : ''}
-                    </div>
+            <!-- Commands Management -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">📝 Команды бота</h2>
+                    <button id="addCommandBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Добавить команду
+                    </button>
                 </div>
                 
-                <!-- Правая область чата -->
-                <div class="chat-area">
-                    <div class="chat-header">
-                        <h3>${activeChatUser ? `💬 @${escapeHtml(activeChatUser)}` : '✨ DICEGRAM'}</h3>
-                        <p>${activeChatUser ? 'личные сообщения' : 'выберите чат или найдите пользователя'}</p>
-                    </div>
-                    <div class="messages-container" id="messagesContainerDynamic">
-                        ${messages.map(msg => {
-                            const isOut = msg.fromUser === currentUser;
-                            return `
-                                <div class="message ${isOut ? 'message-outgoing' : 'message-incoming'}">
-                                    <div>${escapeHtml(msg.text)}</div>
-                                    <div class="message-time">${isOut ? 'Вы' : '@'+escapeHtml(msg.fromUser)} • ${new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
-                                </div>
-                            `;
-                        }).join('')}
-                        ${messages.length === 0 && activeChatUser ? '<div style="text-align:center; color:#67859b; margin-top:30px;">💬 Напишите первое сообщение...</div>' : ''}
-                    </div>
-                    <div class="input-area">
-                        <input type="text" id="messageInputField" placeholder="Сообщение..." ${!activeChatUser ? 'disabled' : ''} autocomplete="off">
-                        <button id="sendMessageButton" ${!activeChatUser ? 'disabled' : ''}>➤ Отправить</button>
+                <div id="commandsContainer" class="space-y-3">
+                    <!-- Commands will be added here dynamically -->
+                </div>
+                
+                <div id="noCommandsMsg" class="text-center text-gray-400 py-8 bg-gray-50 rounded-lg">
+                    Нет добавленных команд. Нажмите "Добавить команду"
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="flex gap-4 pt-4 border-t border-gray-200">
+                <button id="startBotBtn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                    🚀 Запустить бота
+                </button>
+                <button id="stopBotBtn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                    ⏹️ Остановить бота
+                </button>
+            </div>
+
+            <!-- Status Indicator -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-600">Статус бота:</span>
+                    <div class="flex items-center gap-2">
+                        <div id="statusIndicator" class="w-3 h-3 bg-gray-400 rounded-full animate-pulse"></div>
+                        <span id="statusText" class="text-sm font-semibold text-gray-700">Не запущен</span>
                     </div>
                 </div>
             </div>
-        `;
-        
-        // --- ЛОГАУТ ---
-        document.getElementById('logoutButtonSide')?.addEventListener('click', () => logoutUser());
-        
-        // --- КЛИК ПО ДИАЛОГАМ (открытие чата) ---
-        document.querySelectorAll('.dialog-item').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const username = el.getAttribute('data-chat-user');
-                if (username && username !== currentUser) {
-                    activeChatUser = username;
-                    renderFullApp();
-                }
-            });
-        });
-        
-        // === ПОИСК ПОЛЬЗОВАТЕЛЯ (как в телеграме) ===
-        const searchInput = document.getElementById('searchUsernameInput');
-        const searchBtn = document.getElementById('searchUserActionBtn');
-        const feedbackDiv = document.getElementById('searchFeedbackMsg');
-        
-        const findAndOpenChat = () => {
-            let query = searchInput.value.trim();
-            if (query.startsWith('@')) query = query.slice(1);
-            if (query === "") {
-                feedbackDiv.innerText = "✏️ Введите юзернейм для поиска";
-                return;
+        </div>
+
+        <!-- Info Footer -->
+        <div class="text-center text-xs text-gray-500 mt-8">
+            💡 Подсказка: Команды должны начинаться с / (например: /start, /help)
+        </div>
+    </div>
+
+    <script>
+        let commands = [];
+
+        // Load commands from localStorage
+        function loadCommands() {
+            const saved = localStorage.getItem('botCommands');
+            if (saved) {
+                commands = JSON.parse(saved);
+                renderCommands();
             }
-            // Проверяем существование в БД
-            const found = database.users.find(u => u.username.toLowerCase() === query.toLowerCase());
-            if (!found) {
-                feedbackDiv.innerText = `❌ Пользователь @${query} не зарегистрирован в DICEGRAM`;
-                return;
-            }
-            if (found.username === currentUser) {
-                feedbackDiv.innerText = "😅 Это вы! Напишите другому пользователю.";
-                return;
-            }
-            // Открываем чат с найденным
-            activeChatUser = found.username;
-            feedbackDiv.innerText = `✅ Чат с @${found.username} открыт`;
-            searchInput.value = "";
-            renderFullApp();
-            setTimeout(() => {
-                if(feedbackDiv) feedbackDiv.innerText = "";
-            }, 2000);
-        };
-        
-        searchBtn.addEventListener('click', findAndOpenChat);
-        searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') findAndOpenChat(); });
-        
-        // === ОТПРАВКА СООБЩЕНИЙ (с исправлением клавиатуры) ===
-        const msgField = document.getElementById('messageInputField');
-        const sendBtn = document.getElementById('sendMessageButton');
-        
-        const sendMsgAction = () => {
-            if (!activeChatUser) return;
-            const text = msgField.value;
-            if (!text.trim()) return;
-            sendNewMessage(currentUser, activeChatUser, text);
-            msgField.value = '';
-            renderFullApp();
-            scrollMessagesToBottom();
-            // Фокус обратно на поле ввода после рендера (для удобства на телефоне)
-            setTimeout(() => {
-                const newMsgField = document.getElementById('messageInputField');
-                if (newMsgField) newMsgField.focus();
-            }, 60);
-        };
-        
-        if (sendBtn) sendBtn.addEventListener('click', sendMsgAction);
-        if (msgField) {
-            msgField.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendMsgAction();
-                }
-            });
-            msgField.focus();
         }
-        
-        scrollMessagesToBottom();
-    }
-    
-    // Инициализация демо-пользователей для теста (но регистрация работает честно)
-    function initDemoUsers() {
-        if (database.users.length === 0) {
-            // Добавляем пару тестовых аккаунтов, чтобы можно было с кем-то общаться после регистрации
-            database.users.push({ username: "Alex", registeredAt: Date.now() });
-            database.users.push({ username: "Jessica", registeredAt: Date.now() });
-            database.users.push({ username: "DICEGRAM_official_bot", registeredAt: 1 });
-            saveUsers();
-            // Приветственное сообщение от бота для Алекса (демо)
-            if (database.messages.length === 0) {
-                database.messages.push({
-                    fromUser: "DICEGRAM_official_bot",
-                    toUser: "Alex",
-                    text: "Добро пожаловать в DICEGRAM! Это официальный бот. Здесь как Telegram, но твой 😎",
-                    timestamp: new Date().toISOString()
+
+        // Save commands to localStorage
+        function saveCommands() {
+            localStorage.setItem('botCommands', JSON.stringify(commands));
+        }
+
+        // Render commands list
+        function renderCommands() {
+            const container = document.getElementById('commandsContainer');
+            const noCommandsMsg = document.getElementById('noCommandsMsg');
+            
+            if (commands.length === 0) {
+                container.innerHTML = '';
+                noCommandsMsg.classList.remove('hidden');
+                return;
+            }
+            
+            noCommandsMsg.classList.add('hidden');
+            container.innerHTML = commands.map((cmd, index) => `
+                <div class="command-card bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <div class="flex-1">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Команда</label>
+                            <input type="text" value="${escapeHtml(cmd.command)}" 
+                                   onchange="updateCommand(${index}, 'command', this.value)"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono">
+                        </div>
+                        <div class="flex-[2]">
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Ответ бота</label>
+                            <input type="text" value="${escapeHtml(cmd.response)}" 
+                                   onchange="updateCommand(${index}, 'response', this.value)"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="removeCommand(${index})" 
+                                    class="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-md transition">
+                                🗑️ Удалить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function updateCommand(index, field, value) {
+            commands[index][field] = value;
+            saveCommands();
+        }
+
+        function removeCommand(index) {
+            commands.splice(index, 1);
+            saveCommands();
+            renderCommands();
+        }
+
+        function addCommand() {
+            commands.push({ command: '/newcommand', response: 'Это ответ бота' });
+            saveCommands();
+            renderCommands();
+        }
+
+        // API calls
+        async function startBot() {
+            const token = document.getElementById('tokenInput').value.trim();
+            if (!token) {
+                showStatus('❌ Введите токен бота', 'error');
+                return;
+            }
+            
+            if (commands.length === 0) {
+                showStatus('❌ Добавьте хотя бы одну команду', 'error');
+                return;
+            }
+
+            // Validate commands format
+            for (let cmd of commands) {
+                if (!cmd.command.startsWith('/')) {
+                    showStatus('❌ Команды должны начинаться с /', 'error');
+                    return;
+                }
+                if (!cmd.response) {
+                    showStatus('❌ Укажите текст ответа для всех команд', 'error');
+                    return;
+                }
+            }
+
+            showStatus('🔄 Запуск бота...', 'loading');
+            
+            try {
+                const response = await axios.post('/api/start', {
+                    token: token,
+                    commands: commands
                 });
-                saveMessages();
+                
+                if (response.data.success) {
+                    showStatus('✅ Бот успешно запущен!', 'success');
+                    updateUIForRunning(true);
+                } else {
+                    showStatus('❌ Ошибка: ' + response.data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Ошибка соединения с сервером', 'error');
             }
         }
-    }
-    
-    // Обработка клавиатуры на мобильных устройствах: при изменении размера окна скроллим вниз
-    window.addEventListener('resize', () => {
-        setTimeout(() => {
-            const msgContainer = document.getElementById('messagesContainerDynamic');
-            if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
-        }, 100);
-    });
-    
-    // Фокус на поле ввода не ломает интерфейс, скролл подстраивается
-    document.body.addEventListener('focusin', (e) => {
-        if (e.target && (e.target.id === 'messageInputField' || e.target.id === 'searchUsernameInput' || e.target.id === 'regUsernameField')) {
-            setTimeout(() => {
-                const msgCont = document.getElementById('messagesContainerDynamic');
-                if (msgCont) msgCont.scrollTop = msgCont.scrollHeight;
-            }, 300);
+
+        async function stopBot() {
+            showStatus('🔄 Остановка бота...', 'loading');
+            
+            try {
+                const response = await axios.post('/api/stop');
+                
+                if (response.data.success) {
+                    showStatus('✅ Бот остановлен', 'success');
+                    updateUIForRunning(false);
+                } else {
+                    showStatus('❌ Ошибка: ' + response.data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Ошибка соединения с сервером', 'error');
+            }
         }
-    });
-    
-    // СТАРТ ПРИЛОЖЕНИЯ
-    loadData();
-    initDemoUsers();
-    renderFullApp();
-</script>
+
+        function showStatus(message, type) {
+            const statusText = document.getElementById('statusText');
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            statusText.textContent = message;
+            
+            if (type === 'error') {
+                statusIndicator.className = 'w-3 h-3 bg-red-500 rounded-full';
+            } else if (type === 'success') {
+                statusIndicator.className = 'w-3 h-3 bg-green-500 rounded-full';
+            } else if (type === 'loading') {
+                statusIndicator.className = 'w-3 h-3 bg-yellow-500 rounded-full animate-pulse';
+            }
+            
+            setTimeout(() => {
+                if (type !== 'loading') {
+                    const isRunning = statusText.textContent.includes('успешно запущен');
+                    if (!isRunning && !statusText.textContent.includes('остановлен')) {
+                        // Don't auto-clear error/success messages
+                    }
+                }
+            }, 3000);
+        }
+
+        function updateUIForRunning(isRunning) {
+            const startBtn = document.getElementById('startBotBtn');
+            const stopBtn = document.getElementById('stopBotBtn');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (isRunning) {
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                statusIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
+                statusText.textContent = '✅ Бот работает';
+            } else {
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                statusIndicator.className = 'w-3 h-3 bg-gray-400 rounded-full';
+                statusText.textContent = '⏹️ Не запущен';
+            }
+        }
+
+        // Check bot status on page load
+        async function checkStatus() {
+            try {
+                const response = await axios.get('/api/status');
+                if (response.data.running) {
+                    updateUIForRunning(true);
+                    // Load saved token and commands
+                    const tokenResponse = await axios.get('/api/token');
+                    if (tokenResponse.data.token) {
+                        document.getElementById('tokenInput').value = tokenResponse.data.token;
+                    }
+                    const commandsResponse = await axios.get('/api/commands');
+                    if (commandsResponse.data.commands && commandsResponse.data.commands.length > 0) {
+                        commands = commandsResponse.data.commands;
+                        renderCommands();
+                    }
+                } else {
+                    updateUIForRunning(false);
+                }
+            } catch (error) {
+                console.error('Status check failed:', error);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('addCommandBtn').addEventListener('click', addCommand);
+        document.getElementById('startBotBtn').addEventListener('click', startBot);
+        document.getElementById('stopBotBtn').addEventListener('click', stopBot);
+        
+        // Initialize
+        loadCommands();
+        checkStatus();
+        
+        // Auto-save token
+        document.getElementById('tokenInput').addEventListener('change', function() {
+            if (this.value.trim()) {
+                axios.post('/api/save-token', { token: this.value.trim() }).catch(console.error);
+            }
+        });
+    </script>
 </body>
 </html>

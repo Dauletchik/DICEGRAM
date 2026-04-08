@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>DICEGRAM — твой мессенджер</title>
+    <title>DICEGRAM — ваш новый мессенджер</title>
     <style>
         * {
             margin: 0;
@@ -13,644 +13,702 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0f172a 0%, #111827 100%);
+            background: linear-gradient(145deg, #1e2a3a 0%, #0f1724 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 20px;
         }
 
-        /* Главный контейнер */
-        .app {
+        /* Основной контейнер приложения */
+        .app-container {
             width: 100%;
-            max-width: 500px;
-            height: 85vh;
-            background: #1e293b;
+            max-width: 1400px;
+            height: 90vh;
+            min-height: 600px;
+            background: #0f1820;
             border-radius: 32px;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            display: flex;
             overflow: hidden;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Боковая панель (список чатов + поиск) */
+        .sidebar {
+            width: 320px;
+            background: #111b24;
+            border-right: 1px solid #2a3a44;
             display: flex;
             flex-direction: column;
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            overflow: hidden;
         }
 
-        /* Шапка */
-        .header {
-            background: #0f172a;
-            padding: 20px 20px 12px;
-            border-bottom: 1px solid #334155;
-            text-align: center;
+        .sidebar-header {
+            padding: 20px 16px;
+            background: #0e1620;
+            border-bottom: 1px solid #25333d;
         }
-        .logo {
+
+        .sidebar-header h2 {
             font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(135deg, #c084fc, #60a5fa);
+            background: linear-gradient(135deg, #ffd966, #ffb347);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
-        }
-        .logo span {
-            background: none;
-            color: #facc15;
-            -webkit-background-clip: unset;
+            letter-spacing: 1px;
         }
 
-        /* Экраны */
-        .screen {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
+        .user-info {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .hide {
-            display: none !important;
-        }
-
-        /* Регистрация */
-        .reg-card {
-            background: #334155;
-            border-radius: 28px;
-            padding: 28px 20px;
-            text-align: center;
-            margin: auto;
-            width: 100%;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        .reg-card h2 {
-            color: #facc15;
-            margin-bottom: 20px;
-            font-size: 26px;
-        }
-        .reg-input {
-            width: 100%;
-            padding: 14px 18px;
-            background: #1e293b;
-            border: 2px solid #475569;
-            border-radius: 60px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            transition: 0.2s;
-            margin-bottom: 20px;
-        }
-        .reg-input:focus {
-            border-color: #c084fc;
-        }
-        .btn {
-            background: #6366f1;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-primary {
-            background: #8b5cf6;
-            box-shadow: 0 4px 12px #8b5cf670;
-        }
-        .btn-primary:hover {
-            background: #a78bfa;
-            transform: scale(0.97);
-        }
-        .error-msg {
-            color: #f87171;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        /* Список чатов / личек */
-        .chat-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .chat-item {
-            background: #334155;
-            padding: 14px 18px;
-            border-radius: 24px;
-            display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid #475569;
-        }
-        .chat-item:active {
-            background: #475569;
-        }
-        .chat-name {
-            font-weight: 600;
-            color: #f1f5f9;
-            font-size: 18px;
-        }
-        .chat-badge {
-            background: #8b5cf6;
-            padding: 4px 12px;
-            border-radius: 50px;
-            font-size: 12px;
+            background: #1e2a32;
+            padding: 12px 14px;
+            border-radius: 20px;
+            margin: 12px 12px 0 12px;
         }
 
-        /* Поиск */
-        .search-box {
-            background: #0f172a;
-            border-radius: 60px;
-            padding: 8px 16px;
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
+        .user-tag {
+            font-weight: 600;
+            color: #cbd5e6;
+            font-size: 14px;
         }
-        .search-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-        .search-box button {
-            background: #6366f1;
-            border: none;
-            border-radius: 40px;
-            padding: 6px 16px;
-            color: white;
+
+        .user-tag span {
+            color: #ffb347;
             font-weight: bold;
         }
 
-        /* Окно диалога */
-        .chat-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 4px;
-            border-bottom: 1px solid #475569;
-            margin-bottom: 12px;
-        }
-        .back-btn {
-            background: none;
+        .logout-btn {
+            background: #2d3e4b;
             border: none;
-            font-size: 28px;
+            color: #ffaa66;
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: 30px;
             cursor: pointer;
-            color: #94a3b8;
+            transition: 0.2s;
         }
-        .messages-area {
+
+        .logout-btn:hover {
+            background: #3e5566;
+            color: white;
+        }
+
+        /* поиск */
+        .search-box {
+            padding: 16px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: #1e2b34;
+            border: 1px solid #2f4553;
+            padding: 12px 16px;
+            border-radius: 30px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #ffb347;
+        }
+
+        /* список диалогов */
+        .dialogs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 8px 20px;
+        }
+
+        .dialog-item {
+            background: #15212b;
+            border-radius: 18px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid #253e4a;
+        }
+
+        .dialog-item:hover {
+            background: #1e2f3c;
+            transform: scale(0.99);
+        }
+
+        .dialog-item.active {
+            background: #2a3f4c;
+            border-left: 4px solid #ffb347;
+        }
+
+        .dialog-username {
+            font-weight: bold;
+            color: #ffd966;
+        }
+
+        .dialog-lastmsg {
+            font-size: 12px;
+            color: #8aa4b5;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* основная область чата */
+        .chat-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            background: #0c141c;
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            background: #0e1620;
+            border-bottom: 1px solid #25333d;
+        }
+
+        .chat-header h3 {
+            color: #ffd966;
+            font-size: 22px;
+        }
+
+        .chat-header p {
+            color: #7e95a8;
+            font-size: 13px;
+        }
+
+        .messages-container {
+            flex: 1;
             overflow-y: auto;
-            margin-bottom: 12px;
-            max-height: 55vh;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
+
         .message {
-            max-width: 80%;
+            max-width: 70%;
             padding: 10px 14px;
-            border-radius: 24px;
-            font-size: 15px;
+            border-radius: 20px;
             word-wrap: break-word;
+            font-size: 14px;
         }
-        .my-msg {
-            background: #8b5cf6;
+
+        .message-outgoing {
+            background: #ffb347;
+            color: #1e2a2e;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
-            color: white;
         }
-        .their-msg {
-            background: #334155;
+
+        .message-incoming {
+            background: #1e2e3b;
+            color: #eef4ff;
             align-self: flex-start;
             border-bottom-left-radius: 4px;
-            color: #e2e8f0;
         }
+
+        .message-info {
+            font-size: 11px;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
         .input-area {
+            padding: 18px 24px;
+            background: #0e1620;
             display: flex;
-            gap: 10px;
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 60px;
+            gap: 12px;
+            border-top: 1px solid #25333d;
         }
+
         .input-area input {
             flex: 1;
-            background: #1e293b;
+            background: #1f2e38;
             border: none;
-            border-radius: 40px;
-            padding: 10px 16px;
+            padding: 12px 18px;
+            border-radius: 32px;
             color: white;
+            outline: none;
         }
-        .send-btn {
-            background: #facc15;
+
+        .input-area button {
+            background: #ffb347;
             border: none;
-            border-radius: 40px;
-            padding: 8px 20px;
+            padding: 0 22px;
+            border-radius: 32px;
             font-weight: bold;
-            color: #0f172a;
-        }
-
-        /* Нижняя навигация */
-        .bottom-nav {
-            display: flex;
-            background: #0f172a;
-            padding: 10px 20px;
-            justify-content: space-around;
-            border-top: 1px solid #334155;
-        }
-        .nav-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 20px;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 40px;
             cursor: pointer;
-        }
-        .nav-active {
-            background: #334155;
-            color: #facc15;
+            transition: 0.2s;
         }
 
-        /* настройки */
-        .settings-card {
-            background: #334155;
-            border-radius: 28px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .input-area button:hover {
+            background: #ff9f1a;
         }
-        .settings-item {
-            background: #1e293b;
-            padding: 14px;
-            border-radius: 24px;
+
+        /* регистрационный экран */
+        .auth-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-card {
+            background: #14222c;
+            padding: 40px 32px;
+            border-radius: 48px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid #ffb34755;
+        }
+
+        .auth-card h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffdd99, #ffaa33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .auth-card p {
+            color: #bccee0;
+            margin-bottom: 28px;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            background: #1f313d;
+            border: 1px solid #3a5a6b;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .error-msg {
+            color: #ff8877;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .auth-card button {
+            background: #ffb347;
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
             cursor: pointer;
+        }
+
+        .fake-bot-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1e2a2e;
+            border-left: 6px solid #ffb347;
+            padding: 12px 20px;
+            border-radius: 30px;
+            color: #f0f0f0;
+            font-size: 13px;
+            z-index: 1100;
+            max-width: 320px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.2s;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1b2a33;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffb347;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-<div class="app" id="app">
-    <div class="header">
-        <div class="logo">DICE<span>GRAM</span></div>
-        <div style="font-size: 12px; color:#94a3b8;">бросай кубик — общайся</div>
-    </div>
-
-    <!-- экран регистрации -->
-    <div id="regScreen" class="screen">
-        <div class="reg-card">
-            <h2>✨ DICEGRAM ✨</h2>
-            <input type="text" id="regUsername" class="reg-input" placeholder="придумай юзернейм... например: dice_master" autocomplete="off">
-            <button id="registerBtn" class="btn btn-primary">Войти в DICEGRAM</button>
-            <div id="regError" class="error-msg"></div>
-            <div style="margin-top: 24px; font-size:12px; color:#94a3b8;">🔥 твой уникальный мир общения</div>
-        </div>
-    </div>
-
-    <!-- основной интерфейс после логина -->
-    <div id="mainScreen" class="screen hide">
-        <!-- список диалогов (вкладка Чаты) -->
-        <div id="chatsPanel">
-            <div class="search-box">
-                <input type="text" id="searchUserInput" placeholder="Поиск по юзернейму... например: @alice">
-                <button id="searchUserBtn">Найти</button>
-            </div>
-            <div id="chatsListContainer" class="chat-list">
-                <!-- динамические лички -->
-            </div>
-            <div style="text-align: center; margin-top: 12px;">
-                <button id="createGroupBtn" class="btn" style="background:#475569;">➕ Создать группу (бета)</button>
-            </div>
-        </div>
-
-        <!-- панель сообщений (открытый диалог) -->
-        <div id="chatPanel" class="hide">
-            <div class="chat-header">
-                <button id="backToListBtn" class="back-btn">←</button>
-                <div style="font-weight: bold; font-size: 20px; color:#facc15;" id="currentChatTitle">@user</div>
-            </div>
-            <div id="messagesContainer" class="messages-area"></div>
-            <div class="input-area">
-                <input type="text" id="messageInput" placeholder="Напиши сообщение...">
-                <button id="sendMsgBtn" class="send-btn">📨</button>
-            </div>
-        </div>
-
-        <!-- настройки -->
-        <div id="settingsPanel" class="hide">
-            <div class="settings-card">
-                <div class="settings-item">
-                    <span>🆔 Мой юзернейм</span>
-                    <span style="color:#c084fc;" id="myUsernameDisplay">@user</span>
-                </div>
-                <div class="settings-item" id="logoutBtn">
-                    <span>🚪 Выйти из аккаунта</span>
-                    <span>→</span>
-                </div>
-                <div class="settings-item">
-                    <span>🤖 DICEGRAM | официальное бот</span>
-                    <span>✅</span>
-                </div>
-                <div style="font-size: 12px; color:#94a3b8; text-align: center;">версия 1.0 — твой мессенджер</div>
-            </div>
-        </div>
-
-        <!-- нижнее меню -->
-        <div class="bottom-nav">
-            <button class="nav-btn" data-nav="chats">💬 Чаты</button>
-            <button class="nav-btn" data-nav="settings">⚙️ Настройки</button>
-        </div>
-    </div>
+<div class="app-container" id="appRoot">
+    <!-- динамическая подгрузка -->
 </div>
 
 <script>
-    // ---------- СИСТЕМА ХРАНЕНИЯ ----------
-    let currentUser = null;        // { username }
-    let usersDB = [];              // массив зарегистрированных юзернеймов
-    let messagesDB = [];           // { from, to, text, timestamp, isGroup? (пока лс) }
+    // ---------- Хранилище данных (LocalStorage) ----------
+    // Структура: users: [{ username, registeredAt }]
+    // messages: [{ from, to, text, timestamp }]  (to может быть "global"? но у нас личные)
+    // activeSessions: текущий залогиненный юзернейм (только один)
+    let db = {
+        users: [],
+        messages: []   // каждый объект: { fromUser, toUser, text, time }
+    };
 
-    // Загрузка из localStorage
     function loadData() {
-        const storedUsers = localStorage.getItem('dicegram_users');
-        if(storedUsers) usersDB = JSON.parse(storedUsers);
-        else usersDB = [];
-
-        const storedMessages = localStorage.getItem('dicegram_messages');
-        if(storedMessages) messagesDB = JSON.parse(storedMessages);
-        else messagesDB = [];
-
-        const savedSession = localStorage.getItem('dicegram_session');
-        if(savedSession) {
-            const sessionUser = JSON.parse(savedSession);
-            if(usersDB.find(u => u.username === sessionUser.username)) {
-                currentUser = sessionUser;
-            }
-        }
+        const storedUsers = localStorage.getItem('DICEGRAM_users');
+        const storedMsgs = localStorage.getItem('DICEGRAM_messages');
+        if (storedUsers) db.users = JSON.parse(storedUsers);
+        if (storedMsgs) db.messages = JSON.parse(storedMsgs);
+        // для совместимости структур
+        if (!Array.isArray(db.users)) db.users = [];
+        if (!Array.isArray(db.messages)) db.messages = [];
     }
 
     function saveUsers() {
-        localStorage.setItem('dicegram_users', JSON.stringify(usersDB));
+        localStorage.setItem('DICEGRAM_users', JSON.stringify(db.users));
     }
     function saveMessages() {
-        localStorage.setItem('dicegram_messages', JSON.stringify(messagesDB));
-    }
-    function saveSession() {
-        if(currentUser) localStorage.setItem('dicegram_session', JSON.stringify(currentUser));
-        else localStorage.removeItem('dicegram_session');
+        localStorage.setItem('DICEGRAM_messages', JSON.stringify(db.messages));
     }
 
-    // Регистрация нового пользователя
+    // системные уведомления (бот DICEGRAM)
+    function sendBotWelcomeMessage(username) {
+        // официальный бот DICEGRAM присылает сообщение при регистрации
+        const botMessage = {
+            fromUser: "DICEGRAM_official_bot",
+            toUser: username,
+            text: `✅ Вы успешно зарегистрировали аккаунт в DICEGRAM со юзером @${username}. Добро пожаловать в безопасный мессенджер! ✨`,
+            time: new Date().toISOString()
+        };
+        db.messages.push(botMessage);
+        saveMessages();
+        // также имитируем "пришло письмо" – показываем всплывашку
+        showBotToast(`📨 Бот DICEGRAM | официальное сообщение для @${username}`);
+    }
+
+    function showBotToast(text) {
+        let toastDiv = document.querySelector('.fake-bot-toast');
+        if (!toastDiv) {
+            toastDiv = document.createElement('div');
+            toastDiv.className = 'fake-bot-toast';
+            document.body.appendChild(toastDiv);
+        }
+        toastDiv.innerHTML = `<span>🤖 DICEGRAM BOT: ${text}</span>`;
+        toastDiv.classList.remove('hidden');
+        setTimeout(() => {
+            toastDiv.classList.add('hidden');
+        }, 4000);
+    }
+
+    // проверка существования юзернейма (регистронезависимо, но сохраняем как ввели)
+    function isUsernameExists(username) {
+        return db.users.some(u => u.username.toLowerCase() === username.toLowerCase());
+    }
+
+    // регистрация нового пользователя
     function registerUser(username) {
-        username = username.trim().toLowerCase();
-        if(username === "") return { ok: false, error: "Введите юзернейм" };
-        if(username.length < 3) return { ok: false, error: "Минимум 3 символа" };
-        const exists = usersDB.some(u => u.username === username);
-        if(exists) return { ok: false, error: "Уже существует такой юзернейм ❌" };
-        // регистрируем
-        usersDB.push({ username: username, createdAt: Date.now() });
+        if (!username || username.trim() === "") return { success: false, error: "Юзернейм не может быть пустым" };
+        if (isUsernameExists(username)) return { success: false, error: "уже существует такой юзернейм" };
+        const newUser = {
+            username: username.trim(),
+            registeredAt: Date.now()
+        };
+        db.users.push(newUser);
         saveUsers();
-        return { ok: true, username };
+        // сохраняем сессию
+        localStorage.setItem('DICEGRAM_currentUser', username.trim());
+        // отправляем бот-приветствие
+        sendBotWelcomeMessage(username.trim());
+        return { success: true };
     }
 
-    // вход / автосохранение после регистрации
-    function loginUser(username) {
-        currentUser = { username: username };
-        saveSession();
-        renderMainUI();
-        // имитация бота: при регистрации высылаем сообщение от бота DICEGRAM
-        const botMsgExists = messagesDB.some(m => m.from === "dicegram_bot" && m.to === username && m.text.includes("успешшно зарегситроовалти"));
-        if(!botMsgExists) {
-            const welcomeText = `🎲 вы успешшно ззаарегситроовалли аккауньа в дикеграам со юзер @${username}!\nДобро пожаловать в DICEGRAM! 🎉`;
-            messagesDB.push({
-                from: "dicegram_bot",
-                to: username,
-                text: welcomeText,
-                timestamp: Date.now()
+    function getCurrentUser() {
+        return localStorage.getItem('DICEGRAM_currentUser');
+    }
+
+    function logout() {
+        localStorage.removeItem('DICEGRAM_currentUser');
+        renderApp();
+    }
+
+    // получение списка диалогов (уникальные собеседники, с которыми были сообщения у текущего юзера)
+    function getDialogsForUser(currentUser) {
+        const relatedMessages = db.messages.filter(m => m.fromUser === currentUser || m.toUser === currentUser);
+        const interlocutorsSet = new Set();
+        relatedMessages.forEach(msg => {
+            if (msg.fromUser === currentUser) interlocutorsSet.add(msg.toUser);
+            if (msg.toUser === currentUser) interlocutorsSet.add(msg.fromUser);
+        });
+        // также добавляем всех зарегистрированных пользователей, кроме себя (чтоб можно было начать чат, даже если сообщений нет)
+        db.users.forEach(user => {
+            if (user.username !== currentUser) interlocutorsSet.add(user.username);
+        });
+        // преобразуем в массив и отсортируем по последнему сообщению
+        let dialogs = Array.from(interlocutorsSet).filter(name => name !== currentUser);
+        dialogs.sort((a,b) => {
+            const lastA = db.messages.filter(m => (m.fromUser === currentUser && m.toUser === a) || (m.fromUser === a && m.toUser === currentUser)).sort((x,y)=> new Date(y.time) - new Date(x.time))[0];
+            const lastB = db.messages.filter(m => (m.fromUser === currentUser && m.toUser === b) || (m.fromUser === b && m.toUser === currentUser)).sort((x,y)=> new Date(y.time) - new Date(x.time))[0];
+            if(!lastA && !lastB) return 0;
+            if(!lastA) return 1;
+            if(!lastB) return -1;
+            return new Date(lastB.time) - new Date(lastA.time);
+        });
+        return dialogs;
+    }
+
+    // получение сообщений между двумя пользователями
+    function getMessagesBetween(userA, userB) {
+        return db.messages.filter(m => 
+            (m.fromUser === userA && m.toUser === userB) || (m.fromUser === userB && m.toUser === userA)
+        ).sort((a,b) => new Date(a.time) - new Date(b.time));
+    }
+
+    function sendMessage(from, to, text) {
+        if (!text.trim()) return false;
+        const newMsg = {
+            fromUser: from,
+            toUser: to,
+            text: text.trim(),
+            time: new Date().toISOString()
+        };
+        db.messages.push(newMsg);
+        saveMessages();
+        return true;
+    }
+
+    // ------------------------------------ UI рендер (React-like) ----------------------------------
+    let currentActiveDialog = null;   // юзернейм собеседника
+
+    function renderApp() {
+        const currentUser = getCurrentUser();
+        const appRoot = document.getElementById('appRoot');
+        if (!currentUser) {
+            // показать экран регистрации
+            appRoot.innerHTML = `
+                <div class="auth-screen">
+                    <div class="auth-card">
+                        <h1>🎲 DICEGRAM</h1>
+                        <p>ваш надёжный мессенджер</p>
+                        <input type="text" id="regUsername" placeholder="Напишите ваш юзернейм" autocomplete="off">
+                        <div id="authError" class="error-msg"></div>
+                        <button id="registerBtn">🚀 Начать общение</button>
+                        <div style="margin-top:16px; font-size:12px; color:#ffaa77;">красиво будет написан ✨</div>
+                    </div>
+                </div>
+            `;
+            const regBtn = document.getElementById('registerBtn');
+            const regInput = document.getElementById('regUsername');
+            const errorDiv = document.getElementById('authError');
+            const performReg = () => {
+                const username = regInput.value.trim();
+                const result = registerUser(username);
+                if (result.success) {
+                    renderApp(); // перезагрузка после регистрации
+                } else {
+                    errorDiv.innerText = result.error;
+                }
+            };
+            regBtn.addEventListener('click', performReg);
+            regInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') performReg(); });
+            return;
+        }
+
+        // --- основной интерфейс мессенджера ---
+        const dialogs = getDialogsForUser(currentUser);
+        // если текущий активный диалог не существует или удален (или нет в списке) — обнулить или выбрать первый
+        if (currentActiveDialog && !dialogs.includes(currentActiveDialog) && currentActiveDialog !== currentUser) {
+            currentActiveDialog = dialogs.length > 0 ? dialogs[0] : null;
+        }
+        if (!currentActiveDialog && dialogs.length > 0) currentActiveDialog = dialogs[0];
+        
+        const messages = currentActiveDialog ? getMessagesBetween(currentUser, currentActiveDialog) : [];
+
+        // поиск по юзернеймам среди всех зарегистрированных (кроме себя)
+        const allOtherUsers = db.users.filter(u => u.username !== currentUser).map(u => u.username);
+        
+        // HTML структура
+        appRoot.innerHTML = `
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2>DICEGRAM</h2>
+                </div>
+                <div class="user-info">
+                    <div class="user-tag">👤 <span>@${currentUser}</span></div>
+                    <button class="logout-btn" id="logoutButton">🚪 выйти</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchUserInput" placeholder="🔍 Поиск юзернейма... например, @friend" autocomplete="off">
+                </div>
+                <div class="dialogs-list" id="dialogsList">
+                    ${dialogs.map(dialog => `
+                        <div class="dialog-item ${currentActiveDialog === dialog ? 'active' : ''}" data-username="${dialog}">
+                            <div class="dialog-username">@${dialog}</div>
+                            <div class="dialog-lastmsg">${getLastMessagePreview(currentUser, dialog)}</div>
+                        </div>
+                    `).join('')}
+                    ${dialogs.length === 0 ? '<div style="padding:20px; text-align:center; color:#778f9e;">✨ Начните диалог через поиск ✨</div>' : ''}
+                </div>
+            </div>
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h3>${currentActiveDialog ? `💬 @${currentActiveDialog}` : '🤖 DICEGRAM'}</h3>
+                    <p>${currentActiveDialog ? 'личная переписка • конфиденциально' : 'выберите собеседника'}</p>
+                </div>
+                <div class="messages-container" id="messagesContainer">
+                    ${messages.map(msg => {
+                        const isOutgoing = msg.fromUser === currentUser;
+                        return `
+                            <div class="message ${isOutgoing ? 'message-outgoing' : 'message-incoming'}">
+                                <div>${escapeHtml(msg.text)}</div>
+                                <div class="message-info">${isOutgoing ? 'Вы' : '@'+msg.fromUser} • ${new Date(msg.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${messages.length === 0 && currentActiveDialog ? '<div style="text-align:center; color:#6b8da8; margin-top:30px;">💬 Напишите первое сообщение...</div>' : ''}
+                </div>
+                <div class="input-area">
+                    <input type="text" id="messageInput" placeholder="Введите сообщение..." ${!currentActiveDialog ? 'disabled' : ''}>
+                    <button id="sendMsgBtn" ${!currentActiveDialog ? 'disabled' : ''}>➤ Отправить</button>
+                </div>
+            </div>
+        `;
+
+        // Обработчики
+        const logoutBtn = document.getElementById('logoutButton');
+        if (logoutBtn) logoutBtn.addEventListener('click', () => logout());
+
+        // обработка кликов по диалогам
+        document.querySelectorAll('.dialog-item').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const username = el.getAttribute('data-username');
+                if (username) {
+                    currentActiveDialog = username;
+                    renderApp();
+                }
             });
+        });
+
+        // поиск и открытие лички по юзернейму (похоже на телеграм)
+        const searchInput = document.getElementById('searchUserInput');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    let query = searchInput.value.trim().replace(/^@/, '');
+                    if (query === "") return;
+                    // проверяем существует ли такой пользователь в базе
+                    const foundUser = db.users.find(u => u.username.toLowerCase() === query.toLowerCase());
+                    if (foundUser && foundUser.username !== currentUser) {
+                        // открываем диалог
+                        currentActiveDialog = foundUser.username;
+                        renderApp();
+                        searchInput.value = '';
+                    } else {
+                        alert(`⚠️ Пользователь @${query} не существует. Проверьте написание.`);
+                    }
+                }
+            });
+        }
+
+        // отправка сообщения
+        const sendBtn = document.getElementById('sendMsgBtn');
+        const msgInput = document.getElementById('messageInput');
+        const sendMessageHandler = () => {
+            if (!currentActiveDialog) return;
+            const text = msgInput.value;
+            if (text.trim() === "") return;
+            sendMessage(currentUser, currentActiveDialog, text);
+            msgInput.value = '';
+            renderApp(); // обновляем чат
+            // авто-скролл вниз (будет после рендера)
+            scrollToBottom();
+        };
+        if (sendBtn) sendBtn.addEventListener('click', sendMessageHandler);
+        if (msgInput) msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessageHandler();
+        });
+
+        // скролл вниз после отрисовки
+        scrollToBottom();
+    }
+
+    function getLastMessagePreview(currentUser, interlocutor) {
+        const relevant = db.messages.filter(m => 
+            (m.fromUser === currentUser && m.toUser === interlocutor) || (m.fromUser === interlocutor && m.toUser === currentUser)
+        ).sort((a,b) => new Date(b.time) - new Date(a.time));
+        if (relevant.length === 0) return "Напишите сообщение...";
+        const last = relevant[0];
+        const prefix = last.fromUser === currentUser ? "Вы: " : `@${last.fromUser}: `;
+        let preview = last.text.length > 35 ? last.text.slice(0,32)+"..." : last.text;
+        return prefix + preview;
+    }
+
+    function scrollToBottom() {
+        setTimeout(() => {
+            const container = document.getElementById('messagesContainer');
+            if (container) container.scrollTop = container.scrollHeight;
+        }, 50);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Инициализация приложения
+    loadData();
+    // небольшой хелпер: если нет пользователей, можно ничего не делать, регистрируемся с нуля
+    // также добавим демо-пользователей, только если база пуста (для красоты)
+    if (db.users.length === 0) {
+        // при пустой базе создадим тестовых юзеров, чтобы было с кем общаться (но регистрация все равно спасет)
+        // Но чтобы не ломать логику "бот присылает письмо только при регистрации реальной", просто добавим пару фейковых пользователей, которые уже существуют.
+        // Это только для демонстрации функционала "поиск и личка". Но регистрация реального юзера работает отдельно.
+        db.users.push({ username: "Alex", registeredAt: Date.now() });
+        db.users.push({ username: "Jessica", registeredAt: Date.now() });
+        db.users.push({ username: "DICEGRAM_official_bot", registeredAt: 1 });
+        saveUsers();
+        // добавим приветственное сообщение от бота (не для всех, а просто для демонстрации)
+        if (!db.messages.length) {
+            db.messages.push({ fromUser: "DICEGRAM_official_bot", toUser: "Alex", text: "Добро пожаловать в DICEGRAM, Alex! Это официальный бот.", time: new Date().toISOString() });
             saveMessages();
         }
     }
 
-    // отправка сообщения (личка)
-    function sendMessage(toUsername, text) {
-        if(!text.trim()) return;
-        const msg = {
-            from: currentUser.username,
-            to: toUsername,
-            text: text.trim(),
-            timestamp: Date.now()
-        };
-        messagesDB.push(msg);
-        saveMessages();
-    }
+    renderApp();
 
-    // получить диалог между двумя пользователями (сортировка)
-    function getDialog(userA, userB) {
-        return messagesDB.filter(m => 
-            (m.from === userA && m.to === userB) || (m.from === userB && m.to === userA)
-        ).sort((a,b) => a.timestamp - b.timestamp);
-    }
-
-    // получить список всех чатов (уникальные собеседники + бот)
-    function getChatsList() {
-        if(!currentUser) return [];
-        const set = new Set();
-        messagesDB.forEach(m => {
-            if(m.from === currentUser.username) set.add(m.to);
-            if(m.to === currentUser.username) set.add(m.from);
-        });
-        // также добавим всех зарегистрированных пользователей, кроме себя, чтобы можно было начать диалог
-        usersDB.forEach(u => {
-            if(u.username !== currentUser.username) set.add(u.username);
-        });
-        // добавим бота если нет
-        if(!set.has("dicegram_bot")) set.add("dicegram_bot");
-        
-        return Array.from(set).sort();
-    }
-
-    // поиск юзера и открытие чата
-    function findAndOpenChat(searchUsername) {
-        let target = searchUsername.trim().toLowerCase().replace('@','');
-        if(target === currentUser.username) {
-            alert("Нельзя открыть чат с самим собой 🤡");
-            return false;
+    // Автоматическое обновление интерфейса при любых изменениях из другой вкладки (можно добавить интервал, но просто при перерисовке)
+    // Для лучшего UX, можно каждые 2 секунды обновлять интерфейс если есть изменения? но достаточно триггерить при отправке.
+    // добавим интервал для синхронизации сообщений между вкладками (опционально)
+    setInterval(() => {
+        const current = getCurrentUser();
+        if (current) {
+            // перезагружаем данные из localStorage
+            loadData();
+            // сохраняем активный диалог, но если сообщения обновились снаружи - перерисуем
+            renderApp();
         }
-        const userExists = usersDB.some(u => u.username === target);
-        if(!target || (!userExists && target !== "dicegram_bot")) {
-            alert(`Пользователь @${target} не найден 😢`);
-            return false;
-        }
-        openChatWith(target);
-        return true;
-    }
-
-    // открыть личку
-    let activeChatPartner = null;
-    function openChatWith(partner) {
-        activeChatPartner = partner;
-        document.getElementById('chatsPanel').classList.add('hide');
-        document.getElementById('chatPanel').classList.remove('hide');
-        document.getElementById('settingsPanel').classList.add('hide');
-        document.getElementById('currentChatTitle').innerText = `@${partner}`;
-        renderMessages();
-        // подсветка навигации (чаты)
-        setActiveNav('chats');
-    }
-
-    function renderMessages() {
-        const container = document.getElementById('messagesContainer');
-        if(!activeChatPartner) return;
-        const dialog = getDialog(currentUser.username, activeChatPartner);
-        container.innerHTML = '';
-        dialog.forEach(msg => {
-            const div = document.createElement('div');
-            div.className = `message ${msg.from === currentUser.username ? 'my-msg' : 'their-msg'}`;
-            let senderName = msg.from === currentUser.username ? 'Вы' : `@${msg.from}`;
-            if(msg.from === 'dicegram_bot') senderName = '🤖 DICEGRAM Bot';
-            div.innerHTML = `<strong style="font-size:12px;">${senderName}</strong><br>${msg.text}`;
-            container.appendChild(div);
-        });
-        container.scrollTop = container.scrollHeight;
-    }
-
-    function renderChatsList() {
-        const container = document.getElementById('chatsListContainer');
-        if(!container) return;
-        const chats = getChatsList();
-        if(chats.length === 0) {
-            container.innerHTML = '<div style="text-align:center;color:#94a3b8;">Начни диалог через поиск 🔍</div>';
-            return;
-        }
-        container.innerHTML = '';
-        chats.forEach(chat => {
-            const chatDiv = document.createElement('div');
-            chatDiv.className = 'chat-item';
-            let displayName = chat === 'dicegram_bot' ? '🤖 DICEGRAM Bot' : `@${chat}`;
-            chatDiv.innerHTML = `<div class="chat-name">${displayName}</div><div class="chat-badge">💬</div>`;
-            chatDiv.addEventListener('click', () => openChatWith(chat));
-            container.appendChild(chatDiv);
-        });
-    }
-
-    // отрисовка главного экрана (после логина)
-    function renderMainUI() {
-        document.getElementById('regScreen').classList.add('hide');
-        document.getElementById('mainScreen').classList.remove('hide');
-        document.getElementById('myUsernameDisplay').innerText = `@${currentUser.username}`;
-        // показать панель чатов по умолчанию
-        showPanel('chats');
-        renderChatsList();
-        // если чат был открыт, обновим
-        if(activeChatPartner) renderMessages();
-    }
-
-    function showPanel(panel) {
-        document.getElementById('chatsPanel').classList.add('hide');
-        document.getElementById('chatPanel').classList.add('hide');
-        document.getElementById('settingsPanel').classList.add('hide');
-        if(panel === 'chats') {
-            document.getElementById('chatsPanel').classList.remove('hide');
-            renderChatsList();
-            activeChatPartner = null;
-        } else if(panel === 'settings') {
-            document.getElementById('settingsPanel').classList.remove('hide');
-        }
-    }
-
-    function setActiveNav(active) {
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('nav-active');
-        });
-        if(active === 'chats') document.querySelector('[data-nav="chats"]').classList.add('nav-active');
-        if(active === 'settings') document.querySelector('[data-nav="settings"]').classList.add('nav-active');
-    }
-
-    // ---------- инициализация событий ----------
-    function bindEvents() {
-        // Регистрация
-        const regBtn = document.getElementById('registerBtn');
-        const regInput = document.getElementById('regUsername');
-        const regError = document.getElementById('regError');
-        regBtn.onclick = () => {
-            const username = regInput.value;
-            const result = registerUser(username);
-            if(result.ok) {
-                loginUser(result.username);
-                // после успеха: бот присылает письмо (уже сделано в loginUser)
-            } else {
-                regError.innerText = result.error;
-            }
-        };
-        // Навигация
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.onclick = () => {
-                const navTo = btn.getAttribute('data-nav');
-                if(navTo === 'chats') { showPanel('chats'); setActiveNav('chats'); }
-                if(navTo === 'settings') { showPanel('settings'); setActiveNav('settings'); }
-            };
-        });
-        // Поиск пользователя
-        document.getElementById('searchUserBtn').onclick = () => {
-            const searchVal = document.getElementById('searchUserInput').value;
-            if(findAndOpenChat(searchVal)) {
-                document.getElementById('searchUserInput').value = '';
-            }
-        };
-        // Назад к списку чатов
-        document.getElementById('backToListBtn').onclick = () => {
-            showPanel('chats');
-            activeChatPartner = null;
-            setActiveNav('chats');
-        };
-        // Отправка сообщения
-        document.getElementById('sendMsgBtn').onclick = () => {
-            if(!activeChatPartner) return;
-            const input = document.getElementById('messageInput');
-            const text = input.value;
-            if(text.trim()) {
-                sendMessage(activeChatPartner, text);
-                input.value = '';
-                renderMessages();
-            }
-        };
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') document.getElementById('sendMsgBtn').click();
-        });
-        // Выход
-        document.getElementById('logoutBtn').onclick = () => {
-            localStorage.removeItem('dicegram_session');
-            currentUser = null;
-            activeChatPartner = null;
-            document.getElementById('regScreen').classList.remove('hide');
-            document.getElementById('mainScreen').classList.add('hide');
-            document.getElementById('regUsername').value = '';
-            document.getElementById('regError').innerText = '';
-        };
-        // Создание группы (заглушка с функцией)
-        document.getElementById('createGroupBtn').onclick = () => {
-            alert("⚙️ Функция групп в разработке! Скоро вы сможете создавать группы и добавлять участников. DICEGRAM расширяется!");
-        };
-    }
-
-    // Запуск приложения
-    function init() {
-        loadData();
-        bindEvents();
-        if(currentUser && usersDB.some(u => u.username === currentUser.username)) {
-            renderMainUI();
-        } else {
-            document.getElementById('regScreen').classList.remove('hide');
-            document.getElementById('mainScreen').classList.add('hide');
-        }
-    }
-    init();
+    }, 2000);
 </script>
 </body>
-    </html>
+</html>

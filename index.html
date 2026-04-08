@@ -2,696 +2,680 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Telegram Bot Constructor | Глобальные переменные</title>
-    <!-- Tailwind + Font Awesome -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'sans-serif']
-                    }
-                }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Clicker Arena | Неоновая битва кликов</title>
+    <!-- Импорт Firebase SDK v9+ (модульный стиль) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .log-line {
-            border-left: 3px solid #3b82f6;
-            transition: all 0.2s ease;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Orbitron', 'Poppins', monospace;
         }
-        .log-line:hover {
-            background-color: rgba(59,130,246,0.1);
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03050b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        .command-card, .var-card {
+
+        /* основной контейнер с неоновым свечением */
+        .arena-container {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(10, 20, 28, 0.65);
+            backdrop-filter: blur(3px);
+            border-radius: 3rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 35px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.05);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        /* шапка профиля */
+        .profile-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 60px;
+            padding: 10px 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #0ff;
+            border-right: 4px solid #f0f;
+            box-shadow: 0 0 12px #0ff3;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid cyan;
+            box-shadow: 0 0 10px cyan;
+            object-fit: cover;
+        }
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #aaffff, #ff66ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px #0ff8;
+        }
+        .login-btn {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 0 10px #00a6ff;
+        }
+        .login-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 18px cyan;
+        }
+
+        /* основная сетка */
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 0.9fr;
+            gap: 20px;
+        }
+        @media (max-width: 950px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        /* карточки */
+        .glass-card {
+            background: rgba(5, 10, 20, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.2rem;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             transition: all 0.2s;
         }
-        .command-card:hover, .var-card:hover {
-            transform: translateX(4px);
+
+        .click-area {
+            text-align: center;
+        }
+        .click-btn {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ff4d4d, #aa2e2e);
+            border: 4px solid #ffcc00;
+            box-shadow: 0 0 0 0 #ffcc88, 0 0 30px #ff4444;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 12px gold;
+            cursor: pointer;
+            transition: 0.07s linear;
+            margin: 20px auto;
+        }
+        .click-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 0 35px #ff8800;
+        }
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffffaa, #ffaa66);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        .score-label {
+            color: #8db5ff;
+            font-size: 1.2rem;
+        }
+
+        /* магазин */
+        .shop-item {
+            background: #0a1424;
+            margin: 12px 0;
+            padding: 12px;
+            border-radius: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid cyan;
+            transition: 0.1s;
+        }
+        .shop-info h4 {
+            color: #0ff;
+        }
+        .shop-info p {
+            color: #bbb;
+            font-size: 0.8rem;
+        }
+        .buy-btn {
+            background: #2c2f6e;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 0 5px cyan;
+        }
+        .buy-btn:active {
+            transform: scale(0.96);
+        }
+        .buy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* топ и чат */
+        .leaderboard-list {
+            list-style: none;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        .leaderboard-list li {
+            padding: 8px;
+            border-bottom: 1px solid #2c3e55;
+            display: flex;
+            gap: 8px;
+            color: #ccf;
+        }
+        .chat-messages {
+            height: 280px;
+            overflow-y: auto;
+            background: #010a14aa;
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+        .message {
+            margin: 8px 0;
+            font-size: 0.85rem;
+            word-break: break-word;
+            border-left: 3px solid cyan;
+            padding-left: 8px;
+        }
+        .msg-name {
+            color: #0ff;
+            font-weight: bold;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            background: #0f1a2b;
+            border: 1px solid cyan;
+            border-radius: 40px;
+            padding: 10px;
+            color: white;
+            outline: none;
+        }
+        .chat-input-area button {
+            background: #00b4d8;
+            border: none;
+            border-radius: 40px;
+            padding: 0 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .logout-btn {
+            background: #ff3366aa;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #66ccffaa;
         }
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: #1f2937;
-            border-radius: 10px;
+            background: #001;
         }
         ::-webkit-scrollbar-thumb {
-            background: #4b5563;
+            background: cyan;
             border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
-        }
-        .settings-panel {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .settings-panel.open {
-            max-height: 600px;
-            transition: max-height 0.4s ease-in;
-        }
-        .variable-badge {
-            background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2));
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 antialiased">
-    <div class="container mx-auto px-4 py-6 max-w-5xl">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg mb-3">
-                <i class="fa-solid fa-robot text-3xl text-white"></i>
-            </div>
-            <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Конструктор Telegram-ботов
-            </h1>
-            <p class="text-gray-400 mt-2">С поддержкой переменных {{переменная}}</p>
+<body>
+<div class="arena-container" id="app">
+    <!-- Профиль -->
+    <div class="profile-bar">
+        <div class="user-info" id="userInfoArea">
+            <img id="avatarImg" class="avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="avatar">
+            <span id="userNameSpan" class="user-name">Гость Арены</span>
         </div>
-
-        <!-- Главная карточка -->
-        <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-xl overflow-hidden">
-            <!-- Токен + Кнопка настроек -->
-            <div class="p-6 border-b border-gray-700">
-                <div class="flex items-center justify-between gap-4 flex-wrap">
-                    <div class="flex-1 min-w-0">
-                        <label class="block text-sm font-semibold text-gray-300 mb-2">
-                            <i class="fa-solid fa-key text-yellow-500 mr-2"></i>API Токен бота
-                        </label>
-                        <input type="text" id="tokenInput" 
-                               placeholder="1234567890:ABCdefGHIJKlmnoPQRstUVwxyz" 
-                               class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-100 placeholder-gray-500 transition">
-                    </div>
-                    <button id="settingsToggleBtn" class="mt-6 bg-gray-700 hover:bg-gray-600 text-gray-300 p-3 rounded-xl transition-all duration-200">
-                        <i class="fa-solid fa-sliders-h text-xl"></i>
-                    </button>
-                </div>
-                <p class="text-xs text-gray-500 mt-2">
-                    <i class="fa-regular fa-circle-question mr-1"></i>Получить токен можно у <a href="https://t.me/botfather" target="_blank" class="text-blue-400 hover:underline">@BotFather</a>
-                </p>
-            </div>
-
-            <!-- Панель глобальных переменных (скрытая по умолчанию) -->
-            <div id="settingsPanel" class="settings-panel border-b border-gray-700 bg-gray-900/30">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
-                        <h3 class="text-lg font-semibold flex items-center gap-2">
-                            <i class="fa-solid fa-code-branch text-purple-400"></i>Глобальные переменные
-                        </h3>
-                        <button id="addVariableBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-plus"></i>
-                            Добавить переменную
-                        </button>
-                    </div>
-                    <p class="text-xs text-gray-500 mb-4">
-                        <i class="fa-regular fa-lightbulb mr-1"></i>Используйте {{название}} в ответах бота. Например: "Привет, твой баланс {{balance}}"
-                    </p>
-                    <div id="variablesContainer" class="space-y-2">
-                        <!-- Переменные будут тут -->
-                    </div>
-                    <div id="noVariablesMsg" class="text-center text-gray-500 py-6 bg-gray-800/30 rounded-xl border border-dashed border-gray-700 text-sm">
-                        <i class="fa-regular fa-database text-2xl mb-2 block"></i>
-                        Нет глобальных переменных. Нажмите "Добавить переменную"
-                    </div>
-                </div>
-            </div>
-
-            <!-- Команды -->
-            <div class="p-6 border-b border-gray-700">
-                <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
-                    <h2 class="text-xl font-semibold flex items-center gap-2">
-                        <i class="fa-solid fa-terminal text-green-400"></i>Команды бота
-                    </h2>
-                    <button id="addCommandBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-lg">
-                        <i class="fa-solid fa-plus"></i>
-                        Добавить команду
-                    </button>
-                </div>
-                
-                <div id="commandsContainer" class="space-y-3">
-                    <!-- Команды будут тут -->
-                </div>
-                
-                <div id="noCommandsMsg" class="text-center text-gray-500 py-8 bg-gray-900/50 rounded-xl border border-dashed border-gray-700">
-                    <i class="fa-regular fa-message text-3xl mb-2 block"></i>
-                    Нет добавленных команд. Нажмите "Добавить команду"
-                </div>
-            </div>
-
-            <!-- Кнопки управления -->
-            <div class="p-6 border-b border-gray-700">
-                <div class="flex gap-4 flex-col sm:flex-row">
-                    <button id="startBotBtn" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl transition transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg">
-                        <i class="fa-solid fa-play mr-2"></i>Запустить бота
-                    </button>
-                    <button id="stopBotBtn" class="flex-1 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-3 rounded-xl transition transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg">
-                        <i class="fa-solid fa-stop mr-2"></i>Остановить бота
-                    </button>
-                </div>
-            </div>
-
-            <!-- Статус и логи -->
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                        <div id="statusIndicator" class="w-3 h-3 bg-gray-500 rounded-full"></div>
-                        <span id="statusText" class="text-sm font-medium text-gray-400">Не запущен</span>
-                    </div>
-                    <button id="clearLogsBtn" class="text-xs text-gray-500 hover:text-gray-300 transition">
-                        <i class="fa-regular fa-trash-alt mr-1"></i>Очистить логи
-                    </button>
-                </div>
-                
-                <div class="bg-gray-900 rounded-xl border border-gray-700 p-3 h-48 overflow-y-auto font-mono text-xs">
-                    <div id="logContainer">
-                        <div class="text-gray-600 text-center py-8">📋 Лог событий появится здесь...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center text-xs text-gray-600 mt-6">
-            <i class="fa-regular fa-lightbulb mr-1"></i>Команды должны начинаться с / | В ответах можно использовать {{переменная}}
+        <div>
+            <button id="googleLoginBtn" class="login-btn">⚡ Войти через Google</button>
+            <button id="logoutBtn" class="logout-btn" style="display: none;">Выйти</button>
         </div>
     </div>
 
-    <script>
-        // ==================== Глобальные переменные ====================
-        let commands = [];               // Массив команд [{ command, response }]
-        let variables = [];              // Массив переменных [{ name, value, type }] type: 'number' или 'string'
-        let pollingInterval = null;     
-        let lastUpdateId = 0;           
-        let isBotRunning = false;       
-        let currentToken = '';          
-        let settingsPanelOpen = false;   // Состояние панели настроек
-        
-        // ==================== Работа с localStorage ====================
-        function loadFromStorage() {
-            const savedCommands = localStorage.getItem('botCommands');
-            if (savedCommands) {
-                commands = JSON.parse(savedCommands);
-                renderCommands();
-            }
-            
-            const savedVariables = localStorage.getItem('botVariables');
-            if (savedVariables) {
-                variables = JSON.parse(savedVariables);
-                renderVariables();
-            }
-            
-            const savedToken = localStorage.getItem('botToken');
-            if (savedToken) {
-                document.getElementById('tokenInput').value = savedToken;
-            }
-        }
-        
-        function saveCommands() {
-            localStorage.setItem('botCommands', JSON.stringify(commands));
-        }
-        
-        function saveVariables() {
-            localStorage.setItem('botVariables', JSON.stringify(variables));
-        }
-        
-        function saveToken(token) {
-            localStorage.setItem('botToken', token);
-        }
-        
-        // ==================== Замена переменных в тексте ====================
-        function replaceVariables(text) {
-            if (!text || variables.length === 0) return text;
-            
-            let result = text;
-            for (let v of variables) {
-                const regex = new RegExp(`{{${escapeRegex(v.name)}}}`, 'gi');
-                let value = v.value;
-                // Если тип number и значение можно преобразовать, оставляем как есть
-                if (v.type === 'number' && !isNaN(parseFloat(value))) {
-                    value = parseFloat(value);
-                }
-                result = result.replace(regex, value);
-            }
-            return result;
-        }
-        
-        function escapeRegex(str) {
-            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-        
-        // ==================== Управление UI переменными ====================
-        function renderVariables() {
-            const container = document.getElementById('variablesContainer');
-            const noVariablesMsg = document.getElementById('noVariablesMsg');
-            
-            if (variables.length === 0) {
-                container.innerHTML = '';
-                noVariablesMsg.classList.remove('hidden');
-                return;
-            }
-            
-            noVariablesMsg.classList.add('hidden');
-            container.innerHTML = variables.map((v, index) => `
-                <div class="var-card bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                    <div class="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-                        <div class="flex-1">
-                            <input type="text" value="${escapeHtml(v.name)}" 
-                                   onchange="updateVariable(${index}, 'name', this.value)"
-                                   placeholder="Имя переменной"
-                                   class="w-full px-3 py-1.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 font-mono text-sm">
-                        </div>
-                        <div class="flex-1">
-                            <input type="text" value="${escapeHtml(v.value)}" 
-                                   onchange="updateVariable(${index}, 'value', this.value)"
-                                   placeholder="Значение"
-                                   class="w-full px-3 py-1.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm">
-                        </div>
-                        <div class="w-32">
-                            <select onchange="updateVariable(${index}, 'type', this.value)"
-                                    class="w-full px-2 py-1.5 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm">
-                                <option value="string" ${v.type === 'string' ? 'selected' : ''}>📝 Строка</option>
-                                <option value="number" ${v.type === 'number' ? 'selected' : ''}>🔢 Число</option>
-                            </select>
-                        </div>
-                        <button onclick="removeVariable(${index})" 
-                                class="bg-red-900/50 hover:bg-red-800 text-red-300 px-3 py-1.5 rounded-lg transition">
-                            <i class="fa-regular fa-trash-alt"></i>
-                        </button>
-                    </div>
+    <div class="game-grid">
+        <!-- Центр: клики и очки -->
+        <div class="glass-card click-area">
+            <h2 style="color: cyan; text-align: center;">💥 CLICK ARENA 💥</h2>
+            <button id="clickButton" class="click-btn">🔥<br>КЛИК</button>
+            <div class="score-label">ТВОИ ОЧКИ</div>
+            <div class="score-display" id="scoreDisplay">0</div>
+            <div style="margin-top: 12px;"><span id="clickPowerLabel">⚡ Сила клика: 1</span> &nbsp;|&nbsp; <span id="autoLabel">🤖 Автоклик: 0/сек</span></div>
+        </div>
+
+        <!-- Магазин улучшений -->
+        <div class="glass-card">
+            <h3 style="color: #ff77ff; text-align: center;">🛒 НЕОНОВЫЙ МАГАЗИН 🛒</h3>
+            <div class="shop-item">
+                <div class="shop-info">
+                    <h4>💪 Сила клика +1</h4>
+                    <p>Увеличивает доход за клик на 1</p>
                 </div>
-            `).join('');
-        }
-        
-        function updateVariable(index, field, value) {
-            if (field === 'name') {
-                // Валидация имени переменной (только буквы, цифры, _)
-                const cleanName = value.replace(/[^a-zA-Zа-яА-Я0-9_]/g, '');
-                variables[index][field] = cleanName;
-            } else if (field === 'value' && variables[index].type === 'number') {
-                // Для чисел пытаемся преобразовать
-                const numValue = parseFloat(value);
-                variables[index][field] = isNaN(numValue) ? 0 : numValue;
-            } else {
-                variables[index][field] = value;
-            }
-            saveVariables();
-            renderVariables();
-            if (isBotRunning) {
-                addLog('⚠️ Переменная изменена. Изменения применятся к новым сообщениям.', 'warning');
-            }
-        }
-        
-        function removeVariable(index) {
-            variables.splice(index, 1);
-            saveVariables();
-            renderVariables();
-            if (isBotRunning) {
-                addLog('⚠️ Переменная удалена', 'warning');
-            }
-        }
-        
-        function addVariable() {
-            variables.push({ name: 'переменная', value: 'значение', type: 'string' });
-            saveVariables();
-            renderVariables();
-            addLog('➕ Добавлена новая глобальная переменная', 'info');
-        }
-        
-        // ==================== Управление UI командами ====================
-        function renderCommands() {
-            const container = document.getElementById('commandsContainer');
-            const noCommandsMsg = document.getElementById('noCommandsMsg');
-            
-            if (commands.length === 0) {
-                container.innerHTML = '';
-                noCommandsMsg.classList.remove('hidden');
-                return;
-            }
-            
-            noCommandsMsg.classList.add('hidden');
-            container.innerHTML = commands.map((cmd, index) => `
-                <div class="command-card bg-gray-900 rounded-xl p-4 border border-gray-700">
-                    <div class="flex flex-col md:flex-row gap-3">
-                        <div class="flex-1">
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Команда</label>
-                            <input type="text" value="${escapeHtml(cmd.command)}" 
-                                   onchange="updateCommand(${index}, 'command', this.value)"
-                                   class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm text-gray-100">
-                        </div>
-                        <div class="flex-[2]">
-                            <label class="block text-xs font-medium text-gray-500 mb-1">
-                                Ответ бота <span class="text-purple-400 ml-1">(можно использовать {{переменная}})</span>
-                            </label>
-                            <input type="text" value="${escapeHtml(cmd.response)}" 
-                                   onchange="updateCommand(${index}, 'response', this.value)"
-                                   class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm text-gray-100">
-                        </div>
-                        <div class="flex items-end">
-                            <button onclick="removeCommand(${index})" 
-                                    class="bg-red-900/50 hover:bg-red-800 text-red-300 px-3 py-2 rounded-lg transition">
-                                <i class="fa-regular fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    </div>
+                <button class="buy-btn" id="buyClickUpgrade">Купить <span id="clickUpgradeCost">10</span>⚡</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-info">
+                    <h4>🤖 Автокликер</h4>
+                    <p>+1 очко/сек пассивно</p>
                 </div>
-            `).join('');
-        }
-        
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
+                <button class="buy-btn" id="buyAutoClicker">Купить <span id="autoUpgradeCost">25</span>⚡</button>
+            </div>
+            <div id="shopMessage" style="color: #ffaa66; font-size: 0.8rem; margin-top: 12px;"></div>
+        </div>
+
+        <!-- Топ-10 и чат в одной колонке? Но разделим: две колонки будут? в grid третий блок: топ + чат вертикально -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-card">
+                <h3 style="color: gold; text-align: center;">🏆 ТОП-10 ИГРОКОВ 🏆</h3>
+                <ul id="leaderboardList" class="leaderboard-list">
+                    <li>✨ Загрузка рейтинга...</li>
+                </ul>
+            </div>
+            <div class="glass-card">
+                <h3 style="color: #0ff; text-align: center;">💬 МИРОВОЙ ЧАТ (последние 50)</h3>
+                <div id="chatMessagesDiv" class="chat-messages">
+                    <div class="message">⚡ Чат загружается...</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Напиши сообщение..." maxlength="150">
+                    <button id="sendChatBtn">📨 Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-note">⚡ Каждые 5 сек синхронизация очков | Онлайн Топ и Чат в реальном времени</div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, orderBy, limit, addDoc, serverTimestamp, increment } from "firebase/firestore";
+
+    // Конфиг Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5xtPtUOZRzT5we8d117Jy8kHQqcSb6aE",
+        authDomain: "clickergram999.firebaseapp.com",
+        projectId: "clickergram999",
+        storageBucket: "clickergram999.firebasestorage.app",
+        messagingSenderId: "421877387649",
+        appId: "1:421877387649:web:04055d85f59bd2a4ea5880",
+        measurementId: "G-NCVR5W9D09"
+    };
+
+    // Инициализация
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
+
+    // DOM элементы
+    const googleBtn = document.getElementById("googleLoginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const avatarImg = document.getElementById("avatarImg");
+    const userNameSpan = document.getElementById("userNameSpan");
+    const clickButton = document.getElementById("clickButton");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const buyClickUpgradeBtn = document.getElementById("buyClickUpgrade");
+    const buyAutoClickerBtn = document.getElementById("buyAutoClicker");
+    const clickUpgradeCostSpan = document.getElementById("clickUpgradeCost");
+    const autoUpgradeCostSpan = document.getElementById("autoUpgradeCost");
+    const clickPowerLabel = document.getElementById("clickPowerLabel");
+    const autoLabel = document.getElementById("autoLabel");
+    const shopMessageDiv = document.getElementById("shopMessage");
+    const leaderboardList = document.getElementById("leaderboardList");
+    const chatMessagesDiv = document.getElementById("chatMessagesDiv");
+    const chatInput = document.getElementById("chatInput");
+    const sendChatBtn = document.getElementById("sendChatBtn");
+
+    // --- Глобальное состояние игрока (локальное) ---
+    let currentUser = null;           // объект firebase user
+    let userDocRef = null;
+    let localScore = 0;
+    let clickPower = 1;
+    let autoClickers = 0;
+    let syncInterval = null;
+    let autoIncomeInterval = null;
+
+    // Цены
+    let clickUpgradeBaseCost = 10;
+    let autoUpgradeBaseCost = 25;
+    
+    // Функция обновления UI по локальным данным
+    function updateUI() {
+        scoreDisplay.innerText = Math.floor(localScore);
+        clickPowerLabel.innerText = `⚡ Сила клика: ${clickPower}`;
+        autoLabel.innerText = `🤖 Автоклик: ${autoClickers}/сек`;
+        clickUpgradeCostSpan.innerText = clickUpgradeBaseCost;
+        autoUpgradeCostSpan.innerText = autoUpgradeBaseCost;
+    }
+
+    // Загрузка данных игрока из Firestore при входе
+    async function loadUserData(user) {
+        if (!user) return;
+        userDocRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            localScore = data.score ?? 0;
+            clickPower = data.clickPower ?? 1;
+            autoClickers = data.autoClickers ?? 0;
+            // синхронизируем стоимость (опционально, но можно оставить как есть)
+            // цены не храним в базе, они динамические
+        } else {
+            // новый игрок
+            localScore = 0;
+            clickPower = 1;
+            autoClickers = 0;
+            await setDoc(userDocRef, {
+                uid: user.uid,
+                displayName: user.displayName || "Аноним",
+                photoURL: user.photoURL || "",
+                score: 0,
+                clickPower: 1,
+                autoClickers: 0,
+                updatedAt: serverTimestamp()
             });
         }
-        
-        function updateCommand(index, field, value) {
-            commands[index][field] = value;
-            saveCommands();
-            if (isBotRunning) {
-                addLog('⚠️ Команда изменена. Перезапустите бота для применения.', 'warning');
+        updateUI();
+        // Запускаем пассивный доход
+        if (autoIncomeInterval) clearInterval(autoIncomeInterval);
+        autoIncomeInterval = setInterval(() => {
+            if (currentUser && autoClickers > 0) {
+                const passiveGain = autoClickers;
+                localScore += passiveGain;
+                updateUI();
+                // НЕ сохраняем каждую секунду, только по таймеру 5 сек
             }
+        }, 1000);
+    }
+
+    // Сохранение данных в Firestore (каждые 5 секунд)
+    function syncToFirestore() {
+        if (!currentUser || !userDocRef) return;
+        // Обновляем документ: очки, силу клика, автокликеры + время
+        updateDoc(userDocRef, {
+            score: localScore,
+            clickPower: clickPower,
+            autoClickers: autoClickers,
+            displayName: currentUser.displayName || currentUser.email,
+            photoURL: currentUser.photoURL || "",
+            updatedAt: serverTimestamp()
+        }).catch(err => console.warn("sync error", err));
+    }
+
+    // Функция покупки (проверка и списание)
+    function tryBuyUpgrade(type) {
+        if (!currentUser) {
+            shopMessageDiv.innerText = "❌ Войдите в аккаунт!";
+            setTimeout(() => shopMessageDiv.innerText = "", 1500);
+            return false;
         }
-        
-        function removeCommand(index) {
-            commands.splice(index, 1);
-            saveCommands();
-            renderCommands();
-            if (isBotRunning) {
-                addLog('⚠️ Команда удалена. Перезапустите бота.', 'warning');
+        if (type === 'click') {
+            const cost = clickUpgradeBaseCost;
+            if (localScore >= cost) {
+                localScore -= cost;
+                clickPower++;
+                // новая стоимость (базовая формула)
+                clickUpgradeBaseCost = Math.floor(10 + (clickPower-1) * 7);
+                updateUI();
+                shopMessageDiv.innerText = `💪 Сила клика увеличена до ${clickPower}!`;
+                setTimeout(() => shopMessageDiv.innerText = "", 1500);
+                return true;
+            } else {
+                shopMessageDiv.innerText = `⚠️ Не хватает очков! Нужно ${cost}`;
+                setTimeout(() => shopMessageDiv.innerText = "", 1500);
+                return false;
             }
-        }
-        
-        function addCommand() {
-            commands.push({ command: '/newcommand', response: 'Привет! Твой баланс {{balance}} 🤖' });
-            saveCommands();
-            renderCommands();
-            addLog('➕ Добавлена новая команда', 'info');
-        }
-        
-        // ==================== Логирование ====================
-        function addLog(message, type = 'info') {
-            const logContainer = document.getElementById('logContainer');
-            const timestamp = new Date().toLocaleTimeString('ru-RU');
-            
-            if (logContainer.innerHTML.includes('Лог событий появится здесь')) {
-                logContainer.innerHTML = '';
-            }
-            
-            const colors = {
-                info: 'text-blue-400',
-                success: 'text-green-400',
-                error: 'text-red-400',
-                warning: 'text-yellow-400',
-                message: 'text-purple-400'
-            };
-            
-            const icons = {
-                info: 'fa-circle-info',
-                success: 'fa-circle-check',
-                error: 'fa-circle-exclamation',
-                warning: 'fa-triangle-exclamation',
-                message: 'fa-comment'
-            };
-            
-            const logLine = document.createElement('div');
-            logLine.className = `log-line pl-3 py-1 mb-1 text-xs ${colors[type] || colors.info}`;
-            logLine.innerHTML = `<i class="fa-regular ${icons[type] || icons.info} mr-2 w-4"></i><span class="text-gray-500">[${timestamp}]</span> ${escapeHtml(message)}`;
-            logContainer.appendChild(logLine);
-            logContainer.scrollTop = logContainer.scrollHeight;
-            
-            while (logContainer.children.length > 100) {
-                logContainer.removeChild(logContainer.firstChild);
-            }
-        }
-        
-        function clearLogs() {
-            const logContainer = document.getElementById('logContainer');
-            logContainer.innerHTML = '<div class="text-gray-600 text-center py-8">📋 Логи очищены</div>';
-            addLog('Логи очищены', 'info');
-        }
-        
-        // ==================== Telegram API методы ====================
-        async function sendMessage(chatId, text) {
-            if (!currentToken) return false;
-            
-            // Заменяем переменные в тексте ответа
-            const processedText = replaceVariables(text);
-            
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${currentToken}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: processedText,
-                        parse_mode: 'HTML',
-                        disable_web_page_preview: true
-                    })
-                });
-                const data = await response.json();
-                if (data.ok) {
-                    addLog(`📤 Ответ отправлен в чат ${chatId}`, 'success');
-                    return true;
-                } else {
-                    addLog(`❌ Ошибка отправки: ${data.description}`, 'error');
-                    return false;
-                }
-            } catch (error) {
-                addLog(`❌ Ошибка сети при отправке: ${error.message}`, 'error');
+        } else if (type === 'auto') {
+            const cost = autoUpgradeBaseCost;
+            if (localScore >= cost) {
+                localScore -= cost;
+                autoClickers++;
+                autoUpgradeBaseCost = Math.floor(25 + autoClickers * 12);
+                updateUI();
+                shopMessageDiv.innerText = `🤖 Автокликер +1! Теперь ${autoClickers} очков/сек.`;
+                setTimeout(() => shopMessageDiv.innerText = "", 1500);
+                return true;
+            } else {
+                shopMessageDiv.innerText = `⚠️ Не хватает очков! Нужно ${cost}`;
+                setTimeout(() => shopMessageDiv.innerText = "", 1500);
                 return false;
             }
         }
-        
-        async function processUpdate(update) {
-            if (!update.message) return;
-            
-            const message = update.message;
-            const text = message.text;
-            const chatId = message.chat.id;
-            const username = message.from?.username || message.from?.first_name || 'пользователь';
-            
-            if (!text) return;
-            
-            addLog(`📨 Получено сообщение от @${username}: "${text.substring(0, 50)}"`, 'message');
-            
-            for (let cmd of commands) {
-                const commandPattern = new RegExp(`^${escapeRegex(cmd.command)}(\\s|$)`, 'i');
-                if (commandPattern.test(text)) {
-                    addLog(`🎯 Сработала команда ${cmd.command} → отправка ответа с заменой переменных`, 'success');
-                    await sendMessage(chatId, cmd.response);
-                    return;
-                }
-            }
-            
-            if (text.startsWith('/')) {
-                const commandsList = commands.map(c => c.command).join(', ');
-                const reply = `❌ Неизвестная команда.\n\nДоступные команды: ${commandsList || 'нет команд'}`;
-                await sendMessage(chatId, reply);
-                addLog(`⚠️ Неизвестная команда от @${username}`, 'warning');
-            }
+    }
+
+    // Обработка клика
+    function handleClick() {
+        if (!currentUser) {
+            shopMessageDiv.innerText = "🔐 Войдите через Google, чтобы играть!";
+            setTimeout(() => shopMessageDiv.innerText = "", 1500);
+            return;
         }
-        
-        // ==================== Long Polling ====================
-        async function pollUpdates() {
-            if (!isBotRunning || !currentToken) return;
-            
-            try {
-                let url = `https://api.telegram.org/bot${currentToken}/getUpdates?timeout=25&allowed_updates=["message"]`;
-                if (lastUpdateId > 0) {
-                    url += `&offset=${lastUpdateId + 1}`;
-                }
-                
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
-                
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                const data = await response.json();
-                
-                if (data.ok && data.result) {
-                    for (let update of data.result) {
-                        if (update.update_id > lastUpdateId) {
-                            lastUpdateId = update.update_id;
-                            await processUpdate(update);
-                        }
-                    }
-                } else if (!data.ok) {
-                    if (data.description && data.description.includes('Not found')) {
-                        addLog('❌ Токен недействителен! Бот остановлен.', 'error');
-                        stopBotInternal('Неверный токен');
-                    }
-                }
-            } catch (error) {
-                if (error.name === 'AbortError') {
-                    return;
-                }
-                addLog(`⚠️ Ошибка опроса: ${error.message}`, 'error');
-            }
-        }
-        
-        function startPollingLoop() {
-            if (pollingInterval) clearInterval(pollingInterval);
-            pollingInterval = setInterval(() => {
-                if (isBotRunning && currentToken) {
-                    pollUpdates();
-                }
-            }, 800);
-            addLog('🔄 Цикл опроса запущен', 'info');
-        }
-        
-        function stopPollingLoop() {
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingInterval = null;
-                addLog('⏹️ Цикл опроса остановлен', 'info');
-            }
-        }
-        
-        // ==================== Управление ботом ====================
-        async function startBot() {
-            const token = document.getElementById('tokenInput').value.trim();
-            
-            if (!token) {
-                addLog('❌ Введите токен бота', 'error');
+        localScore += clickPower;
+        updateUI();
+    }
+
+    // ---------- Глобальный ТОП-10 (onSnapshot) ----------
+    function subscribeLeaderboard() {
+        const q = query(collection(db, "users"), orderBy("score", "desc"), limit(10));
+        onSnapshot(q, (snapshot) => {
+            const items = snapshot.docs;
+            if (items.length === 0) {
+                leaderboardList.innerHTML = "<li>😵 Нет игроков</li>";
                 return;
             }
-            
-            if (commands.length === 0) {
-                addLog('❌ Добавьте хотя бы одну команду перед запуском', 'error');
+            let html = "";
+            items.forEach((doc, idx) => {
+                const data = doc.data();
+                const name = data.displayName || "NoName";
+                const scoreVal = data.score ?? 0;
+                html += `<li>${idx+1}. ${name.slice(0,18)} — ⚡${Math.floor(scoreVal)} очков</li>`;
+            });
+            leaderboardList.innerHTML = html;
+        }, (err) => {
+            console.error("Топ ошибка", err);
+            leaderboardList.innerHTML = "<li>❌ Ошибка загрузки топа</li>";
+        });
+    }
+
+    // ---------- Мировой чат (реалтайм, последние 50) ----------
+    function subscribeChat() {
+        const q = query(collection(db, "messages"), orderBy("timestamp", "desc"), limit(50));
+        onSnapshot(q, (snapshot) => {
+            const messages = [];
+            snapshot.forEach(doc => {
+                messages.push({ id: doc.id, ...doc.data() });
+            });
+            // выводим в обратном порядке (старые сверху)
+            messages.reverse();
+            if (messages.length === 0) {
+                chatMessagesDiv.innerHTML = '<div class="message">💬 Пока нет сообщений. Будь первым!</div>';
                 return;
             }
-            
-            for (let cmd of commands) {
-                if (!cmd.command.startsWith('/')) {
-                    addLog('❌ Команды должны начинаться с символа / (например: /start)', 'error');
-                    return;
-                }
-                if (!cmd.response.trim()) {
-                    addLog(`❌ У команды ${cmd.command} пустой ответ`, 'error');
-                    return;
-                }
-            }
-            
-            addLog('🔍 Проверка токена...', 'info');
-            
-            try {
-                const testResponse = await fetch(`https://api.telegram.org/bot${token}/getMe`);
-                const testData = await testResponse.json();
-                
-                if (!testData.ok) {
-                    addLog(`❌ Неверный токен: ${testData.description}`, 'error');
-                    return;
-                }
-                
-                const botName = testData.result.username;
-                currentToken = token;
-                saveToken(token);
-                lastUpdateId = 0;
-                isBotRunning = true;
-                
-                addLog(`✅ Бот @${botName} успешно запущен! Переменные: ${variables.length} шт.`, 'success');
-                updateUIForRunning(true);
-                
-                startPollingLoop();
-                setTimeout(() => pollUpdates(), 500);
-                
-            } catch (error) {
-                addLog(`❌ Ошибка подключения: ${error.message}`, 'error');
-            }
-        }
-        
-        function stopBotInternal(reason) {
-            if (!isBotRunning && !reason) return;
-            
-            isBotRunning = false;
-            stopPollingLoop();
-            currentToken = '';
-            
-            updateUIForRunning(false);
-            addLog(`🛑 Бот остановлен${reason ? ': ' + reason : ''}`, 'warning');
-        }
-        
-        async function stopBot() {
-            stopBotInternal('пользователем');
-        }
-        
-        // ==================== UI обновление ====================
-        function updateUIForRunning(running) {
-            const startBtn = document.getElementById('startBotBtn');
-            const stopBtn = document.getElementById('stopBotBtn');
-            const statusIndicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            const tokenInput = document.getElementById('tokenInput');
-            
-            if (running) {
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
-                statusIndicator.className = 'w-3 h-3 bg-green-500 rounded-full animate-pulse';
-                statusText.innerHTML = '<i class="fa-solid fa-circle text-green-500 text-xs mr-1"></i> Бот работает';
-                tokenInput.disabled = true;
-                tokenInput.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-                statusIndicator.className = 'w-3 h-3 bg-gray-500 rounded-full';
-                statusText.innerHTML = '<i class="fa-solid fa-circle text-gray-500 text-xs mr-1"></i> Не запущен';
-                tokenInput.disabled = false;
-                tokenInput.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        }
-        
-        // ==================== Панель настроек ====================
-        function toggleSettingsPanel() {
-            const panel = document.getElementById('settingsPanel');
-            settingsPanelOpen = !settingsPanelOpen;
-            if (settingsPanelOpen) {
-                panel.classList.add('open');
-            } else {
-                panel.classList.remove('open');
-            }
-        }
-        
-        // ==================== Инициализация ====================
-        document.getElementById('addCommandBtn').addEventListener('click', addCommand);
-        document.getElementById('startBotBtn').addEventListener('click', startBot);
-        document.getElementById('stopBotBtn').addEventListener('click', stopBot);
-        document.getElementById('clearLogsBtn').addEventListener('click', clearLogs);
-        document.getElementById('addVariableBtn').addEventListener('click', addVariable);
-        document.getElementById('settingsToggleBtn').addEventListener('click', toggleSettingsPanel);
-        
-        document.getElementById('tokenInput').addEventListener('change', function() {
-            if (this.value.trim()) {
-                saveToken(this.value.trim());
-            }
+            let html = "";
+            messages.forEach(msg => {
+                const author = msg.authorName || "Аноним";
+                const text = msg.text || "...";
+                const time = msg.timestamp?.toDate?.()?.toLocaleTimeString() || "";
+                html += `<div class="message"><span class="msg-name">${escapeHtml(author)}</span> <span style="color:#aaa">[${time}]</span>: ${escapeHtml(text)}</div>`;
+            });
+            chatMessagesDiv.innerHTML = html;
+            // автоскролл вниз (после рендера)
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         });
-        
-        window.addEventListener('beforeunload', () => {
-            if (isBotRunning) {
-                stopPollingLoop();
-            }
-        });
-        
-        loadFromStorage();
-        addLog('🚀 Конструктор загружен. Введите токен, добавьте команды и переменные', 'info');
-        
-        const savedTokenCheck = localStorage.getItem('botToken');
-        if (savedTokenCheck && commands.length > 0) {
-            addLog('💾 Найдены сохранённые настройки. Нажмите "Запустить бота" для активации', 'info');
+    }
+
+    // простой esc
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).slice(0, 100);
+    }
+
+    // Отправка сообщения
+    async function sendChatMessage() {
+        if (!currentUser) {
+            shopMessageDiv.innerText = "❌ Войдите, чтобы писать в чат!";
+            setTimeout(() => shopMessageDiv.innerText = "", 1500);
+            return;
         }
-        if (variables.length > 0) {
-            addLog(`📦 Загружено переменных: ${variables.length}`, 'info');
+        const text = chatInput.value.trim();
+        if (text === "") return;
+        if (text.length > 150) {
+            shopMessageDiv.innerText = "Сообщение не более 150 символов";
+            return;
         }
-    </script>
+        try {
+            await addDoc(collection(db, "messages"), {
+                text: text,
+                authorId: currentUser.uid,
+                authorName: currentUser.displayName || currentUser.email?.split('@')[0] || "Воин",
+                timestamp: serverTimestamp()
+            });
+            chatInput.value = "";
+        } catch(e) {
+            console.error(e);
+            shopMessageDiv.innerText = "Ошибка отправки";
+        }
+    }
+
+    // --- Авторизация ---
+    async function loginWithGoogle() {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            // пользователь залогинен
+        } catch (error) {
+            console.error(error);
+            shopMessageDiv.innerText = "Ошибка входа: " + error.message;
+        }
+    }
+
+    function logoutUser() {
+        signOut(auth).then(() => {
+            // сброс UI
+        }).catch(console.error);
+    }
+
+    // отслеживание состояния авторизации
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            avatarImg.src = user.photoURL || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            userNameSpan.innerText = user.displayName || user.email || "Игрок";
+            googleBtn.style.display = "none";
+            logoutBtn.style.display = "inline-block";
+            // загружаем данные игрока
+            await loadUserData(user);
+            // запускаем синхронизацию (если была, перезапустим)
+            if (syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(() => {
+                if (currentUser) syncToFirestore();
+            }, 5000);
+            // активируем кнопки
+            clickButton.disabled = false;
+            buyClickUpgradeBtn.disabled = false;
+            buyAutoClickerBtn.disabled = false;
+        } else {
+            // Сброс состояния гостя
+            if (syncInterval) clearInterval(syncInterval);
+            if (autoIncomeInterval) clearInterval(autoIncomeInterval);
+            currentUser = null;
+            userDocRef = null;
+            localScore = 0;
+            clickPower = 1;
+            autoClickers = 0;
+            clickUpgradeBaseCost = 10;
+            autoUpgradeBaseCost = 25;
+            updateUI();
+            avatarImg.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            userNameSpan.innerText = "Гость Арены";
+            googleBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
+            clickButton.disabled = true;
+            buyClickUpgradeBtn.disabled = true;
+            buyAutoClickerBtn.disabled = true;
+            shopMessageDiv.innerText = "Войдите, чтобы начать битву!";
+        }
+    });
+
+    // подписка на топ и чат (работают независимо, но для гостя тоже виден топ)
+    subscribeLeaderboard();
+    subscribeChat();
+
+    // Обработчики событий
+    googleBtn.addEventListener("click", loginWithGoogle);
+    logoutBtn.addEventListener("click", logoutUser);
+    clickButton.addEventListener("click", handleClick);
+    buyClickUpgradeBtn.addEventListener("click", () => tryBuyUpgrade('click'));
+    buyAutoClickerBtn.addEventListener("click", () => tryBuyUpgrade('auto'));
+    sendChatBtn.addEventListener("click", sendChatMessage);
+    chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendChatMessage();
+    });
+
+    // начальное состояние (гость)
+    updateUI();
+    clickButton.disabled = true;
+    buyClickUpgradeBtn.disabled = true;
+    buyAutoClickerBtn.disabled = true;
+</script>
 </body>
-    </html>
+</html>

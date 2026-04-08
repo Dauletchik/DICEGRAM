@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DICEGRAM — мессенджер с душой</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>DICEGRAM — мессенджер как Telegram</title>
     <style>
         * {
             margin: 0;
@@ -14,44 +14,44 @@
 
         body {
             background: #0a0f16;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
             overflow: hidden;
             position: fixed;
             width: 100%;
         }
 
-        /* Главный контейнер — адаптив и мобильная клавиатура не ломает */
-        .app-wrapper {
+        /* Основной контейнер — как Telegram */
+        .app-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
             width: 100%;
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
             background: #0f1722;
-            box-shadow: 0 0 40px rgba(0,0,0,0.4);
         }
 
-        /* Навигация + рабочая область (flex для планшетов/пк) */
+        /* Две колонки: список чатов и область чата */
         .main-layout {
             display: flex;
             flex: 1;
-            min-height: 0;  /* важно для скроллов */
+            min-height: 0;
             overflow: hidden;
         }
 
-        /* Сайдбар — адаптив */
+        /* Боковая панель (список диалогов) */
         .sidebar {
             width: 300px;
-            background: #111a24;
-            border-right: 1px solid #242f3a;
+            background: #111b24;
+            border-right: 1px solid #25313d;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
+        /* Шапка сайдбара */
         .sidebar-header {
             padding: 20px 18px 12px;
             background: #0e1620;
@@ -64,27 +64,25 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
-        .user-panel {
+        .user-card {
             background: #1a2a34;
             border-radius: 28px;
-            padding: 10px 16px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 6px;
         }
 
-        .user-tag {
+        .user-name {
             font-weight: 600;
-            color: #cddcec;
+            color: #e0edf5;
             font-size: 15px;
         }
 
-        .user-tag span {
+        .user-name span {
             color: #FFB347;
             font-weight: bold;
         }
@@ -93,25 +91,24 @@
             background: #2a3e4a;
             border: none;
             color: #ffaa66;
-            font-size: 12px;
+            font-size: 13px;
             padding: 6px 14px;
-            border-radius: 40px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: 0.2s;
             font-weight: 500;
         }
 
-        .search-area {
+        /* Поиск */
+        .search-box {
             padding: 16px 16px 12px;
         }
 
         .search-wrapper {
             display: flex;
             gap: 8px;
-            align-items: center;
             background: #1f2e38;
-            border-radius: 40px;
-            padding: 4px 8px 4px 18px;
+            border-radius: 30px;
+            padding: 4px 8px 4px 16px;
             border: 1px solid #2f4555;
         }
 
@@ -129,13 +126,21 @@
             background: #ffb347;
             border: none;
             border-radius: 30px;
-            padding: 8px 16px;
+            padding: 8px 18px;
             font-weight: bold;
             cursor: pointer;
             font-size: 13px;
-            transition: 0.2s;
         }
 
+        .search-feedback {
+            font-size: 12px;
+            margin-top: 8px;
+            padding-left: 12px;
+            color: #ffaa77;
+            min-height: 28px;
+        }
+
+        /* Список чатов */
         .dialogs-list {
             flex: 1;
             overflow-y: auto;
@@ -144,12 +149,12 @@
 
         .dialog-item {
             background: #14222c;
-            border-radius: 20px;
+            border-radius: 18px;
             padding: 14px 16px;
             margin-bottom: 8px;
             cursor: pointer;
             transition: 0.1s;
-            border: 1px solid #293e4a;
+            border: 1px solid #2a3e4a;
         }
 
         .dialog-item.active {
@@ -165,8 +170,8 @@
 
         .dialog-preview {
             font-size: 12px;
-            color: #90a9bc;
-            margin-top: 5px;
+            color: #8aaec2;
+            margin-top: 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -184,23 +189,25 @@
         .chat-header {
             padding: 18px 24px;
             background: #0e1620;
-            border-bottom: 1px solid #1f2e38;
+            border-bottom: 1px solid #1e2d38;
         }
 
         .chat-header h3 {
             color: #FFD966;
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .chat-header p {
             color: #7d98ae;
-            font-size: 13px;
+            font-size: 12px;
+            margin-top: 4px;
         }
 
-        .messages-area {
+        /* Контейнер сообщений */
+        .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 18px;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -209,34 +216,35 @@
         .message {
             max-width: 80%;
             padding: 10px 16px;
-            border-radius: 24px;
+            border-radius: 20px;
             word-wrap: break-word;
             font-size: 15px;
         }
 
-        .outgoing {
+        .message-outgoing {
             background: #FFB347;
-            color: #1f2a2e;
+            color: #1e2a2e;
             align-self: flex-end;
-            border-bottom-right-radius: 5px;
+            border-bottom-right-radius: 4px;
         }
 
-        .incoming {
+        .message-incoming {
             background: #1e2f3c;
             color: #f0f4fa;
             align-self: flex-start;
-            border-bottom-left-radius: 5px;
+            border-bottom-left-radius: 4px;
         }
 
-        .msg-time {
+        .message-time {
             font-size: 10px;
             opacity: 0.7;
             margin-top: 5px;
             text-align: right;
         }
 
-        .input-row {
-            padding: 16px 20px 22px;
+        /* Поле ввода */
+        .input-area {
+            padding: 14px 20px 22px;
             background: #0e1620;
             border-top: 1px solid #1e2d38;
             display: flex;
@@ -244,35 +252,34 @@
             align-items: center;
         }
 
-        .input-row input {
+        .input-area input {
             flex: 1;
             background: #1f2e3a;
             border: none;
             padding: 14px 18px;
-            border-radius: 40px;
+            border-radius: 30px;
             color: white;
             font-size: 16px;
             outline: none;
         }
 
-        .input-row button {
+        .input-area button {
             background: #ffb347;
             border: none;
             padding: 0 24px;
             height: 50px;
-            border-radius: 40px;
+            border-radius: 30px;
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        /* Регистрация */
-        .auth-overlay {
+        /* Регистрационный экран */
+        .auth-screen {
             position: fixed;
             inset: 0;
-            background: rgba(5, 10, 18, 0.96);
-            backdrop-filter: blur(16px);
+            background: rgba(8, 12, 20, 0.98);
+            backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -282,17 +289,17 @@
 
         .auth-card {
             background: #14222e;
-            max-width: 400px;
+            max-width: 380px;
             width: 100%;
             padding: 40px 28px;
             border-radius: 48px;
             text-align: center;
-            border: 1px solid #ffb34755;
-            box-shadow: 0 30px 40px rgba(0,0,0,0.5);
+            border: 1px solid #ffb34766;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
         }
 
         .auth-card h1 {
-            font-size: 52px;
+            font-size: 48px;
             background: linear-gradient(135deg, #FFE0A3, #FFAA44);
             -webkit-background-clip: text;
             background-clip: text;
@@ -308,13 +315,14 @@
             color: white;
             font-size: 18px;
             text-align: center;
-            margin: 20px 0 10px;
+            margin: 24px 0 12px;
         }
 
-        .error-auth {
+        .auth-error {
             color: #ff8a7a;
             font-size: 14px;
-            min-height: 40px;
+            min-height: 44px;
+            margin-bottom: 8px;
         }
 
         .auth-card button {
@@ -328,368 +336,215 @@
             cursor: pointer;
         }
 
-        .toast-bot {
+        /* Тосты от бота */
+        .bot-toast {
             position: fixed;
             bottom: 20px;
             left: 20px;
             right: 20px;
-            max-width: 360px;
+            max-width: 340px;
             background: #1f2e3a;
-            border-left: 6px solid #ffb347;
+            border-left: 5px solid #ffb347;
             padding: 14px 18px;
-            border-radius: 28px;
+            border-radius: 24px;
             color: #f0f0f0;
-            font-size: 14px;
+            font-size: 13px;
             z-index: 2100;
-            box-shadow: 0 8px 20px black;
-            backdrop-filter: blur(8px);
-            transition: 0.2s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
             pointer-events: none;
+            backdrop-filter: blur(8px);
         }
 
         .hidden {
             display: none;
         }
 
+        /* Мобильная адаптация как в Telegram */
         @media (max-width: 680px) {
             .sidebar {
                 width: 260px;
             }
             .message {
-                max-width: 90%;
-            }
-            .input-row button {
-                padding: 0 18px;
+                max-width: 85%;
             }
         }
 
-        @media (max-width: 550px) {
+        @media (max-width: 560px) {
             .main-layout {
                 flex-direction: column;
             }
             .sidebar {
                 width: 100%;
-                height: 40%;
+                height: 42%;
                 border-right: none;
-                border-bottom: 1px solid #242f3a;
+                border-bottom: 1px solid #25313d;
             }
             .chat-area {
-                height: 60%;
+                height: 58%;
             }
+            .sidebar-header {
+                padding: 14px 16px;
+            }
+            .logo {
+                font-size: 26px;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* скролл */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1b2a33;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffb347;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-<div class="app-wrapper" id="appRoot"></div>
+<div id="appRoot" class="app-container"></div>
 
 <script>
-    // ======================== ХРАНИЛИЩЕ ========================
-    let DB = {
-        users: [],      // { username, regDate }
-        messages: []    // { from, to, text, timestamp }
+    // ====================== ХРАНИЛИЩЕ (LocalStorage) ======================
+    let database = {
+        users: [],      // { username, registeredAt }
+        messages: []    // { fromUser, toUser, text, timestamp }
     };
 
-    function loadStorage() {
-        const u = localStorage.getItem('DICEGRAM_users');
-        const m = localStorage.getItem('DICEGRAM_messages');
-        if (u) DB.users = JSON.parse(u);
-        if (m) DB.messages = JSON.parse(m);
-        if (!Array.isArray(DB.users)) DB.users = [];
-        if (!Array.isArray(DB.messages)) DB.messages = [];
+    function loadData() {
+        const savedUsers = localStorage.getItem('DICEGRAM_users');
+        const savedMessages = localStorage.getItem('DICEGRAM_messages');
+        if (savedUsers) database.users = JSON.parse(savedUsers);
+        if (savedMessages) database.messages = JSON.parse(savedMessages);
+        if (!Array.isArray(database.users)) database.users = [];
+        if (!Array.isArray(database.messages)) database.messages = [];
     }
 
-    function saveUsers() { localStorage.setItem('DICEGRAM_users', JSON.stringify(DB.users)); }
-    function saveMessages() { localStorage.setItem('DICEGRAM_messages', JSON.stringify(DB.messages)); }
+    function saveUsers() { localStorage.setItem('DICEGRAM_users', JSON.stringify(database.users)); }
+    function saveMessages() { localStorage.setItem('DICEGRAM_messages', JSON.stringify(database.messages)); }
 
-    // проверка существования (регистронезависимая)
-    function userExists(username) {
-        return DB.users.some(u => u.username.toLowerCase() === username.toLowerCase());
+    // Проверка существования юзернейма (регистронезависимая)
+    function isUserExists(username) {
+        return database.users.some(u => u.username.toLowerCase() === username.toLowerCase());
     }
 
-    // регистрация
-    function registerNewUser(username) {
-        const clean = username.trim();
-        if (!clean) return { ok: false, err: "Напиши юзернейм!" };
-        if (userExists(clean)) return { ok: false, err: "уже существует такой юзернейм 😢" };
-        const newUser = { username: clean, regDate: Date.now() };
-        DB.users.push(newUser);
+    // Регистрация нового пользователя
+    function registerAccount(username) {
+        const cleanName = username.trim();
+        if (!cleanName) return { success: false, error: "Введите юзернейм" };
+        if (isUserExists(cleanName)) return { success: false, error: "уже существует такой юзернейм 😢" };
+        
+        const newUser = {
+            username: cleanName,
+            registeredAt: Date.now()
+        };
+        database.users.push(newUser);
         saveUsers();
-        localStorage.setItem('DICEGRAM_currentUser', clean);
-        // Бот DICEGRAM | официальное сообщение
-        const botMsg = {
-            from: "DICEGRAM_official_bot",
-            to: clean,
-            text: `🎉 Вы успешно зарегистрировали аккаунт в DICEGRAM со юзером @${clean}. Добро пожаловать! ✨ Теперь общайся с друзьями.`,
+        // Сохраняем сессию
+        localStorage.setItem('DICEGRAM_currentUser', cleanName);
+        
+        // Отправляем приветствие от официального бота DICEGRAM
+        const botMessage = {
+            fromUser: "DICEGRAM_official_bot",
+            toUser: cleanName,
+            text: `🎉 Вы успешно зарегистрировали аккаунт в DICEGRAM со юзером @${cleanName}. Добро пожаловать! ✨ Теперь вы можете общаться с друзьями.`,
             timestamp: new Date().toISOString()
         };
-        DB.messages.push(botMsg);
+        database.messages.push(botMessage);
         saveMessages();
-        showBotToast(`🤖 DICEGRAM | официальное бот: Привет, @${clean}! Ты в игре.`);
-        return { ok: true };
+        
+        // Показываем уведомление как в телеграм
+        showBotToast(`📩 DICEGRAM | официальное бот: Привет, @${cleanName}! Вы зарегистрированы.`);
+        
+        return { success: true };
     }
 
-    function getCurrentUser() { return localStorage.getItem('DICEGRAM_currentUser'); }
-    function logout() { localStorage.removeItem('DICEGRAM_currentUser'); renderApp(); }
+    function getCurrentSession() {
+        return localStorage.getItem('DICEGRAM_currentUser');
+    }
+
+    function logoutUser() {
+        localStorage.removeItem('DICEGRAM_currentUser');
+        renderFullApp();
+    }
 
     function showBotToast(text) {
-        let toast = document.querySelector('.toast-bot');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.className = 'toast-bot';
-            document.body.appendChild(toast);
+        let toastEl = document.querySelector('.bot-toast');
+        if (!toastEl) {
+            toastEl = document.createElement('div');
+            toastEl.className = 'bot-toast';
+            document.body.appendChild(toastEl);
         }
-        toast.innerText = text;
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 4000);
+        toastEl.innerHTML = `<span>🤖 ${text}</span>`;
+        toastEl.classList.remove('hidden');
+        setTimeout(() => toastEl.classList.add('hidden'), 4500);
     }
 
-    // отправить сообщение
-    function sendMessageTo(fromUser, toUser, text) {
+    // Отправка сообщения
+    function sendNewMessage(from, to, text) {
         if (!text.trim()) return false;
         const msg = {
-            from: fromUser,
-            to: toUser,
+            fromUser: from,
+            toUser: to,
             text: text.trim(),
             timestamp: new Date().toISOString()
         };
-        DB.messages.push(msg);
+        database.messages.push(msg);
         saveMessages();
         return true;
     }
 
-    // получить диалоги (уникальные собеседники, с которыми переписывались + все остальные зарегистрированные, кроме себя)
-    function getDialogs(currentUser) {
-        const allUsers = DB.users.map(u => u.username).filter(u => u !== currentUser);
-        const msgsFromTo = DB.messages.filter(m => m.from === currentUser || m.to === currentUser);
-        const interlocutors = new Set();
-        msgsFromTo.forEach(m => {
-            if (m.from === currentUser) interlocutors.add(m.to);
-            if (m.to === currentUser) interlocutors.add(m.from);
+    // Получить список диалогов (все пользователи, с которыми был контакт + все зарегистрированные кроме себя)
+    function getDialogsForUser(currentUser) {
+        // все зарегистрированные кроме меня
+        const allOthers = database.users.filter(u => u.username !== currentUser).map(u => u.username);
+        // собеседники по сообщениям
+        const relatedMsgs = database.messages.filter(m => m.fromUser === currentUser || m.toUser === currentUser);
+        const interlocutorsSet = new Set();
+        relatedMsgs.forEach(msg => {
+            if (msg.fromUser === currentUser) interlocutorsSet.add(msg.toUser);
+            if (msg.toUser === currentUser) interlocutorsSet.add(msg.fromUser);
         });
-        allUsers.forEach(u => interlocutors.add(u));
-        // убираем бота из диалогов? нет, оставляем, но это круто
-        let dialogsArr = Array.from(interlocutors).filter(name => name !== currentUser);
-        // сортируем по последнему сообщению
-        dialogsArr.sort((a,b) => {
-            const lastA = DB.messages.filter(m => (m.from === currentUser && m.to === a) || (m.from === a && m.to === currentUser)).sort((x,y)=> new Date(y.timestamp) - new Date(x.timestamp))[0];
-            const lastB = DB.messages.filter(m => (m.from === currentUser && m.to === b) || (m.from === b && m.to === currentUser)).sort((x,y)=> new Date(y.timestamp) - new Date(x.timestamp))[0];
-            if(!lastA && !lastB) return 0;
-            if(!lastA) return 1;
-            if(!lastB) return -1;
+        allOthers.forEach(u => interlocutorsSet.add(u));
+        
+        let dialogsArray = Array.from(interlocutorsSet);
+        // сортировка по последнему сообщению
+        dialogsArray.sort((a,b) => {
+            const lastA = database.messages.filter(m => (m.fromUser === currentUser && m.toUser === a) || (m.fromUser === a && m.toUser === currentUser))
+                .sort((x,y) => new Date(y.timestamp) - new Date(x.timestamp))[0];
+            const lastB = database.messages.filter(m => (m.fromUser === currentUser && m.toUser === b) || (m.fromUser === b && m.toUser === currentUser))
+                .sort((x,y) => new Date(y.timestamp) - new Date(x.timestamp))[0];
+            if (!lastA && !lastB) return 0;
+            if (!lastA) return 1;
+            if (!lastB) return -1;
             return new Date(lastB.timestamp) - new Date(lastA.timestamp);
         });
-        return dialogsArr;
+        return dialogsArray;
     }
 
     function getMessagesBetween(userA, userB) {
-        return DB.messages.filter(m => 
-            (m.from === userA && m.to === userB) || (m.from === userB && m.to === userA)
+        return database.messages.filter(m => 
+            (m.fromUser === userA && m.toUser === userB) || (m.fromUser === userB && m.toUser === userA)
         ).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
     }
 
-    function getLastPreview(current, interlocutor) {
-        const relevant = DB.messages.filter(m => 
-            (m.from === current && m.to === interlocutor) || (m.from === interlocutor && m.to === current)
-        ).sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
-        if (relevant.length === 0) return "💬 Напишите сообщение...";
+    function getLastMessagePreview(currentUser, interlocutor) {
+        const relevant = database.messages.filter(m => 
+            (m.fromUser === currentUser && m.toUser === interlocutor) || (m.fromUser === interlocutor && m.toUser === currentUser)
+        ).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        if (relevant.length === 0) return "💬 Напишите первое сообщение";
         const last = relevant[0];
-        const prefix = last.from === current ? "Вы: " : `@${last.from}: `;
-        let preview = last.text.length > 40 ? last.text.slice(0,37)+"..." : last.text;
+        const prefix = last.fromUser === currentUser ? "Вы: " : `@${last.fromUser}: `;
+        let preview = last.text.length > 38 ? last.text.slice(0,35)+"..." : last.text;
         return prefix + preview;
     }
 
-    // глобальная переменная активного чата
-    let activeChat = null;
+    let activeChatUser = null; // текущий открытый чат
 
-    function renderApp() {
-        const current = getCurrentUser();
-        const root = document.getElementById('appRoot');
-        if (!current) {
-            // Экран регистрации с красивым вводом
-            root.innerHTML = `
-                <div class="auth-overlay">
-                    <div class="auth-card">
-                        <h1>🎲 DICEGRAM</h1>
-                        <p style="color:#cdddee; margin:8px 0;">твой личный мессенджер</p>
-                        <input type="text" id="regUsernameInput" placeholder="Напишите ваш юзернейм" autocomplete="off">
-                        <div class="error-auth" id="regErrorMsg"></div>
-                        <button id="doRegisterBtn">🚀 Начать историю</button>
-                        <div style="margin-top:20px; font-size:13px; color:#ffbb77;">красиво будет написан ✨</div>
-                    </div>
-                </div>
-            `;
-            const regInput = document.getElementById('regUsernameInput');
-            const regBtn = document.getElementById('doRegisterBtn');
-            const errSpan = document.getElementById('regErrorMsg');
-            const attemptReg = () => {
-                const username = regInput.value.trim();
-                const res = registerNewUser(username);
-                if (res.ok) {
-                    renderApp();
-                } else {
-                    errSpan.innerText = res.err;
-                }
-            };
-            regBtn.addEventListener('click', attemptReg);
-            regInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') attemptReg(); });
-            return;
-        }
-
-        // ========= ОСНОВНОЙ ИНТЕРФЕЙС ==========
-        const dialogsList = getDialogs(current);
-        // если активный чат не существует или удален, установим первый
-        if (activeChat && !dialogsList.includes(activeChat) && activeChat !== current) {
-            activeChat = dialogsList.length ? dialogsList[0] : null;
-        }
-        if (!activeChat && dialogsList.length) activeChat = dialogsList[0];
-        
-        const messages = activeChat ? getMessagesBetween(current, activeChat) : [];
-        
-        // HTML разметка с умным поиском @username
-        root.innerHTML = `
-            <div class="main-layout">
-                <div class="sidebar">
-                    <div class="sidebar-header">
-                        <div class="logo">DICEGRAM</div>
-                        <div class="user-panel">
-                            <div class="user-tag">👤 <span>@${escapeHtml(current)}</span></div>
-                            <button class="logout-btn" id="logoutSideBtn">🚪 Выйти</button>
-                        </div>
-                    </div>
-                    <div class="search-area">
-                        <div class="search-wrapper">
-                            <input type="text" id="globalSearchInput" placeholder="🔍 Найти @username..." autocomplete="off">
-                            <button id="searchUserBtn">Найти</button>
-                        </div>
-                        <div id="searchFeedback" style="font-size:12px; margin-top:6px; color:#ffaa77; padding-left:8px;"></div>
-                    </div>
-                    <div class="dialogs-list" id="dialogsContainer">
-                        ${dialogsList.map(d => `
-                            <div class="dialog-item ${activeChat === d ? 'active' : ''}" data-dialog-user="${escapeHtml(d)}">
-                                <div class="dialog-name">@${escapeHtml(d)}</div>
-                                <div class="dialog-preview">${escapeHtml(getLastPreview(current, d))}</div>
-                            </div>
-                        `).join('')}
-                        ${dialogsList.length === 0 ? '<div style="padding:20px;text-align:center;color:#7d9ab0;">🌟 Найди друга через поиск и начни общение</div>' : ''}
-                    </div>
-                </div>
-                <div class="chat-area">
-                    <div class="chat-header">
-                        <h3>${activeChat ? `💬 @${escapeHtml(activeChat)}` : '✨ DICEGRAM'}</h3>
-                        <p>${activeChat ? 'личные сообщения • только вы двое' : 'выберите диалог или найдите пользователя'}</p>
-                    </div>
-                    <div class="messages-area" id="messagesArea">
-                        ${messages.map(msg => {
-                            const isOut = msg.from === current;
-                            return `
-                                <div class="message ${isOut ? 'outgoing' : 'incoming'}">
-                                    <div>${escapeHtml(msg.text)}</div>
-                                    <div class="msg-time">${isOut ? 'Вы' : '@'+escapeHtml(msg.from)} • ${new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
-                                </div>
-                            `;
-                        }).join('')}
-                        ${messages.length === 0 && activeChat ? '<div style="text-align:center; color:#67859b; margin-top:30px;">💬 Напишите первое сообщение...</div>' : ''}
-                    </div>
-                    <div class="input-row">
-                        <input type="text" id="messageCompose" placeholder="Сообщение..." ${!activeChat ? 'disabled' : ''} autocomplete="off">
-                        <button id="sendMessageBtn" ${!activeChat ? 'disabled' : ''}>➤ Отправить</button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Логаут
-        document.getElementById('logoutSideBtn')?.addEventListener('click', () => logout());
-
-        // Клик по диалогам
-        document.querySelectorAll('.dialog-item').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const username = el.getAttribute('data-dialog-user');
-                if (username && username !== current) {
-                    activeChat = username;
-                    renderApp();
-                }
-            });
-        });
-
-        // ========= ПОИСК ПОЛЬЗОВАТЕЛЯ с проверкой существования =========
-        const searchInput = document.getElementById('globalSearchInput');
-        const searchBtn = document.getElementById('searchUserBtn');
-        const feedbackSpan = document.getElementById('searchFeedback');
-        
-        const performSearch = () => {
-            let raw = searchInput.value.trim();
-            if (raw.startsWith('@')) raw = raw.slice(1);
-            if (raw === "") {
-                feedbackSpan.innerText = "✏️ Введите юзернейм для поиска";
-                return;
-            }
-            const foundUser = DB.users.find(u => u.username.toLowerCase() === raw.toLowerCase());
-            if (!foundUser) {
-                feedbackSpan.innerText = `❌ Пользователь @${raw} не зарегистрирован в DICEGRAM`;
-                return;
-            }
-            if (foundUser.username === current) {
-                feedbackSpan.innerText = "😄 Это вы! Напишите себе? Лучше напишите другому.";
-                return;
-            }
-            // Если пользователь существует - открываем чат с ним
-            activeChat = foundUser.username;
-            feedbackSpan.innerText = `✅ Открыт чат с @${foundUser.username}`;
-            searchInput.value = "";
-            renderApp();
-            setTimeout(() => {
-                if(feedbackSpan) feedbackSpan.innerText = "";
-            }, 2000);
-        };
-        
-        searchBtn.addEventListener('click', performSearch);
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
-
-        // ========= ОТПРАВКА СООБЩЕНИЙ (клавиатура не ломает, скролл вниз) =========
-        const msgField = document.getElementById('messageCompose');
-        const sendBtn = document.getElementById('sendMessageBtn');
-        
-        const sendMsg = () => {
-            if (!activeChat) return;
-            const text = msgField.value;
-            if (!text.trim()) return;
-            sendMessageTo(current, activeChat, text);
-            msgField.value = '';
-            // обновляем чат и скроллим
-            renderApp();
-            scrollChatToBottom();
-            // сохраняем фокус в поле ввода после рендера (для удобства)
-            setTimeout(() => {
-                const newInput = document.getElementById('messageCompose');
-                if (newInput) newInput.focus();
-            }, 50);
-        };
-        
-        if (sendBtn) sendBtn.addEventListener('click', sendMsg);
-        if (msgField) {
-            msgField.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendMsg();
-                }
-            });
-            // автофокус при открытом чате
-            msgField.focus();
-        }
-        
-        scrollChatToBottom();
-    }
-    
-    function scrollChatToBottom() {
-        setTimeout(() => {
-            const container = document.getElementById('messagesArea');
-            if (container) container.scrollTop = container.scrollHeight;
-        }, 30);
-    }
-    
+    // Экранирование HTML
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -699,50 +554,241 @@
             return m;
         });
     }
+
+    function scrollMessagesToBottom() {
+        setTimeout(() => {
+            const container = document.getElementById('messagesContainerDynamic');
+            if (container) container.scrollTop = container.scrollHeight;
+        }, 50);
+    }
+
+    // Основной рендер приложения
+    function renderFullApp() {
+        const currentUser = getCurrentSession();
+        const root = document.getElementById('appRoot');
+        
+        // ЭКРАН РЕГИСТРАЦИИ
+        if (!currentUser) {
+            root.innerHTML = `
+                <div class="auth-screen">
+                    <div class="auth-card">
+                        <h1>🎲 DICEGRAM</h1>
+                        <p style="color:#bdd4e8; margin:8px 0;">как Telegram, но твой</p>
+                        <input type="text" id="regUsernameField" placeholder="Напишите ваш юзернейм" autocomplete="off">
+                        <div class="auth-error" id="regErrorBlock"></div>
+                        <button id="registerButton">✨ Начать общение</button>
+                        <div style="margin-top:18px; font-size:13px; color:#ffbb77;">красиво будет написан ✨</div>
+                    </div>
+                </div>
+            `;
+            const regInput = document.getElementById('regUsernameField');
+            const regBtn = document.getElementById('registerButton');
+            const errorBlock = document.getElementById('regErrorBlock');
+            const attemptRegister = () => {
+                const username = regInput.value.trim();
+                const result = registerAccount(username);
+                if (result.success) {
+                    renderFullApp();
+                } else {
+                    errorBlock.innerText = result.error;
+                }
+            };
+            regBtn.addEventListener('click', attemptRegister);
+            regInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') attemptRegister(); });
+            return;
+        }
+        
+        // =========== ОСНОВНОЙ ИНТЕРФЕЙС ===========
+        const dialogs = getDialogsForUser(currentUser);
+        // Если активный чат не существует или удален — выбираем первый
+        if (activeChatUser && !dialogs.includes(activeChatUser) && activeChatUser !== currentUser) {
+            activeChatUser = dialogs.length > 0 ? dialogs[0] : null;
+        }
+        if (!activeChatUser && dialogs.length > 0) activeChatUser = dialogs[0];
+        
+        const messages = activeChatUser ? getMessagesBetween(currentUser, activeChatUser) : [];
+        
+        // Генерация HTML
+        root.innerHTML = `
+            <div class="main-layout">
+                <!-- Левая панель -->
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <div class="logo">DICEGRAM</div>
+                        <div class="user-card">
+                            <div class="user-name">👤 <span>@${escapeHtml(currentUser)}</span></div>
+                            <button class="logout-btn" id="logoutButtonSide">🚪 Выйти</button>
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <div class="search-wrapper">
+                            <input type="text" id="searchUsernameInput" placeholder="🔍 Поиск @username..." autocomplete="off">
+                            <button id="searchUserActionBtn">Найти</button>
+                        </div>
+                        <div class="search-feedback" id="searchFeedbackMsg"></div>
+                    </div>
+                    <div class="dialogs-list" id="dialogsListSidebar">
+                        ${dialogs.map(d => `
+                            <div class="dialog-item ${activeChatUser === d ? 'active' : ''}" data-chat-user="${escapeHtml(d)}">
+                                <div class="dialog-name">@${escapeHtml(d)}</div>
+                                <div class="dialog-preview">${escapeHtml(getLastMessagePreview(currentUser, d))}</div>
+                            </div>
+                        `).join('')}
+                        ${dialogs.length === 0 ? '<div style="padding:20px;text-align:center;color:#7d9ab0;">🌟 Найдите друга через поиск</div>' : ''}
+                    </div>
+                </div>
+                
+                <!-- Правая область чата -->
+                <div class="chat-area">
+                    <div class="chat-header">
+                        <h3>${activeChatUser ? `💬 @${escapeHtml(activeChatUser)}` : '✨ DICEGRAM'}</h3>
+                        <p>${activeChatUser ? 'личные сообщения' : 'выберите чат или найдите пользователя'}</p>
+                    </div>
+                    <div class="messages-container" id="messagesContainerDynamic">
+                        ${messages.map(msg => {
+                            const isOut = msg.fromUser === currentUser;
+                            return `
+                                <div class="message ${isOut ? 'message-outgoing' : 'message-incoming'}">
+                                    <div>${escapeHtml(msg.text)}</div>
+                                    <div class="message-time">${isOut ? 'Вы' : '@'+escapeHtml(msg.fromUser)} • ${new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                        ${messages.length === 0 && activeChatUser ? '<div style="text-align:center; color:#67859b; margin-top:30px;">💬 Напишите первое сообщение...</div>' : ''}
+                    </div>
+                    <div class="input-area">
+                        <input type="text" id="messageInputField" placeholder="Сообщение..." ${!activeChatUser ? 'disabled' : ''} autocomplete="off">
+                        <button id="sendMessageButton" ${!activeChatUser ? 'disabled' : ''}>➤ Отправить</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // --- ЛОГАУТ ---
+        document.getElementById('logoutButtonSide')?.addEventListener('click', () => logoutUser());
+        
+        // --- КЛИК ПО ДИАЛОГАМ (открытие чата) ---
+        document.querySelectorAll('.dialog-item').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const username = el.getAttribute('data-chat-user');
+                if (username && username !== currentUser) {
+                    activeChatUser = username;
+                    renderFullApp();
+                }
+            });
+        });
+        
+        // === ПОИСК ПОЛЬЗОВАТЕЛЯ (как в телеграме) ===
+        const searchInput = document.getElementById('searchUsernameInput');
+        const searchBtn = document.getElementById('searchUserActionBtn');
+        const feedbackDiv = document.getElementById('searchFeedbackMsg');
+        
+        const findAndOpenChat = () => {
+            let query = searchInput.value.trim();
+            if (query.startsWith('@')) query = query.slice(1);
+            if (query === "") {
+                feedbackDiv.innerText = "✏️ Введите юзернейм для поиска";
+                return;
+            }
+            // Проверяем существование в БД
+            const found = database.users.find(u => u.username.toLowerCase() === query.toLowerCase());
+            if (!found) {
+                feedbackDiv.innerText = `❌ Пользователь @${query} не зарегистрирован в DICEGRAM`;
+                return;
+            }
+            if (found.username === currentUser) {
+                feedbackDiv.innerText = "😅 Это вы! Напишите другому пользователю.";
+                return;
+            }
+            // Открываем чат с найденным
+            activeChatUser = found.username;
+            feedbackDiv.innerText = `✅ Чат с @${found.username} открыт`;
+            searchInput.value = "";
+            renderFullApp();
+            setTimeout(() => {
+                if(feedbackDiv) feedbackDiv.innerText = "";
+            }, 2000);
+        };
+        
+        searchBtn.addEventListener('click', findAndOpenChat);
+        searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') findAndOpenChat(); });
+        
+        // === ОТПРАВКА СООБЩЕНИЙ (с исправлением клавиатуры) ===
+        const msgField = document.getElementById('messageInputField');
+        const sendBtn = document.getElementById('sendMessageButton');
+        
+        const sendMsgAction = () => {
+            if (!activeChatUser) return;
+            const text = msgField.value;
+            if (!text.trim()) return;
+            sendNewMessage(currentUser, activeChatUser, text);
+            msgField.value = '';
+            renderFullApp();
+            scrollMessagesToBottom();
+            // Фокус обратно на поле ввода после рендера (для удобства на телефоне)
+            setTimeout(() => {
+                const newMsgField = document.getElementById('messageInputField');
+                if (newMsgField) newMsgField.focus();
+            }, 60);
+        };
+        
+        if (sendBtn) sendBtn.addEventListener('click', sendMsgAction);
+        if (msgField) {
+            msgField.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMsgAction();
+                }
+            });
+            msgField.focus();
+        }
+        
+        scrollMessagesToBottom();
+    }
     
-    // Инициализация БД с демо-юзером и ботом, но чтобы регистрация была чистой, добавляем пару фейковых
-    function initDemoData() {
-        if (DB.users.length === 0) {
-            DB.users.push({ username: "Alex", regDate: Date.now() });
-            DB.users.push({ username: "Jessica", regDate: Date.now() });
-            DB.users.push({ username: "DICEGRAM_official_bot", regDate: 1 });
+    // Инициализация демо-пользователей для теста (но регистрация работает честно)
+    function initDemoUsers() {
+        if (database.users.length === 0) {
+            // Добавляем пару тестовых аккаунтов, чтобы можно было с кем-то общаться после регистрации
+            database.users.push({ username: "Alex", registeredAt: Date.now() });
+            database.users.push({ username: "Jessica", registeredAt: Date.now() });
+            database.users.push({ username: "DICEGRAM_official_bot", registeredAt: 1 });
             saveUsers();
-            // приветственное сообщение от бота Алексу для примера
-            if (DB.messages.length === 0) {
-                DB.messages.push({ from: "DICEGRAM_official_bot", to: "Alex", text: "Привет! Это официальный бот DICEGRAM. Здесь безопасно и уютно 💙", timestamp: new Date().toISOString() });
+            // Приветственное сообщение от бота для Алекса (демо)
+            if (database.messages.length === 0) {
+                database.messages.push({
+                    fromUser: "DICEGRAM_official_bot",
+                    toUser: "Alex",
+                    text: "Добро пожаловать в DICEGRAM! Это официальный бот. Здесь как Telegram, но твой 😎",
+                    timestamp: new Date().toISOString()
+                });
                 saveMessages();
             }
         }
     }
     
-    // Глобальная обработка изменения размера viewport (чтобы клавиатура не ломала)
-    function handleResize() {
-        // просто форсируем скролл активного чата при изменении (для мобильных клавиатур)
-        const msgArea = document.getElementById('messagesArea');
-        if (msgArea) msgArea.scrollTop = msgArea.scrollHeight;
-    }
-    
-    // Старт приложения
-    loadStorage();
-    initDemoData();
-    renderApp();
+    // Обработка клавиатуры на мобильных устройствах: при изменении размера окна скроллим вниз
     window.addEventListener('resize', () => {
         setTimeout(() => {
-            const area = document.getElementById('messagesArea');
-            if (area) area.scrollTop = area.scrollHeight;
+            const msgContainer = document.getElementById('messagesContainerDynamic');
+            if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
         }, 100);
     });
-    window.addEventListener('load', () => {
-        // дополнительно фикс для клавиатуры на мобильных устройствах: при фокусе поле ввода поднимается, но мы перерисовываем скролл
-        document.body.addEventListener('focusin', (e) => {
-            if (e.target && (e.target.id === 'messageCompose' || e.target.id === 'globalSearchInput' || e.target.id === 'regUsernameInput')) {
-                setTimeout(() => {
-                    const msgCont = document.getElementById('messagesArea');
-                    if (msgCont) msgCont.scrollTop = msgCont.scrollHeight;
-                }, 300);
-            }
-        });
+    
+    // Фокус на поле ввода не ломает интерфейс, скролл подстраивается
+    document.body.addEventListener('focusin', (e) => {
+        if (e.target && (e.target.id === 'messageInputField' || e.target.id === 'searchUsernameInput' || e.target.id === 'regUsernameField')) {
+            setTimeout(() => {
+                const msgCont = document.getElementById('messagesContainerDynamic');
+                if (msgCont) msgCont.scrollTop = msgCont.scrollHeight;
+            }, 300);
+        }
     });
+    
+    // СТАРТ ПРИЛОЖЕНИЯ
+    loadData();
+    initDemoUsers();
+    renderFullApp();
 </script>
 </body>
 </html>

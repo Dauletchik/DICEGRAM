@@ -3,679 +3,508 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Clicker Arena | Неоновая битва кликов</title>
-    <!-- Импорт Firebase SDK v9+ (модульный стиль) -->
-    <script type="importmap">
-        {
-            "imports": {
-                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
-                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
-            }
-        }
-    </script>
+    <title>Free Fire Shooter | KREE KIRE</title>
+    <!-- Google Fonts: агрессивный экшн-стиль -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (бесплатные иконки) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Orbitron', 'Poppins', monospace;
+            user-select: none; /* легкий игровой стиль */
         }
 
         body {
-            min-height: 100vh;
-            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03050b);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Orbitron', 'Rajdhani', 'Bangers', sans-serif;
+            /* ФОН: замените URL на нужную картинку пустыни */
+            background: url('https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=1600') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            color: white;
         }
 
-        /* основной контейнер с неоновым свечением */
-        .arena-container {
-            max-width: 1400px;
+        /* затемнение для читаемости текста, как в free fire */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            background: rgba(10, 20, 28, 0.65);
-            backdrop-filter: blur(3px);
-            border-radius: 3rem;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 0 35px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0, 255, 255, 0.05);
-            padding: 1.5rem;
-            transition: all 0.3s;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.65) 100%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* шапка профиля */
-        .profile-bar {
+        /* главный контейнер GRID - по краям экрана */
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+            padding: 20px 25px 25px 25px;
+        }
+
+        /* ========= ВЕРХНЯЯ ПАНЕЛЬ (Header) ========= */
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
             border-radius: 60px;
-            padding: 10px 25px;
-            margin-bottom: 30px;
-            border-left: 4px solid #0ff;
-            border-right: 4px solid #f0f;
-            box-shadow: 0 0 12px #0ff3;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: 2px solid cyan;
-            box-shadow: 0 0 10px cyan;
-            object-fit: cover;
-        }
-        .user-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #aaffff, #ff66ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 8px #0ff8;
-        }
-        .login-btn {
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            border: none;
-            padding: 10px 24px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 0 10px #00a6ff;
-        }
-        .login-btn:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 18px cyan;
+            padding: 8px 20px 8px 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            width: 100%;
         }
 
-        /* основная сетка */
-        .game-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr 0.9fr;
+        /* левый блок: имя + уровень */
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 18px 5px 15px;
+            border-radius: 40px;
+            border-left: 3px solid #ffcc00;
+        }
+        .player-name {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            color: #FFE484;
+            text-shadow: 3px 3px 0 #b45f06, 0 0 8px #ff9900;
+            margin-right: 5px;
+        }
+        .level-icon {
+            background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            border: 2px solid #FFD966;
+            color: #FFD966;
+            box-shadow: 0 0 6px gold;
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* правый блок ресурсы */
+        .resources {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 6px 20px;
+            border-radius: 50px;
+        }
+        .gold, .diamonds {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 1px 1px 0 black;
+        }
+        .gold i, .diamonds i {
+            font-size: 1.6rem;
+        }
+        .gold i { color: #FFD966; }
+        .diamonds i { color: #4afff5; text-shadow: 0 0 3px cyan;}
+
+        /* ========= ОСНОВНАЯ СЕТКА (боковое меню + правая часть) ========= */
+        .middle-area {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 20px 0;
             gap: 20px;
         }
-        @media (max-width: 950px) {
-            .game-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-        }
 
-        /* карточки */
-        .glass-card {
-            background: rgba(5, 10, 20, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 2rem;
-            padding: 1.2rem;
-            border: 1px solid rgba(0, 255, 255, 0.4);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-            transition: all 0.2s;
+        /* ЛЕВОЕ МЕНЮ (Sidebar) */
+        .sidebar {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 20px 12px;
+            width: 240px;
+            border: 1px solid rgba(255, 200, 50, 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-
-        .click-area {
-            text-align: center;
-        }
-        .click-btn {
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ff4d4d, #aa2e2e);
-            border: 4px solid #ffcc00;
-            box-shadow: 0 0 0 0 #ffcc88, 0 0 30px #ff4444;
-            font-size: 3rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 0 12px gold;
-            cursor: pointer;
-            transition: 0.07s linear;
-            margin: 20px auto;
-        }
-        .click-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 0 35px #ff8800;
-        }
-        .score-display {
-            font-size: 3rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ffffaa, #ffaa66);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: 2px;
-        }
-        .score-label {
-            color: #8db5ff;
-            font-size: 1.2rem;
-        }
-
-        /* магазин */
-        .shop-item {
-            background: #0a1424;
-            margin: 12px 0;
-            padding: 12px;
-            border-radius: 1.5rem;
+        .nav-btn {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border: 1px solid cyan;
-            transition: 0.1s;
-        }
-        .shop-info h4 {
-            color: #0ff;
-        }
-        .shop-info p {
-            color: #bbb;
-            font-size: 0.8rem;
-        }
-        .buy-btn {
-            background: #2c2f6e;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
+            gap: 18px;
+            background: rgba(20, 20, 30, 0.7);
+            margin: 12px 0;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: #f0f0f0;
+            transition: all 0.2s ease;
             cursor: pointer;
-            transition: 0.1s;
-            box-shadow: 0 0 5px cyan;
+            border: 1px solid transparent;
         }
-        .buy-btn:active {
-            transform: scale(0.96);
+        .nav-btn i {
+            width: 28px;
+            font-size: 1.5rem;
+            color: #ffcc44;
         }
-        .buy-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .nav-btn:hover {
+            background: rgba(255, 200, 70, 0.25);
+            transform: scale(1.02) translateX(6px);
+            border-color: #ffcc44;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.5);
+            color: #ffdd88;
         }
 
-        /* топ и чат */
-        .leaderboard-list {
-            list-style: none;
-            max-height: 280px;
-            overflow-y: auto;
-        }
-        .leaderboard-list li {
-            padding: 8px;
-            border-bottom: 1px solid #2c3e55;
+        /* ПРАВАЯ ЧАСТЬ: друзья онлайн + режимы */
+        .right-panel {
             display: flex;
-            gap: 8px;
-            color: #ccf;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 20px;
+            width: 240px;
         }
-        .chat-messages {
-            height: 280px;
-            overflow-y: auto;
-            background: #010a14aa;
-            border-radius: 20px;
-            padding: 10px;
+        .friends-online {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 15px 18px;
+            width: 100%;
+            text-align: right;
+            border-right: 3px solid #ffaa33;
+        }
+        .friends-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #ffcc77;
             margin-bottom: 12px;
-        }
-        .message {
-            margin: 8px 0;
-            font-size: 0.85rem;
-            word-break: break-word;
-            border-left: 3px solid cyan;
-            padding-left: 8px;
-        }
-        .msg-name {
-            color: #0ff;
-            font-weight: bold;
-        }
-        .chat-input-area {
             display: flex;
+            justify-content: flex-end;
             gap: 8px;
         }
-        .chat-input-area input {
-            flex: 1;
-            background: #0f1a2b;
-            border: 1px solid cyan;
-            border-radius: 40px;
-            padding: 10px;
-            color: white;
-            outline: none;
+        .friend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        .chat-input-area button {
-            background: #00b4d8;
-            border: none;
+        .friend-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .friend-item i {
+            font-size: 1.3rem;
+            color: #5eff6e;
+        }
+        .friend-name {
+            font-family: 'Rajdhani', monospace;
+        }
+        .mode-buttons {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 15px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .mode-btn {
+            background: rgba(10, 10, 20, 0.8);
+            padding: 10px;
+            text-align: center;
             border-radius: 40px;
-            padding: 0 18px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.2s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 200, 100, 0.3);
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+        .mode-btn:hover {
+            background: #ffaa2a;
+            color: black;
+            transform: scale(1.02);
+            box-shadow: 0 0 10px gold;
+        }
+
+        /* ========= НИЖНЯЯ ПАНЕЛЬ (Footer) ========= */
+        .footer-menu {
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(15px);
+            border-radius: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 30px;
+            margin-top: 10px;
+            border-top: 1px solid #ffcc44;
+            border-bottom: 1px solid #ffcc44;
+        }
+        .footer-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s;
+            color: #ddd;
+            padding: 6px 18px;
+            border-radius: 40px;
         }
-        .logout-btn {
-            background: #ff3366aa;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 30px;
-            color: white;
-            cursor: pointer;
+        .footer-btn i {
+            font-size: 1.7rem;
+            color: #ffcc55;
         }
-        .footer-note {
-            text-align: center;
-            margin-top: 20px;
+        .footer-btn span {
             font-size: 0.7rem;
-            color: #66ccffaa;
+            letter-spacing: 1px;
         }
-        ::-webkit-scrollbar {
-            width: 5px;
+        .footer-btn:hover {
+            background: rgba(255, 204, 85, 0.3);
+            transform: translateY(-4px);
+            color: #ffdd99;
         }
-        ::-webkit-scrollbar-track {
-            background: #001;
+
+        /* БОЛЬШАЯ КНОПКА СТАРТ (правый нижний угол абсолютно) */
+        .start-btn-wrapper {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 15;
         }
-        ::-webkit-scrollbar-thumb {
-            background: cyan;
-            border-radius: 10px;
+        .start-button {
+            background: radial-gradient(circle at 30% 20%, #FFD966, #F0A500);
+            border: none;
+            font-family: 'Bangers', cursive;
+            font-size: 2.5rem;
+            padding: 18px 42px;
+            border-radius: 80px;
+            color: #1f2a0e;
+            text-shadow: 2px 2px 0 #FFE484;
+            letter-spacing: 3px;
+            box-shadow: 0 15px 0 #a05e15, 0 8px 25px black;
+            cursor: pointer;
+            transition: all 0.07s linear;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .start-button:active {
+            transform: translateY(4px);
+            box-shadow: 0 8px 0 #a05e15;
+        }
+        .start-button:hover {
+            transform: scale(1.02) translateY(-2px);
+            background: radial-gradient(circle at 30% 20%, #FFE28C, #ffbb2e);
+            box-shadow: 0 12px 0 #a05e15, 0 10px 30px gold;
+        }
+
+        /* адаптивность небольшая */
+        @media (max-width: 800px) {
+            .player-name { font-size: 1.3rem; }
+            .sidebar { width: 180px; }
+            .nav-btn { padding: 8px 12px; font-size: 0.9rem; }
+            .right-panel { width: 180px; }
+            .start-button { font-size: 1.6rem; padding: 12px 28px; }
+        }
+
+        /* всплывающее уведомление (имитация старта) */
+        .toast-msg {
+            position: fixed;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000000cc;
+            backdrop-filter: blur(20px);
+            color: #ffd966;
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            padding: 12px 28px;
+            border-radius: 60px;
+            border: 2px solid gold;
+            z-index: 200;
+            pointer-events: none;
+            animation: fadeUp 1.2s forwards;
+            white-space: nowrap;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateX(-50%) translateY(30px);}
+            20% { opacity: 1; transform: translateX(-50%) translateY(0px);}
+            80% { opacity: 1; transform: translateX(-50%) translateY(0px);}
+            100% { opacity: 0; transform: translateX(-50%) translateY(-50px); visibility: hidden;}
         }
     </style>
 </head>
 <body>
-<div class="arena-container" id="app">
-    <!-- Профиль -->
-    <div class="profile-bar">
-        <div class="user-info" id="userInfoArea">
-            <img id="avatarImg" class="avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="avatar">
-            <span id="userNameSpan" class="user-name">Гость Арены</span>
+
+<div class="game-container">
+    <!-- Верхняя панель Header: крупно KREE KIRE слева -->
+    <div class="top-bar">
+        <div class="player-info">
+            <div class="player-name">KREE KIRE</div>
+            <div class="level-icon">69</div>
         </div>
-        <div>
-            <button id="googleLoginBtn" class="login-btn">⚡ Войти через Google</button>
-            <button id="logoutBtn" class="logout-btn" style="display: none;">Выйти</button>
+        <div class="resources">
+            <div class="gold"><i class="fas fa-coins"></i> 12,450</div>
+            <div class="diamonds"><i class="fas fa-gem"></i> 890</div>
         </div>
     </div>
 
-    <div class="game-grid">
-        <!-- Центр: клики и очки -->
-        <div class="glass-card click-area">
-            <h2 style="color: cyan; text-align: center;">💥 CLICK ARENA 💥</h2>
-            <button id="clickButton" class="click-btn">🔥<br>КЛИК</button>
-            <div class="score-label">ТВОИ ОЧКИ</div>
-            <div class="score-display" id="scoreDisplay">0</div>
-            <div style="margin-top: 12px;"><span id="clickPowerLabel">⚡ Сила клика: 1</span> &nbsp;|&nbsp; <span id="autoLabel">🤖 Автоклик: 0/сек</span></div>
+    <!-- средняя секция: левое меню + правая панель -->
+    <div class="middle-area">
+        <!-- левый сайдбар (Магазин, Джекпот, Booyah Пропуск, Миссии, События) -->
+        <div class="sidebar">
+            <div class="nav-btn" data-action="shop"><i class="fas fa-store"></i> <span>Магазин</span></div>
+            <div class="nav-btn" data-action="jackpot"><i class="fas fa-trophy"></i> <span>Джекпот</span></div>
+            <div class="nav-btn" data-action="booyah"><i class="fas fa-ticket-alt"></i> <span>Booyah Пропуск</span></div>
+            <div class="nav-btn" data-action="missions"><i class="fas fa-tasks"></i> <span>Миссии</span></div>
+            <div class="nav-btn" data-action="events"><i class="fas fa-calendar-alt"></i> <span>События</span></div>
         </div>
 
-        <!-- Магазин улучшений -->
-        <div class="glass-card">
-            <h3 style="color: #ff77ff; text-align: center;">🛒 НЕОНОВЫЙ МАГАЗИН 🛒</h3>
-            <div class="shop-item">
-                <div class="shop-info">
-                    <h4>💪 Сила клика +1</h4>
-                    <p>Увеличивает доход за клик на 1</p>
+        <!-- Правая часть: иконки друзей онлайн и кнопки режимов -->
+        <div class="right-panel">
+            <div class="friends-online">
+                <div class="friends-title"><span>ДРУЗЬЯ ОНЛАЙН</span> <i class="fas fa-user-friends"></i></div>
+                <div class="friend-list">
+                    <div class="friend-item"><span class="friend-name">GHOST_47</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
+                    <div class="friend-item"><span class="friend-name">ViperX</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
+                    <div class="friend-item"><span class="friend-name">KILLER_BEAN</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
+                    <div class="friend-item"><span class="friend-name">DIABLO_FF</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
                 </div>
-                <button class="buy-btn" id="buyClickUpgrade">Купить <span id="clickUpgradeCost">10</span>⚡</button>
             </div>
-            <div class="shop-item">
-                <div class="shop-info">
-                    <h4>🤖 Автокликер</h4>
-                    <p>+1 очко/сек пассивно</p>
-                </div>
-                <button class="buy-btn" id="buyAutoClicker">Купить <span id="autoUpgradeCost">25</span>⚡</button>
-            </div>
-            <div id="shopMessage" style="color: #ffaa66; font-size: 0.8rem; margin-top: 12px;"></div>
-        </div>
-
-        <!-- Топ-10 и чат в одной колонке? Но разделим: две колонки будут? в grid третий блок: топ + чат вертикально -->
-        <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div class="glass-card">
-                <h3 style="color: gold; text-align: center;">🏆 ТОП-10 ИГРОКОВ 🏆</h3>
-                <ul id="leaderboardList" class="leaderboard-list">
-                    <li>✨ Загрузка рейтинга...</li>
-                </ul>
-            </div>
-            <div class="glass-card">
-                <h3 style="color: #0ff; text-align: center;">💬 МИРОВОЙ ЧАТ (последние 50)</h3>
-                <div id="chatMessagesDiv" class="chat-messages">
-                    <div class="message">⚡ Чат загружается...</div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" placeholder="Напиши сообщение..." maxlength="150">
-                    <button id="sendChatBtn">📨 Отправить</button>
-                </div>
+            <div class="mode-buttons">
+                <div class="mode-btn">КЛАССИЧЕСКИЙ <i class="fas fa-gamepad"></i></div>
+                <div class="mode-btn">БОЕВОЙ РОЯЛЬ  <i class="fas fa-skull"></i></div>
+                <div class="mode-btn">КОМАНДНЫЙ БОЙ</div>
+                <div class="mode-btn">КЛОНОВОЕ ПОЛЕ</div>
             </div>
         </div>
     </div>
-    <div class="footer-note">⚡ Каждые 5 сек синхронизация очков | Онлайн Топ и Чат в реальном времени</div>
+
+    <!-- Нижняя панель (Footer): Склад, Оружие, Пресет, Лаба -->
+    <div class="footer-menu">
+        <div class="footer-btn" data-footer="inventory"><i class="fas fa-box"></i><span>Склад</span></div>
+        <div class="footer-btn" data-footer="weapon"><i class="fas fa-gun"></i><span>Оружие</span></div>
+        <div class="footer-btn" data-footer="preset"><i class="fas fa-layer-group"></i><span>Пресет</span></div>
+        <div class="footer-btn" data-footer="lab"><i class="fas fa-flask"></i><span>Лаба</span></div>
+    </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, orderBy, limit, addDoc, serverTimestamp, increment } from "firebase/firestore";
+<!-- Отдельная большая кнопка СТАРТ в правом нижнем углу -->
+<div class="start-btn-wrapper">
+    <button class="start-button" id="bigStartBtn"><i class="fas fa-play"></i> СТАРТ</button>
+</div>
 
-    // Конфиг Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyD5xtPtUOZRzT5we8d117Jy8kHQqcSb6aE",
-        authDomain: "clickergram999.firebaseapp.com",
-        projectId: "clickergram999",
-        storageBucket: "clickergram999.firebasestorage.app",
-        messagingSenderId: "421877387649",
-        appId: "1:421877387649:web:04055d85f59bd2a4ea5880",
-        measurementId: "G-NCVR5W9D09"
-    };
+<script>
+    // Имитация клика по кнопке СТАРТ + всплывающие уведомления для меню (игровой стиль)
+    function showNotification(message) {
+        // удалить предыдущий тост, если есть
+        const existingToast = document.querySelector('.toast-msg');
+        if(existingToast) existingToast.remove();
 
-    // Инициализация
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    const db = getFirestore(app);
-
-    // DOM элементы
-    const googleBtn = document.getElementById("googleLoginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const avatarImg = document.getElementById("avatarImg");
-    const userNameSpan = document.getElementById("userNameSpan");
-    const clickButton = document.getElementById("clickButton");
-    const scoreDisplay = document.getElementById("scoreDisplay");
-    const buyClickUpgradeBtn = document.getElementById("buyClickUpgrade");
-    const buyAutoClickerBtn = document.getElementById("buyAutoClicker");
-    const clickUpgradeCostSpan = document.getElementById("clickUpgradeCost");
-    const autoUpgradeCostSpan = document.getElementById("autoUpgradeCost");
-    const clickPowerLabel = document.getElementById("clickPowerLabel");
-    const autoLabel = document.getElementById("autoLabel");
-    const shopMessageDiv = document.getElementById("shopMessage");
-    const leaderboardList = document.getElementById("leaderboardList");
-    const chatMessagesDiv = document.getElementById("chatMessagesDiv");
-    const chatInput = document.getElementById("chatInput");
-    const sendChatBtn = document.getElementById("sendChatBtn");
-
-    // --- Глобальное состояние игрока (локальное) ---
-    let currentUser = null;           // объект firebase user
-    let userDocRef = null;
-    let localScore = 0;
-    let clickPower = 1;
-    let autoClickers = 0;
-    let syncInterval = null;
-    let autoIncomeInterval = null;
-
-    // Цены
-    let clickUpgradeBaseCost = 10;
-    let autoUpgradeBaseCost = 25;
-    
-    // Функция обновления UI по локальным данным
-    function updateUI() {
-        scoreDisplay.innerText = Math.floor(localScore);
-        clickPowerLabel.innerText = `⚡ Сила клика: ${clickPower}`;
-        autoLabel.innerText = `🤖 Автоклик: ${autoClickers}/сек`;
-        clickUpgradeCostSpan.innerText = clickUpgradeBaseCost;
-        autoUpgradeCostSpan.innerText = autoUpgradeBaseCost;
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerText = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if(toast) toast.remove();
+        }, 1200);
     }
 
-    // Загрузка данных игрока из Firestore при входе
-    async function loadUserData(user) {
-        if (!user) return;
-        userDocRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(userDocRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            localScore = data.score ?? 0;
-            clickPower = data.clickPower ?? 1;
-            autoClickers = data.autoClickers ?? 0;
-            // синхронизируем стоимость (опционально, но можно оставить как есть)
-            // цены не храним в базе, они динамические
-        } else {
-            // новый игрок
-            localScore = 0;
-            clickPower = 1;
-            autoClickers = 0;
-            await setDoc(userDocRef, {
-                uid: user.uid,
-                displayName: user.displayName || "Аноним",
-                photoURL: user.photoURL || "",
-                score: 0,
-                clickPower: 1,
-                autoClickers: 0,
-                updatedAt: serverTimestamp()
-            });
-        }
-        updateUI();
-        // Запускаем пассивный доход
-        if (autoIncomeInterval) clearInterval(autoIncomeInterval);
-        autoIncomeInterval = setInterval(() => {
-            if (currentUser && autoClickers > 0) {
-                const passiveGain = autoClickers;
-                localScore += passiveGain;
-                updateUI();
-                // НЕ сохраняем каждую секунду, только по таймеру 5 сек
-            }
-        }, 1000);
-    }
-
-    // Сохранение данных в Firestore (каждые 5 секунд)
-    function syncToFirestore() {
-        if (!currentUser || !userDocRef) return;
-        // Обновляем документ: очки, силу клика, автокликеры + время
-        updateDoc(userDocRef, {
-            score: localScore,
-            clickPower: clickPower,
-            autoClickers: autoClickers,
-            displayName: currentUser.displayName || currentUser.email,
-            photoURL: currentUser.photoURL || "",
-            updatedAt: serverTimestamp()
-        }).catch(err => console.warn("sync error", err));
-    }
-
-    // Функция покупки (проверка и списание)
-    function tryBuyUpgrade(type) {
-        if (!currentUser) {
-            shopMessageDiv.innerText = "❌ Войдите в аккаунт!";
-            setTimeout(() => shopMessageDiv.innerText = "", 1500);
-            return false;
-        }
-        if (type === 'click') {
-            const cost = clickUpgradeBaseCost;
-            if (localScore >= cost) {
-                localScore -= cost;
-                clickPower++;
-                // новая стоимость (базовая формула)
-                clickUpgradeBaseCost = Math.floor(10 + (clickPower-1) * 7);
-                updateUI();
-                shopMessageDiv.innerText = `💪 Сила клика увеличена до ${clickPower}!`;
-                setTimeout(() => shopMessageDiv.innerText = "", 1500);
-                return true;
-            } else {
-                shopMessageDiv.innerText = `⚠️ Не хватает очков! Нужно ${cost}`;
-                setTimeout(() => shopMessageDiv.innerText = "", 1500);
-                return false;
-            }
-        } else if (type === 'auto') {
-            const cost = autoUpgradeBaseCost;
-            if (localScore >= cost) {
-                localScore -= cost;
-                autoClickers++;
-                autoUpgradeBaseCost = Math.floor(25 + autoClickers * 12);
-                updateUI();
-                shopMessageDiv.innerText = `🤖 Автокликер +1! Теперь ${autoClickers} очков/сек.`;
-                setTimeout(() => shopMessageDiv.innerText = "", 1500);
-                return true;
-            } else {
-                shopMessageDiv.innerText = `⚠️ Не хватает очков! Нужно ${cost}`;
-                setTimeout(() => shopMessageDiv.innerText = "", 1500);
-                return false;
-            }
-        }
-    }
-
-    // Обработка клика
-    function handleClick() {
-        if (!currentUser) {
-            shopMessageDiv.innerText = "🔐 Войдите через Google, чтобы играть!";
-            setTimeout(() => shopMessageDiv.innerText = "", 1500);
-            return;
-        }
-        localScore += clickPower;
-        updateUI();
-    }
-
-    // ---------- Глобальный ТОП-10 (onSnapshot) ----------
-    function subscribeLeaderboard() {
-        const q = query(collection(db, "users"), orderBy("score", "desc"), limit(10));
-        onSnapshot(q, (snapshot) => {
-            const items = snapshot.docs;
-            if (items.length === 0) {
-                leaderboardList.innerHTML = "<li>😵 Нет игроков</li>";
-                return;
-            }
-            let html = "";
-            items.forEach((doc, idx) => {
-                const data = doc.data();
-                const name = data.displayName || "NoName";
-                const scoreVal = data.score ?? 0;
-                html += `<li>${idx+1}. ${name.slice(0,18)} — ⚡${Math.floor(scoreVal)} очков</li>`;
-            });
-            leaderboardList.innerHTML = html;
-        }, (err) => {
-            console.error("Топ ошибка", err);
-            leaderboardList.innerHTML = "<li>❌ Ошибка загрузки топа</li>";
-        });
-    }
-
-    // ---------- Мировой чат (реалтайм, последние 50) ----------
-    function subscribeChat() {
-        const q = query(collection(db, "messages"), orderBy("timestamp", "desc"), limit(50));
-        onSnapshot(q, (snapshot) => {
-            const messages = [];
-            snapshot.forEach(doc => {
-                messages.push({ id: doc.id, ...doc.data() });
-            });
-            // выводим в обратном порядке (старые сверху)
-            messages.reverse();
-            if (messages.length === 0) {
-                chatMessagesDiv.innerHTML = '<div class="message">💬 Пока нет сообщений. Будь первым!</div>';
-                return;
-            }
-            let html = "";
-            messages.forEach(msg => {
-                const author = msg.authorName || "Аноним";
-                const text = msg.text || "...";
-                const time = msg.timestamp?.toDate?.()?.toLocaleTimeString() || "";
-                html += `<div class="message"><span class="msg-name">${escapeHtml(author)}</span> <span style="color:#aaa">[${time}]</span>: ${escapeHtml(text)}</div>`;
-            });
-            chatMessagesDiv.innerHTML = html;
-            // автоскролл вниз (после рендера)
-            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
-        });
-    }
-
-    // простой esc
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        }).slice(0, 100);
-    }
-
-    // Отправка сообщения
-    async function sendChatMessage() {
-        if (!currentUser) {
-            shopMessageDiv.innerText = "❌ Войдите, чтобы писать в чат!";
-            setTimeout(() => shopMessageDiv.innerText = "", 1500);
-            return;
-        }
-        const text = chatInput.value.trim();
-        if (text === "") return;
-        if (text.length > 150) {
-            shopMessageDiv.innerText = "Сообщение не более 150 символов";
-            return;
-        }
-        try {
-            await addDoc(collection(db, "messages"), {
-                text: text,
-                authorId: currentUser.uid,
-                authorName: currentUser.displayName || currentUser.email?.split('@')[0] || "Воин",
-                timestamp: serverTimestamp()
-            });
-            chatInput.value = "";
-        } catch(e) {
-            console.error(e);
-            shopMessageDiv.innerText = "Ошибка отправки";
-        }
-    }
-
-    // --- Авторизация ---
-    async function loginWithGoogle() {
-        try {
-            const result = await signInWithPopup(auth, provider);
-            // пользователь залогинен
-        } catch (error) {
-            console.error(error);
-            shopMessageDiv.innerText = "Ошибка входа: " + error.message;
-        }
-    }
-
-    function logoutUser() {
-        signOut(auth).then(() => {
-            // сброс UI
-        }).catch(console.error);
-    }
-
-    // отслеживание состояния авторизации
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            avatarImg.src = user.photoURL || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-            userNameSpan.innerText = user.displayName || user.email || "Игрок";
-            googleBtn.style.display = "none";
-            logoutBtn.style.display = "inline-block";
-            // загружаем данные игрока
-            await loadUserData(user);
-            // запускаем синхронизацию (если была, перезапустим)
-            if (syncInterval) clearInterval(syncInterval);
-            syncInterval = setInterval(() => {
-                if (currentUser) syncToFirestore();
-            }, 5000);
-            // активируем кнопки
-            clickButton.disabled = false;
-            buyClickUpgradeBtn.disabled = false;
-            buyAutoClickerBtn.disabled = false;
-        } else {
-            // Сброс состояния гостя
-            if (syncInterval) clearInterval(syncInterval);
-            if (autoIncomeInterval) clearInterval(autoIncomeInterval);
-            currentUser = null;
-            userDocRef = null;
-            localScore = 0;
-            clickPower = 1;
-            autoClickers = 0;
-            clickUpgradeBaseCost = 10;
-            autoUpgradeBaseCost = 25;
-            updateUI();
-            avatarImg.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-            userNameSpan.innerText = "Гость Арены";
-            googleBtn.style.display = "inline-block";
-            logoutBtn.style.display = "none";
-            clickButton.disabled = true;
-            buyClickUpgradeBtn.disabled = true;
-            buyAutoClickerBtn.disabled = true;
-            shopMessageDiv.innerText = "Войдите, чтобы начать битву!";
-        }
+    // Эмуляция старта матча
+    const startBtn = document.getElementById('bigStartBtn');
+    startBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showNotification('🔫 BOOYAH! ВЫЛЕТАЕМ НА ОСТРОВ 🔫');
+        // дополнительно можно добавить вибрацию если нужно, но главное имитация
+        console.log("MATCH START - KREE KIRE ГОТОВ К БИТВЕ!");
     });
 
-    // подписка на топ и чат (работают независимо, но для гостя тоже виден топ)
-    subscribeLeaderboard();
-    subscribeChat();
-
-    // Обработчики событий
-    googleBtn.addEventListener("click", loginWithGoogle);
-    logoutBtn.addEventListener("click", logoutUser);
-    clickButton.addEventListener("click", handleClick);
-    buyClickUpgradeBtn.addEventListener("click", () => tryBuyUpgrade('click'));
-    buyAutoClickerBtn.addEventListener("click", () => tryBuyUpgrade('auto'));
-    sendChatBtn.addEventListener("click", sendChatMessage);
-    chatInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendChatMessage();
+    // Обработчики для бокового меню (вывод сообщения - как в free fire, переход в раздел демо)
+    const sideBtns = document.querySelectorAll('.nav-btn');
+    sideBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const textSpan = btn.querySelector('span')?.innerText || btn.innerText;
+            showNotification(`📌 ${textSpan} : скоро в игре!`);
+        });
     });
 
-    // начальное состояние (гость)
-    updateUI();
-    clickButton.disabled = true;
-    buyClickUpgradeBtn.disabled = true;
-    buyAutoClickerBtn.disabled = true;
+    // для кнопок режимов
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modeText = btn.innerText.trim();
+            showNotification(`🎮 РЕЖИМ "${modeText}" | ПОИСК ИГРОКОВ...`);
+        });
+    });
+
+    // для нижних кнопок (Склад, Оружие, Пресет, Лаба)
+    const footerActions = document.querySelectorAll('.footer-btn');
+    footerActions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const spanText = btn.querySelector('span')?.innerText || "раздел";
+            showNotification(`⚙️ ${spanText} : Экипировка KREE KIRE`);
+        });
+    });
+
+    // Дополнительно: кнопка друзей онлайн (клик по имени друга)
+    const friendsItems = document.querySelectorAll('.friend-item');
+    friendsItems.forEach(friend => {
+        friend.addEventListener('click', () => {
+            const name = friend.querySelector('.friend-name')?.innerText || "игрок";
+            showNotification(`💬 Пригласить ${name} в отряд?`);
+        });
+    });
+
+    // Эффект лёгкой адаптации под изменение размера, но главное сохранить позиционирование
+    // Также имитация уровня + ресурсов (статично, но круто)
+    // Если кликнуть на золото/алмазы - небольшой фидбек
+    const goldDiv = document.querySelector('.gold');
+    const diamondDiv = document.querySelector('.diamonds');
+    if(goldDiv) {
+        goldDiv.addEventListener('click', () => showNotification('💰 + 500 золота (ежедневный бонус)'));
+    }
+    if(diamondDiv) {
+        diamondDiv.addEventListener('click', () => showNotification('💎 МАГАЗИН АЛМАЗОВ | ПОПОЛНЕНИЕ'));
+    }
+    // Анимация нажатия на уровень
+    const levelIconDiv = document.querySelector('.level-icon');
+    if(levelIconDiv) {
+        levelIconDiv.addEventListener('click', () => showNotification('🏆 УРОВЕНЬ 69 | СЛЕДУЮЩИЙ РАНГ'));
+    }
+
+    // Добавим эффект изменения курсора и небольшие звукоподобные ощущения (только визуал)
+    console.log("Free Fire Clone | KREE KIRE | Готов к бою!");
 </script>
+
+<!-- дополнительный комментарий: фон можно поменять в теге body background url -->
+<!-- Вставьте свой URL пустыни вместо текущего образца -->
 </body>
-</html>

@@ -3,508 +3,608 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Free Fire Shooter | KREE KIRE</title>
-    <!-- Google Fonts: агрессивный экшн-стиль -->
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (бесплатные иконки) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>BIO DAULET | энергия стиля</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* легкий игровой стиль */
+            user-select: none; /* легкий эффект, чтобы не выделялся текст при клике */
         }
 
         body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Orbitron', 'Rajdhani', 'Bangers', sans-serif;
-            /* ФОН: замените URL на нужную картинку пустыни */
-            background: url('https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=1600') no-repeat center center;
-            background-size: cover;
-            position: relative;
-            color: white;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03050b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            cursor: pointer;
         }
 
-        /* затемнение для читаемости текста, как в free fire */
-        body::before {
-            content: "";
-            position: absolute;
+        /* динамический фон с пульсирующими частицами */
+        .energy-bg {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.65) 100%);
-            pointer-events: none;
             z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
         }
 
-        /* главный контейнер GRID - по краям экрана */
-        .game-container {
+        .particle {
+            position: absolute;
+            background: rgba(255, 80, 120, 0.6);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: floatParticle 8s infinite ease-in-out;
+            box-shadow: 0 0 12px rgba(255, 50, 100, 0.8);
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-40px) translateX(20px) scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.3;
+            }
+        }
+
+        /* главный контейнер */
+        .glass-card {
             position: relative;
-            width: 100%;
-            height: 100%;
+            z-index: 10;
+            backdrop-filter: blur(16px);
+            background: rgba(15, 20, 35, 0.55);
+            border-radius: 64px;
+            padding: 2rem 2rem 2.5rem;
+            width: 90%;
+            max-width: 560px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 70, 120, 0.2) inset;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            text-align: center;
+            animation: cardFloat 1.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes cardFloat {
+            0% {
+                opacity: 0;
+                transform: scale(0.85) translateY(70px);
+                filter: blur(8px);
+            }
+            60% {
+                transform: scale(1.02) translateY(-8px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* главный заголовок BIO DAULET с дикой анимацией */
+        .glow-title {
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #FFB347, #FF4D6D, #C9184A, #FFB347);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 3s ease infinite, textPulse 1.2s ease-in-out infinite alternate;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 12px rgba(255, 60, 100, 0.6);
+            word-break: keep-all;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes textPulse {
+            0% {
+                text-shadow: 0 0 0px rgba(255, 80, 120, 0.3);
+                letter-spacing: 4px;
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(255, 80, 120, 0.9), 0 0 5px #ff4d6d;
+                letter-spacing: 6px;
+            }
+        }
+
+        .sub {
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 245, 220, 0.85);
+            background: rgba(0, 0, 0, 0.4);
+            display: inline-block;
+            padding: 0.2rem 1.4rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        /* сетка значков — энергия */
+        .links-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .social-item {
+            text-decoration: none;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            z-index: 2;
-            padding: 20px 25px 25px 25px;
+            align-items: center;
+            transition: all 0.2s cubic-bezier(0.18, 1.3, 0.6, 1);
+            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
+            cursor: pointer;
         }
 
-        /* ========= ВЕРХНЯЯ ПАНЕЛЬ (Header) ========= */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.55);
+        .icon-bubble {
+            width: 80px;
+            height: 80px;
+            background: rgba(20, 25, 45, 0.8);
             backdrop-filter: blur(8px);
-            border-radius: 60px;
-            padding: 8px 20px 8px 20px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            width: 100%;
-        }
-
-        /* левый блок: имя + уровень */
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 18px 5px 15px;
             border-radius: 40px;
-            border-left: 3px solid #ffcc00;
-        }
-        .player-name {
-            font-family: 'Bangers', cursive;
-            font-size: 2.2rem;
-            letter-spacing: 2px;
-            color: #FFE484;
-            text-shadow: 3px 3px 0 #b45f06, 0 0 8px #ff9900;
-            margin-right: 5px;
-        }
-        .level-icon {
-            background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-            border-radius: 50%;
-            width: 42px;
-            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            font-weight: bold;
-            border: 2px solid #FFD966;
-            color: #FFD966;
-            box-shadow: 0 0 6px gold;
-            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
         }
 
-        /* правый блок ресурсы */
-        .resources {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            background: rgba(0,0,0,0.5);
-            padding: 6px 20px;
-            border-radius: 50px;
-        }
-        .gold, .diamonds {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: bold;
-            font-size: 1.3rem;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 1px 1px 0 black;
-        }
-        .gold i, .diamonds i {
-            font-size: 1.6rem;
-        }
-        .gold i { color: #FFD966; }
-        .diamonds i { color: #4afff5; text-shadow: 0 0 3px cyan;}
-
-        /* ========= ОСНОВНАЯ СЕТКА (боковое меню + правая часть) ========= */
-        .middle-area {
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin: 20px 0;
-            gap: 20px;
+        .social-item:hover .icon-bubble {
+            transform: scale(1.2) translateY(-10px);
+            background: rgba(255, 80, 120, 0.85);
+            border-color: rgba(255, 210, 180, 0.9);
+            box-shadow: 0 0 24px #ff4d6d, 0 12px 28px black;
         }
 
-        /* ЛЕВОЕ МЕНЮ (Sidebar) */
-        .sidebar {
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(12px);
-            border-radius: 28px;
-            padding: 20px 12px;
-            width: 240px;
-            border: 1px solid rgba(255, 200, 50, 0.4);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            background: rgba(20, 20, 30, 0.7);
-            margin: 12px 0;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            color: #f0f0f0;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .nav-btn i {
-            width: 28px;
-            font-size: 1.5rem;
-            color: #ffcc44;
-        }
-        .nav-btn:hover {
-            background: rgba(255, 200, 70, 0.25);
-            transform: scale(1.02) translateX(6px);
-            border-color: #ffcc44;
-            box-shadow: 0 0 12px rgba(255, 204, 0, 0.5);
-            color: #ffdd88;
+        .social-item:active .icon-bubble {
+            transform: scale(0.98) translateY(2px);
+            transition: 0.05s;
         }
 
-        /* ПРАВАЯ ЧАСТЬ: друзья онлайн + режимы */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 20px;
-            width: 240px;
-        }
-        .friends-online {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 15px 18px;
-            width: 100%;
-            text-align: right;
-            border-right: 3px solid #ffaa33;
-        }
-        .friends-title {
+        .social-label {
+            margin-top: 12px;
+            font-weight: 600;
             font-size: 0.9rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #ffcc77;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-        .friend-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .friend-item {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 12px;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        .friend-item i {
-            font-size: 1.3rem;
-            color: #5eff6e;
-        }
-        .friend-name {
-            font-family: 'Rajdhani', monospace;
-        }
-        .mode-buttons {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 15px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .mode-btn {
-            background: rgba(10, 10, 20, 0.8);
-            padding: 10px;
-            text-align: center;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: 0.2s;
-            cursor: pointer;
-            border: 1px solid rgba(255, 200, 100, 0.3);
-            font-family: 'Rajdhani', sans-serif;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(2px);
+            color: #f1e9db;
             letter-spacing: 1px;
         }
-        .mode-btn:hover {
-            background: #ffaa2a;
-            color: black;
-            transform: scale(1.02);
-            box-shadow: 0 0 10px gold;
+
+        /* вибрация-эффект при наведении (энергия) */
+        .social-item:hover .social-label {
+            color: #ffb347;
+            text-shadow: 0 0 3px #ff7b2c;
         }
 
-        /* ========= НИЖНЯЯ ПАНЕЛЬ (Footer) ========= */
-        .footer-menu {
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(15px);
-            border-radius: 60px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 12px 30px;
-            margin-top: 10px;
-            border-top: 1px solid #ffcc44;
-            border-bottom: 1px solid #ffcc44;
-        }
-        .footer-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+        /* дополнительный текст / пульс */
+        .energy-footer {
+            margin-top: 2.2rem;
             font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #ddd;
+            color: rgba(255, 200, 170, 0.7);
+            background: rgba(0, 0, 0, 0.4);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
             padding: 6px 18px;
-            border-radius: 40px;
-        }
-        .footer-btn i {
-            font-size: 1.7rem;
-            color: #ffcc55;
-        }
-        .footer-btn span {
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-        }
-        .footer-btn:hover {
-            background: rgba(255, 204, 85, 0.3);
-            transform: translateY(-4px);
-            color: #ffdd99;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            animation: softPulse 1.6s infinite;
         }
 
-        /* БОЛЬШАЯ КНОПКА СТАРТ (правый нижний угол абсолютно) */
-        .start-btn-wrapper {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 15;
+        @keyframes softPulse {
+            0% { opacity: 0.5; box-shadow: 0 0 0 0 rgba(255, 100, 100, 0);}
+            100% { opacity: 1; box-shadow: 0 0 12px 0 rgba(255, 80, 120, 0.4);}
         }
-        .start-button {
-            background: radial-gradient(circle at 30% 20%, #FFD966, #F0A500);
-            border: none;
-            font-family: 'Bangers', cursive;
-            font-size: 2.5rem;
-            padding: 18px 42px;
-            border-radius: 80px;
-            color: #1f2a0e;
-            text-shadow: 2px 2px 0 #FFE484;
-            letter-spacing: 3px;
-            box-shadow: 0 15px 0 #a05e15, 0 8px 25px black;
-            cursor: pointer;
-            transition: all 0.07s linear;
-            font-weight: bold;
+
+        /* кнопка управления звуком */
+        .sound-control {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 200, 150, 0.5);
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-        .start-button:active {
-            transform: translateY(4px);
-            box-shadow: 0 8px 0 #a05e15;
-        }
-        .start-button:hover {
-            transform: scale(1.02) translateY(-2px);
-            background: radial-gradient(circle at 30% 20%, #FFE28C, #ffbb2e);
-            box-shadow: 0 12px 0 #a05e15, 0 10px 30px gold;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #ffddbb;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: monospace;
+            letter-spacing: 1px;
         }
 
-        /* адаптивность небольшая */
-        @media (max-width: 800px) {
-            .player-name { font-size: 1.3rem; }
-            .sidebar { width: 180px; }
-            .nav-btn { padding: 8px 12px; font-size: 0.9rem; }
-            .right-panel { width: 180px; }
-            .start-button { font-size: 1.6rem; padding: 12px 28px; }
+        .sound-control:hover {
+            background: #ff4d6dcc;
+            color: white;
+            border-color: white;
+            transform: scale(1.03);
         }
 
-        /* всплывающее уведомление (имитация старта) */
-        .toast-msg {
-            position: fixed;
-            bottom: 35%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #000000cc;
-            backdrop-filter: blur(20px);
-            color: #ffd966;
-            font-family: 'Bangers', cursive;
-            font-size: 1.8rem;
-            padding: 12px 28px;
-            border-radius: 60px;
-            border: 2px solid gold;
-            z-index: 200;
-            pointer-events: none;
-            animation: fadeUp 1.2s forwards;
-            white-space: nowrap;
+        /* адаптив */
+        @media (max-width: 500px) {
+            .glass-card {
+                padding: 1.5rem 1.2rem 2rem;
+                width: 92%;
+            }
+            .glow-title {
+                font-size: 2.2rem;
+                letter-spacing: 2px;
+            }
+            .icon-bubble {
+                width: 65px;
+                height: 65px;
+                font-size: 2.8rem;
+            }
+            .links-grid {
+                gap: 1.2rem;
+            }
         }
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateX(-50%) translateY(30px);}
-            20% { opacity: 1; transform: translateX(-50%) translateY(0px);}
-            80% { opacity: 1; transform: translateX(-50%) translateY(0px);}
-            100% { opacity: 0; transform: translateX(-50%) translateY(-50px); visibility: hidden;}
+
+        /* ритмичная тряска при загрузке */
+        @keyframes microShake {
+            0% { transform: translate(0px, 0px); }
+            25% { transform: translate(1px, -1px);}
+            50% { transform: translate(-1px, 1px);}
+            75% { transform: translate(1px, 0px);}
+            100% { transform: translate(0,0);}
+        }
+        .shake-once {
+            animation: microShake 0.25s ease-in-out 2;
         }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <!-- Верхняя панель Header: крупно KREE KIRE слева -->
-    <div class="top-bar">
-        <div class="player-info">
-            <div class="player-name">KREE KIRE</div>
-            <div class="level-icon">69</div>
-        </div>
-        <div class="resources">
-            <div class="gold"><i class="fas fa-coins"></i> 12,450</div>
-            <div class="diamonds"><i class="fas fa-gem"></i> 890</div>
-        </div>
+<div class="energy-bg" id="particleBg"></div>
+
+<div class="glass-card" id="mainCard">
+    <div class="glow-title" id="bioTitle">BIO DAULET</div>
+    <div class="sub">⚡ ENERGY CONNECTION ⚡</div>
+    
+    <div class="links-grid">
+        <!-- VK значок -->
+        <a class="social-item" id="vkLink" href="#" target="_blank" rel="noopener noreferrer">
+            <div class="icon-bubble">🎵</div>
+            <div class="social-label">VK</div>
+        </a>
+        <!-- TELEGRAM значок -->
+        <a class="social-item" id="tgLink" href="#" target="_blank" rel="noopener noreferrer">
+            <div class="icon-bubble">📱</div>
+            <div class="social-label">TELEGRAM</div>
+        </a>
+        <!-- TIKTOK значок -->
+        <a class="social-item" id="ttLink" href="#" target="_blank" rel="noopener noreferrer">
+            <div class="icon-bubble">🎶</div>
+            <div class="social-label">TIKTOK</div>
+        </a>
     </div>
-
-    <!-- средняя секция: левое меню + правая панель -->
-    <div class="middle-area">
-        <!-- левый сайдбар (Магазин, Джекпот, Booyah Пропуск, Миссии, События) -->
-        <div class="sidebar">
-            <div class="nav-btn" data-action="shop"><i class="fas fa-store"></i> <span>Магазин</span></div>
-            <div class="nav-btn" data-action="jackpot"><i class="fas fa-trophy"></i> <span>Джекпот</span></div>
-            <div class="nav-btn" data-action="booyah"><i class="fas fa-ticket-alt"></i> <span>Booyah Пропуск</span></div>
-            <div class="nav-btn" data-action="missions"><i class="fas fa-tasks"></i> <span>Миссии</span></div>
-            <div class="nav-btn" data-action="events"><i class="fas fa-calendar-alt"></i> <span>События</span></div>
-        </div>
-
-        <!-- Правая часть: иконки друзей онлайн и кнопки режимов -->
-        <div class="right-panel">
-            <div class="friends-online">
-                <div class="friends-title"><span>ДРУЗЬЯ ОНЛАЙН</span> <i class="fas fa-user-friends"></i></div>
-                <div class="friend-list">
-                    <div class="friend-item"><span class="friend-name">GHOST_47</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
-                    <div class="friend-item"><span class="friend-name">ViperX</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
-                    <div class="friend-item"><span class="friend-name">KILLER_BEAN</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
-                    <div class="friend-item"><span class="friend-name">DIABLO_FF</span> <i class="fas fa-circle" style="font-size: 0.7rem; color:#3eff5e;"></i></div>
-                </div>
-            </div>
-            <div class="mode-buttons">
-                <div class="mode-btn">КЛАССИЧЕСКИЙ <i class="fas fa-gamepad"></i></div>
-                <div class="mode-btn">БОЕВОЙ РОЯЛЬ  <i class="fas fa-skull"></i></div>
-                <div class="mode-btn">КОМАНДНЫЙ БОЙ</div>
-                <div class="mode-btn">КЛОНОВОЕ ПОЛЕ</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Нижняя панель (Footer): Склад, Оружие, Пресет, Лаба -->
-    <div class="footer-menu">
-        <div class="footer-btn" data-footer="inventory"><i class="fas fa-box"></i><span>Склад</span></div>
-        <div class="footer-btn" data-footer="weapon"><i class="fas fa-gun"></i><span>Оружие</span></div>
-        <div class="footer-btn" data-footer="preset"><i class="fas fa-layer-group"></i><span>Пресет</span></div>
-        <div class="footer-btn" data-footer="lab"><i class="fas fa-flask"></i><span>Лаба</span></div>
+    
+    <div class="energy-footer">
+        🔥 TAP & GO | vibe energy 🔥
     </div>
 </div>
 
-<!-- Отдельная большая кнопка СТАРТ в правом нижнем углу -->
-<div class="start-btn-wrapper">
-    <button class="start-button" id="bigStartBtn"><i class="fas fa-play"></i> СТАРТ</button>
+<div class="sound-control" id="soundToggle">
+    <span>🔊</span> <span id="soundStatus">SOUND ON</span>
 </div>
 
 <script>
-    // Имитация клика по кнопке СТАРТ + всплывающие уведомления для меню (игровой стиль)
-    function showNotification(message) {
-        // удалить предыдущий тост, если есть
-        const existingToast = document.querySelector('.toast-msg');
-        if(existingToast) existingToast.remove();
-
-        const toast = document.createElement('div');
-        toast.className = 'toast-msg';
-        toast.innerText = message;
-        document.body.appendChild(toast);
+    (function() {
+        // ---------- ЗВУКОВАЯ СИСТЕМА ----------
+        // Создаем аудио контекст (Web Audio API) для энергичного бита
+        let audioCtx = null;
+        let isAudioAllowed = false;
+        let gainNode = null;
+        let oscillator = null;
+        let isPlaying = false;
+        let soundEnabled = true;   // флаг желания пользователя
+        
+        // Функция инициализации аудио (по жесту пользователя)
+        function initAudio() {
+            if (audioCtx) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.45;  // комфортная громкость
+                gainNode.connect(audioCtx.destination);
+                // создаем простой ритмичный "энерджи-саунд" — бас-дроп с пульсацией
+                startRhythmicSound();
+            } catch(e) {
+                console.warn("Web Audio не поддерживается", e);
+                document.getElementById('soundStatus').innerText = "🔇 NO AUDIO";
+                soundEnabled = false;
+            }
+        }
+        
+        function startRhythmicSound() {
+            if (!audioCtx || !gainNode || isPlaying) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                    playEnergyLoop();
+                }).catch(e=>console.log);
+            } else {
+                playEnergyLoop();
+            }
+        }
+        
+        let loopInterval = null;
+        let currentOsc = null;
+        
+        function playEnergyLoop() {
+            if (!soundEnabled || !audioCtx || !gainNode) return;
+            if (loopInterval) clearInterval(loopInterval);
+            isPlaying = true;
+            
+            // Функция для короткого "бип-бас" удара (энергичный звук)
+            function playBeep(frequency, duration, volume = 0.3) {
+                if (!audioCtx || !gainNode || !soundEnabled) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(gainNode);
+                osc.type = 'sine';
+                osc.frequency.value = frequency;
+                gain.gain.setValueAtTime(volume, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+                osc.start();
+                osc.stop(now + duration);
+            }
+            
+            // первая серия звуков при старте: энергичный восходящий сигнал + бас
+            playBeep(880, 0.2, 0.25);
+            setTimeout(() => { if(soundEnabled) playBeep(1046, 0.18, 0.3); }, 120);
+            setTimeout(() => { if(soundEnabled) playBeep(1318, 0.25, 0.35); }, 280);
+            setTimeout(() => { if(soundEnabled) playBeep(880, 0.4, 0.28); }, 550);
+            
+            // установка ритмичного пульса (каждые 1.4 секунды)
+            let beatCounter = 0;
+            loopInterval = setInterval(() => {
+                if (!soundEnabled || !audioCtx || audioCtx.state !== 'running') return;
+                // Основной бас-кик
+                playBeep(120, 0.12, 0.4);
+                beatCounter++;
+                if (beatCounter % 2 === 0) {
+                    // доп. хай-хэт эффект
+                    playBeep(2400, 0.08, 0.18);
+                }
+                if (beatCounter % 4 === 0) {
+                    // каждый 4й удар - короткая мелодия
+                    playBeep(680, 0.1, 0.22);
+                    setTimeout(() => playBeep(860, 0.12, 0.2), 80);
+                }
+            }, 700);  // быстрый ритм ~ 85 bpm? но ощущается энергично
+        }
+        
+        function stopRhythmicSound() {
+            if (loopInterval) {
+                clearInterval(loopInterval);
+                loopInterval = null;
+            }
+            isPlaying = false;
+        }
+        
+        function toggleSound() {
+            if (!audioCtx) {
+                // если еще не инициализировано, принудительно включаем
+                initAudio();
+                soundEnabled = true;
+                document.getElementById('soundStatus').innerHTML = "🔊 SOUND ON";
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(() => {
+                        startRhythmicSound();
+                    });
+                } else if(audioCtx){
+                    startRhythmicSound();
+                }
+                return;
+            }
+            
+            if (soundEnabled) {
+                // выключаем звук
+                soundEnabled = false;
+                document.getElementById('soundStatus').innerHTML = "🔇 SOUND OFF";
+                if (loopInterval) {
+                    clearInterval(loopInterval);
+                    loopInterval = null;
+                }
+                isPlaying = false;
+                if (audioCtx) {
+                    // не останавливаем контекст полностью, а просто глушим все новые звуки
+                    // но также можно "заглушить" гейн? но проще через флаг playBeep ничего не играет
+                }
+            } else {
+                soundEnabled = true;
+                document.getElementById('soundStatus').innerHTML = "🔊 SOUND ON";
+                if (audioCtx && audioCtx.state === 'running') {
+                    startRhythmicSound();
+                } else if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(() => startRhythmicSound());
+                } else if (!audioCtx) {
+                    initAudio();
+                } else {
+                    startRhythmicSound();
+                }
+            }
+        }
+        
+        // Получение ссылок и установка переходов
+        const vkAnchor = document.getElementById('vkLink');
+        const tgAnchor = document.getElementById('tgLink');
+        const ttAnchor = document.getElementById('ttLink');
+        
+        // корректные URL
+        const VK_URL = "https://vk.ru/dauletchik";
+        const TG_URL = "http://t.me/HETY_HOMEP";
+        const TT_URL = "https://tiktok.com/@dauproff";
+        
+        vkAnchor.href = VK_URL;
+        tgAnchor.href = TG_URL;
+        ttAnchor.href = TT_URL;
+        
+        // Добавляем дополнительный фидбек при клике на значки: звуковой удар, вибрация текста
+        function handleLinkClick(e, platformName) {
+            if (soundEnabled && audioCtx && audioCtx.state === 'running') {
+                // проигрываем короткий яркий звук "перехода"
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(gainNode);
+                osc.frequency.value = 1200;
+                gain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+                
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(gainNode);
+                    osc2.frequency.value = 880;
+                    gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.1);
+                }, 50);
+            }
+            
+            // Добавляем мини-тряску заголовку для энергии
+            const titleEl = document.getElementById('bioTitle');
+            titleEl.classList.add('shake-once');
+            setTimeout(() => titleEl.classList.remove('shake-once'), 400);
+            
+            // пульс карточки
+            const card = document.querySelector('.glass-card');
+            card.style.transform = 'scale(0.98)';
+            setTimeout(() => { card.style.transform = ''; }, 120);
+            
+            // Разрешаем переход (ссылка откроется)
+            return true;
+        }
+        
+        vkAnchor.addEventListener('click', (e) => {
+            handleLinkClick(e, 'VK');
+        });
+        tgAnchor.addEventListener('click', (e) => {
+            handleLinkClick(e, 'TELEGRAM');
+        });
+        ttAnchor.addEventListener('click', (e) => {
+            handleLinkClick(e, 'TIKTOK');
+        });
+        
+        // Звуковая кнопка
+        const soundBtn = document.getElementById('soundToggle');
+        soundBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSound();
+            // дополнительная визуальная реакция
+            const statusSpan = document.getElementById('soundStatus');
+            if(soundEnabled) {
+                statusSpan.innerText = "SOUND ON";
+            } else {
+                statusSpan.innerText = "SOUND OFF";
+            }
+        });
+        
+        // Чтобы автоматически инициализировать звук при первом касании/клике в любом месте (по правилам браузера)
+        function firstTouchInit() {
+            if (!audioCtx) {
+                initAudio();
+            } else if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                    if(soundEnabled && !loopInterval) startRhythmicSound();
+                });
+            }
+            document.body.removeEventListener('click', firstTouchInit);
+            document.body.removeEventListener('touchstart', firstTouchInit);
+        }
+        document.body.addEventListener('click', firstTouchInit);
+        document.body.addEventListener('touchstart', firstTouchInit);
+        
+        // Фоновые частицы - создаем энергичный "световой шум"
+        function createParticles() {
+            const container = document.getElementById('particleBg');
+            const particleCount = 55;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 12 + 4;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                const duration = Math.random() * 7 + 5;
+                particle.style.animationDuration = duration + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                const colors = ['#FF5E7E', '#FFB347', '#FF3A6F', '#E84393', '#F39C12'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.opacity = Math.random() * 0.4 + 0.2;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+        
+        // периодическая смена интенсивности свечения (энергичный фон)
+        setInterval(() => {
+            const card = document.querySelector('.glass-card');
+            if (card) {
+                const intensity = Math.sin(Date.now() / 800) * 0.1 + 0.15;
+                card.style.boxShadow = `0 30px 45px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 70, 120, ${0.15 + intensity * 0.2}) inset`;
+            }
+        }, 400);
+        
+        // Маленький "приветственный" звук при первом появлении страницы после жеста, но не напрямую
+        // Энергичное мигание заголовка каждые 3 секунды
+        setInterval(() => {
+            const title = document.getElementById('bioTitle');
+            if (title) {
+                title.style.animation = 'none';
+                setTimeout(() => { title.style.animation = 'gradientShift 3s ease infinite, textPulse 1.2s ease-in-out infinite alternate'; }, 10);
+            }
+        }, 3200);
+        
+        // Если пользователь не взаимодействовал, показываем намёк
         setTimeout(() => {
-            if(toast) toast.remove();
-        }, 1200);
-    }
-
-    // Эмуляция старта матча
-    const startBtn = document.getElementById('bigStartBtn');
-    startBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        showNotification('🔫 BOOYAH! ВЫЛЕТАЕМ НА ОСТРОВ 🔫');
-        // дополнительно можно добавить вибрацию если нужно, но главное имитация
-        console.log("MATCH START - KREE KIRE ГОТОВ К БИТВЕ!");
-    });
-
-    // Обработчики для бокового меню (вывод сообщения - как в free fire, переход в раздел демо)
-    const sideBtns = document.querySelectorAll('.nav-btn');
-    sideBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const textSpan = btn.querySelector('span')?.innerText || btn.innerText;
-            showNotification(`📌 ${textSpan} : скоро в игре!`);
-        });
-    });
-
-    // для кнопок режимов
-    const modeButtons = document.querySelectorAll('.mode-btn');
-    modeButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const modeText = btn.innerText.trim();
-            showNotification(`🎮 РЕЖИМ "${modeText}" | ПОИСК ИГРОКОВ...`);
-        });
-    });
-
-    // для нижних кнопок (Склад, Оружие, Пресет, Лаба)
-    const footerActions = document.querySelectorAll('.footer-btn');
-    footerActions.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const spanText = btn.querySelector('span')?.innerText || "раздел";
-            showNotification(`⚙️ ${spanText} : Экипировка KREE KIRE`);
-        });
-    });
-
-    // Дополнительно: кнопка друзей онлайн (клик по имени друга)
-    const friendsItems = document.querySelectorAll('.friend-item');
-    friendsItems.forEach(friend => {
-        friend.addEventListener('click', () => {
-            const name = friend.querySelector('.friend-name')?.innerText || "игрок";
-            showNotification(`💬 Пригласить ${name} в отряд?`);
-        });
-    });
-
-    // Эффект лёгкой адаптации под изменение размера, но главное сохранить позиционирование
-    // Также имитация уровня + ресурсов (статично, но круто)
-    // Если кликнуть на золото/алмазы - небольшой фидбек
-    const goldDiv = document.querySelector('.gold');
-    const diamondDiv = document.querySelector('.diamonds');
-    if(goldDiv) {
-        goldDiv.addEventListener('click', () => showNotification('💰 + 500 золота (ежедневный бонус)'));
-    }
-    if(diamondDiv) {
-        diamondDiv.addEventListener('click', () => showNotification('💎 МАГАЗИН АЛМАЗОВ | ПОПОЛНЕНИЕ'));
-    }
-    // Анимация нажатия на уровень
-    const levelIconDiv = document.querySelector('.level-icon');
-    if(levelIconDiv) {
-        levelIconDiv.addEventListener('click', () => showNotification('🏆 УРОВЕНЬ 69 | СЛЕДУЮЩИЙ РАНГ'));
-    }
-
-    // Добавим эффект изменения курсора и небольшие звукоподобные ощущения (только визуал)
-    console.log("Free Fire Clone | KREE KIRE | Готов к бою!");
+            const footer = document.querySelector('.energy-footer');
+            if(footer) footer.style.opacity = '0.9';
+        }, 800);
+        
+        // На случай, если аудио уже разрешено, запускаем после инита
+        // Автостарт звука через любой клик (первый клик везде)
+    })();
 </script>
-
-<!-- дополнительный комментарий: фон можно поменять в теге body background url -->
-<!-- Вставьте свой URL пустыни вместо текущего образца -->
 </body>
+    </html>

@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BIO DAULET | энергия стиля</title>
+    <title>BIO DAULET | MAX ENERGY</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* легкий эффект, чтобы не выделялся текст при клике */
+            user-select: none;
         }
 
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03050b);
+            background: radial-gradient(circle at 30% 10%, #0a0015, #010003);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Montserrat', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', 'Montserrat', system-ui, sans-serif;
             overflow-x: hidden;
-            cursor: pointer;
+            cursor: crosshair;
+            position: relative;
         }
 
-        /* динамический фон с пульсирующими частицами */
+        /* Энергетический фон с динамическими полосами */
         .energy-bg {
             position: fixed;
             top: 0;
@@ -37,114 +38,128 @@
 
         .particle {
             position: absolute;
-            background: rgba(255, 80, 120, 0.6);
+            background: radial-gradient(circle, #ff3366, #ff9933);
             border-radius: 50%;
-            filter: blur(2px);
-            animation: floatParticle 8s infinite ease-in-out;
-            box-shadow: 0 0 12px rgba(255, 50, 100, 0.8);
+            filter: blur(3px);
+            animation: floatParticle 6s infinite alternate ease-in-out;
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.8);
         }
 
         @keyframes floatParticle {
             0% {
-                transform: translateY(0) translateX(0) scale(1);
-                opacity: 0.3;
-            }
-            50% {
-                transform: translateY(-40px) translateX(20px) scale(1.2);
-                opacity: 0.8;
+                transform: translateY(0px) translateX(0px) scale(1);
+                opacity: 0.2;
             }
             100% {
-                transform: translateY(0) translateX(0) scale(1);
-                opacity: 0.3;
+                transform: translateY(-60px) translateX(40px) scale(1.5);
+                opacity: 0.7;
             }
         }
 
-        /* главный контейнер */
+        /* Волновой эффект от баса */
+        .bass-wave {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #ff3366, #ffcc00, #ff3366);
+            filter: blur(4px);
+            z-index: 99;
+            animation: bassPulse 0.2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bassPulse {
+            0% { height: 4px; opacity: 0.6; }
+            100% { height: 18px; opacity: 1; }
+        }
+
+        /* Главная карточка с неоновым свечением */
         .glass-card {
             position: relative;
-            z-index: 10;
-            backdrop-filter: blur(16px);
-            background: rgba(15, 20, 35, 0.55);
-            border-radius: 64px;
-            padding: 2rem 2rem 2.5rem;
+            z-index: 20;
+            backdrop-filter: blur(20px);
+            background: rgba(8, 5, 20, 0.65);
+            border-radius: 80px;
+            padding: 2.2rem 2rem 2.8rem;
             width: 90%;
-            max-width: 560px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 70, 120, 0.2) inset;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            max-width: 600px;
+            border: 2px solid rgba(255, 70, 120, 0.7);
+            box-shadow: 0 0 40px rgba(255, 51, 102, 0.5), 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255,255,255,0.2);
             text-align: center;
-            animation: cardFloat 1.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            animation: cardExplode 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
+            transition: transform 0.1s ease;
         }
 
-        @keyframes cardFloat {
+        @keyframes cardExplode {
             0% {
                 opacity: 0;
-                transform: scale(0.85) translateY(70px);
-                filter: blur(8px);
+                transform: scale(0.6) rotate(-5deg);
+                filter: blur(12px);
             }
-            60% {
-                transform: scale(1.02) translateY(-8px);
+            40% {
+                transform: scale(1.05) rotate(1deg);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) translateY(0);
+                transform: scale(1) rotate(0);
                 filter: blur(0);
             }
         }
 
-        /* главный заголовок BIO DAULET с дикой анимацией */
+        /* ГЛАВНЫЙ ЗАГОЛОВОК С ДРОЖАНИЕМ */
         .glow-title {
-            font-size: 3.2rem;
+            font-size: 3.8rem;
             font-weight: 900;
-            letter-spacing: 4px;
-            background: linear-gradient(135deg, #FFB347, #FF4D6D, #C9184A, #FFB347);
-            background-size: 300% 300%;
+            letter-spacing: 6px;
+            background: linear-gradient(45deg, #FFD166, #FF4D6D, #C9184A, #FFB347, #FF4D6D);
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: gradientShift 3s ease infinite, textPulse 1.2s ease-in-out infinite alternate;
+            animation: gradientShift 2s ease infinite, textShake 1.2s infinite alternate;
             margin-bottom: 0.5rem;
-            text-shadow: 0 0 12px rgba(255, 60, 100, 0.6);
-            word-break: keep-all;
+            text-shadow: 0 0 15px #ff3366;
         }
 
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
-        @keyframes textPulse {
-            0% {
-                text-shadow: 0 0 0px rgba(255, 80, 120, 0.3);
-                letter-spacing: 4px;
-            }
-            100% {
-                text-shadow: 0 0 20px rgba(255, 80, 120, 0.9), 0 0 5px #ff4d6d;
-                letter-spacing: 6px;
-            }
+        @keyframes textShake {
+            0% { transform: translate(0px, 0px); text-shadow: 0 0 5px #ff3366; letter-spacing: 6px; }
+            100% { transform: translate(2px, -1px); text-shadow: 0 0 25px #ff6699; letter-spacing: 8px; }
         }
 
         .sub {
-            font-size: 1rem;
-            font-weight: 500;
-            color: rgba(255, 245, 220, 0.85);
-            background: rgba(0, 0, 0, 0.4);
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.7);
             display: inline-block;
-            padding: 0.2rem 1.4rem;
+            padding: 0.3rem 1.8rem;
             border-radius: 60px;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
             margin-bottom: 2rem;
-            letter-spacing: 1px;
+            color: #ffcc88;
+            border: 1px solid #ff6680;
+            box-shadow: 0 0 12px rgba(255,80,120,0.6);
+            animation: subPulse 1s infinite;
         }
 
-        /* сетка значков — энергия */
+        @keyframes subPulse {
+            0% { box-shadow: 0 0 0px #ff3366; }
+            100% { box-shadow: 0 0 18px #ff6699; }
+        }
+
+        /* СЕТКА ССЫЛОК - НЕВЕРОЯТНЫЕ ЗНАЧКИ */
         .links-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0 1rem;
+            gap: 2.5rem;
+            margin: 2rem 0 1.5rem;
         }
 
         .social-item {
@@ -152,459 +167,462 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: all 0.2s cubic-bezier(0.18, 1.3, 0.6, 1);
-            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
-            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 1.8, 0.4, 1);
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.6));
         }
 
         .icon-bubble {
-            width: 80px;
-            height: 80px;
-            background: rgba(20, 25, 45, 0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
+            width: 95px;
+            height: 95px;
+            background: linear-gradient(145deg, #1a1a2e, #0f0f1f);
+            border-radius: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+            font-size: 4rem;
+            transition: all 0.2s ease;
+            border: 2px solid rgba(255, 80, 120, 0.9);
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.7);
         }
 
         .social-item:hover .icon-bubble {
-            transform: scale(1.2) translateY(-10px);
-            background: rgba(255, 80, 120, 0.85);
-            border-color: rgba(255, 210, 180, 0.9);
-            box-shadow: 0 0 24px #ff4d6d, 0 12px 28px black;
+            transform: scale(1.25) translateY(-12px) rotate(3deg);
+            background: radial-gradient(circle, #ff4d6d, #c9184a);
+            border-color: #ffdf80;
+            box-shadow: 0 0 40px #ff3366;
         }
 
         .social-item:active .icon-bubble {
-            transform: scale(0.98) translateY(2px);
-            transition: 0.05s;
+            transform: scale(0.96) translateY(4px);
         }
 
         .social-label {
-            margin-top: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 4px 12px;
-            border-radius: 60px;
-            backdrop-filter: blur(2px);
-            color: #f1e9db;
-            letter-spacing: 1px;
+            margin-top: 14px;
+            font-weight: 800;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: #ffddbb;
+            letter-spacing: 1.5px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #ff6680;
         }
 
-        /* вибрация-эффект при наведении (энергия) */
         .social-item:hover .social-label {
-            color: #ffb347;
-            text-shadow: 0 0 3px #ff7b2c;
+            background: #ff3366;
+            color: white;
+            box-shadow: 0 0 15px #ff3366;
         }
 
-        /* дополнительный текст / пульс */
+        /* Доп. энергичный текст */
         .energy-footer {
-            margin-top: 2.2rem;
-            font-size: 0.8rem;
-            color: rgba(255, 200, 170, 0.7);
-            background: rgba(0, 0, 0, 0.4);
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 20px;
+            border-radius: 50px;
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
-            padding: 6px 18px;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-            animation: softPulse 1.6s infinite;
+            color: #ffc285;
+            animation: footerGlow 0.9s infinite alternate;
         }
 
-        @keyframes softPulse {
-            0% { opacity: 0.5; box-shadow: 0 0 0 0 rgba(255, 100, 100, 0);}
-            100% { opacity: 1; box-shadow: 0 0 12px 0 rgba(255, 80, 120, 0.4);}
+        @keyframes footerGlow {
+            0% { text-shadow: 0 0 0px #ff884d; box-shadow: 0 0 0px #ff4d6d; }
+            100% { text-shadow: 0 0 8px #ff4d6d; box-shadow: 0 0 18px #ff4d6d; }
         }
 
-        /* кнопка управления звуком */
-        .sound-control {
+        /* Анимация тряски всей карточки при клике */
+        .shake-card {
+            animation: cardShake 0.2s cubic-bezier(0.36, 2.5, 0.64, 1) 0s 2;
+        }
+
+        @keyframes cardShake {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            25% { transform: translate(4px, -2px) rotate(1deg); }
+            50% { transform: translate(-3px, 1px) rotate(-1deg); }
+            75% { transform: translate(2px, -1px) rotate(0.5deg); }
+            100% { transform: translate(0,0); }
+        }
+
+        @media (max-width: 550px) {
+            .glow-title { font-size: 2.5rem; letter-spacing: 3px; }
+            .icon-bubble { width: 70px; height: 70px; font-size: 2.8rem; }
+            .links-grid { gap: 1.5rem; }
+            .glass-card { padding: 1.5rem; }
+        }
+
+        /* Визуализатор звука (простой эквалайзер) */
+        .vizualizer {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 99;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 12px 18px;
-            border: 1px solid rgba(255, 200, 150, 0.5);
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
             display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #ffddbb;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: monospace;
-            letter-spacing: 1px;
+            gap: 5px;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 12px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+            pointer-events: none;
         }
-
-        .sound-control:hover {
-            background: #ff4d6dcc;
-            color: white;
-            border-color: white;
-            transform: scale(1.03);
-        }
-
-        /* адаптив */
-        @media (max-width: 500px) {
-            .glass-card {
-                padding: 1.5rem 1.2rem 2rem;
-                width: 92%;
-            }
-            .glow-title {
-                font-size: 2.2rem;
-                letter-spacing: 2px;
-            }
-            .icon-bubble {
-                width: 65px;
-                height: 65px;
-                font-size: 2.8rem;
-            }
-            .links-grid {
-                gap: 1.2rem;
-            }
-        }
-
-        /* ритмичная тряска при загрузке */
-        @keyframes microShake {
-            0% { transform: translate(0px, 0px); }
-            25% { transform: translate(1px, -1px);}
-            50% { transform: translate(-1px, 1px);}
-            75% { transform: translate(1px, 0px);}
-            100% { transform: translate(0,0);}
-        }
-        .shake-once {
-            animation: microShake 0.25s ease-in-out 2;
+        .viz-bar {
+            width: 6px;
+            height: 18px;
+            background: #ff4d6d;
+            border-radius: 4px;
+            transition: height 0.05s ease;
         }
     </style>
 </head>
 <body>
 
 <div class="energy-bg" id="particleBg"></div>
+<div class="bass-wave"></div>
+<div class="vizualizer" id="vizualizer">
+    <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+    <div class="viz-bar"></div><div class="viz-bar"></div><div class="viz-bar"></div>
+</div>
 
 <div class="glass-card" id="mainCard">
     <div class="glow-title" id="bioTitle">BIO DAULET</div>
-    <div class="sub">⚡ ENERGY CONNECTION ⚡</div>
+    <div class="sub">🔥 ENERGY OVERDRIVE 🔥</div>
     
     <div class="links-grid">
-        <!-- VK значок -->
         <a class="social-item" id="vkLink" href="#" target="_blank" rel="noopener noreferrer">
-            <div class="icon-bubble">🎵</div>
+            <div class="icon-bubble">🎧</div>
             <div class="social-label">VK</div>
         </a>
-        <!-- TELEGRAM значок -->
         <a class="social-item" id="tgLink" href="#" target="_blank" rel="noopener noreferrer">
-            <div class="icon-bubble">📱</div>
+            <div class="icon-bubble">✈️</div>
             <div class="social-label">TELEGRAM</div>
         </a>
-        <!-- TIKTOK значок -->
         <a class="social-item" id="ttLink" href="#" target="_blank" rel="noopener noreferrer">
-            <div class="icon-bubble">🎶</div>
+            <div class="icon-bubble">🎵</div>
             <div class="social-label">TIKTOK</div>
         </a>
     </div>
     
     <div class="energy-footer">
-        🔥 TAP & GO | vibe energy 🔥
+        ⚡ TAP ANY ICON — EXPLOSIVE VIBE ⚡
     </div>
-</div>
-
-<div class="sound-control" id="soundToggle">
-    <span>🔊</span> <span id="soundStatus">SOUND ON</span>
 </div>
 
 <script>
     (function() {
-        // ---------- ЗВУКОВАЯ СИСТЕМА ----------
-        // Создаем аудио контекст (Web Audio API) для энергичного бита
+        // ----- МОЩНЫЙ ЗВУК: БЕЗ КНОПКИ ВКЛ/ВЫКЛ, ВСЕГДА ИГРАЕТ -----
         let audioCtx = null;
-        let isAudioAllowed = false;
-        let gainNode = null;
-        let oscillator = null;
-        let isPlaying = false;
-        let soundEnabled = true;   // флаг желания пользователя
+        let masterGain = null;
+        let bassGain = null;
+        let isAudioStarted = false;
+        let beatInterval = null;
+        let visualizerInterval = null;
         
-        // Функция инициализации аудио (по жесту пользователя)
-        function initAudio() {
+        // Базовые частоты для тяжелого бита
+        const KICK_FREQ = 70;    // глубокий бас
+        const SNARE_FREQ = 1200;
+        const HAT_FREQ = 4800;
+        const MELODY_BASE = 440;
+        
+        // Инициализация звука ПРИ СТАРТЕ (автоматически, с использованием первого клика, но звук включается мгновенно по правилам браузера)
+        function initPowerSound() {
             if (audioCtx) return;
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                gainNode = audioCtx.createGain();
-                gainNode.gain.value = 0.45;  // комфортная громкость
-                gainNode.connect(audioCtx.destination);
-                // создаем простой ритмичный "энерджи-саунд" — бас-дроп с пульсацией
-                startRhythmicSound();
+                masterGain = audioCtx.createGain();
+                bassGain = audioCtx.createGain();
+                masterGain.gain.value = 0.65;  // громкий, насыщенный
+                bassGain.gain.value = 0.8;
+                
+                masterGain.connect(audioCtx.destination);
+                bassGain.connect(masterGain);
+                
+                // Запускаем тяжелый ритм сразу после разрешения контекста
+                startHardcoreBeat();
+                
+                // Визуализатор звука
+                startVisualizer();
+                
             } catch(e) {
-                console.warn("Web Audio не поддерживается", e);
-                document.getElementById('soundStatus').innerText = "🔇 NO AUDIO";
-                soundEnabled = false;
+                console.warn("Аудио не поддерживается, но сайт живёт", e);
             }
         }
         
-        function startRhythmicSound() {
-            if (!audioCtx || !gainNode || isPlaying) return;
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume().then(() => {
-                    playEnergyLoop();
-                }).catch(e=>console.log);
-            } else {
-                playEnergyLoop();
-            }
-        }
-        
-        let loopInterval = null;
-        let currentOsc = null;
-        
-        function playEnergyLoop() {
-            if (!soundEnabled || !audioCtx || !gainNode) return;
-            if (loopInterval) clearInterval(loopInterval);
-            isPlaying = true;
+        function playTone(frequency, duration, volume = 0.4, type = 'sine', useBass = false) {
+            if (!audioCtx || !masterGain) return;
+            if (audioCtx.state !== 'running') return;
             
-            // Функция для короткого "бип-бас" удара (энергичный звук)
-            function playBeep(frequency, duration, volume = 0.3) {
-                if (!audioCtx || !gainNode || !soundEnabled) return;
-                const now = audioCtx.currentTime;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = frequency;
+            
+            let targetGain = useBass ? bassGain : masterGain;
+            gainNode.connect(targetGain);
+            osc.connect(gainNode);
+            
+            gainNode.gain.setValueAtTime(volume, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            osc.start();
+            osc.stop(now + duration);
+        }
+        
+        // Основной энергетический драм-луп (тяжелый бит)
+        let beatActive = false;
+        function startHardcoreBeat() {
+            if (beatInterval) clearInterval(beatInterval);
+            if (!audioCtx) return;
+            
+            beatActive = true;
+            let beatCount = 0;
+            
+            // первый мощный удар сразу при запуске
+            const playKick = () => {
+                if (!audioCtx || audioCtx.state !== 'running') return;
+                // Кик (глубокий бас)
+                const oscKick = audioCtx.createOscillator();
+                const gainKick = audioCtx.createGain();
+                oscKick.type = 'triangle';
+                oscKick.frequency.value = 80;
+                gainKick.gain.setValueAtTime(0.7, audioCtx.currentTime);
+                gainKick.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                oscKick.connect(gainKick);
+                gainKick.connect(masterGain);
+                oscKick.start();
+                oscKick.stop(audioCtx.currentTime + 0.25);
+                
+                // добавочный низкий бум
+                const subOsc = audioCtx.createOscillator();
+                const subGain = audioCtx.createGain();
+                subOsc.type = 'sine';
+                subOsc.frequency.value = 55;
+                subGain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+                subGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                subOsc.connect(subGain);
+                subGain.connect(masterGain);
+                subOsc.start();
+                subOsc.stop(audioCtx.currentTime + 0.3);
+            };
+            
+            const playSnare = () => {
+                if (!audioCtx || audioCtx.state !== 'running') return;
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.value = 1100;
+                gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
                 osc.connect(gain);
-                gain.connect(gainNode);
-                osc.type = 'sine';
-                osc.frequency.value = frequency;
-                gain.gain.setValueAtTime(volume, now);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+                gain.connect(masterGain);
                 osc.start();
-                osc.stop(now + duration);
-            }
+                osc.stop(audioCtx.currentTime + 0.12);
+            };
             
-            // первая серия звуков при старте: энергичный восходящий сигнал + бас
-            playBeep(880, 0.2, 0.25);
-            setTimeout(() => { if(soundEnabled) playBeep(1046, 0.18, 0.3); }, 120);
-            setTimeout(() => { if(soundEnabled) playBeep(1318, 0.25, 0.35); }, 280);
-            setTimeout(() => { if(soundEnabled) playBeep(880, 0.4, 0.28); }, 550);
+            const playHat = () => {
+                if (!audioCtx || audioCtx.state !== 'running') return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.value = 5200;
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            };
             
-            // установка ритмичного пульса (каждые 1.4 секунды)
-            let beatCounter = 0;
-            loopInterval = setInterval(() => {
-                if (!soundEnabled || !audioCtx || audioCtx.state !== 'running') return;
-                // Основной бас-кик
-                playBeep(120, 0.12, 0.4);
-                beatCounter++;
-                if (beatCounter % 2 === 0) {
-                    // доп. хай-хэт эффект
-                    playBeep(2400, 0.08, 0.18);
+            // басовый дроп каждый 2й такт
+            const playBassDrop = () => {
+                if (!audioCtx || audioCtx.state !== 'running') return;
+                const bassOsc = audioCtx.createOscillator();
+                const bassGainNode = audioCtx.createGain();
+                bassOsc.type = 'sawtooth';
+                bassOsc.frequency.value = 62;
+                bassGainNode.gain.setValueAtTime(0.55, audioCtx.currentTime);
+                bassGainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                bassOsc.connect(bassGainNode);
+                bassGainNode.connect(masterGain);
+                bassOsc.start();
+                bassOsc.stop(audioCtx.currentTime + 0.35);
+            };
+            
+            beatInterval = setInterval(() => {
+                if (!audioCtx || audioCtx.state !== 'running' || !beatActive) return;
+                playKick();     // каждый такт кик
+                
+                if (beatCount % 2 === 0) {
+                    playSnare();   // снэр на каждом втором
                 }
-                if (beatCounter % 4 === 0) {
-                    // каждый 4й удар - короткая мелодия
-                    playBeep(680, 0.1, 0.22);
-                    setTimeout(() => playBeep(860, 0.12, 0.2), 80);
+                if (beatCount % 1 === 0) {
+                    playHat();    // хэт часто
                 }
-            }, 700);  // быстрый ритм ~ 85 bpm? но ощущается энергично
+                if (beatCount % 4 === 2) {
+                    playBassDrop();  // мощный дроп
+                    // дополнительная вибрация полоски баса
+                    const waveDiv = document.querySelector('.bass-wave');
+                    if(waveDiv) {
+                        waveDiv.style.animation = 'none';
+                        setTimeout(() => waveDiv.style.animation = 'bassPulse 0.2s infinite', 5);
+                    }
+                }
+                beatCount = (beatCount + 1) % 8;
+            }, 320);  // ~187 BPM — очень энергично!
         }
         
-        function stopRhythmicSound() {
-            if (loopInterval) {
-                clearInterval(loopInterval);
-                loopInterval = null;
-            }
-            isPlaying = false;
-        }
-        
-        function toggleSound() {
-            if (!audioCtx) {
-                // если еще не инициализировано, принудительно включаем
-                initAudio();
-                soundEnabled = true;
-                document.getElementById('soundStatus').innerHTML = "🔊 SOUND ON";
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume().then(() => {
-                        startRhythmicSound();
+        // Визуализатор (синхронизация с битом)
+        function startVisualizer() {
+            const bars = document.querySelectorAll('.viz-bar');
+            if (!bars.length) return;
+            visualizerInterval = setInterval(() => {
+                if (!audioCtx || audioCtx.state !== 'running') {
+                    // простая анимация даже без звука для динамики
+                    bars.forEach((bar, idx) => {
+                        const h = Math.sin(Date.now() * 0.015 + idx) * 12 + 12;
+                        bar.style.height = Math.max(6, h) + 'px';
                     });
-                } else if(audioCtx){
-                    startRhythmicSound();
+                    return;
                 }
-                return;
-            }
-            
-            if (soundEnabled) {
-                // выключаем звук
-                soundEnabled = false;
-                document.getElementById('soundStatus').innerHTML = "🔇 SOUND OFF";
-                if (loopInterval) {
-                    clearInterval(loopInterval);
-                    loopInterval = null;
-                }
-                isPlaying = false;
-                if (audioCtx) {
-                    // не останавливаем контекст полностью, а просто глушим все новые звуки
-                    // но также можно "заглушить" гейн? но проще через флаг playBeep ничего не играет
-                }
-            } else {
-                soundEnabled = true;
-                document.getElementById('soundStatus').innerHTML = "🔊 SOUND ON";
-                if (audioCtx && audioCtx.state === 'running') {
-                    startRhythmicSound();
-                } else if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume().then(() => startRhythmicSound());
-                } else if (!audioCtx) {
-                    initAudio();
-                } else {
-                    startRhythmicSound();
-                }
+                // Имитация басового визуала
+                bars.forEach((bar, i) => {
+                    let intensity = Math.random() * 24 + 8;
+                    if (i % 2 === 0) intensity += 10;
+                    bar.style.height = intensity + 'px';
+                    bar.style.background = `linear-gradient(180deg, #ff6699, #ffcc33)`;
+                });
+            }, 90);
+        }
+        
+        // запуск звука с автополитикой: любой жест пользователя включает контекст.
+        // но мы его резолвим при первом клике или тапе.
+        function resumeAudioContext() {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => {
+                    console.log('Звук активирован! Мощный бит поехал');
+                    if (!beatActive) startHardcoreBeat();
+                }).catch(e=>console.log);
+            } else if (!audioCtx) {
+                initPowerSound();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
             }
         }
         
-        // Получение ссылок и установка переходов
-        const vkAnchor = document.getElementById('vkLink');
-        const tgAnchor = document.getElementById('tgLink');
-        const ttAnchor = document.getElementById('ttLink');
+        // Добавляем слушатели на весь документ для активации звука (первое же взаимодействие включает)
+        document.body.addEventListener('click', resumeAudioContext, { once: false });
+        document.body.addEventListener('touchstart', resumeAudioContext, { once: false });
         
-        // корректные URL
+        // также пробуем авто-резолв через "старт" имитации, но браузеры блокируют, поэтому ждём клик.
+        // но чтобы звук заиграл мгновенно при любом клике по кнопке или значку - делаем
+        
+        // Установка ссылок
         const VK_URL = "https://vk.ru/dauletchik";
         const TG_URL = "http://t.me/HETY_HOMEP";
         const TT_URL = "https://tiktok.com/@dauproff";
         
-        vkAnchor.href = VK_URL;
-        tgAnchor.href = TG_URL;
-        ttAnchor.href = TT_URL;
+        document.getElementById('vkLink').href = VK_URL;
+        document.getElementById('tgLink').href = TG_URL;
+        document.getElementById('ttLink').href = TT_URL;
         
-        // Добавляем дополнительный фидбек при клике на значки: звуковой удар, вибрация текста
-        function handleLinkClick(e, platformName) {
-            if (soundEnabled && audioCtx && audioCtx.state === 'running') {
-                // проигрываем короткий яркий звук "перехода"
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(gainNode);
-                osc.frequency.value = 1200;
-                gain.gain.setValueAtTime(0.45, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.15);
+        // Функция клика - мощный звуковой фидбек + тряска
+        function onSocialClick(event, platform) {
+            event.preventDefault();
+            // Воспроизводим взрывной звук при клике
+            if (audioCtx && audioCtx.state === 'running') {
+                // Взрывной панч
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.value = 220;
+                gain1.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                osc1.connect(gain1);
+                gain1.connect(masterGain);
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 0.2);
                 
                 setTimeout(() => {
+                    if(!audioCtx) return;
                     const osc2 = audioCtx.createOscillator();
                     const gain2 = audioCtx.createGain();
-                    osc2.connect(gain2);
-                    gain2.connect(gainNode);
+                    osc2.type = 'square';
                     osc2.frequency.value = 880;
-                    gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gain2.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+                    gain2.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                    osc2.connect(gain2);
+                    gain2.connect(masterGain);
                     osc2.start();
-                    osc2.stop(audioCtx.currentTime + 0.1);
-                }, 50);
+                    osc2.stop(audioCtx.currentTime + 0.15);
+                }, 30);
             }
             
-            // Добавляем мини-тряску заголовку для энергии
-            const titleEl = document.getElementById('bioTitle');
-            titleEl.classList.add('shake-once');
-            setTimeout(() => titleEl.classList.remove('shake-once'), 400);
+            // тряска карточки
+            const card = document.getElementById('mainCard');
+            card.classList.add('shake-card');
+            setTimeout(() => card.classList.remove('shake-card'), 300);
             
-            // пульс карточки
-            const card = document.querySelector('.glass-card');
-            card.style.transform = 'scale(0.98)';
-            setTimeout(() => { card.style.transform = ''; }, 120);
-            
-            // Разрешаем переход (ссылка откроется)
-            return true;
-        }
-        
-        vkAnchor.addEventListener('click', (e) => {
-            handleLinkClick(e, 'VK');
-        });
-        tgAnchor.addEventListener('click', (e) => {
-            handleLinkClick(e, 'TELEGRAM');
-        });
-        ttAnchor.addEventListener('click', (e) => {
-            handleLinkClick(e, 'TIKTOK');
-        });
-        
-        // Звуковая кнопка
-        const soundBtn = document.getElementById('soundToggle');
-        soundBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleSound();
-            // дополнительная визуальная реакция
-            const statusSpan = document.getElementById('soundStatus');
-            if(soundEnabled) {
-                statusSpan.innerText = "SOUND ON";
-            } else {
-                statusSpan.innerText = "SOUND OFF";
-            }
-        });
-        
-        // Чтобы автоматически инициализировать звук при первом касании/клике в любом месте (по правилам браузера)
-        function firstTouchInit() {
-            if (!audioCtx) {
-                initAudio();
-            } else if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume().then(() => {
-                    if(soundEnabled && !loopInterval) startRhythmicSound();
-                });
-            }
-            document.body.removeEventListener('click', firstTouchInit);
-            document.body.removeEventListener('touchstart', firstTouchInit);
-        }
-        document.body.addEventListener('click', firstTouchInit);
-        document.body.addEventListener('touchstart', firstTouchInit);
-        
-        // Фоновые частицы - создаем энергичный "световой шум"
-        function createParticles() {
-            const container = document.getElementById('particleBg');
-            const particleCount = 55;
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const size = Math.random() * 12 + 4;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                const duration = Math.random() * 7 + 5;
-                particle.style.animationDuration = duration + 's';
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                const colors = ['#FF5E7E', '#FFB347', '#FF3A6F', '#E84393', '#F39C12'];
-                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.opacity = Math.random() * 0.4 + 0.2;
-                container.appendChild(particle);
-            }
-        }
-        createParticles();
-        
-        // периодическая смена интенсивности свечения (энергичный фон)
-        setInterval(() => {
-            const card = document.querySelector('.glass-card');
-            if (card) {
-                const intensity = Math.sin(Date.now() / 800) * 0.1 + 0.15;
-                card.style.boxShadow = `0 30px 45px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 70, 120, ${0.15 + intensity * 0.2}) inset`;
-            }
-        }, 400);
-        
-        // Маленький "приветственный" звук при первом появлении страницы после жеста, но не напрямую
-        // Энергичное мигание заголовка каждые 3 секунды
-        setInterval(() => {
+            // анимация заголовка
             const title = document.getElementById('bioTitle');
-            if (title) {
-                title.style.animation = 'none';
-                setTimeout(() => { title.style.animation = 'gradientShift 3s ease infinite, textPulse 1.2s ease-in-out infinite alternate'; }, 10);
+            title.style.animation = 'none';
+            setTimeout(() => {
+                title.style.animation = 'gradientShift 2s ease infinite, textShake 1.2s infinite alternate';
+            }, 10);
+            
+            // перенаправление через 50 мс для эффекта
+            let link;
+            if (platform === 'vk') link = VK_URL;
+            else if (platform === 'tg') link = TG_URL;
+            else link = TT_URL;
+            
+            setTimeout(() => {
+                window.open(link, '_blank');
+            }, 70);
+        }
+        
+        document.getElementById('vkLink').addEventListener('click', (e) => onSocialClick(e, 'vk'));
+        document.getElementById('tgLink').addEventListener('click', (e) => onSocialClick(e, 'tg'));
+        document.getElementById('ttLink').addEventListener('click', (e) => onSocialClick(e, 'tt'));
+        
+        // создание фоновых частиц в огромном количестве
+        function createMassiveParticles() {
+            const container = document.getElementById('particleBg');
+            for(let i=0;i<120;i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                let size = Math.random() * 18 + 3;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.animationDuration = Math.random() * 8 + 3 + 's';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                const hue = Math.random() * 20 + 330;
+                p.style.background = `radial-gradient(circle, hsl(${hue}, 90%, 65%), hsl(${hue}, 80%, 45%))`;
+                p.style.boxShadow = `0 0 25px hsl(${hue}, 80%, 60%)`;
+                container.appendChild(p);
             }
-        }, 3200);
+        }
+        createMassiveParticles();
         
-        // Если пользователь не взаимодействовал, показываем намёк
-        setTimeout(() => {
-            const footer = document.querySelector('.energy-footer');
-            if(footer) footer.style.opacity = '0.9';
-        }, 800);
+        // динамический неон по краям карты
+        setInterval(() => {
+            const card = document.querySelector('.glass-card');
+            if(card) {
+                let glow = Math.sin(Date.now() / 300) * 0.3 + 0.7;
+                card.style.boxShadow = `0 0 ${30 + glow * 20}px rgba(255, 51, 102, 0.7), 0 20px 40px black, inset 0 0 12px rgba(255,100,100,0.4)`;
+            }
+        }, 100);
         
-        // На случай, если аудио уже разрешено, запускаем после инита
-        // Автостарт звука через любой клик (первый клик везде)
+        // Инициализация звука при загрузке (контекст создастся, но будет suspended до клика)
+        // но пользователь кликнет куда-то гарантированно, звук проснется
+        initPowerSound();
+        
+        // дополнительно: если страница загружена, показываем сообщение "tap to unleash"
+        console.log('🔥 MAX ENERGY MODE 🔥');
     })();
 </script>
 </body>
-    </html>
+</html>

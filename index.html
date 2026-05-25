@@ -50,7 +50,6 @@
             width: 100vw;
         }
 
-        /* Принудительное нативное отображение слоев в обход багов компилятора */
         .layer-visible {
             display: flex !important;
             flex-direction: column;
@@ -99,7 +98,7 @@
         <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between h-full">
             <div class="w-full max-w-sm mx-auto pt-12">
                 <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Номер телефона</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите номер. Система автоматически определит, войти или зарегистрироваться.</p>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите номер телефона. Система автоматически определит, войти или создать новый профиль.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-secondary-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Страна</label>
@@ -126,10 +125,10 @@
         <div id="auth-step-login" class="flex flex-col flex-1 p-6 justify-between h-full hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
                 <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Двухэтапный пароль</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Этот аккаунт защищен облачным паролем. Введите его для входа.</p>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Этот номер телефона уже зарегистрирован. Введите пароль для входа.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
-                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Пароль</label>
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваш пароль</label>
                         <input type="password" id="login-pass-input" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
                     </div>
                     <p id="error-login" class="text-xs text-red-500 font-medium hidden"></p>
@@ -146,10 +145,10 @@
         <div id="auth-step-2" class="flex flex-col flex-1 p-6 justify-between h-full hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
                 <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Придумайте пароль</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Создайте надежный облачный пароль для защиты вашего профиля.</p>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Создайте надежный пароль для защиты вашей учетной записи.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
-                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Введите пароль</label>
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Придумайте пароль</label>
                         <input type="password" id="auth-pass" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
                     </div>
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
@@ -169,15 +168,15 @@
 
         <div id="auth-step-3" class="flex flex-col flex-1 p-6 justify-between h-full hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
-                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">О себе</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите имя и выберите свободный юзернейм.</p>
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Личные данные</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите ваше имя и выберите уникальный свободный юзернейм.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваше Имя</label>
                         <input type="text" id="auth-name" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="Например: Даулет">
                     </div>
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
-                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Юзернейм</label>
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Уникальный юзернейм</label>
                         <input type="text" id="auth-username" value="@" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-mono">
                     </div>
                     <p id="error-step-3" class="text-xs text-red-500 font-medium hidden"></p>
@@ -243,7 +242,7 @@
                             <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-lg">⭐️</div>
                             <div>
                                 <h4 class="font-medium text-[var(--tg-theme-text)]">Telegram Stars</h4>
-                                <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс SPA</p>
+                                <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс аккаунта</p>
                             </div>
                         </div>
                         <span class="font-bold text-amber-500 text-lg">1000 ⭐️</span>
@@ -323,7 +322,7 @@
             <h3 class="text-lg font-bold text-[var(--tg-theme-text)]">Новая группа</h3>
             <div>
                 <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название вашей группы</label>
-                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none" placeholder="Например: Любители CRMP">
+                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none" placeholder="Введите название...">
             </div>
             <div class="flex justify-end space-x-3 pt-2">
                 <button id="btn-modal-cancel" class="px-4 py-2 text-sm font-medium text-[var(--tg-theme-hint)]">Отмена</button>
@@ -343,8 +342,9 @@
 
     <script>
         (function() {
+            // Эмуляция глобальной базы данных локального хранилища
             let db = { users: [], groups: [] };
-            let state = { currentUser: null, activeChatId: null, selectedMsgId: null, isDarkMode: false };
+            let state = { currentUser: null, activeChatId: null, selectedMsgId: null, isDarkMode: false, tempAuthPhone: '', tempAuthPass: '' };
 
             function loadDB() {
                 try {
@@ -352,6 +352,7 @@
                     if (saved) {
                         db = JSON.parse(saved);
                     } else {
+                        // Дефолтные глобальные боты и юзеры, чтобы поиск сразу выдавал результаты
                         db.users = [
                             { phone: "+7 707 111 2233", password: "123", name: "Павел Дуров", username: "@durov", contacts: [], chats: [] },
                             { phone: "+7 707 999 8877", password: "123", name: "Telegram Support", username: "@support", contacts: [], chats: [] }
@@ -458,6 +459,7 @@
                 container.innerHTML = '';
                 const cleanFilter = filter.trim().toLowerCase();
 
+                // Если в поиске написали @username, включаем глобальный поиск по всей БД пользователей и групп
                 if (cleanFilter.startsWith('@') && cleanFilter.length > 1) {
                     renderGlobalSearchResults(cleanFilter, container);
                     return;
@@ -466,7 +468,7 @@
                 const list = getActiveChats().filter(c => c.title.toLowerCase().includes(cleanFilter) || c.username.toLowerCase().includes(cleanFilter));
 
                 if (list.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чатов не найдено. Введите @username в поиск для глобального поиска!</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чатов не найдено. Напишите @ в поиске для глобального поиска по людям и группам!</div>`;
                     return;
                 }
 
@@ -506,24 +508,32 @@
                 heading.textContent = "Результаты глобального поиска";
                 container.appendChild(heading);
 
+                // Рендер найденных людей
                 foundUsers.forEach(u => {
                     const item = document.createElement('div');
                     item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)]";
                     item.onclick = () => { openChatWindow(u.username, false); document.getElementById('chat-search-input').value = ''; };
                     item.innerHTML = `
                         <div class="w-11 h-11 rounded-full bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white font-bold flex-shrink-0">${u.name.charAt(0).toUpperCase()}</div>
-                        <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${u.name}</h4><p class="text-xs text-[#2481cc] font-mono">${u.username}</p></div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${u.name}</h4>
+                            <p class="text-xs text-[#2481cc] font-mono">${u.username}</p>
+                        </div>
                     `;
                     container.appendChild(item);
                 });
 
+                // Рендер найденных групп по ссылкам
                 foundGroups.forEach(g => {
                     const item = document.createElement('div');
                     item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)]";
                     item.onclick = () => { openChatWindow(g.username, true); document.getElementById('chat-search-input').value = ''; };
                     item.innerHTML = `
                         <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-red-500 flex items-center justify-center text-white font-bold flex-shrink-0">👥</div>
-                        <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${g.title}</h4><p class="text-xs text-gray-400 font-mono">${g.username}</p></div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${g.title}</h4>
+                            <p class="text-xs text-gray-400 font-mono">${g.username}</p>
+                        </div>
                     `;
                     container.appendChild(item);
                 });
@@ -547,7 +557,10 @@
                     el.onclick = () => { openChatWindow(target.username, false); };
                     el.innerHTML = `
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">${target.name.charAt(0).toUpperCase()}</div>
-                        <div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${target.name}</h4><p class="text-xs text-emerald-500">онлайн</p></div>
+                        <div>
+                            <h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${target.name}</h4>
+                            <p class="text-xs text-emerald-500">онлайн</p>
+                        </div>
                     `;
                     container.appendChild(el);
                 });
@@ -567,7 +580,7 @@
                     statusNode.textContent = `Ссылка: ${group.username}`;
                     av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0";
                     av.textContent = "👥";
-                    contactBtn.classList.add('hidden');
+                    contactBtn.classList.add('hidden'); // Кнопка контактов скрыта для групп
                     renderChatHistory(group.messages);
                 } else {
                     const targetUser = db.users.find(u => u.username === targetUsername);
@@ -576,11 +589,12 @@
                     av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-blue-400 to-indigo-600 flex-shrink-0";
                     av.textContent = targetUser.name.charAt(0).toUpperCase();
 
+                    // Логика управления контактами
                     if ((state.currentUser.contacts || []).includes(targetUsername)) {
                         contactBtn.textContent = "Удалить контакт";
                         contactBtn.classList.remove('hidden');
                     } else {
-                        contactBtn.textContent = "Добавить в контакты";
+                        contactBtn.textContent = "В контакты";
                         contactBtn.classList.remove('hidden');
                     }
 
@@ -619,6 +633,7 @@
                         </div>
                     `;
 
+                    // Удаление сообщения по нажатию (клику)
                     wrapper.querySelector('.chat-bubble').addEventListener('click', function(e) {
                         e.stopPropagation();
                         if (isMe) {
@@ -653,6 +668,7 @@
                     let myChat = state.currentUser.chats.find(c => c.username === state.activeChatId.username);
                     myChat.messages.push(newMsg);
 
+                    // Синхронизируем доставку сообщения второй стороне
                     const opponent = db.users.find(u => u.username === state.activeChatId.username);
                     if (opponent) {
                         if (!opponent.chats) opponent.chats = [];
@@ -670,6 +686,7 @@
             }
 
             function setupEventListeners() {
+                // Закрывать контекстные меню при любом клике по экрану
                 document.addEventListener('click', () => {
                     document.getElementById('popup-menu-main').classList.add('hidden');
                     document.getElementById('msg-context-menu').classList.add('hidden');
@@ -688,6 +705,7 @@
                     renderChatsList(this.value);
                 });
 
+                // Работа с созданием групп
                 document.getElementById('btn-fab-create').addEventListener('click', () => document.getElementById('modal-create-layer').classList.remove('hidden'));
                 document.getElementById('pop-create-group').addEventListener('click', () => document.getElementById('modal-create-layer').classList.remove('hidden'));
                 document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-create-layer').classList.add('hidden'));
@@ -696,13 +714,14 @@
                     const title = document.getElementById('modal-create-input').value.trim();
                     if (!title) return;
                     const randomHash = Math.random().toString(36).substring(2, 7);
-                    const groupUrl = `@t_me_joinchat_${randomHash}`;
+                    const groupUrl = `@t_me_joinchat_${randomHash}`; // Уникальная ссылка
 
                     db.groups.push({
                         id: Date.now(),
                         title: title,
                         username: groupUrl,
                         creator: state.currentUser.username,
+                        members: [state.currentUser.username],
                         messages: []
                     });
                     saveDB();
@@ -712,6 +731,7 @@
                     openChatWindow(groupUrl, true);
                 });
 
+                // Функция удаления сообщений с обеих сторон
                 document.getElementById('btn-delete-msg').addEventListener('click', () => {
                     if (!state.selectedMsgId) return;
                     if (state.activeChatId.isGroup) {
@@ -733,6 +753,7 @@
                     }
                 });
 
+                // Обработчик кнопки добавления/удаления контакта
                 document.getElementById('btn-toggle-contact').addEventListener('click', function() {
                     if (!state.activeChatId || state.activeChatId.isGroup) return;
                     if (!state.currentUser.contacts) state.currentUser.contacts = [];
@@ -740,7 +761,7 @@
                     const target = state.activeChatId.username;
                     if (state.currentUser.contacts.includes(target)) {
                         state.currentUser.contacts = state.currentUser.contacts.filter(c => c !== target);
-                        this.textContent = "Добавить в контакты";
+                        this.textContent = "В контакты";
                     } else {
                         state.currentUser.contacts.push(target);
                         this.textContent = "Удалить контакт";
@@ -776,7 +797,7 @@
                     }
                 });
 
-                // ШАГ 1 АВТОРИЗАЦИИ
+                // ЛОГИКА АВТОРИЗАЦИИ: ШАГ 1
                 document.getElementById('btn-step-1-next').addEventListener('click', () => {
                     const phone = document.getElementById('auth-phone-input').value.trim();
                     const err = document.getElementById('error-step-1');
@@ -792,13 +813,15 @@
                     state.tempAuthPhone = phone;
 
                     if (existingUser) {
+                        // Если номер найден — запрашиваем пароль (Вход)
                         showAuthStep('login');
                     } else {
+                        // Если номера нет — отправляем на регистрацию нового аккаунта
                         showAuthStep('2');
                     }
                 });
 
-                // ОКОНЧАТЕЛЬНЫЙ ЛОГИН СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ
+                // ФИНАЛЬНЫЙ ВХОД ДЛЯ СУЩЕСТВУЮЩИХ ПОЛЬЗОВАТЕЛЕЙ
                 document.getElementById('btn-login-submit').addEventListener('click', () => {
                     const pass = document.getElementById('login-pass-input').value;
                     const err = document.getElementById('error-login');
@@ -806,31 +829,4 @@
 
                     if (user && user.password === pass) {
                         state.currentUser = user;
-                        localStorage.setItem('tg_active_session_phone', user.phone);
-                        launchApp();
-                    } else {
-                        err.textContent = "Неверный облачный пароль безопасности!";
-                        err.classList.remove('hidden');
-                    }
-                });
-                document.getElementById('btn-login-back').addEventListener('click', () => showAuthStep('1'));
-
-                // ШАГ РЕГИСТРАЦИИ 2
-                document.getElementById('btn-step-2-next').addEventListener('click', () => {
-                    const p1 = document.getElementById('auth-pass').value;
-                    const p2 = document.getElementById('auth-pass-confirm').value;
-                    const err = document.getElementById('error-step-2');
-                    err.classList.add('hidden');
-
-                    if (!p1 || p1 !== p2) {
-                        err.textContent = "Облачные пароли не совпадают!";
-                        err.classList.remove('hidden');
-                        return;
-                    }
-                    state.tempAuthPass = p1;
-                    showAuthStep('3');
-                });
-                document.getElementById('btn-step-2-back').addEventListener('click', () => showAuthStep('1'));
-
-                // ФИНАЛЬНАЯ РЕГИСТРАЦИЯ И ПРОВЕРКА ЮЗЕРНЕЙМА
-                document.getEleme
+                        localStorage.setItem

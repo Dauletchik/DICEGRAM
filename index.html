@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Telegram Advanced SPA</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -50,7 +50,7 @@
             width: 100vw;
         }
 
-        /* Безопасное принудительное отображение слоев без зависимости от багов Tailwind */
+        /* Принудительное нативное отображение слоев в обход багов компилятора */
         .layer-visible {
             display: flex !important;
             flex-direction: column;
@@ -833,4 +833,4 @@
                 document.getElementById('btn-step-2-back').addEventListener('click', () => showAuthStep('1'));
 
                 // ФИНАЛЬНАЯ РЕГИСТРАЦИЯ И ПРОВЕРКА ЮЗЕРНЕЙМА
-                documen
+                document.getEleme

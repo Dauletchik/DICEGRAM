@@ -2,277 +2,820 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Telegram Mobile SPA Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Общие стили для красивого фона в стиле Telegram */
+        :root {
+            --tg-theme-bg: #ffffff;
+            --tg-theme-text: #000000;
+            --tg-theme-hint: #707579;
+            --tg-theme-link: #2481cc;
+            --tg-theme-button: #2481cc;
+            --tg-theme-button-text: #ffffff;
+            --tg-theme-secondary-bg: #f1f5f9;
+            --tg-theme-border: #e5e7eb;
+            --tg-theme-chat-bg: #e7ebf0;
+            --tg-theme-msg-in: #ffffff;
+            --tg-theme-msg-out: #eeffde;
+            --tg-theme-msg-out-ticks: #4fae4e;
+        }
+
+        .dark-mode {
+            --tg-theme-bg: #182533;
+            --tg-theme-text: #ffffff;
+            --tg-theme-hint: #7e8b98;
+            --tg-theme-link: #5288c1;
+            --tg-theme-button: #5288c1;
+            --tg-theme-button-text: #ffffff;
+            --tg-theme-secondary-bg: #0f172a;
+            --tg-theme-border: #243447;
+            --tg-theme-chat-bg: #0f172a;
+            --tg-theme-msg-in: #182533;
+            --tg-theme-msg-out: #2b5278;
+            --tg-theme-msg-out-ticks: #4fae4e;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #17212b;
-            color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--tg-theme-bg);
+            color: var(--tg-theme-text);
+            transition: background-color 0.25s ease, color 0.25s ease;
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* Контейнер для экранов/окон */
-        .container {
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-            box-sizing: border-box;
+        .chat-background {
+            background-color: var(--tg-theme-chat-bg);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%239bc3e2' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Стиль карточки (активного экрана) */
-        .screen {
-            background-color: #24303f;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-            display: none; /* Прячем все экраны по умолчанию */
+        .dark-mode .chat-background {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23101921' fill-opacity='0.6'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Класс для отображения текущего экрана */
-        .screen.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out;
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 2px;
+        }
+        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .gpu-accelerated {
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
-        h2 {
-            font-size: 20px;
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #fff;
-            font-weight: 600;
+        @keyframes premium-glow {
+            0% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
+            50% { filter: drop-shadow(0 0 8px #60a5fa); text-shadow: 0 0 10px #60a5fa; }
+            100% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
         }
-
-        p {
-            font-size: 14px;
-            color: #708499;
-            margin-top: 0;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        /* Поля ввода */
-        .input-group {
-            margin-bottom: 16px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: #5288c1;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        select {
-            width: 100%;
-            padding: 12px;
-            background-color: #1f2936;
-            border: 1px solid #2f3e51;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 15px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus, select:focus {
-            border-color: #5288c1;
-        }
-
-        /* Кнопки */
-        .btn-block {
-            display: flex;
-            gap: 10px;
-            margin-top: 24px;
-        }
-
-        button {
-            flex: 1;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 500;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s, opacity 0.2s;
-        }
-
-        .btn-primary {
-            background-color: #5288c1;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background-color: #4374a5;
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            color: #708499;
-            border: 1px solid #2f3e51;
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Информационные элементы аккаунта */
-        .balance-box {
-            background: #1f2936;
-            padding: 12px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .stars-icon {
-            color: #ffa800;
-            font-size: 16px;
+        .premium-star-anim {
+            animation: premium-glow 3s infinite ease-in-out;
+            color: #38bdf8;
         }
     </style>
 </head>
-<body>
+<body class="gpu-accelerated select-none">
 
-<div class="container">
-
-    <div id="screen-phone" class="screen active">
-        <h2>Номер телефона</h2>
-        <p>Введите номер. Система автоматически определит, войти или зарегистрироваться.</p>
+    <div id="auth-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden">
         
-        <div class="input-group">
-            <label>Страна</label>
-            <select>
-                <option>Казахстан (+7)</option>
-                <option>Россия (+7)</option>
-                <option>Узбекистан (+998)</option>
-            </select>
-        </div>
-        
-        <div class="input-group">
-            <label>Номер телефона</label>
-            <input type="text" placeholder="+7 707 208 01 14" id="phone-input">
+        <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <div class="flex justify-center mb-6">
+                    <i class="fab fa-telegram text-6xl text-[#2481cc]"></i>
+                </div>
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Ваш телефон</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите номер мобильного телефона для входа или создания профиля.</p>
+                
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-secondary-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Страна</label>
+                        <select id="auth-country-select" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-medium">
+                            <option value="+7">Казахстан (+7)</option>
+                            <option value="+7">Россия (+7)</option>
+                            <option value="+1">США (+1)</option>
+                            <option value="+998">Узбекистан (+998)</option>
+                        </select>
+                    </div>
+
+                    <div class="border-2 border-[#2481cc] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[#2481cc] block mb-1">Номер телефона</label>
+                        <input type="tel" id="auth-phone-input" value="+7" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-lg font-medium tracking-wide" placeholder="+7 707 123 4567">
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
+                <button id="btn-step-1-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="btn-block">
-            <button class="btn-primary" onclick="nextScreen('screen-two-step')">Далее</button>
+        <div id="auth-step-login-pass" class="flex flex-col flex-1 p-6 justify-between hidden">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Вход в аккаунт</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Этот номер уже зарегистрирован. Пожалуйста, введите ваш облачный пароль.</p>
+                
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваш пароль</label>
+                        <input type="password" id="auth-login-pass-input" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
+                    </div>
+                    <p id="error-login-pass" class="text-xs text-red-500 font-medium text-center hidden">Неверный пароль. Попробуйте еще раз.</p>
+                </div>
+            </div>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
+                <button id="btn-login-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
+                <button id="btn-login-submit" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="auth-step-2" class="flex flex-col flex-1 p-6 justify-between hidden">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Создайте облачный пароль</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Придумайте пароль для защиты вашего нового аккаунта.</p>
+                
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Придумайте пароль</label>
+                        <input type="password" id="auth-pass" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
+                    </div>
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Повторите пароль</label>
+                        <input type="password" id="auth-pass-confirm" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
+                    </div>
+                    <p id="error-step-2" class="text-xs text-red-500 font-medium text-center hidden">Пароли не совпадают</p>
+                </div>
+            </div>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
+                <button id="btn-step-2-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
+                <button id="btn-step-2-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="auth-step-3" class="flex flex-col flex-1 p-6 justify-between hidden">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">О себе</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите ваше имя и выберите свободный юзернейм.</p>
+                
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваше Имя</label>
+                        <input type="text" id="auth-name" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="Например: Даулет">
+                    </div>
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Юзернейм</label>
+                        <input type="text" id="auth-username" value="@" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-mono" placeholder="@username">
+                    </div>
+                    <p id="error-step-3" class="text-xs text-red-500 font-medium text-center hidden"></p>
+                </div>
+            </div>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
+                <button id="btn-step-3-finish" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div id="screen-two-step" class="screen">
-        <h2>Двухэтапный пароль</h2>
-        <p>Этот аккаунт защищен облачным паролем. Введите его для входа.</p>
+    <div id="app-layer" class="fixed inset-0 z-10 flex flex-col bg-[var(--tg-theme-bg)] hidden">
         
-        <div class="input-group">
-            <label>Ваш облачный пароль</label>
-            <input type="password" placeholder="••••••••">
+        <div id="main-content" class="flex-1 overflow-hidden relative">
+            
+            <div id="tab-pane-chats" class="absolute inset-0 flex flex-col view-pane">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center justify-between bg-[var(--tg-theme-bg)] sticky top-0 z-20">
+                    <h1 class="text-xl font-bold tracking-tight text-[var(--tg-theme-text)]">Telegram Pro</h1>
+                    <div class="flex items-center space-x-4">
+                        <button id="btn-main-menu" class="text-[var(--tg-theme-hint)] active:scale-90 transition-transform p-1">
+                            <i class="fas fa-ellipsis-v text-lg"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="p-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)]">
+                    <div class="relative flex items-center bg-[var(--tg-theme-secondary-bg)] rounded-xl px-3 py-2">
+                        <i class="fas fa-search text-[var(--tg-theme-hint)] mr-3"></i>
+                        <input type="text" id="chat-search-input" placeholder="Поиск чатов или юзернеймов..." class="w-full bg-transparent border-none outline-none text-sm text-[var(--tg-theme-text)]">
+                    </div>
+                </div>
+
+                <div id="chats-list-container" class="flex-1 overflow-y-auto custom-scrollbar pb-24"></div>
+
+                <button id="btn-fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#2481cc] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30">
+                    <i class="fas fa-pencil-alt text-lg"></i>
+                </button>
+            </div>
+
+            <div id="tab-pane-contacts" class="absolute inset-0 flex flex-col view-pane hidden">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
+                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Контакты</h1>
+                </header>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4" id="contacts-list-container"></div>
+            </div>
+
+            <div id="tab-pane-settings" class="absolute inset-0 flex flex-col view-pane hidden">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
+                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Настройки</h1>
+                </header>
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-[var(--tg-theme-secondary-bg)]">
+                    <div class="bg-[var(--tg-theme-bg)] p-4 flex items-center space-x-4 border-b border-[var(--tg-theme-border)]">
+                        <div class="relative">
+                            <div id="settings-avatar-placeholder" class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl bg-gradient-to-br from-blue-500 to-indigo-600"></div>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h3 id="settings-name-display" class="font-bold text-lg text-[var(--tg-theme-text)]"></h3>
+                                <i class="fas fa-star premium-star-anim text-sm" title="Telegram Premium"></i>
+                            </div>
+                            <p id="settings-phone-display" class="text-sm text-[var(--tg-theme-hint)]"></p>
+                            <p id="settings-username-display" class="text-sm text-[#2481cc] font-mono"></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 flex items-center justify-between border-y border-[var(--tg-theme-border)]">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-lg">⭐️</div>
+                            <div>
+                                <h4 class="font-medium text-[var(--tg-theme-text)]">Telegram Stars</h4>
+                                <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс аккаунта</p>
+                            </div>
+                        </div>
+                        <span id="settings-stars-balance" class="font-bold text-amber-500 text-lg">1000 ⭐️</span>
+                    </div>
+
+                    <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 border-y border-[var(--tg-theme-border)] space-y-4">
+                        <h4 class="text-xs font-semibold text-[#2481cc] uppercase tracking-wider">Настройки интерфейса</h4>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-moon text-lg text-[var(--tg-theme-hint)]"></i>
+                                <span class="text-[var(--tg-theme-text)] font-medium">Ночной режим</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-dark-mode" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2481cc]"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 px-4">
+                        <button id="btn-logout" class="w-full bg-red-500/10 text-red-500 hover:bg-red-500/20 py-3 rounded-xl font-medium transition-colors text-center">
+                            Выйти из аккаунта
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-pane-profile" class="absolute inset-0 flex flex-col view-pane hidden">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
+                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Мой Профиль</h1>
+                </header>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 flex flex-col items-center">
+                    <div class="relative w-32 h-32">
+                        <div id="profile-pane-avatar-placeholder" class="w-32 h-32 rounded-full flex items-center justify-center text-white font-bold text-4xl shadow-md bg-gradient-to-br from-blue-500 to-indigo-600"></div>
+                        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs border-4 border-[var(--tg-theme-bg)]">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <div class="text-center space-y-1">
+                        <div class="flex items-center justify-center space-x-2">
+                            <h2 id="profile-pane-name" class="text-2xl font-bold text-[var(--tg-theme-text)]"></h2>
+                            <i class="fas fa-star premium-star-anim text-lg"></i>
+                        </div>
+                        <p class="text-sm bg-blue-500/10 text-[#2481cc] px-3 py-1 rounded-full inline-block font-semibold">
+                            Telegram Premium Активен
+                        </p>
+                    </div>
+
+                    <div class="w-full border-t border-[var(--tg-theme-border)] pt-4 space-y-4">
+                        <div>
+                            <label class="text-xs text-[var(--tg-theme-hint)]">Номер телефона</label>
+                            <p id="profile-pane-phone" class="text-base font-medium text-[var(--tg-theme-text)]"></p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-[var(--tg-theme-hint)]">Имя пользователя</label>
+                            <p id="profile-pane-username" class="text-base font-mono font-medium text-[#2481cc]"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="btn-block">
-            <button class="btn-secondary" onclick="nextScreen('screen-phone')">Назад</button>
-            <button class="btn-primary" onclick="nextScreen('screen-create-password')">Далее</button>
+        <nav class="h-16 border-t border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] fixed bottom-0 left-0 right-0 flex items-center justify-around z-40 px-2 select-none">
+            <button data-tab="chats" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[#2481cc]">
+                <div class="relative">
+                    <i class="fas fa-comment-alt text-xl"></i>
+                    <span id="chats-global-badge" class="absolute -top-2 -right-3.5 bg-[#2481cc] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-[var(--tg-theme-bg)]">1</span>
+                </div>
+                <span class="text-[11px] font-medium mt-1">Чаты</span>
+            </button>
+            <button data-tab="contacts" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
+                <i class="fas fa-address-book text-xl"></i>
+                <span class="text-[11px] font-medium mt-1">Контакты</span>
+            </button>
+            <button data-tab="settings" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
+                <i class="fas fa-cog text-xl"></i>
+                <span class="text-[11px] font-medium mt-1">Настройки</span>
+            </button>
+            <button data-tab="profile" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-[11px] font-medium mt-1">Профиль</span>
+            </button>
+        </nav>
+    </div>
+
+    <div id="chat-window-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden transform translate-x-full transition-transform duration-200">
+        <header class="h-14 px-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] flex items-center justify-between sticky top-0 z-20">
+            <div class="flex items-center space-x-2">
+                <button id="btn-close-chat" class="w-8 h-8 flex items-center justify-center text-[#2481cc] active:scale-90 transition-transform">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </button>
+                <div id="chat-window-avatar-placeholder" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"></div>
+                <div class="flex flex-col">
+                    <span id="chat-window-title" class="font-bold text-sm text-[var(--tg-theme-text)] truncate max-w-[180px]">Чат</span>
+                    <span id="chat-window-status" class="text-xs text-[var(--tg-theme-hint)]">не в сети</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 text-[var(--tg-theme-hint)]">
+                <i class="fas fa-phone"></i>
+                <i class="fas fa-ellipsis-v px-1"></i>
+            </div>
+        </header>
+
+        <div id="chat-history-flow" class="flex-1 overflow-y-auto custom-scrollbar chat-background p-4 space-y-2"></div>
+
+        <div class="p-2 bg-[var(--tg-theme-bg)] border-t border-[var(--tg-theme-border)] flex items-end space-x-2 sticky bottom-0 z-20">
+            <button class="w-10 h-10 flex items-center justify-center text-[var(--tg-theme-hint)]">
+                <i class="fas fa-paperclip text-lg"></i>
+            </button>
+            <div class="flex-1 bg-[var(--tg-theme-secondary-bg)] rounded-2xl px-3 py-2 flex items-end max-h-32">
+                <textarea id="chat-msg-input" rows="1" class="w-full bg-transparent border-none outline-none resize-none text-sm text-[var(--tg-theme-text)] max-h-24 py-0.5 custom-scrollbar" placeholder="Сообщение"></textarea>
+            </div>
+            <button id="btn-send-message" class="w-10 h-10 rounded-full bg-[#2481cc] text-white flex items-center justify-center transition-transform">
+                <i class="fas fa-paper-plane text-sm"></i>
+            </button>
         </div>
     </div>
 
-    <div id="screen-create-password" class="screen">
-        <h2>Придумайте пароль</h2>
-        <p>Создайте надежный облачный пароль для защиты вашей учетной записи.</p>
-        
-        <div class="input-group">
-            <label>Придумайте пароль</label>
-            <input type="password" placeholder="••••••••">
-        </div>
-        <div class="input-group">
-            <label>Повторите пароль</label>
-            <input type="password" placeholder="••••••••">
-        </div>
-
-        <div class="btn-block">
-            <button class="btn-secondary" onclick="nextScreen('screen-two-step')">Назад</button>
-            <button class="btn-primary" onclick="nextScreen('screen-about')">Далее</button>
+    <div id="modal-create-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden p-4">
+        <div class="bg-[var(--tg-theme-bg)] rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-xl">
+            <h3 id="modal-create-title" class="text-lg font-bold text-[var(--tg-theme-text)]">Создать</h3>
+            <div>
+                <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название</label>
+                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none">
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button id="btn-modal-cancel" class="px-4 py-2 text-sm font-medium text-[var(--tg-theme-hint)]">Отмена</button>
+                <button id="btn-modal-submit" class="px-5 py-2 text-sm font-medium bg-[#2481cc] text-white rounded-xl">Создать</button>
+            </div>
         </div>
     </div>
 
-    <div id="screen-about" class="screen">
-        <h2>Личные данные</h2>
-        <p>Введите ваше имя и выберите уникальный свободный юзернейм.</p>
-        
-        <div class="input-group">
-            <label>Ваше Имя</label>
-            <input type="text" placeholder="Например: Даулет">
-        </div>
-        <div class="input-group">
-            <label>Уникальный юзернейм</label>
-            <input type="text" placeholder="@username">
-        </div>
-
-        <div class="btn-block">
-            <button class="btn-secondary" onclick="nextScreen('screen-create-password')">Назад</button>
-            <button class="btn-primary" onclick="nextScreen('screen-main')">Готово</button>
-        </div>
+    <div id="popup-menu-main" class="fixed top-12 right-4 z-40 bg-[var(--tg-theme-bg)] border border-[var(--tg-theme-border)] rounded-xl shadow-xl w-48 py-1 text-sm hidden">
+        <button id="pop-create-group" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
+            <i class="fas fa-users text-[var(--tg-theme-hint)] w-5"></i> <span>Создать группу</span>
+        </button>
+        <button id="pop-create-channel" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
+            <i class="fas fa-bullhorn text-[var(--tg-theme-hint)] w-5"></i> <span>Создать канал</span>
+        </button>
     </div>
 
-    <div id="screen-main" class="screen">
-        <h2>Telegram Главная</h2>
-        <p>Добро пожаловать в систему настроек профиля.</p>
-        
-        <div class="input-group">
-            <label>Поиск по @username или имени</label>
-            <input type="text" placeholder="Поиск...">
-        </div>
+    <script>
+        (function() {
+            // База данных зарегистрированных пользователей (в localStorage)
+            // Структура элементов внутри базы: { phone: { name, username, password, chats: [...] } }
+            let usersDatabase = {};
+            let state = { currentUserPhone: null, user: null, chats: [], activeChatId: null, currentModalMode: null, isDarkMode: false };
+            
+            const aiResponses = ["Привет! Как дела?", "Я тут, слушаю тебя.", "Хаха, это реально смешно 😂", "Погнали в Блек Рашу катать вечерком?", "Че там с балансом Stars?", "Бот работает отлично, без лагов."];
 
-        <h3 style="font-size: 16px; margin-top: 20px; color: #5288c1;">Настройки</h3>
-        
-        <div class="balance-box">
-            <span>Telegram Stars</span>
-            <span class="stars-icon">1000 ★</span>
-        </div>
-        
-        <div class="balance-box" style="margin-top: 8px;">
-            <span>Внутренний баланс SPA</span>
-            <span style="color: #40a7e3; font-weight: bold;">Активен</span>
-        </div>
+            function getFormattedTime() {
+                const now = new Date();
+                let hh = now.getHours(), mm = now.getMinutes();
+                return `${hh < 10 ? '0'+hh : hh}:${mm < 10 ? '0'+mm : mm}`;
+            }
 
-        <div class="btn-block">
-            <button class="btn-secondary" onclick="nextScreen('screen-phone')">Выйти из аккаунта</button>
-        </div>
-    </div>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Обнуление старых кривых конфигураций для чистого старта
+                if(localStorage.getItem('tg_spa_account')) {
+                    localStorage.removeItem('tg_spa_account');
+                }
+                
+                initDatabase();
+                initTheme();
+                checkSession();
+                setupEventListeners();
+            });
 
-</div>
+            function initDatabase() {
+                try {
+                    const db = localStorage.getItem('tg_users_db');
+                    if (db) {
+                        usersDatabase = JSON.parse(db);
+                    } else {
+                        usersDatabase = {};
+                        localStorage.setItem('tg_users_db', JSON.stringify(usersDatabase));
+                    }
+                } catch(e) { usersDatabase = {}; }
+            }
 
-<script>
-    // Простая функция для переключения экранов без перезагрузки
-    function nextScreen(screenId) {
-        // Находим все элементы с классом screen и убираем у них класс active
-        const screens = document.querySelectorAll('.screen');
-        screens.forEach(screen => {
-            screen.classList.remove('active');
-        });
+            function saveDatabase() {
+                try { localStorage.setItem('tg_users_db', JSON.stringify(usersDatabase)); } catch(e) {}
+            }
 
-        // Добавляем класс active нужному экрану
-        const currentScreen = document.getElementById(screenId);
-        if (currentScreen) {
-            currentScreen.classList.add('active');
-        }
-    }
-</script>
+            function initTheme() {
+                try {
+                    if (localStorage.getItem('tg_spa_theme') === 'dark') {
+                        document.body.classList.add('dark-mode');
+                        document.getElementById('toggle-dark-mode').checked = true;
+                        state.isDarkMode = true;
+                    }
+                } catch(e) {}
+            }
 
-</body>
-</html>
+            function toggleTheme(isDark) {
+                if (isDark) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('tg_spa_theme', 'dark');
+                    state.isDarkMode = true;
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('tg_spa_theme', 'light');
+                    state.isDarkMode = false;
+                }
+            }
+
+            function checkSession() {
+                // Проверяем текущую активную сессию входа
+                let activePhone = localStorage.getItem('tg_active_session_phone');
+                if (activePhone && usersDatabase[activePhone]) {
+                    state.currentUserPhone = activePhone;
+                    state.user = usersDatabase[activePhone];
+                    loadApplicationData();
+                    showLayer('app-layer');
+                    switchTab('chats');
+                } else {
+                    showLayer('auth-layer');
+                    showAuthStep('auth-step-1');
+                }
+            }
+
+            function showLayer(layerId) {
+                document.getElementById('auth-layer').classList.add('hidden');
+                document.getElementById('app-layer').classList.add('hidden');
+                document.getElementById(layerId).classList.remove('hidden');
+            }
+
+            function showAuthStep(stepId) {
+                document.getElementById('auth-step-1').classList.add('hidden');
+                document.getElementById('auth-step-login-pass').classList.add('hidden');
+                document.getElementById('auth-step-2').classList.add('hidden');
+                document.getElementById('auth-step-3').classList.add('hidden');
+                document.getElementById(stepId).classList.remove('hidden');
+            }
+
+            function loadApplicationData() {
+                state.chats = state.user.chats || [];
+                if (state.chats.length === 0) {
+                    state.chats = [
+                        { id: 'tg_support', title: 'Telegram Support', type: 'official', username: '@support', status: 'в сети', gradient: 'from-blue-500 to-sky-600', verified: true, messages: [{ sender: 'them', text: `Приветствуем, ${state.user.name}! Ваш аккаунт успешно активен. На балансе 1000 звёзд (⭐️).`, time: getFormattedTime() }], unreadCount: 1 }
+                    ];
+                    state.user.chats = state.chats;
+                    usersDatabase[state.currentUserPhone] = state.user;
+                    saveDatabase();
+                }
+                renderChatsList();
+                updateGlobalUnreadBadge();
+                fillSettingsAndProfilePanes();
+            }
+
+            function renderChatsList() {
+                const container = document.getElementById('chats-list-container');
+                container.innerHTML = '';
+
+                if (state.chats.length === 0) {
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чаты отсутствуют.</div>`;
+                    return;
+                }
+
+                state.chats.forEach(chat => {
+                    const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: 'Нет сообщений', time: '' };
+                    const item = document.createElement('div');
+                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors";
+                    item.onclick = () => openChatWindow(chat.id);
+
+                    item.innerHTML = `
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-lg">${chat.title.charAt(0).toUpperCase()}</div>
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate flex items-center">${chat.title} ${chat.verified ? '<i class="fas fa-check-circle text-[#2481cc] ml-1 text-xs"></i>':''}</h3>
+                                <span class="text-xs text-[var(--tg-theme-hint)] ml-2">${lastMsg.time}</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-0.5">
+                                <p class="text-sm text-[var(--tg-theme-hint)] truncate pr-2">${lastMsg.text}</p>
+                                ${chat.unreadCount > 0 ? `<span class="bg-[#2481cc] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">${chat.unreadCount}</span>`:''}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+
+            function updateGlobalUnreadBadge() {
+                const total = state.chats.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+                const badge = document.getElementById('chats-global-badge');
+                if (total > 0) {
+                    badge.textContent = total;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            function fillSettingsAndProfilePanes() {
+                if (!state.user) return;
+                document.getElementById('settings-name-display').textContent = state.user.name;
+                document.getElementById('settings-phone-display').textContent = state.currentUserPhone;
+                document.getElementById('settings-username-display').textContent = state.user.username;
+                document.getElementById('profile-pane-name').textContent = state.user.name;
+                document.getElementById('profile-pane-phone').textContent = state.currentUserPhone;
+                document.getElementById('profile-pane-username').textContent = state.user.username;
+
+                document.getElementById('settings-avatar-placeholder').textContent = state.user.name.charAt(0).toUpperCase();
+                document.getElementById('profile-pane-avatar-placeholder').textContent = state.user.name.charAt(0).toUpperCase();
+                
+                renderContactsPane();
+            }
+
+            function renderContactsPane() {
+                const container = document.getElementById('contacts-list-container');
+                container.innerHTML = '';
+                state.chats.forEach(c => {
+                    const el = document.createElement('div');
+                    el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer";
+                    el.onclick = () => { switchTab('chats'); openChatWindow(c.id); };
+                    el.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${c.gradient || 'from-blue-500 to-blue-600'} flex items-center justify-center text-white font-bold text-sm">${c.title.charAt(0).toUpperCase()}</div><div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${c.title}</h4><p class="text-xs text-emerald-500">в сети</p></div>`;
+                    container.appendChild(el);
+                });
+            }
+
+            function switchTab(tabId) {
+                ['chats', 'contacts', 'settings', 'profile'].forEach(p => document.getElementById(`tab-pane-${p}`).classList.add('hidden'));
+                document.getElementById(`tab-pane-${tabId}`).classList.remove('hidden');
+                document.querySelectorAll('.nav-item').forEach(btn => {
+                    if (btn.getAttribute('data-tab') === tabId) {
+                        btn.classList.remove('text-[var(--tg-theme-hint)]'); btn.classList.add('text-[#2481cc]');
+                    } else {
+                        btn.classList.remove('text-[#2481cc]'); btn.classList.add('text-[var(--tg-theme-hint)]');
+                    }
+                });
+            }
+
+            function openChatWindow(chatId) {
+                const chat = state.chats.find(c => c.id === chatId);
+                if (!chat) return;
+                state.activeChatId = chatId;
+                chat.unreadCount = 0;
+                usersDatabase[state.currentUserPhone] = state.user; saveDatabase();
+                renderChatsList(); updateGlobalUnreadBadge();
+
+                document.getElementById('chat-window-title').textContent = chat.title;
+                document.getElementById('chat-window-status').textContent = chat.status;
+                
+                const plcW = document.getElementById('chat-window-avatar-placeholder');
+                plcW.className = `w-10 h-10 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-sm`;
+                plcW.textContent = chat.title.charAt(0).toUpperCase();
+
+                renderChatHistory(chat);
+                const layer = document.getElementById('chat-window-layer');
+                layer.classList.remove('hidden');
+                setTimeout(() => layer.classList.remove('translate-x-full'), 10);
+            }
+
+            function closeChatWindow() {
+                const layer = document.getElementById('chat-window-layer');
+                layer.classList.add('translate-x-full');
+                state.activeChatId = null;
+                setTimeout(() => layer.classList.add('hidden'), 200);
+            }
+
+            function renderChatHistory(chat) {
+                const container = document.getElementById('chat-history-flow');
+                container.innerHTML = '';
+                chat.messages.forEach(msg => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `flex w-full ${msg.sender === 'me' ? 'justify-end':'justify-start'}`;
+                    const bubble = msg.sender === 'me' ? 'bg-[var(--tg-theme-msg-out)] text-slate-900':'bg-[var(--tg-theme-msg-in)] text-[var(--tg-theme-text)]';
+                    wrapper.innerHTML = `<div class="max-w-[75%] rounded-2xl px-3 py-1.5 shadow-sm text-sm break-words ${bubble}"><p>${msg.text}</p><div class="text-[10px] text-gray-500 float-right mt-1 ml-4">${msg.time} ${msg.sender==='me'?'<i class="fas fa-check-double text-[var(--tg-theme-msg-out-ticks)]"></i>':''}</div></div>`;
+                    container.appendChild(wrapper);
+                });
+                container.scrollTop = container.scrollHeight;
+            }
+
+            function handleSendMessage() {
+                const input = document.getElementById('chat-msg-input');
+                const text = input.value.trim();
+                if (!text || !state.activeChatId) return;
+                const chat = state.chats.find(c => c.id === state.activeChatId);
+                if (!chat) return;
+
+                chat.messages.push({ sender: 'me', text: text, time: getFormattedTime() });
+                input.value = '';
+                renderChatHistory(chat); 
+                usersDatabase[state.currentUserPhone] = state.user; saveDatabase();
+                renderChatsList();
+
+                if (chat.type === 'private') {
+                    setTimeout(() => {
+                        if (state.activeChatId === chat.id) document.getElementById('chat-window-status').textContent = 'печатает...';
+                        setTimeout(() => {
+                            const ans = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                            chat.messages.push({ sender: 'them', text: ans, time: getFormattedTime() });
+                            if (state.activeChatId === chat.id) {
+                                document.getElementById('chat-window-status').textContent = chat.status;
+                                renderChatHistory(chat);
+                            } else { chat.unreadCount++; }
+                            usersDatabase[state.currentUserPhone] = state.user; saveDatabase();
+                            renderChatsList(); updateGlobalUnreadBadge();
+                        }, 1200);
+                    }, 300);
+                }
+            }
+
+            function setupEventListeners() {
+                // Навигация
+                document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', function() { switchTab(this.getAttribute('data-tab')); }));
+                
+                // Меню
+                const pm = document.getElementById('popup-menu-main');
+                document.getElementById('btn-main-menu').addEventListener('click', function(e) { e.stopPropagation(); pm.classList.toggle('hidden'); });
+                document.addEventListener('click', function() { pm.classList.add('hidden'); });
+
+                // Поиск
+                document.getElementById('chat-search-input').addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && this.value.trim()) {
+                        let val = this.value.trim();
+                        if (!val.startsWith('@')) val = '@' + val;
+                        const exist = state.chats.find(c => c.username.toLowerCase() === val.toLowerCase());
+                        if (exist) { openChatWindow(exist.id); } 
+                        else {
+                            const nc = { id: 'c_'+Date.now(), title: val.substring(1), type: 'private', username: val, status: 'в сети', gradient: 'from-teal-400 to-teal-600', messages: [], unreadCount: 0 };
+                            state.chats.unshift(nc); 
+                            usersDatabase[state.currentUserPhone] = state.user; saveDatabase();
+                            renderChatsList(); openChatWindow(nc.id);
+                        }
+                        this.value = '';
+                    }
+                });
+
+                document.getElementById('btn-close-chat').addEventListener('click', closeChatWindow);
+                document.getElementById('btn-send-message').addEventListener('click', handleSendMessage);
+                document.getElementById('btn-fab-create').addEventListener('click', () => openModal('group'));
+                document.getElementById('pop-create-group').addEventListener('click', () => openModal('group'));
+                document.getElementById('pop-create-channel').addEventListener('click', () => openModal('channel'));
+                document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-create-layer').classList.add('hidden'));
+                document.getElementById('btn-modal-submit').addEventListener('click', submitModal);
+
+                document.getElementById('toggle-dark-mode').addEventListener('change', function() { toggleTheme(this.checked); });
+                
+                document.getElementById('btn-logout').addEventListener('click', () => { 
+                    localStorage.removeItem('tg_active_session_phone'); 
+                    location.reload(); 
+                });
+
+                // --- ЛОГИКА АВТОРИЗАЦИИ И СУЩЕСТВУЮЩИХ АККАУНТОВ ---
+                
+                // Изменение страны меняет префикс в инпуте номера телефона
+                document.getElementById('auth-country-select').addEventListener('change', function() {
+                    document.getElementById('auth-phone-input').value = this.value;
+                });
+
+                // Кнопка Далее на шаге ввода телефона
+                document.getElementById('btn-step-1-next').addEventListener('click', () => {
+                    const phone = document.getElementById('auth-phone-input').value.trim();
+                    if (phone.length < 7) {
+                        alert("Введите корректный номер телефона");
+                        return;
+                    }
+
+                    // Сохраняем временный телефон в сессию для проверки
+                    state.currentUserPhone = phone;
+
+                    // КРИТИЧЕСКАЯ ПРОВЕРКА: Существует ли уже такой аккаунт в базе?
+                    if (usersDatabase[phone]) {
+                        // Аккаунт найден -> отправляем на форму ввода пароля для входа
+                        document.getElementById('error-login-pass').classList.add('hidden');
+                        document.getElementById('auth-login-pass-input').value = '';
+                        showAuthStep('auth-step-login-pass');
+                    } else {
+                        // Аккаунта нет -> отправляем на ветку РЕГИСТРАЦИИ нового профиля
+                        document.getElementById('error-step-2').classList.add('hidden');
+                        document.getElementById('auth-pass').value = '';
+                        document.getElementById('auth-pass-confirm').value = '';
+                        showAuthStep('auth-step-2');
+                    }
+                });
+
+                // Возврат с окна авторизации пароля
+                document.getElementById('btn-login-back').addEventListener('click', () => {
+                    showAuthStep('auth-step-1');
+                });
+
+                // Проверка пароля для СУЩЕСТВУЮЩЕГО аккаунта
+                document.getElementById('btn-login-submit').addEventListener('click', () => {
+                    const inputPass = document.getElementById('auth-login-pass-input').value;
+                    const savedAccount = usersDatabase[state.currentUserPhone];
+
+                    if (savedAccount && savedAccount.password === inputPass) {
+                        // Пароль верный! Логинимся в его сохраненный аккаунт
+                        state.user = savedAccount;
+                        localStorage.setItem('tg_active_session_phone', state.currentUserPhone);
+                        loadApplicationData();
+                        showLayer('app-layer');
+                        switchTab('chats');
+                    } else {
+                        // Ошибка
+                        document.getElementById('error-login-pass').classList.remove('hidden');
+                    }
+                });
+
+                // Назад из окна создания пароля (Регистрация)
+                document.getElementById('btn-step-2-back').addEventListener('click', () => {
+                    showAuthStep('auth-step-1');
+                });
+
+                // Создание пароля (Далее) при регистрации
+                document.getElementById('btn-step-2-next').addEventListener('click', () => {
+                    const p1 = document.getElementById('auth-pass').value;
+                    const p2 = document.getElementById('auth-pass-confirm').value;
+                    
+                    if (p1 && p1 === p2) {
+                        document.getElementById('error-step-2').classList.add('hidden');
+                        showAuthStep('auth-step-3');
+                    } else {
+                        document.getElementById('error-step-2').classList.remove('hidden');
+                    }
+                });
+
+                // Завершение регистрации нового профиля
+                document.getElementById('btn-step-3-finish').addEventListener('click', () => {
+                    const name = document.getElementById('auth-name').value.trim();
+                    let username = document.getElementById('auth-username').value.trim();
+                    const password = document.getElementById('auth-pass').value;
+
+                    if (!name) {
+                        alert("Пожалуйста, введите имя");
+                        return;
+                    }
+                    if (username.length < 3) {
+                        alert("Юзернейм слишком короткий");
+                        return;
+                    }
+                    if (!username.startsWith('@')) username = '@' + username;
+
+                    // Создаем структуру и сохраняем в нашу базу
+                    state.user = {
+                        name: name,
+                        username: username,
+                        password: password,
+                        chats: [] // Чаты будут созданы автоматически в loadApplicationData()
+                    };
+
+                    // Пишем в базу данных
+                    usersDatabase[state.currentUserPhone] = state.user;
+                    saveDatabase();
+
+                    // Ставим флаг активной сессии
+                    localStorage.setItem('tg_active_session_phone', state.currentUserPhone);
+
+                    loadApplicationData();
+                    showLayer('app-layer');
+                    switchTab('chats');
+                });
+            }
+
+            function openModal(mode) {
+                state.currentModalMode = mode;
+                document.getElementById('modal-create-title').textContent = mode === 'group' ? 'Создать группу':'Создать канал';
+                document.getElementById('modal-create-input').value = '';
+                document.getElementById('modal-cr

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Telegram Mobile SPA</title>
+    <title>Telegram</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,15 +14,12 @@
 
         :root {
             --primary: #2481cc;
-            --primary-dark: #1a5fa8;
             --bg: #ffffff;
             --bg-secondary: #f5f5f5;
             --text: #000000;
             --text-secondary: #707579;
             --border: #e5e7eb;
-            --msg-in: #ffffff;
             --msg-out: #eeffde;
-            --msg-ticks: #4fae4e;
         }
 
         body.dark-mode {
@@ -31,7 +28,6 @@
             --text: #ffffff;
             --text-secondary: #8a8f95;
             --border: #262d33;
-            --msg-in: #212529;
             --msg-out: #2b5278;
         }
 
@@ -44,14 +40,8 @@
             overflow: hidden;
         }
 
-        .container {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        /* AUTH LAYER */
-        .auth-layer {
+        /* ========== AUTH ========== */
+        .auth-screen {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -61,8 +51,8 @@
             background-color: var(--bg);
         }
 
-        .auth-layer.hidden {
-            display: none;
+        .auth-screen.hidden {
+            display: none !important;
         }
 
         .auth-step {
@@ -80,7 +70,7 @@
         }
 
         .auth-header {
-            margin-top: 60px;
+            margin-top: 80px;
         }
 
         .auth-header h2 {
@@ -93,6 +83,7 @@
         .auth-header p {
             font-size: 14px;
             color: var(--text-secondary);
+            line-height: 1.4;
         }
 
         .auth-form {
@@ -116,8 +107,7 @@
         }
 
         .input-group input,
-        .input-group select,
-        .input-group textarea {
+        .input-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid var(--border);
@@ -126,7 +116,6 @@
             color: var(--text);
             font-size: 16px;
             outline: none;
-            transition: border-color 0.3s;
         }
 
         .input-group input:focus,
@@ -134,11 +123,20 @@
             border-color: var(--primary);
         }
 
+        .input-group select {
+            cursor: pointer;
+        }
+
         .error-message {
             font-size: 12px;
             color: #ff4444;
             margin-top: 4px;
             text-align: left;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
 
         .auth-buttons {
@@ -172,7 +170,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s;
+            transition: all 0.2s;
         }
 
         .btn-next:active {
@@ -184,138 +182,21 @@
             cursor: not-allowed;
         }
 
-        /* APP LAYER */
-        .app-layer {
+        /* ========== APP ========== */
+        .app-screen {
             display: flex;
+            flex-direction: column;
             width: 100%;
             height: 100vh;
             background-color: var(--bg);
         }
 
-        .app-layer.hidden {
-            display: none;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: -280px;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background-color: var(--bg-secondary);
-            transition: left 0.3s ease;
-            z-index: 100;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header h3 {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .sidebar-header button {
-            background: none;
-            border: none;
-            font-size: 16px;
-            color: var(--text);
-            cursor: pointer;
-        }
-
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px 0;
-        }
-
-        .sidebar-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text);
-        }
-
-        .sidebar-item:hover {
-            background-color: var(--bg);
-        }
-
-        .sidebar-item i {
-            width: 24px;
-            text-align: center;
-            color: var(--primary);
-        }
-
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .toggle-theme {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .switch {
-            position: relative;
-            width: 44px;
-            height: 28px;
-            background-color: #ccc;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .switch.on {
-            background-color: var(--primary);
-        }
-
-        .switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 24px;
-            height: 24px;
-            background-color: white;
-            border-radius: 50%;
-            transition: left 0.3s;
-        }
-
-        .switch.on::after {
-            left: 18px;
-        }
-
-        /* MAIN CONTENT */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
+        .app-screen.hidden {
+            display: none !important;
         }
 
         /* HEADER */
-        .header {
+        .app-header {
             height: 56px;
             background-color: var(--bg);
             border-bottom: 1px solid var(--border);
@@ -323,13 +204,7 @@
             align-items: center;
             padding: 0 12px;
             justify-content: space-between;
-            z-index: 10;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            flex-shrink: 0;
         }
 
         .menu-btn {
@@ -345,15 +220,16 @@
             justify-content: center;
         }
 
-        .header-title {
+        .app-title {
             font-size: 18px;
             font-weight: bold;
             color: var(--text);
+            flex: 1;
+            text-align: center;
         }
 
-        .header-right {
-            display: flex;
-            gap: 12px;
+        .menu-icon {
+            color: var(--text-secondary);
         }
 
         /* SEARCH */
@@ -361,6 +237,7 @@
             padding: 12px;
             background-color: var(--bg);
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
 
         .search-input {
@@ -385,17 +262,21 @@
             padding-bottom: 70px;
         }
 
+        .chats-list.hidden {
+            display: none;
+        }
+
         .chat-item {
-            padding: 12px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border);
             cursor: pointer;
             display: flex;
             gap: 12px;
-            align-items: flex-start;
+            align-items: center;
             transition: background-color 0.2s;
         }
 
-        .chat-item:hover {
+        .chat-item:active {
             background-color: var(--bg-secondary);
         }
 
@@ -403,7 +284,7 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), #5288c1);
+            background: linear-gradient(135deg, #2481cc, #5288c1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -422,7 +303,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .chat-name {
@@ -442,91 +323,23 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: flex;
-            gap: 4px;
         }
 
-        .chat-badge {
-            background-color: var(--primary);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        /* SEARCH RESULTS */
-        .search-results {
-            display: none;
-            position: absolute;
-            top: 110px;
-            left: 0;
-            right: 0;
-            background-color: var(--bg);
-            border-bottom: 1px solid var(--border);
-            z-index: 20;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .search-result-item:hover {
-            background-color: var(--bg-secondary);
-        }
-
-        .search-result-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), #5288c1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .search-result-info {
+        .empty-state {
             flex: 1;
-        }
-
-        .search-result-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text);
-        }
-
-        .search-result-username {
-            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             color: var(--text-secondary);
+            text-align: center;
+            padding: 20px;
         }
 
-        .search-result-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
         }
 
         /* CHAT WINDOW */
@@ -554,6 +367,7 @@
             align-items: center;
             padding: 0 12px;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .chat-window-back {
@@ -569,22 +383,23 @@
             justify-content: center;
         }
 
-        .chat-window-title {
+        .chat-window-info {
             flex: 1;
             margin-left: 8px;
         }
 
-        .chat-window-title h3 {
+        .chat-window-name {
             font-size: 15px;
             font-weight: 600;
             color: var(--text);
         }
 
-        .chat-window-title p {
+        .chat-window-status {
             font-size: 11px;
             color: var(--text-secondary);
         }
 
+        /* MESSAGES */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -597,7 +412,7 @@
 
         .message {
             display: flex;
-            margin-bottom: 8px;
+            margin-bottom: 2px;
         }
 
         .message.sent {
@@ -609,15 +424,12 @@
         }
 
         .message-bubble {
-            max-width: 70%;
+            max-width: 80%;
             padding: 8px 12px;
             border-radius: 18px;
             font-size: 15px;
             word-wrap: break-word;
-            display: flex;
-            justify-content: space-between;
-            gap: 4px;
-            align-items: flex-end;
+            display: inline-block;
         }
 
         .message.sent .message-bubble {
@@ -627,7 +439,7 @@
         }
 
         .message.received .message-bubble {
-            background-color: var(--msg-in);
+            background-color: var(--bg-secondary);
             color: var(--text);
             border-bottom-left-radius: 4px;
         }
@@ -635,13 +447,8 @@
         .message-time {
             font-size: 11px;
             color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        .message-ticks {
-            font-size: 10px;
-            color: var(--msg-ticks);
-            margin-left: 2px;
+            margin-top: 2px;
+            padding: 0 12px;
         }
 
         /* INPUT */
@@ -652,34 +459,17 @@
             display: flex;
             gap: 8px;
             align-items: flex-end;
-        }
-
-        .input-actions {
-            display: flex;
-            gap: 4px;
-        }
-
-        .input-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 18px;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-shrink: 0;
         }
 
         .input-field {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 8px;
             background-color: var(--bg-secondary);
             border-radius: 20px;
             padding: 8px 12px;
+            border: 1px solid var(--border);
         }
 
         .input-field textarea {
@@ -696,6 +486,19 @@
 
         .input-field textarea::placeholder {
             color: var(--text-secondary);
+        }
+
+        .send-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* FAB */
@@ -764,17 +567,6 @@
             color: var(--text);
         }
 
-        .modal-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text);
-            cursor: pointer;
-        }
-
         .modal-buttons {
             display: flex;
             gap: 12px;
@@ -789,7 +581,6 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
         }
 
         .btn-primary {
@@ -802,45 +593,12 @@
             color: var(--text);
         }
 
-        .btn:active {
-            opacity: 0.8;
-        }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 2px;
-        }
-
-        body.dark-mode ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 600px) {
-            .sidebar {
-                left: -280px;
-            }
-
-            .chat-item {
-                padding: 8px;
-            }
-
-            .message-bubble {
-                max-width: 85%;
-            }
-        }
-
         /* TABS */
         .tabs {
             display: flex;
             gap: 0;
             background-color: var(--bg);
-            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--border);
             height: 48px;
             position: fixed;
             bottom: 0;
@@ -861,7 +619,6 @@
             justify-content: center;
             gap: 4px;
             font-weight: 500;
-            transition: color 0.2s;
         }
 
         .tab.active {
@@ -872,29 +629,24 @@
             font-size: 20px;
         }
 
-        /* NO DATA */
-        .empty-state {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 20px;
+        ::-webkit-scrollbar {
+            width: 4px;
         }
 
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 <body>
 
-<!-- AUTH LAYER -->
-<div class="auth-layer" id="authLayer">
+<!-- ========== AUTH ========== -->
+<div class="auth-screen" id="authScreen">
     <!-- STEP 1: PHONE -->
     <div class="auth-step active" id="authStep1">
         <div class="auth-header">
@@ -908,12 +660,11 @@
                     <option value="7">Казахстан (+7)</option>
                     <option value="7">Россия (+7)</option>
                     <option value="1">США (+1)</option>
-                    <option value="44">Великобритания (+44)</option>
                 </select>
             </div>
             <div class="input-group">
                 <label>Номер телефона</label>
-                <input type="tel" id="phoneInput" placeholder="+7 707 123 4567" />
+                <input type="tel" id="phoneInput" placeholder="707 123 4567" />
             </div>
         </div>
         <div class="auth-buttons">
@@ -924,7 +675,7 @@
         </div>
     </div>
 
-    <!-- STEP 2: PASSWORD (NEW USER) -->
+    <!-- STEP 2: PASSWORD (NEW) -->
     <div class="auth-step" id="authStep2">
         <div class="auth-header">
             <h2>Создайте пароль</h2>
@@ -949,7 +700,7 @@
         </div>
     </div>
 
-    <!-- STEP 3: PROFILE (NEW USER) -->
+    <!-- STEP 3: PROFILE (NEW) -->
     <div class="auth-step" id="authStep3">
         <div class="auth-header">
             <h2>О себе</h2>
@@ -958,11 +709,11 @@
         <div class="auth-form">
             <div class="input-group">
                 <label>Ваше имя</label>
-                <input type="text" id="nameInput" placeholder="Например: Даулет" />
+                <input type="text" id="nameInput" placeholder="Даулет" />
             </div>
             <div class="input-group">
                 <label>Юзернейм</label>
-                <input type="text" id="usernameInput" placeholder="@username" />
+                <input type="text" id="usernameInput" placeholder="username" />
             </div>
             <div class="error-message" id="step3Error"></div>
         </div>
@@ -974,7 +725,7 @@
         </div>
     </div>
 
-    <!-- STEP 2B: LOGIN (EXISTING USER) -->
+    <!-- STEP 2B: LOGIN (EXISTING) -->
     <div class="auth-step" id="authStep2Login">
         <div class="auth-header">
             <h2>Введите пароль</h2>
@@ -996,97 +747,53 @@
     </div>
 </div>
 
-<!-- APP LAYER -->
-<div class="app-layer hidden" id="appLayer">
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>Меню</h3>
-            <button id="closeSidebar"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="sidebar-content">
-            <div class="sidebar-item" data-action="profile">
-                <i class="fas fa-user"></i>
-                <span>Профиль</span>
-            </div>
-            <div class="sidebar-item" data-action="create-group">
-                <i class="fas fa-users"></i>
-                <span>Создать группу</span>
-            </div>
-            <div class="sidebar-item" data-action="contacts">
-                <i class="fas fa-address-book"></i>
-                <span>Контакты</span>
-            </div>
-            <div class="sidebar-item" data-action="saved">
-                <i class="fas fa-bookmark"></i>
-                <span>Избранное</span>
-            </div>
-            <div class="sidebar-item" data-action="settings">
-                <i class="fas fa-cog"></i>
-                <span>Настройки</span>
-            </div>
-        </div>
-        <div class="sidebar-footer">
-            <span>Ночной режим</span>
-            <div class="switch" id="themeSwitch"></div>
-        </div>
+<!-- ========== APP ========== -->
+<div class="app-screen hidden" id="appScreen">
+    <!-- HEADER -->
+    <div class="app-header">
+        <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+        <div class="app-title">Telegram</div>
+        <button class="menu-btn menu-icon"><i class="fas fa-ellipsis-v"></i></button>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <!-- HEADER -->
-        <div class="header">
-            <div class="header-left">
-                <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-                <div class="header-title">Telegram</div>
-            </div>
-            <div class="header-right">
-                <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
-            </div>
-        </div>
+    <!-- SEARCH -->
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="Поиск по @username..." />
+    </div>
 
-        <!-- SEARCH -->
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Поиск по @username..." />
-        </div>
+    <!-- CHATS LIST -->
+    <div class="chats-list" id="chatsList"></div>
 
-        <!-- SEARCH RESULTS -->
-        <div class="search-results" id="searchResults"></div>
+    <!-- FAB -->
+    <button class="fab" id="fabBtn"><i class="fas fa-pen"></i></button>
 
-        <!-- CHATS LIST -->
-        <div class="chats-list" id="chatsList"></div>
-
-        <!-- FAB -->
-        <button class="fab" id="fabBtn"><i class="fas fa-pen"></i></button>
-
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab active" data-tab="chats">
-                <i class="fas fa-comment"></i>
-                <span>Чаты</span>
-            </button>
-            <button class="tab" data-tab="contacts">
-                <i class="fas fa-address-book"></i>
-                <span>Контакты</span>
-            </button>
-            <button class="tab" data-tab="settings">
-                <i class="fas fa-cog"></i>
-                <span>Настройки</span>
-            </button>
-            <button class="tab" data-tab="profile">
-                <i class="fas fa-user"></i>
-                <span>Профиль</span>
-            </button>
-        </div>
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" data-tab="chats">
+            <i class="fas fa-comment"></i>
+            <span>Чаты</span>
+        </button>
+        <button class="tab" data-tab="contacts">
+            <i class="fas fa-address-book"></i>
+            <span>Контакты</span>
+        </button>
+        <button class="tab" data-tab="settings">
+            <i class="fas fa-cog"></i>
+            <span>Настройки</span>
+        </button>
+        <button class="tab" data-tab="profile">
+            <i class="fas fa-user"></i>
+            <span>Профиль</span>
+        </button>
     </div>
 
     <!-- CHAT WINDOW -->
     <div class="chat-window" id="chatWindow">
         <div class="chat-window-header">
             <button class="chat-window-back" id="chatWindowBack"><i class="fas fa-arrow-left"></i></button>
-            <div class="chat-window-title">
-                <h3 id="chatWindowName">Чат</h3>
-                <p id="chatWindowStatus">в сети</p>
+            <div class="chat-window-info">
+                <div class="chat-window-name" id="chatWindowName">Чат</div>
+                <div class="chat-window-status" id="chatWindowStatus">в сети</div>
             </div>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -1094,7 +801,7 @@
             <div class="input-field">
                 <textarea id="messageInput" placeholder="Сообщение..." rows="1"></textarea>
             </div>
-            <button class="input-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
@@ -1102,7 +809,6 @@
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal" id="modal">
-        <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
         <div class="modal-header" id="modalHeader">Создать группу</div>
         <div class="auth-form">
             <div class="input-group">
@@ -1124,8 +830,7 @@
         chats: [],
         users: [],
         activeChatId: null,
-        currentModalMode: null,
-        isDarkMode: false
+        searchMode: false
     };
 
     // ============ CONFIG ============
@@ -1133,76 +838,57 @@
         usersKey: 'tg_users',
         userKey: 'tg_current_user',
         chatsKeyPrefix: 'tg_chats_',
-        reservedUsernames: ['@admin', '@telegram', '@support', '@durov', '@bot', '@crypto'],
+        reserved: ['admin', 'telegram', 'support', 'durov', 'bot', 'crypto'],
         aiResponses: [
             "Привет! Как дела?",
-            "Не могу сейчас, позже напишу.",
+            "Спасибо, отлично!",
+            "Согласен, круто!",
+            "Ага, понял 👍",
             "Хахаха 😂",
-            "Жақсы, рахмет!",
-            "Погнали!",
-            "Че там?"
+            "Погнали! 🚀"
         ]
     };
 
     // ============ UTILS ============
     function getTime() {
-        const now = new Date();
-        return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const h = String(new Date().getHours()).padStart(2, '0');
+        const m = String(new Date().getMinutes()).padStart(2, '0');
+        return `${h}:${m}`;
     }
 
-    function generateId() {
+    function genId() {
         return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
-    function generateInviteLink() {
-        return `t.me/joinchat/${Math.random().toString(36).substring(2, 15).toUpperCase()}`;
+    function genInviteLink() {
+        return `t.me/joinchat/${Math.random().toString(36).substring(2, 12).toUpperCase()}`;
     }
 
-    function saveToStorage(key, value) {
+    function save(key, val) {
         try {
-            localStorage.setItem(key, JSON.stringify(value));
-        } catch (e) {
-            console.error('Storage error:', e);
-        }
+            localStorage.setItem(key, JSON.stringify(val));
+        } catch (e) {}
     }
 
-    function getFromStorage(key, defaultValue = null) {
+    function load(key, def = null) {
         try {
             const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
+            return item ? JSON.parse(item) : def;
         } catch (e) {
-            console.error('Storage error:', e);
-            return defaultValue;
+            return def;
         }
     }
 
     // ============ INIT ============
     document.addEventListener('DOMContentLoaded', () => {
-        initTheme();
-        checkAuth();
-        setupEventListeners();
         loadUsers();
+        checkAuth();
+        setupListeners();
     });
-
-    // ============ THEME ============
-    function initTheme() {
-        STATE.isDarkMode = getFromStorage('tg_theme') === 'dark';
-        applyTheme();
-    }
-
-    function applyTheme() {
-        if (STATE.isDarkMode) {
-            document.body.classList.add('dark-mode');
-            document.getElementById('themeSwitch').classList.add('on');
-        } else {
-            document.body.classList.remove('dark-mode');
-            document.getElementById('themeSwitch').classList.remove('on');
-        }
-    }
 
     // ============ AUTH ============
     function checkAuth() {
-        const user = getFromStorage(CONFIG.userKey);
+        const user = load(CONFIG.userKey);
         if (user) {
             STATE.currentUser = user;
             showApp();
@@ -1214,23 +900,35 @@
     }
 
     function showAuth() {
-        document.getElementById('authLayer').classList.remove('hidden');
-        document.getElementById('appLayer').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
     }
 
     function showApp() {
-        document.getElementById('authLayer').classList.add('hidden');
-        document.getElementById('appLayer').classList.remove('hidden');
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
     }
 
-    function showAuthStep(stepId) {
+    function showAuthStep(id) {
         document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
-        document.getElementById(stepId).classList.add('active');
+        document.getElementById(id).classList.add('active');
     }
 
     // ============ USERS ============
     function loadUsers() {
-        STATE.users = getFromStorage(CONFIG.usersKey, []);
+        STATE.users = load(CONFIG.usersKey, []);
+
+        // Add Telegram Support if not exists
+        if (!STATE.users.find(u => u.username === '@support')) {
+            STATE.users.unshift({
+                id: 'support_bot',
+                name: 'Telegram Support',
+                username: '@support',
+                phone: '+1234567890',
+                isBot: true
+            });
+            save(CONFIG.usersKey, STATE.users);
+        }
     }
 
     function getUserByPhone(phone) {
@@ -1238,60 +936,45 @@
     }
 
     function getUserByUsername(username) {
-        return STATE.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        const clean = username.replace('@', '').toLowerCase();
+        return STATE.users.find(u => u.username.replace('@', '').toLowerCase() === clean);
     }
 
     function saveUser(user) {
-        const existing = STATE.users.findIndex(u => u.phone === user.phone);
-        if (existing >= 0) {
-            STATE.users[existing] = user;
+        const idx = STATE.users.findIndex(u => u.phone === user.phone);
+        if (idx >= 0) {
+            STATE.users[idx] = user;
         } else {
             STATE.users.push(user);
         }
-        saveToStorage(CONFIG.usersKey, STATE.users);
+        save(CONFIG.usersKey, STATE.users);
     }
 
     // ============ CHATS ============
     function loadChats() {
-        STATE.chats = getFromStorage(CONFIG.chatsKeyPrefix + STATE.currentUser.username, []);
+        STATE.chats = load(CONFIG.chatsKeyPrefix + STATE.currentUser.username, []);
     }
 
     function saveChats() {
-        saveToStorage(CONFIG.chatsKeyPrefix + STATE.currentUser.username, STATE.chats);
+        save(CONFIG.chatsKeyPrefix + STATE.currentUser.username, STATE.chats);
     }
 
-    function createOrGetChat(contactId, contactName, contactUsername) {
+    function createOrGetChat(contactId, contactName, contactUsername, type = 'private') {
         let chat = STATE.chats.find(c => c.contactId === contactId);
         if (!chat) {
             chat = {
-                id: generateId(),
+                id: genId(),
                 contactId: contactId,
                 name: contactName,
                 username: contactUsername,
-                type: 'private',
+                type: type,
                 messages: [],
-                createdAt: getTime()
+                inviteLink: type === 'group' ? genInviteLink() : null
             };
             STATE.chats.unshift(chat);
             saveChats();
         }
         return chat;
-    }
-
-    function createGroup(name) {
-        const group = {
-            id: generateId(),
-            name: name,
-            type: 'group',
-            inviteLink: generateInviteLink(),
-            members: [STATE.currentUser.id],
-            messages: [],
-            createdAt: getTime(),
-            createdBy: STATE.currentUser.id
-        };
-        STATE.chats.unshift(group);
-        saveChats();
-        return group;
     }
 
     // ============ RENDER ============
@@ -1311,6 +994,7 @@
 
             const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
             const avatar = chat.name.charAt(0).toUpperCase();
+            const msgText = lastMsg ? lastMsg.text.substring(0, 40) : 'Нет сообщений';
 
             item.innerHTML = `
                 <div class="chat-avatar">${avatar}</div>
@@ -1319,9 +1003,7 @@
                         <div class="chat-name">${chat.name}</div>
                         <div class="chat-time">${lastMsg ? lastMsg.time : ''}</div>
                     </div>
-                    <div class="chat-message">
-                        ${lastMsg ? (lastMsg.sender === 'me' ? '✓✓ ' : '') + lastMsg.text.substring(0, 40) : 'Нет сообщений'}
-                    </div>
+                    <div class="chat-message">${msgText}</div>
                 </div>
             `;
             list.appendChild(item);
@@ -1336,8 +1018,17 @@
         document.getElementById('chatWindowName').textContent = chat.name;
         document.getElementById('chatWindowStatus').textContent = 'в сети';
         document.getElementById('chatWindow').classList.add('active');
+        document.getElementById('chatsList').classList.add('hidden');
+        document.getElementById('messageInput').value = '';
 
         renderMessages(chat);
+        document.getElementById('messageInput').focus();
+    }
+
+    function closeChat() {
+        document.getElementById('chatWindow').classList.remove('active');
+        document.getElementById('chatsList').classList.remove('hidden');
+        STATE.activeChatId = null;
     }
 
     function renderMessages(chat) {
@@ -1350,93 +1041,62 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            bubble.innerHTML = `
-                ${msg.text}
-                <div class="message-time">${msg.time}</div>
-                ${msg.sender === 'me' ? '<div class="message-ticks">✓✓</div>' : ''}
-            `;
-
+            bubble.textContent = msg.text;
             div.appendChild(bubble);
+
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            time.textContent = msg.time;
+            div.appendChild(time);
+
             container.appendChild(div);
         });
 
         container.scrollTop = container.scrollHeight;
     }
 
-    function renderSearchResults(query) {
-        const results = document.getElementById('searchResults');
-        if (!query.trim()) {
-            results.classList.remove('active');
-            return;
-        }
-
-        const searchQuery = query.toLowerCase().replace('@', '');
-        const found = STATE.users.filter(u =>
-            u.username.toLowerCase().includes(searchQuery) ||
-            u.name.toLowerCase().includes(searchQuery)
-        );
-
-        if (found.length === 0) {
-            results.classList.remove('active');
-            return;
-        }
-
-        results.innerHTML = '';
-        found.forEach(user => {
-            const div = document.createElement('div');
-            div.className = 'search-result-item';
-
-            div.innerHTML = `
-                <div class="search-result-avatar">${user.name.charAt(0)}</div>
-                <div class="search-result-info">
-                    <div class="search-result-name">${user.name}</div>
-                    <div class="search-result-username">${user.username}</div>
-                </div>
-                <button class="search-result-btn" data-user-id="${user.id}">Написать</button>
-            `;
-
-            div.querySelector('button').onclick = (e) => {
-                e.stopPropagation();
-                const chat = createOrGetChat(user.id, user.name, user.username);
-                document.getElementById('searchInput').value = '';
-                results.classList.remove('active');
-                renderChats();
-                openChat(chat.id);
-            };
-
-            results.appendChild(div);
-        });
-
-        results.classList.add('active');
-    }
-
-    function addMessageToChat(chatId, text, sender) {
+    function addMessage(chatId, text, sender) {
         const chat = STATE.chats.find(c => c.id === chatId);
         if (!chat) return;
 
         chat.messages.push({
-            id: generateId(),
+            id: genId(),
             text: text,
             sender: sender,
             time: getTime()
         });
 
         saveChats();
-        renderMessages(chat);
+
+        if (STATE.activeChatId === chatId) {
+            renderMessages(chat);
+        }
     }
 
-    // ============ EVENTS ============
-    function setupEventListeners() {
-        // AUTH EVENTS
+    // ============ SEARCH ============
+    function searchUsers(query) {
+        if (!query.trim()) return [];
+
+        const clean = query.toLowerCase().replace('@', '');
+        return STATE.users.filter(u =>
+            u.username.toLowerCase().includes(clean) ||
+            u.name.toLowerCase().includes(clean)
+        );
+    }
+
+    // ============ LISTENERS ============
+    function setupListeners() {
+        // ===== AUTH =====
         document.getElementById('phoneInput').addEventListener('input', (e) => {
-            const valid = e.target.value.length >= 10;
+            const valid = e.target.value.trim().length >= 8;
             document.getElementById('step1Next').disabled = !valid;
         });
 
         document.getElementById('step1Next').addEventListener('click', () => {
-            const phone = document.getElementById('phoneInput').value;
-            const user = getUserByPhone(phone);
+            const phone = '+' + document.getElementById('countrySelect').value + document.getElementById('phoneInput').value;
+            document.getElementById('phoneInput').dataset.phone = phone;
 
+            const user = getUserByPhone(phone);
             if (user) {
                 showAuthStep('authStep2Login');
             } else {
@@ -1447,24 +1107,22 @@
         document.getElementById('step2Back').addEventListener('click', () => showAuthStep('authStep1'));
         document.getElementById('loginBack').addEventListener('click', () => showAuthStep('authStep1'));
 
-        document.getElementById('passwordInput').addEventListener('input', validatePasswordMatch);
-        document.getElementById('passwordConfirmInput').addEventListener('input', validatePasswordMatch);
+        document.getElementById('passwordInput').addEventListener('input', checkPassword);
+        document.getElementById('passwordConfirmInput').addEventListener('input', checkPassword);
 
-        function validatePasswordMatch() {
+        function checkPassword() {
             const p1 = document.getElementById('passwordInput').value;
             const p2 = document.getElementById('passwordConfirmInput').value;
             const valid = p1 && p1 === p2 && p1.length >= 4;
             document.getElementById('step2Next').disabled = !valid;
         }
 
-        document.getElementById('step2Next').addEventListener('click', () => {
-            showAuthStep('authStep3');
-        });
+        document.getElementById('step2Next').addEventListener('click', () => showAuthStep('authStep3'));
 
-        document.getElementById('nameInput').addEventListener('input', validateProfile);
-        document.getElementById('usernameInput').addEventListener('input', validateProfile);
+        document.getElementById('nameInput').addEventListener('input', checkProfile);
+        document.getElementById('usernameInput').addEventListener('input', checkProfile);
 
-        function validateProfile() {
+        function checkProfile() {
             const name = document.getElementById('nameInput').value.trim();
             const username = document.getElementById('usernameInput').value.trim();
             const valid = name && username.length >= 3;
@@ -1475,34 +1133,39 @@
 
         document.getElementById('step3Next').addEventListener('click', () => {
             const name = document.getElementById('nameInput').value.trim();
-            const username = document.getElementById('usernameInput').value.trim();
-            const phone = document.getElementById('phoneInput').value;
+            let username = document.getElementById('usernameInput').value.trim();
+            const phone = document.getElementById('phoneInput').dataset.phone;
             const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('step3Error');
 
-            if (CONFIG.reservedUsernames.includes('@' + username)) {
-                document.getElementById('step3Error').textContent = 'Юзернейм занят';
-                document.getElementById('step3Error').classList.remove('hidden');
+            if (!username.startsWith('@')) username = '@' + username;
+
+            const reserved = CONFIG.reserved.some(r => username.toLowerCase() === '@' + r);
+            if (reserved) {
+                errorDiv.textContent = 'Юзернейм занят';
+                errorDiv.classList.add('show');
                 return;
             }
 
             if (getUserByUsername(username)) {
-                document.getElementById('step3Error').textContent = 'Юзернейм занят';
-                document.getElementById('step3Error').classList.remove('hidden');
+                errorDiv.textContent = 'Юзернейм занят';
+                errorDiv.classList.add('show');
                 return;
             }
 
+            errorDiv.classList.remove('show');
+
             const newUser = {
-                id: generateId(),
+                id: genId(),
                 name: name,
-                username: '@' + username,
+                username: username,
                 phone: phone,
-                password: password,
-                createdAt: getTime()
+                password: password
             };
 
             saveUser(newUser);
             STATE.currentUser = newUser;
-            saveToStorage(CONFIG.userKey, newUser);
+            save(CONFIG.userKey, newUser);
             showApp();
             loadChats();
             renderChats();
@@ -1514,47 +1177,41 @@
         });
 
         document.getElementById('loginSubmit').addEventListener('click', () => {
-            const phone = document.getElementById('phoneInput').value;
+            const phone = document.getElementById('phoneInput').dataset.phone;
             const password = document.getElementById('loginPasswordInput').value;
             const user = getUserByPhone(phone);
+            const errorDiv = document.getElementById('loginError');
 
             if (!user || user.password !== password) {
-                document.getElementById('loginError').textContent = 'Неправильный пароль';
-                document.getElementById('loginError').classList.remove('hidden');
+                errorDiv.textContent = 'Неправильный пароль';
+                errorDiv.classList.add('show');
                 return;
             }
 
+            errorDiv.classList.remove('show');
             STATE.currentUser = user;
-            saveToStorage(CONFIG.userKey, user);
+            save(CONFIG.userKey, user);
             showApp();
             loadChats();
             renderChats();
         });
 
-        // APP EVENTS
-        document.getElementById('menuBtn').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.add('open');
+        // ===== APP =====
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                const found = searchUsers(query);
+                if (found.length > 0) {
+                    const user = found[0];
+                    const chat = createOrGetChat(user.id, user.name, user.username);
+                    renderChats();
+                    openChat(chat.id);
+                    e.target.value = '';
+                }
+            }
         });
 
-        document.getElementById('closeSidebar').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.remove('open');
-        });
-
-        document.getElementById('themeSwitch').addEventListener('click', () => {
-            STATE.isDarkMode = !STATE.isDarkMode;
-            saveToStorage('tg_theme', STATE.isDarkMode ? 'dark' : 'light');
-            applyTheme();
-        });
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            renderSearchResults(e.target.value);
-        });
-
-        document.getElementById('chatWindowBack').addEventListener('click', () => {
-            document.getElementById('chatWindow').classList.remove('active');
-            STATE.activeChatId = null;
-            document.getElementById('messageInput').value = '';
-        });
+        document.getElementById('chatWindowBack').addEventListener('click', closeChat);
 
         document.getElementById('sendBtn').addEventListener('click', sendMessage);
         document.getElementById('messageInput').addEventListener('keypress', (e) => {
@@ -1568,13 +1225,13 @@
             const text = document.getElementById('messageInput').value.trim();
             if (!text || !STATE.activeChatId) return;
 
-            addMessageToChat(STATE.activeChatId, text, 'me');
+            addMessage(STATE.activeChatId, text, 'me');
             document.getElementById('messageInput').value = '';
 
             setTimeout(() => {
                 const response = CONFIG.aiResponses[Math.floor(Math.random() * CONFIG.aiResponses.length)];
-                addMessageToChat(STATE.activeChatId, response, 'them');
-            }, 800);
+                addMessage(STATE.activeChatId, response, 'them');
+            }, 500 + Math.random() * 1000);
         }
 
         document.getElementById('fabBtn').addEventListener('click', () => {
@@ -1582,48 +1239,24 @@
             document.getElementById('modalLabel').textContent = 'Название группы';
             document.getElementById('modalInput').value = '';
             document.getElementById('modalInput').placeholder = 'Введите название...';
-            STATE.currentModalMode = 'group';
             document.getElementById('modalOverlay').classList.add('active');
         });
 
-        document.getElementById('modalClose').addEventListener('click', closeModal);
-        document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
-
-        function closeModal() {
+        document.getElementById('modalCancelBtn').addEventListener('click', () => {
             document.getElementById('modalOverlay').classList.remove('active');
-        }
+        });
 
         document.getElementById('modalSubmitBtn').addEventListener('click', () => {
             const name = document.getElementById('modalInput').value.trim();
             if (!name) return;
 
-            const group = createGroup(name);
+            const group = createOrGetChat(genId(), name, '@' + name.toLowerCase().replace(/\s/g, ''), 'group');
             renderChats();
-            closeModal();
+            document.getElementById('modalOverlay').classList.remove('active');
             openChat(group.id);
-        });
-
-        // SIDEBAR ITEMS
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const action = item.dataset.action;
-                document.getElementById('sidebar').classList.remove('open');
-
-                if (action === 'create-group') {
-                    document.getElementById('fabBtn').click();
-                }
-            });
-        });
-
-        // TABS
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.tab;
-                // Tab functionality can be expanded here
-            });
         });
     }
 </script>
 
 </body>
-                    </html>
+    </html>

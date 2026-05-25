@@ -44,8 +44,32 @@
             transition: background-color 0.25s ease, color 0.25s ease;
             -webkit-tap-highlight-color: transparent;
             overflow: hidden;
+            margin: 0;
+            padding: 0;
             height: 100vh;
             width: 100vw;
+        }
+
+        /* Безопасное принудительное отображение слоев без зависимости от багов Tailwind */
+        .layer-visible {
+            display: flex !important;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 50;
+            background-color: var(--tg-theme-bg);
+        }
+
+        .pane-visible {
+            display: flex !important;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
         }
 
         .chat-background {
@@ -60,7 +84,6 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 2px; }
         .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
-        .gpu-accelerated { transform: translateZ(0); backface-visibility: hidden; }
         
         @keyframes premium-glow {
             0% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
@@ -70,13 +93,13 @@
         .premium-star-anim { animation: premium-glow 3s infinite ease-in-out; color: #38bdf8; }
     </style>
 </head>
-<body class="gpu-accelerated select-none">
+<body class="select-none">
 
-    <div id="auth-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden">
-        <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between">
+    <div id="auth-layer" class="hidden">
+        <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between h-full">
             <div class="w-full max-w-sm mx-auto pt-12">
                 <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Номер телефона</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите номер. Если аккаунт существует, система запросит пароль.</p>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите номер. Система автоматически определит, войти или зарегистрироваться.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-secondary-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Страна</label>
@@ -88,22 +111,22 @@
                     </div>
                     <div class="border-2 border-[#2481cc] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[#2481cc] block mb-1">Номер телефона</label>
-                        <input type="tel" id="auth-phone-input" value="+7" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-lg font-medium tracking-wide">
+                        <input type="tel" id="auth-phone-input" value="+7 " class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-lg font-medium tracking-wide">
                     </div>
                     <p id="error-step-1" class="text-xs text-red-500 font-medium hidden"></p>
                 </div>
             </div>
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
-                <button id="btn-step-1-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
+                <button id="btn-step-1-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </div>
 
-        <div id="auth-step-login" class="flex flex-col flex-1 p-6 justify-between hidden">
+        <div id="auth-step-login" class="flex flex-col flex-1 p-6 justify-between h-full hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
-                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Введите пароль</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Этот номер телефона уже зарегистрирован. Введите ваш облачный пароль.</p>
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Двухэтапный пароль</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Этот аккаунт защищен облачным паролем. Введите его для входа.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Пароль</label>
@@ -114,19 +137,19 @@
             </div>
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
                 <button id="btn-login-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
-                <button id="btn-login-submit" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
+                <button id="btn-login-submit" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </div>
 
-        <div id="auth-step-2" class="flex flex-col flex-1 p-6 justify-between hidden">
+        <div id="auth-step-2" class="flex flex-col flex-1 p-6 justify-between h-full hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
-                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Создайте пароль</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Двухэтапный пароль защитит ваш аккаунт в будущем.</p>
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Придумайте пароль</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Создайте надежный облачный пароль для защиты вашего профиля.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
-                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Придумайте пароль</label>
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Введите пароль</label>
                         <input type="password" id="auth-pass" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
                     </div>
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
@@ -138,16 +161,16 @@
             </div>
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
                 <button id="btn-step-2-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
-                <button id="btn-step-2-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
+                <button id="btn-step-2-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </div>
 
-        <div id="auth-step-3" class="flex flex-col flex-1 p-6 justify-between hidden">
+        <div id="auth-step-3" class="flex flex-col flex-1 p-6 justify-between h-full hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
-                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Данные профиля</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите имя и уникальный юзернейм.</p>
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">О себе</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите имя и выберите свободный юзернейм.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваше Имя</label>
@@ -161,18 +184,18 @@
                 </div>
             </div>
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
-                <button id="btn-step-3-finish" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
+                <button id="btn-step-3-finish" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
                     <i class="fas fa-check"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="app-layer" class="fixed inset-0 z-10 flex flex-col bg-[var(--tg-theme-bg)] hidden">
-        <div id="main-content" class="flex-1 overflow-hidden relative">
+    <div id="app-layer" class="hidden">
+        <div id="main-content" class="flex-1 overflow-hidden relative w-full h-full">
             
-            <div id="tab-pane-chats" class="absolute inset-0 flex flex-col view-pane">
-                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center justify-between bg-[var(--tg-theme-bg)] sticky top-0 z-20">
+            <div id="tab-pane-chats" class="hidden">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center justify-between bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold tracking-tight text-[var(--tg-theme-text)]">Telegram</h1>
                     <button id="btn-main-menu" class="text-[var(--tg-theme-hint)] p-1"><i class="fas fa-ellipsis-v text-lg"></i></button>
                 </header>
@@ -180,25 +203,25 @@
                 <div class="p-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)]">
                     <div class="relative flex items-center bg-[var(--tg-theme-secondary-bg)] rounded-xl px-3 py-2">
                         <i class="fas fa-search text-[var(--tg-theme-hint)] mr-3"></i>
-                        <input type="text" id="chat-search-input" placeholder="Поиск по @юзернейму или названию..." class="w-full bg-transparent border-none outline-none text-sm text-[var(--tg-theme-text)]">
+                        <input type="text" id="chat-search-input" placeholder="Поиск по @username или чатам..." class="w-full bg-transparent border-none outline-none text-sm text-[var(--tg-theme-text)]">
                     </div>
                 </div>
 
                 <div id="chats-list-container" class="flex-1 overflow-y-auto custom-scrollbar pb-24"></div>
 
-                <button id="btn-fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#2481cc] text-white flex items-center justify-center shadow-lg z-30">
+                <button id="btn-fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#2481cc] text-white flex items-center justify-center shadow-lg z-30 active:scale-95 transition-transform">
                     <i class="fas fa-pencil-alt text-lg"></i>
                 </button>
             </div>
 
-            <div id="tab-pane-contacts" class="absolute inset-0 flex flex-col view-pane hidden">
+            <div id="tab-pane-contacts" class="hidden">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Контакты</h1>
                 </header>
-                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4" id="contacts-list-container"></div>
+                <div id="contacts-list-container" class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4"></div>
             </div>
 
-            <div id="tab-pane-settings" class="absolute inset-0 flex flex-col view-pane hidden">
+            <div id="tab-pane-settings" class="hidden">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Настройки</h1>
                 </header>
@@ -220,10 +243,10 @@
                             <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-lg">⭐️</div>
                             <div>
                                 <h4 class="font-medium text-[var(--tg-theme-text)]">Telegram Stars</h4>
-                                <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс аккаунта</p>
+                                <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс SPA</p>
                             </div>
                         </div>
-                        <span class="font-bold text-amber-500 text-lg">1500 ⭐️</span>
+                        <span class="font-bold text-amber-500 text-lg">1000 ⭐️</span>
                     </div>
 
                     <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 border-y border-[var(--tg-theme-border)] space-y-4">
@@ -269,12 +292,12 @@
                 <button id="btn-close-chat" class="w-8 h-8 flex items-center justify-center text-[#2481cc]"><i class="fas fa-arrow-left text-lg"></i></button>
                 <div id="chat-window-avatar" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-blue-500"></div>
                 <div class="flex flex-col flex-1 min-w-0">
-                    <span id="chat-window-title" class="font-bold text-sm text-[var(--tg-theme-text)] truncate"></span>
-                    <span id="chat-window-status" class="text-xs text-[var(--tg-theme-hint)] truncate"></span>
+                    <span id="chat-window-title" class="font-bold text-sm text-[var(--tg-theme-text)] truncate">Чат</span>
+                    <span id="chat-window-status" class="text-xs text-[var(--tg-theme-hint)] truncate">онлайн</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4 text-[var(--tg-theme-hint)]">
-                <button id="btn-toggle-contact" class="text-sm font-medium text-[#2481cc] hidden">Добавить</button>
+                <button id="btn-toggle-contact" class="text-xs font-semibold bg-[#2481cc]/10 text-[#2481cc] px-2.5 py-1 rounded-full hidden">Добавить</button>
                 <i class="fas fa-ellipsis-v"></i>
             </div>
         </header>
@@ -291,16 +314,16 @@
 
     <div id="msg-context-menu" class="fixed z-50 bg-[var(--tg-theme-bg)] border border-[var(--tg-theme-border)] rounded-xl shadow-xl w-40 py-1 text-sm hidden">
         <button id="btn-delete-msg" class="w-full text-left px-4 py-2 hover:bg-[var(--tg-theme-secondary-bg)] text-red-500 flex items-center space-x-2">
-            <i class="fas fa-trash"></i> <span>Удалить</span>
+            <i class="fas fa-trash"></i> <span>Удалить у всех</span>
         </button>
     </div>
 
     <div id="modal-create-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden p-4">
         <div class="bg-[var(--tg-theme-bg)] rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-xl">
-            <h3 class="text-lg font-bold text-[var(--tg-theme-text)]">Создать группу</h3>
+            <h3 class="text-lg font-bold text-[var(--tg-theme-text)]">Новая группа</h3>
             <div>
-                <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название группы</label>
-                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none" placeholder="Например: Разработчики">
+                <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название вашей группы</label>
+                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none" placeholder="Например: Любители CRMP">
             </div>
             <div class="flex justify-end space-x-3 pt-2">
                 <button id="btn-modal-cancel" class="px-4 py-2 text-sm font-medium text-[var(--tg-theme-hint)]">Отмена</button>
@@ -314,28 +337,24 @@
             <i class="fas fa-users text-[var(--tg-theme-hint)] w-5"></i> <span>Создать группу</span>
         </button>
         <button id="pop-reset-db" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-red-500 flex items-center space-x-3">
-            <i class="fas fa-sync w-5"></i> <span>Обнулить всю БД</span>
+            <i class="fas fa-sync w-5"></i> <span>Сбросить данные БД</span>
         </button>
     </div>
 
     <script>
         (function() {
-            // Глобальная имитация серверной базы данных в LocalStorage
             let db = { users: [], groups: [] };
             let state = { currentUser: null, activeChatId: null, selectedMsgId: null, isDarkMode: false };
 
-            const gradients = ['from-red-400 to-red-600', 'from-orange-400 to-orange-600', 'from-green-400 to-green-600', 'from-teal-400 to-teal-600', 'from-blue-400 to-blue-600', 'from-purple-400 to-purple-600'];
-
             function loadDB() {
                 try {
-                    const saved = localStorage.getItem('tg_mock_db');
+                    const saved = localStorage.getItem('tg_advanced_db');
                     if (saved) {
                         db = JSON.parse(saved);
                     } else {
-                        // Системные боты и пользователи по умолчанию
                         db.users = [
-                            { phone: "+77071111111", password: "123", name: "Павел Дуров", username: "@durov", contacts: [], chats: [] },
-                            { phone: "+77072222222", password: "123", name: "Telegram Support", username: "@support", contacts: [], chats: [] }
+                            { phone: "+7 707 111 2233", password: "123", name: "Павел Дуров", username: "@durov", contacts: [], chats: [] },
+                            { phone: "+7 707 999 8877", password: "123", name: "Telegram Support", username: "@support", contacts: [], chats: [] }
                         ];
                         saveDB();
                     }
@@ -343,7 +362,7 @@
             }
 
             function saveDB() {
-                try { localStorage.setItem('tg_mock_db', JSON.stringify(db)); } catch(e){}
+                try { localStorage.setItem('tg_advanced_db', JSON.stringify(db)); } catch(e){}
             }
 
             function getFormattedTime() {
@@ -381,13 +400,15 @@
                     }
                 } catch(e){}
                 showLayer('auth-layer');
-                showAuthStep(1);
+                showAuthStep('1');
             }
 
             function showLayer(id) {
-                document.getElementById('auth-layer').classList.add('hidden');
-                document.getElementById('app-layer').classList.add('hidden');
-                document.getElementById(id).classList.remove('hidden');
+                document.getElementById('auth-layer').className = 'hidden';
+                document.getElementById('app-layer').className = 'hidden';
+                
+                const activeLayer = document.getElementById(id);
+                activeLayer.className = 'layer-visible';
             }
 
             function showAuthStep(step) {
@@ -404,13 +425,13 @@
                 document.getElementById('settings-phone-display').textContent = state.currentUser.phone;
                 document.getElementById('settings-username-display').textContent = state.currentUser.username;
                 
-                const plc = document.getElementById('settings-avatar-placeholder');
-                plc.textContent = state.currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('settings-avatar-placeholder').textContent = state.currentUser.name.charAt(0).toUpperCase();
             }
 
             function switchTab(tabId) {
-                ['chats', 'contacts', 'settings'].forEach(t => document.getElementById(`tab-pane-${t}`).classList.add('hidden'));
-                document.getElementById(`tab-pane-${tabId}`).classList.remove('hidden');
+                ['chats', 'contacts', 'settings'].forEach(t => document.getElementById(`tab-pane-${t}`).className = 'hidden');
+                document.getElementById(`tab-pane-${tabId}`).className = 'pane-visible';
+                
                 document.querySelectorAll('.nav-item').forEach(btn => {
                     if (btn.getAttribute('data-tab') === tabId) {
                         btn.classList.remove('text-[var(--tg-theme-hint)]'); btn.classList.add('text-[#2481cc]');
@@ -421,17 +442,15 @@
                 if (tabId === 'contacts') renderContactsList();
             }
 
-            // Получение всех активных диалогов (Личные чаты + Группы)
             function getActiveChats() {
                 let userChats = state.currentUser.chats || [];
-                // Находим группы, где текущий пользователь является создателем или участником
-                let userGroups = db.groups.filter(g => g.creator === state.currentUser.username);
+                let userGroups = db.groups.filter(g => g.creator === state.currentUser.username || (g.members && g.members.includes(state.currentUser.username)));
                 
                 let merged = [];
                 userChats.forEach(c => merged.push({ ...c, isGroup: false }));
                 userGroups.forEach(g => merged.push({ ...g, isGroup: true }));
                 
-                return merged.sort((a,b) => b.id - a.id);
+                return merged;
             }
 
             function renderChatsList(filter = '') {
@@ -439,8 +458,7 @@
                 container.innerHTML = '';
                 const cleanFilter = filter.trim().toLowerCase();
 
-                // Поиск по всей базе данных, если строка начинается с @
-                if (cleanFilter.startsWith('@') && cleanFilter.length > 2) {
+                if (cleanFilter.startsWith('@') && cleanFilter.length > 1) {
                     renderGlobalSearchResults(cleanFilter, container);
                     return;
                 }
@@ -448,7 +466,7 @@
                 const list = getActiveChats().filter(c => c.title.toLowerCase().includes(cleanFilter) || c.username.toLowerCase().includes(cleanFilter));
 
                 if (list.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чатов пока нет. Введите @username в поиск, чтобы найти кого-то!</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чатов не найдено. Введите @username в поиск для глобального поиска!</div>`;
                     return;
                 }
 
@@ -457,11 +475,11 @@
                     item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors";
                     item.onclick = () => openChatWindow(chat.username, chat.isGroup);
 
-                    const lastMsg = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: chat.isGroup ? 'Группа создана' : 'Нет сообщений', time: '' };
+                    const lastMsg = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: chat.isGroup ? 'Группа активна' : 'Нет сообщений', time: '' };
                     const grad = chat.isGroup ? 'from-orange-400 to-red-500' : 'from-blue-400 to-indigo-600';
 
                     item.innerHTML = `
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-lg">${chat.title.charAt(0).toUpperCase()}</div>
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-lg flex-shrink-0">${chat.title.charAt(0).toUpperCase()}</div>
                         <div class="ml-3 flex-1 min-w-0">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate">${chat.title}</h3>
@@ -475,19 +493,17 @@
             }
 
             function renderGlobalSearchResults(query, container) {
-                // Ищем людей
                 let foundUsers = db.users.filter(u => u.username.toLowerCase().includes(query) && u.username !== state.currentUser.username);
-                // Ищем группы
                 let foundGroups = db.groups.filter(g => g.username.toLowerCase().includes(query));
 
                 if (foundUsers.length === 0 && foundGroups.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Ничего не найдено по запросу ${query}</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Ничего не найдено по юзернейму "${query}"</div>`;
                     return;
                 }
 
                 let heading = document.createElement('div');
                 heading.className = "px-4 py-2 text-xs font-semibold text-[#2481cc] bg-[var(--tg-theme-secondary-bg)] uppercase";
-                heading.textContent = "Глобальный поиск";
+                heading.textContent = "Результаты глобального поиска";
                 container.appendChild(heading);
 
                 foundUsers.forEach(u => {
@@ -495,7 +511,7 @@
                     item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)]";
                     item.onclick = () => { openChatWindow(u.username, false); document.getElementById('chat-search-input').value = ''; };
                     item.innerHTML = `
-                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white font-bold">${u.name.charAt(0).toUpperCase()}</div>
+                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white font-bold flex-shrink-0">${u.name.charAt(0).toUpperCase()}</div>
                         <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${u.name}</h4><p class="text-xs text-[#2481cc] font-mono">${u.username}</p></div>
                     `;
                     container.appendChild(item);
@@ -506,8 +522,8 @@
                     item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)]";
                     item.onclick = () => { openChatWindow(g.username, true); document.getElementById('chat-search-input').value = ''; };
                     item.innerHTML = `
-                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-red-500 flex items-center justify-center text-white font-bold">👥</div>
-                        <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${g.title}</h4><p class="text-xs text-gray-400 font-mono">${g.username} (Ссылка)</p></div>
+                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-red-500 flex items-center justify-center text-white font-bold flex-shrink-0">👥</div>
+                        <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${g.title}</h4><p class="text-xs text-gray-400 font-mono">${g.username}</p></div>
                     `;
                     container.appendChild(item);
                 });
@@ -519,7 +535,7 @@
                 const myContacts = state.currentUser.contacts || [];
 
                 if (myContacts.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Список контактов пуст.</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">У вас пока нет сохраненных контактов.</div>`;
                     return;
                 }
 
@@ -530,8 +546,8 @@
                     el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer";
                     el.onclick = () => { openChatWindow(target.username, false); };
                     el.innerHTML = `
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">${target.name.charAt(0).toUpperCase()}</div>
-                        <div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${target.name}</h4><p class="text-xs text-emerald-500">в сети</p></div>
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">${target.name.charAt(0).toUpperCase()}</div>
+                        <div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${target.name}</h4><p class="text-xs text-emerald-500">онлайн</p></div>
                     `;
                     container.appendChild(el);
                 });
@@ -548,28 +564,26 @@
                 if (isGroup) {
                     const group = db.groups.find(g => g.username === targetUsername);
                     titleNode.textContent = group.title;
-                    statusNode.textContent = `${group.username} • клик для инфо`;
-                    av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-orange-400 to-red-500";
+                    statusNode.textContent = `Ссылка: ${group.username}`;
+                    av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0";
                     av.textContent = "👥";
                     contactBtn.classList.add('hidden');
                     renderChatHistory(group.messages);
                 } else {
                     const targetUser = db.users.find(u => u.username === targetUsername);
                     titleNode.textContent = targetUser.name;
-                    statusNode.textContent = "онлайн";
-                    av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-blue-400 to-indigo-600";
+                    statusNode.textContent = "в сети";
+                    av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-blue-400 to-indigo-600 flex-shrink-0";
                     av.textContent = targetUser.name.charAt(0).toUpperCase();
 
-                    // Проверка контактов
                     if ((state.currentUser.contacts || []).includes(targetUsername)) {
-                        contactBtn.textContent = "Удалить";
+                        contactBtn.textContent = "Удалить контакт";
                         contactBtn.classList.remove('hidden');
                     } else {
-                        contactBtn.textContent = "Добавить";
+                        contactBtn.textContent = "Добавить в контакты";
                         contactBtn.classList.remove('hidden');
                     }
 
-                    // Находим или создаем локальный массив сообщений внутри структуры текущего юзера
                     if (!state.currentUser.chats) state.currentUser.chats = [];
                     let chatData = state.currentUser.chats.find(c => c.username === targetUsername);
                     if (!chatData) {
@@ -605,7 +619,6 @@
                         </div>
                     `;
 
-                    // Событие клика на сообщение для его удаления
                     wrapper.querySelector('.chat-bubble').addEventListener('click', function(e) {
                         e.stopPropagation();
                         if (isMe) {
@@ -640,7 +653,6 @@
                     let myChat = state.currentUser.chats.find(c => c.username === state.activeChatId.username);
                     myChat.messages.push(newMsg);
 
-                    // Синхронизируем это же сообщение в структуру получателя, чтобы он его увидел при входе
                     const opponent = db.users.find(u => u.username === state.activeChatId.username);
                     if (opponent) {
                         if (!opponent.chats) opponent.chats = [];
@@ -658,29 +670,24 @@
             }
 
             function setupEventListeners() {
-                // Закрытие контекстных окон по клику на экран
                 document.addEventListener('click', () => {
                     document.getElementById('popup-menu-main').classList.add('hidden');
                     document.getElementById('msg-context-menu').classList.add('hidden');
                 });
 
-                // Переключение нижних вкладок
                 document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', function() {
                     switchTab(this.getAttribute('data-tab'));
                 }));
 
-                // Шапка — Три точки
                 document.getElementById('btn-main-menu').addEventListener('click', (e) => {
                     e.stopPropagation();
                     document.getElementById('popup-menu-main').classList.toggle('hidden');
                 });
 
-                // Поиск
                 document.getElementById('chat-search-input').addEventListener('input', function() {
                     renderChatsList(this.value);
                 });
 
-                // Создание группы кнопки
                 document.getElementById('btn-fab-create').addEventListener('click', () => document.getElementById('modal-create-layer').classList.remove('hidden'));
                 document.getElementById('pop-create-group').addEventListener('click', () => document.getElementById('modal-create-layer').classList.remove('hidden'));
                 document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-create-layer').classList.add('hidden'));
@@ -705,7 +712,6 @@
                     openChatWindow(groupUrl, true);
                 });
 
-                // Удаление сообщения
                 document.getElementById('btn-delete-msg').addEventListener('click', () => {
                     if (!state.selectedMsgId) return;
                     if (state.activeChatId.isGroup) {
@@ -717,7 +723,6 @@
                         const myChat = state.currentUser.chats.find(c => c.username === state.activeChatId.username);
                         myChat.messages = myChat.messages.filter(m => m.id !== state.selectedMsgId);
 
-                        // Удаляем и у оппонента
                         const opponent = db.users.find(u => u.username === state.activeChatId.username);
                         if (opponent && opponent.chats) {
                             const oppChat = opponent.chats.find(c => c.username === state.currentUser.username);
@@ -728,7 +733,6 @@
                     }
                 });
 
-                // Управление контактами
                 document.getElementById('btn-toggle-contact').addEventListener('click', function() {
                     if (!state.activeChatId || state.activeChatId.isGroup) return;
                     if (!state.currentUser.contacts) state.currentUser.contacts = [];
@@ -736,15 +740,14 @@
                     const target = state.activeChatId.username;
                     if (state.currentUser.contacts.includes(target)) {
                         state.currentUser.contacts = state.currentUser.contacts.filter(c => c !== target);
-                        this.textContent = "Добавить";
+                        this.textContent = "Добавить в контакты";
                     } else {
                         state.currentUser.contacts.push(target);
-                        this.textContent = "Удалить";
+                        this.textContent = "Удалить контакт";
                     }
                     saveDB();
                 });
 
-                // Отправка сообщений
                 document.getElementById('btn-send-message').addEventListener('click', sendMessage);
                 document.getElementById('btn-close-chat').addEventListener('click', () => {
                     document.getElementById('chat-window-layer').classList.add('translate-x-full');
@@ -752,20 +755,17 @@
                     renderChatsList();
                 });
 
-                // Обнуление базы данных мессенджера
                 document.getElementById('pop-reset-db').addEventListener('click', () => {
-                    localStorage.removeItem('tg_mock_db');
+                    localStorage.removeItem('tg_advanced_db');
                     localStorage.removeItem('tg_active_session_phone');
                     location.reload();
                 });
 
-                // Выход из системы
                 document.getElementById('btn-logout').addEventListener('click', () => {
                     localStorage.removeItem('tg_active_session_phone');
                     location.reload();
                 });
 
-                // Переключение Темы
                 document.getElementById('toggle-dark-mode').addEventListener('change', function() {
                     if (this.checked) {
                         document.body.classList.add('dark-mode');
@@ -776,30 +776,29 @@
                     }
                 });
 
-                // Регистрация / Логика Шаг 1 (Номер телефона)
+                // ШАГ 1 АВТОРИЗАЦИИ
                 document.getElementById('btn-step-1-next').addEventListener('click', () => {
                     const phone = document.getElementById('auth-phone-input').value.trim();
                     const err = document.getElementById('error-step-1');
                     err.classList.add('hidden');
 
-                    if (phone.length < 7) {
-                        err.textContent = "Введите корректный номер телефона";
+                    if (phone.length < 8) {
+                        err.textContent = "Введите полноценный корректный номер телефона";
                         err.classList.remove('hidden');
                         return;
                     }
 
-                    // Проверяем существование номера
                     const existingUser = db.users.find(u => u.phone === phone);
                     state.tempAuthPhone = phone;
 
                     if (existingUser) {
-                        showAuthStep('login'); // Аккаунт найден -> просим пароль
+                        showAuthStep('login');
                     } else {
-                        showAuthStep('2'); // Номер новый -> регистрация
+                        showAuthStep('2');
                     }
                 });
 
-                // Шаг Логин: Проверка пароля существующего аккаунта
+                // ОКОНЧАТЕЛЬНЫЙ ЛОГИН СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ
                 document.getElementById('btn-login-submit').addEventListener('click', () => {
                     const pass = document.getElementById('login-pass-input').value;
                     const err = document.getElementById('error-login');
@@ -810,12 +809,28 @@
                         localStorage.setItem('tg_active_session_phone', user.phone);
                         launchApp();
                     } else {
-                        err.textContent = "Неверный облачный пароль";
+                        err.textContent = "Неверный облачный пароль безопасности!";
                         err.classList.remove('hidden');
                     }
                 });
                 document.getElementById('btn-login-back').addEventListener('click', () => showAuthStep('1'));
 
-                // Шаг Регистрации 2: Установка нового пароля
+                // ШАГ РЕГИСТРАЦИИ 2
                 document.getElementById('btn-step-2-next').addEventListener('click', () => {
-                    const
+                    const p1 = document.getElementById('auth-pass').value;
+                    const p2 = document.getElementById('auth-pass-confirm').value;
+                    const err = document.getElementById('error-step-2');
+                    err.classList.add('hidden');
+
+                    if (!p1 || p1 !== p2) {
+                        err.textContent = "Облачные пароли не совпадают!";
+                        err.classList.remove('hidden');
+                        return;
+                    }
+                    state.tempAuthPass = p1;
+                    showAuthStep('3');
+                });
+                document.getElementById('btn-step-2-back').addEventListener('click', () => showAuthStep('1'));
+
+                // ФИНАЛЬНАЯ РЕГИСТРАЦИЯ И ПРОВЕРКА ЮЗЕРНЕЙМА
+                documen

@@ -3,520 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Telegram Web — Premium Messenger</title>
+    <title>Telegram Web — Premium Groups & Channels</title>
     <!-- Tailwind CSS + Font Awesome + Inter Font -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
-        }
-        body {
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            transition: background-color 0.2s ease, color 0.2s;
-        }
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(136, 136, 136, 0.4);
-            border-radius: 10px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(136, 136, 136, 0.7);
-        }
-        /* Паттерн фона чата */
-        .chat-bg-pattern {
-            background-image: radial-gradient(circle at 15% 25%, rgba(0, 0, 0, 0.03) 2%, transparent 2.5%);
-            background-size: 32px 32px;
-        }
-        .dark .chat-bg-pattern {
-            background-image: radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.03) 2%, transparent 2.5%);
-        }
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .message-animate {
-            animation: fadeSlideUp 0.2s ease-out;
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
-        }
-        .sidebar-menu-open {
-            animation: slideInRight 0.25s ease-out;
-        }
-        /* Адаптивные классы */
-        .mobile-chat-active .chat-list-panel {
-            display: none;
-        }
-        .mobile-chat-active .chat-detail-panel {
-            display: flex;
-        }
-        .chat-detail-panel {
-            display: flex;
-        }
+        * { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { margin: 0; height: 100vh; overflow: hidden; transition: background 0.2s; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(136,136,136,0.4); border-radius: 10px; }
+        .chat-bg-pattern { background-image: radial-gradient(circle at 15% 25%, rgba(0,0,0,0.03) 2%, transparent 2.5%); background-size: 32px 32px; }
+        .dark .chat-bg-pattern { background-image: radial-gradient(circle at 15% 25%, rgba(255,255,255,0.03) 2%, transparent 2.5%); }
+        @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .message-animate { animation: fadeSlideUp 0.2s ease-out; }
+        @keyframes slideInRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        .sidebar-menu-open { animation: slideInRight 0.25s ease-out; }
+        .mobile-chat-active .chat-list-panel { display: none; }
+        .mobile-chat-active .chat-detail-panel { display: flex; }
         @media (max-width: 768px) {
-            .chat-list-panel {
-                display: flex;
-                width: 100%;
-            }
-            .chat-detail-panel {
-                display: none;
-                width: 100%;
-            }
-            .mobile-chat-active .chat-list-panel {
-                display: none;
-            }
-            .mobile-chat-active .chat-detail-panel {
-                display: flex;
-            }
+            .chat-list-panel { display: flex; width: 100%; }
+            .chat-detail-panel { display: none; width: 100%; }
+            .mobile-chat-active .chat-list-panel { display: none; }
+            .mobile-chat-active .chat-detail-panel { display: flex; }
         }
-        .online-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #31b545;
-            border-radius: 50%;
-            display: inline-block;
-            border: 1.5px solid white;
-        }
-        .dark .online-dot {
-            border-color: #1f2a3e;
-        }
-        .message-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
-        }
-        button:active {
-            transform: scale(0.96);
-        }
-        .dark {
-            color-scheme: dark;
-        }
-        .verified-badge {
-            color: #3390ec;
-            margin-left: 4px;
-            font-size: 12px;
-        }
-        .premium-star {
-            color: #ffb73d;
-        }
-        /* overlay для мобильного меню */
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 40;
-            display: none;
-        }
-        .overlay.active {
-            display: block;
+        .online-dot { width: 10px; height: 10px; background-color: #31b545; border-radius: 50%; display: inline-block; border: 1.5px solid white; }
+        .dark .online-dot { border-color: #1f2a3e; }
+        .message-input-fix { outline: none; }
+        button:active { transform: scale(0.96); }
+        .dark { color-scheme: dark; }
+        .verified-badge { color: #3390ec; margin-left: 4px; font-size: 12px; }
+        .premium-star { color: #ffb73d; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; display: none; }
+        .overlay.active { display: block; }
+        /* фикс для клавиатуры на мобилках */
+        .keyboard-fix { position: relative; }
+        @media (max-width: 768px) {
+            .bottom-safe { padding-bottom: env(safe-area-inset-bottom, 0); }
         }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
 
-<!-- ЭКРАН ВХОДА / АВТОРИЗАЦИЯ -->
+<!-- ЭКРАН АВТОРИЗАЦИИ -->
 <div id="authScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center p-4 transition-all">
     <div class="bg-white/90 dark:bg-gray-800/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8 border border-gray-200 dark:border-gray-700">
-        <div class="flex justify-center mb-6">
-            <div class="w-20 h-20 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                <i class="fab fa-telegram text-4xl text-white"></i>
-            </div>
-        </div>
+        <div class="flex justify-center mb-6"><div class="w-20 h-20 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg"><i class="fab fa-telegram text-4xl text-white"></i></div></div>
         <h2 class="text-2xl font-bold text-center mb-2">Telegram Web</h2>
         <p class="text-center text-gray-500 dark:text-gray-400 mb-6">Войдите, чтобы продолжить</p>
         <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Ваш Nickname</label>
-                <input type="text" id="loginName" placeholder="Алексей" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Аватар (выберите стиль)</label>
-                <div class="flex gap-3 flex-wrap">
-                    <div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 cursor-pointer border-2 border-transparent hover:border-blue-500" data-avatar="A1"></div>
-                    <div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-green-400 to-teal-500 cursor-pointer border-2 border-transparent hover:border-blue-500" data-avatar="A2"></div>
-                    <div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-pink-400 to-rose-500 cursor-pointer border-2 border-transparent hover:border-blue-500" data-avatar="A3"></div>
-                    <div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 cursor-pointer border-2 border-transparent hover:border-blue-500" data-avatar="A4"></div>
-                    <label class="w-14 h-14 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center cursor-pointer hover:bg-gray-300">
-                        <i class="fas fa-upload text-gray-600"></i>
-                        <input type="file" id="avatarUpload" accept="image/*" class="hidden">
-                    </label>
-                </div>
-            </div>
-            <div class="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 p-3 rounded-xl text-center animate-pulse">
-                <p class="text-sm font-semibold">🎉 Вам начислено: <span class="text-blue-600 dark:text-blue-400">Telegram Premium Навсегда + 1000 Telegram Stars (⭐️)</span> бесплатно!</p>
-            </div>
+            <div><label class="block text-sm font-medium mb-1">Ваш Nickname</label><input type="text" id="loginName" placeholder="Алексей" class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"></div>
+            <div><label class="block text-sm font-medium mb-1">Аватар</label><div class="flex gap-3 flex-wrap"><div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 cursor-pointer border-2 border-transparent hover:border-blue-500" data-avatar="A1"></div><div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-green-400 to-teal-500 cursor-pointer border-2" data-avatar="A2"></div><div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-pink-400 to-rose-500 cursor-pointer border-2" data-avatar="A3"></div><div class="avatar-option w-14 h-14 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 cursor-pointer border-2" data-avatar="A4"></div><label class="w-14 h-14 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center cursor-pointer"><i class="fas fa-upload text-gray-600"></i><input type="file" id="avatarUpload" accept="image/*" class="hidden"></label></div></div>
+            <div class="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 p-3 rounded-xl text-center animate-pulse"><p class="text-sm font-semibold">🎉 Вам начислено: <span class="text-blue-600">Telegram Premium Навсегда + 1000 Telegram Stars (⭐️)</span> бесплатно!</p></div>
             <button id="loginBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition shadow-md">Войти</button>
         </div>
     </div>
 </div>
 
-<!-- ОСНОВНОЙ ИНТЕРФЕЙС (изначально скрыт) -->
+<!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
 <div id="mainApp" class="hidden h-screen w-full overflow-hidden relative">
-    <!-- Оверлей для мобильного меню -->
     <div id="menuOverlay" class="overlay"></div>
-    
-    <!-- Боковое выдвижное меню (Slide Menu) -->
+    <!-- Боковое меню -->
     <div id="slideMenu" class="fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3">
-            <div id="menuAvatar" class="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-md"></div>
-            <div>
-                <div class="font-bold text-lg flex items-center gap-1"><span id="menuUserName">Алексей</span> <i class="fas fa-star text-yellow-500 text-sm"></i></div>
-                <div class="text-xs text-gray-500">Баланс: <span id="menuStars">1000</span> ⭐️</div>
-            </div>
-        </div>
-        <div class="flex-1 p-3 space-y-2">
-            <button id="profileSettingsBtn" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-user-circle w-6"></i><span>Настройки профиля</span></button>
-            <button id="themeMenuToggle" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-moon w-6"></i><span>Тема: Ночь / День</span></button>
-            <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-            <button id="closeMenuBtn" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"><i class="fas fa-sign-out-alt w-6"></i><span>Выйти</span></button>
-        </div>
+        <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex items-center gap-3"><div id="menuAvatar" class="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold"></div><div><div class="font-bold text-lg flex items-center gap-1"><span id="menuUserName"></span> <i class="fas fa-star text-yellow-500 text-sm"></i></div><div class="text-xs text-gray-500">Баланс: <span id="menuStars">1000</span> ⭐️</div></div></div>
+        <div class="flex-1 p-3 space-y-2"><button id="profileSettingsBtn" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-user-circle w-6"></i><span>Настройки профиля</span></button><button id="createGroupBtn" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-users w-6"></i><span>Создать группу</span></button><button id="createChannelBtn" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-bullhorn w-6"></i><span>Создать канал</span></button><button id="themeMenuToggle" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-moon w-6"></i><span>Тема: Ночь / День</span></button><div class="border-t border-gray-200 dark:border-gray-700 my-2"></div><button id="closeMenuBtn" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"><i class="fas fa-sign-out-alt w-6"></i><span>Выйти</span></button></div>
     </div>
-    
+
     <div id="appContainer" class="flex h-full w-full">
         <!-- ЛЕВАЯ ПАНЕЛЬ (Список чатов) -->
         <aside id="chatListPanel" class="chat-list-panel w-full sm:w-96 md:w-96 flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
-            <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
-                <button id="burgerMenuBtn" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-bars text-xl"></i></button>
-                <div class="text-xl font-bold bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">Telegram</div>
-                <button id="themeToggleMain" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i id="themeIconMain" class="fas fa-moon text-xl"></i></button>
-            </div>
-            <div class="p-3">
-                <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Поиск или @username" class="w-full bg-gray-100 dark:bg-gray-700 rounded-full py-2.5 pl-10 pr-4 text-sm">
-                    <button id="searchUserBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 text-sm font-semibold hidden md:block">Добавить</button>
-                </div>
-            </div>
+            <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-700"><button id="burgerMenuBtn" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-bars text-xl"></i></button><div class="text-xl font-bold bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">Telegram</div><button id="themeToggleMain" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i id="themeIconMain" class="fas fa-moon text-xl"></i></button></div>
+            <div class="p-3"><div class="relative"><i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i><input type="text" id="globalSearchInput" placeholder="Поиск или @username" class="w-full bg-gray-100 dark:bg-gray-700 rounded-full py-2.5 pl-10 pr-10 text-sm"><button id="searchUserBtn" class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 text-sm font-semibold"><i class="fas fa-plus-circle"></i></button></div></div>
             <div class="flex-1 overflow-y-auto custom-scroll" id="chatsListContainer"></div>
-            <div class="p-2 text-center text-xs text-gray-400 border-t border-gray-100">✨ Premium Activated</div>
+            <div class="p-2 text-center text-xs text-gray-400 border-t border-gray-100 dark:border-gray-700">✨ Premium Active</div>
         </aside>
 
         <!-- ПРАВАЯ ПАНЕЛЬ (Окно чата) -->
         <main id="chatDetailPanel" class="chat-detail-panel flex-1 flex flex-col bg-white dark:bg-gray-900 relative chat-bg-pattern">
-            <div class="bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm border-b px-4 py-3 flex items-center gap-3">
-                <button id="mobileBackToList" class="md:hidden p-2 rounded-full hover:bg-gray-200"><i class="fas fa-arrow-left text-lg"></i></button>
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center text-white font-semibold" id="chatDetailAvatar">TS</div>
-                <div class="flex-1">
-                    <h2 id="chatDetailName" class="font-semibold flex items-center gap-1">Telegram Support <i class="fas fa-check-circle text-blue-500 text-sm verified-badge"></i></h2>
-                    <span id="chatDetailStatus" class="text-xs text-gray-500">онлайн</span>
-                </div>
+            <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b px-4 py-3 flex items-center gap-3 shadow-sm">
+                <button id="mobileBackToList" class="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fas fa-arrow-left text-lg"></i></button>
+                <div id="chatDetailAvatar" class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center text-white font-semibold">TS</div>
+                <div class="flex-1"><h2 id="chatDetailName" class="font-semibold flex items-center gap-1">Telegram Support <i class="fas fa-check-circle text-blue-500 text-sm"></i></h2><span id="chatDetailStatus" class="text-xs text-gray-500">онлайн</span></div>
+                <button id="copyInviteLinkBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 hidden group-channel-link"><i class="fas fa-link"></i></button>
                 <button class="p-2 rounded-full hover:bg-gray-200"><i class="fas fa-phone-alt"></i></button>
             </div>
-            <div id="messagesAreaDetail" class="flex-1 overflow-y-auto custom-scroll p-4 flex flex-col-reverse">
-                <div id="messagesContainerDetail" class="flex flex-col space-y-2.5"></div>
-            </div>
-            <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t p-3 flex items-center gap-2">
-                <button class="p-2 rounded-full text-gray-500"><i class="fas fa-paperclip text-xl"></i></button>
-                <div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 flex items-center">
-                    <input type="text" id="messageInputDetail" placeholder="Сообщение..." class="w-full bg-transparent outline-none text-sm">
-                    <button id="emojiBtnDetail" class="p-1 text-gray-500"><i class="far fa-smile-wink text-xl"></i></button>
-                </div>
-                <button id="sendMsgBtn" class="p-2 rounded-full bg-blue-500 text-white shadow-md"><i class="fas fa-paper-plane"></i></button>
+            <div id="messagesAreaDetail" class="flex-1 overflow-y-auto custom-scroll p-4 flex flex-col-reverse"><div id="messagesContainerDetail" class="flex flex-col space-y-2.5"></div></div>
+            <div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-t p-3 flex items-center gap-2 bottom-safe">
+                <button id="attachBtnChat" class="p-2 rounded-full text-gray-500 hover:bg-gray-200"><i class="fas fa-paperclip text-xl"></i></button>
+                <div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 flex items-center"><input type="text" id="messageInputDetail" placeholder="Сообщение..." class="w-full bg-transparent outline-none text-sm message-input-fix" autocomplete="off"><button id="emojiBtnDetail" class="p-1 text-gray-500"><i class="far fa-smile-wink text-xl"></i></button></div>
+                <button id="sendMsgBtn" class="p-2 rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition"><i class="fas fa-paper-plane text-lg"></i></button>
             </div>
         </main>
     </div>
+
+    <!-- Модалки -->
+    <div id="profileModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4"><div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6"><h3 class="text-xl font-bold mb-4">Редактировать профиль</h3><div class="flex justify-center mb-4"><div id="modalAvatarPreview" class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow"></div></div><label class="block mb-2">Новое имя</label><input type="text" id="profileNameInput" class="w-full border rounded-xl p-2 dark:bg-gray-700 mb-4"><label class="block mb-2">Сменить аватар</label><input type="file" id="profileAvatarUpload" accept="image/*" class="mb-3"><div class="flex gap-2"><button id="saveProfileBtn" class="flex-1 bg-blue-500 text-white py-2 rounded-xl">Сохранить</button><button id="closeProfileBtn" class="flex-1 bg-gray-300 dark:bg-gray-700 py-2 rounded-xl">Отмена</button></div></div></div>
     
-    <!-- Модальное окно настроек профиля -->
-    <div id="profileModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6">
-            <h3 class="text-xl font-bold mb-4">Редактировать профиль</h3>
-            <div class="flex justify-center mb-4">
-                <div id="modalAvatarPreview" class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow"></div>
-            </div>
-            <label class="block mb-2">Новое имя</label>
-            <input type="text" id="profileNameInput" class="w-full border rounded-xl p-2 dark:bg-gray-700 mb-4">
-            <label class="block mb-2">Сменить аватар (URL или загрузка)</label>
-            <input type="file" id="profileAvatarUpload" accept="image/*" class="mb-3">
-            <div class="flex gap-2">
-                <button id="saveProfileBtn" class="flex-1 bg-blue-500 text-white py-2 rounded-xl">Сохранить</button>
-                <button id="closeProfileBtn" class="flex-1 bg-gray-300 dark:bg-gray-700 py-2 rounded-xl">Отмена</button>
-            </div>
-        </div>
-    </div>
+    <div id="groupModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden p-4"><div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6"><h3 id="groupModalTitle" class="text-xl font-bold mb-4">Создать группу</h3><input type="text" id="groupNameInput" placeholder="Название" class="w-full border rounded-xl p-2 mb-3 dark:bg-gray-700"><input type="text" id="groupDescInput" placeholder="Описание (необязательно)" class="w-full border rounded-xl p-2 mb-4 dark:bg-gray-700"><div class="flex gap-2"><button id="confirmGroupBtn" class="flex-1 bg-blue-500 text-white py-2 rounded-xl">Создать</button><button id="closeGroupModalBtn" class="flex-1 bg-gray-300 dark:bg-gray-700 py-2 rounded-xl">Отмена</button></div></div></div>
 </div>
 
 <script>
-    // ---------- ГЛОБАЛЬНЫЕ ДАННЫЕ ----------
+    // ======================== ГЛОБАЛЬНЫЕ ДАННЫЕ ========================
     let currentUser = { id: "me", username: "Алексей", avatarStyle: "A1", avatarUrl: null, stars: 1000 };
     let darkMode = localStorage.getItem("telegram_theme") === "dark";
     let activeChatId = "support";
     let allChats = [];
     let nextUserId = 100;
     
-    // Вспомогательные функции
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    // Helper: градиенты
+    function getAvatarGradient(style) { const map = { A1:"from-blue-400 to-purple-500", A2:"from-green-400 to-teal-500", A3:"from-pink-400 to-rose-500", A4:"from-amber-400 to-orange-500" }; return map[style] || "from-blue-400 to-purple-500"; }
+    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
     
-    function getAvatarGradient(avatarType) {
-        const map = { A1: "from-blue-400 to-purple-500", A2: "from-green-400 to-teal-500", A3: "from-pink-400 to-rose-500", A4: "from-amber-400 to-orange-500" };
-        return map[avatarType] || "from-blue-400 to-purple-500";
+    function renderAvatarElement(el, user, size="w-10 h-10") {
+        if(user.avatarUrl) { el.innerHTML = `<img src="${user.avatarUrl}" class="rounded-full object-cover w-full h-full">`; el.classList.remove("bg-gradient-to-r"); }
+        else { const grad = getAvatarGradient(user.avatarStyle); el.className = `${size} rounded-full bg-gradient-to-r ${grad} flex items-center justify-center text-white font-bold`; el.innerHTML = user.username.charAt(0).toUpperCase(); }
     }
     
-    function renderAvatarElement(element, userData, size = "w-10 h-10") {
-        if(userData.avatarUrl) {
-            element.innerHTML = `<img src="${userData.avatarUrl}" class="rounded-full object-cover w-full h-full">`;
-            element.classList.remove("bg-gradient-to-r");
-        } else {
-            const grad = getAvatarGradient(userData.avatarStyle);
-            element.className = `${size} rounded-full bg-gradient-to-r ${grad} flex items-center justify-center text-white font-bold`;
-            element.innerHTML = userData.username.charAt(0).toUpperCase();
-        }
+    function updateAllUI() { renderAvatarElement(document.getElementById("menuAvatar"), currentUser, "w-14 h-14"); document.getElementById("menuUserName").innerText = currentUser.username; document.getElementById("menuStars").innerText = currentUser.stars; renderChatsList(); if(activeChatId) renderMessagesForActiveChat(); }
+    
+    // Создание чата (группа/канал/личный)
+    function addChat(id, name, avatarSymbol, type, extra = {}) { const newChat = { id, name, avatar: avatarSymbol, type: type || "private", isOnline: true, lastMessage: "Новый чат", lastTime: "только что", messages: [], unread: 0, verified: false, link: extra.link || null, isChannel: type === "channel", isGroup: type === "group", canWrite: type !== "channel" || true }; allChats.push(newChat); renderChatsList(); return newChat; }
+    
+    function generateInviteLink(chatId, chatName) { return `https://t.me/${chatName.toLowerCase().replace(/\s/g, '_')}_${chatId}`; }
+    
+    // Создание группы
+    function createGroup(name, desc) { const groupId = "group_" + Date.now(); const newGroup = { id: groupId, name: name, avatar: "👥", type: "group", isOnline: true, lastMessage: "Группа создана", lastTime: "сейчас", messages: [], unread: 0, verified: false, isGroup: true, isChannel: false, description: desc, link: generateInviteLink(groupId, name) }; allChats.push(newGroup); renderChatsList(); alert(`Группа "${name}" создана! Ссылка: ${newGroup.link} (скопирована)`); navigator.clipboard.writeText(newGroup.link); return newGroup; }
+    function createChannel(name, desc) { const channelId = "channel_" + Date.now(); const newChannel = { id: channelId, name: name, avatar: "📢", type: "channel", isOnline: true, lastMessage: "Канал создан", lastTime: "сейчас", messages: [], unread: 0, verified: false, isChannel: true, isGroup: false, description: desc, link: generateInviteLink(channelId, name) }; allChats.push(newChannel); renderChatsList(); alert(`Канал "${name}" создан! Ссылка: ${newChannel.link} (скопирована)`); navigator.clipboard.writeText(newChannel.link); return newChannel; }
+    
+    // Отправка сообщений
+    function sendMessageToActive() { const input = document.getElementById('messageInputDetail'); const text = input.value.trim(); if(!text || !activeChatId) return; const chat = allChats.find(c => c.id === activeChatId); if(!chat) return; if(chat.isChannel && chat.id !== "support") { alert("В канале могут писать только администраторы. (Вы администратор, но для демо можно)"); }
+        const timeStr = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); const newMsg = { id: Date.now().toString(), text: text, sender: "me", time: timeStr, status: "sent" }; chat.messages.push(newMsg); chat.lastMessage = text; chat.lastTime = timeStr; chat.unread = 0;
+        setTimeout(() => { const idx = chat.messages.findIndex(m => m.id === newMsg.id); if(idx !== -1) chat.messages[idx].status = "read"; if(activeChatId === chat.id) renderMessagesForActiveChat(); }, 400);
+        renderChatsList(); renderMessagesForActiveChat(); input.value = ""; scrollToBottom();
+        if(chat.type === "group") simulateGroupReply(chat.id, text); else if(chat.type !== "channel") simulateUserReply(chat.id, text);
     }
     
-    function updateAllUserInterfaces() {
-        // меню аватар, имя, звезды
-        renderAvatarElement(document.getElementById("menuAvatar"), currentUser, "w-14 h-14");
-        document.getElementById("menuUserName").innerText = currentUser.username;
-        document.getElementById("menuStars").innerText = currentUser.stars;
-        // Перерисовываем список чатов
-        renderChatsList();
-        if(activeChatId) renderMessagesForActiveChat();
+    function simulateUserReply(chatId, msgText) { const chat = allChats.find(c => c.id === chatId); if(!chat || chat.id === "support") return; const replies = ["Интересно! 😊", "Спасибо за сообщение!", "Продолжаем общение ✨", "Отлично, я на связи!", "Понял, принято!"]; const reply = replies[Math.floor(Math.random()*replies.length)];
+        setTimeout(() => { const existing = allChats.find(c => c.id === chatId); if(existing){ const newMsg = { id: Date.now()+"_r", text: reply, sender: chatId, time: new Date().toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'}), status:"read" }; existing.messages.push(newMsg); existing.lastMessage = reply; if(activeChatId === chatId) { renderMessagesForActiveChat(); scrollToBottom(); } else { existing.unread = (existing.unread||0)+1; renderChatsList(); } } }, 2000);
+    }
+    function simulateGroupReply(chatId, msgText) { const chat = allChats.find(c => c.id === chatId); if(!chat) return; const membersReplies = ["Анна: Круто! 👍", "Дмитрий: Поддерживаю", "Елена: Спасибо за идею", "Бот: Активный чат!"]; const reply = membersReplies[Math.floor(Math.random()*membersReplies.length)];
+        setTimeout(() => { const existing = allChats.find(c => c.id === chatId); if(existing){ const newMsg = { id: Date.now()+"_grp", text: reply, sender: chatId, time: new Date().toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'}), status:"read" }; existing.messages.push(newMsg); existing.lastMessage = reply; if(activeChatId === chatId) { renderMessagesForActiveChat(); scrollToBottom(); } else { existing.unread = (existing.unread||0)+1; renderChatsList(); } } }, 2200);
     }
     
-    function addNewChat(userId, name, avatarType, isBot = true) {
-        const newChat = {
-            id: userId,
-            name: name,
-            avatar: name.charAt(0),
-            avatarStyle: avatarType,
-            status: isBot ? "бот" : "пользователь",
-            isOnline: true,
-            lastMessage: "Напишите что-нибудь",
-            lastTime: "сейчас",
-            messages: [],
-            unread: 0,
-            verified: false
-        };
-        allChats.push(newChat);
-        renderChatsList();
-        return newChat;
+    function renderMessagesForActiveChat() { const chat = allChats.find(c => c.id === activeChatId); if(!chat) return; const container = document.getElementById('messagesContainerDetail'); container.innerHTML = ''; const msgs = [...chat.messages].sort((a,b)=>Number(a.id)-Number(b.id)); msgs.forEach(msg => { const isMe = msg.sender === "me"; const bubble = isMe ? "bg-blue-500 text-white rounded-br-none" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-bl-none"; const align = isMe ? "items-end" : "items-start"; const statusIcon = isMe ? (msg.status === "read" ? '<i class="fas fa-check-double text-xs text-blue-200 ml-1"></i>' : '<i class="fas fa-check text-xs text-blue-200 ml-1"></i>') : ''; const div = document.createElement('div'); div.className = `flex flex-col ${align} max-w-[75%] w-fit message-animate`; div.innerHTML = `<div class="${bubble} px-4 py-2 rounded-2xl shadow-sm"><p class="text-sm break-words">${escapeHtml(msg.text)}</p><div class="flex justify-end items-center gap-0.5 mt-1"><span class="text-[10px] ${isMe ? 'text-blue-100' : 'text-gray-500'}">${msg.time}</span>${statusIcon}</div></div>`; container.appendChild(div); }); if(msgs.length === 0) container.innerHTML = '<div class="text-center text-gray-400 text-sm py-10">✨ Начните общение</div>';
+        document.getElementById('chatDetailName').innerHTML = `${chat.name} ${chat.verified ? '<i class="fas fa-check-circle text-blue-500 text-sm"></i>' : ''} ${chat.isGroup ? '<i class="fas fa-users text-gray-500 text-xs ml-1"></i>' : ''} ${chat.isChannel ? '<i class="fas fa-bullhorn text-gray-500 text-xs ml-1"></i>' : ''}`;
+        document.getElementById('chatDetailStatus').innerText = chat.isOnline ? "онлайн" : (chat.isGroup ? "группа" : (chat.isChannel ? "канал" : "активен"));
+        const avatarDiv = document.getElementById('chatDetailAvatar'); if(chat.avatarStyle) { const grad = getAvatarGradient(chat.avatarStyle); avatarDiv.className = `w-10 h-10 rounded-full bg-gradient-to-r ${grad} flex items-center justify-center text-white font-semibold`; avatarDiv.innerHTML = chat.name.charAt(0); } else { avatarDiv.innerHTML = chat.avatar || "👥"; avatarDiv.className = "w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white text-xl"; }
+        const linkBtn = document.getElementById('copyInviteLinkBtn'); if(chat.link) { linkBtn.classList.remove('hidden'); linkBtn.onclick = () => { navigator.clipboard.writeText(chat.link); alert("Ссылка скопирована: "+chat.link); }; } else linkBtn.classList.add('hidden');
+        chat.unread = 0; renderChatsList(); scrollToBottom();
     }
     
-    function simulateEchoReply(chatId, userMessage) {
-        const chat = allChats.find(c => c.id === chatId);
-        if(!chat || chat.id === "support") return;
-        const replies = ["Интересно!", "Спасибо за сообщение 😊", "Продолжаем общение!", "✨ Отличная идея!", "Я здесь, чтобы помочь!", userMessage.slice(0, 40) + " — принято."];
-        const randomReply = replies[Math.floor(Math.random() * replies.length)];
-        setTimeout(() => {
-            const existing = allChats.find(c => c.id === chatId);
-            if(!existing) return;
-            const newMsg = {
-                id: Date.now() + "_reply",
-                text: randomReply,
-                sender: chatId,
-                time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-                status: "read"
-            };
-            existing.messages.push(newMsg);
-            existing.lastMessage = randomReply;
-            existing.lastTime = newMsg.time;
-            if(activeChatId === chatId) {
-                renderMessagesForActiveChat();
-                scrollToBottom();
-            } else {
-                existing.unread = (existing.unread || 0) + 1;
-                renderChatsList();
-            }
-        }, 1800);
-    }
+    function renderChatsList() { const container = document.getElementById('chatsListContainer'); if(!container) return; container.innerHTML = ''; allChats.forEach(chat => { const isActive = activeChatId === chat.id; const unreadBadge = chat.unread > 0 ? `<span class="bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">${chat.unread}</span>` : ''; let avatarHtml = ''; if(chat.avatarStyle) { const grad = getAvatarGradient(chat.avatarStyle); avatarHtml = `<div class="w-12 h-12 rounded-full bg-gradient-to-r ${grad} flex items-center justify-center text-white font-bold">${chat.name.charAt(0)}</div>`; } else { avatarHtml = `<div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-2xl">${chat.avatar || "💬"}</div>`; } const div = document.createElement('div'); div.className = `flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive ? 'bg-gray-100 dark:bg-gray-700/80' : ''}`; div.innerHTML = `${avatarHtml}<div class="flex-1"><div class="flex justify-between"><span class="font-semibold">${escapeHtml(chat.name)} ${chat.verified ? '<i class="fas fa-check-circle text-blue-500 text-xs"></i>' : ''}</span><span class="text-xs text-gray-400">${chat.lastTime}</span></div><div class="flex justify-between"><span class="text-sm text-gray-500 truncate max-w-[150px]">${escapeHtml(chat.lastMessage)}</span>${unreadBadge}</div></div>`; div.addEventListener('click', () => { activeChatId = chat.id; renderMessagesForActiveChat(); renderChatsList(); scrollToBottom(); if(window.innerWidth < 768) document.getElementById('appContainer').classList.add('mobile-chat-active'); }); container.appendChild(div); }); }
+    function scrollToBottom() { setTimeout(() => { const area = document.getElementById('messagesAreaDetail'); if(area) area.scrollTop = area.scrollHeight; }, 80); }
+    function applyTheme() { if(darkMode) { document.documentElement.classList.add('dark'); document.getElementById('themeIconMain').className = "fas fa-sun text-xl"; } else { document.documentElement.classList.remove('dark'); document.getElementById('themeIconMain').className = "fas fa-moon text-xl"; } localStorage.setItem("telegram_theme", darkMode ? "dark" : "light"); }
     
-    function sendMessageToActive() {
-        const input = document.getElementById('messageInputDetail');
-        const text = input.value.trim();
-        if(!text || !activeChatId) return;
-        const activeChat = allChats.find(c => c.id === activeChatId);
-        if(!activeChat) return;
-        const timeStr = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        const newMsg = { id: Date.now().toString(), text: text, sender: "me", time: timeStr, status: "sent" };
-        activeChat.messages.push(newMsg);
-        activeChat.lastMessage = text;
-        activeChat.lastTime = timeStr;
-        activeChat.unread = 0;
-        setTimeout(() => {
-            const msgIndex = activeChat.messages.findIndex(m => m.id === newMsg.id);
-            if(msgIndex !== -1) activeChat.messages[msgIndex].status = "read";
-            if(activeChatId === activeChat.id) renderMessagesForActiveChat();
-        }, 400);
-        renderChatsList();
-        renderMessagesForActiveChat();
-        input.value = "";
-        scrollToBottom();
-        if(activeChatId !== "support") simulateEchoReply(activeChatId, text);
-        else {
-            // Support bot ответ
-            setTimeout(() => {
-                const supportChat = allChats.find(c => c.id === "support");
-                if(supportChat && activeChatId === "support") {
-                    const reply = { id: Date.now()+"_sup", text: `Спасибо за сообщение, ${currentUser.username}! Ваш запрос обработан.`, sender: "support", time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), status:"read" };
-                    supportChat.messages.push(reply);
-                    supportChat.lastMessage = reply.text;
-                    if(activeChatId === "support") renderMessagesForActiveChat();
-                    renderChatsList();
-                    scrollToBottom();
-                }
-            }, 1500);
-        }
-    }
+    // Поиск + добавление по юзернейму
+    document.getElementById('searchUserBtn')?.addEventListener('click', () => { const query = document.getElementById('globalSearchInput').value.trim(); if(query){ let name = query.startsWith('@') ? query.substring(1) : query; if(!allChats.some(c => c.name === name)){ const newId = "user_"+ (++nextUserId); const newChat = { id: newId, name: name, avatar: name.charAt(0), avatarStyle: "A2", type: "private", isOnline: true, lastMessage: "Напишите что-нибудь", lastTime: "только что", messages: [], unread: 0, verified: false }; allChats.push(newChat); renderChatsList(); document.getElementById('globalSearchInput').value = ''; alert(`Пользователь ${name} добавлен!`); } else alert("Чат уже существует"); } else alert("Введите username"); });
     
-    function renderMessagesForActiveChat() {
-        const chat = allChats.find(c => c.id === activeChatId);
-        if(!chat) return;
-        const container = document.getElementById('messagesContainerDetail');
-        container.innerHTML = '';
-        const msgs = [...chat.messages].sort((a,b)=>Number(a.id)-Number(b.id));
-        msgs.forEach(msg => {
-            const isMe = msg.sender === "me";
-            const bubble = isMe ? "bg-blue-500 text-white rounded-br-none" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-bl-none";
-            const align = isMe ? "items-end" : "items-start";
-            const statusIcon = isMe ? (msg.status === "read" ? '<i class="fas fa-check-double text-xs text-blue-200 ml-1"></i>' : '<i class="fas fa-check text-xs text-blue-200 ml-1"></i>') : '';
-            const div = document.createElement('div');
-            div.className = `flex flex-col ${align} max-w-[75%] w-fit message-animate`;
-            div.innerHTML = `<div class="${bubble} px-4 py-2 rounded-2xl shadow-sm"><p class="text-sm break-words">${escapeHtml(msg.text)}</p><div class="flex justify-end items-center gap-0.5 mt-1"><span class="text-[10px] ${isMe ? 'text-blue-100' : 'text-gray-500'}">${msg.time}</span>${statusIcon}</div></div>`;
-            container.appendChild(div);
-        });
-        if(msgs.length === 0) container.innerHTML = '<div class="text-center text-gray-400 text-sm py-10">Начните общение ✨</div>';
-        document.getElementById('chatDetailName').innerHTML = `${chat.name} ${chat.verified ? '<i class="fas fa-check-circle text-blue-500 text-sm"></i>' : ''}`;
-        document.getElementById('chatDetailStatus').innerText = chat.isOnline ? "онлайн" : chat.status;
-        const avatarDiv = document.getElementById('chatDetailAvatar');
-        if(chat.avatarStyle) {
-            const grad = getAvatarGradient(chat.avatarStyle);
-            avatarDiv.className = `w-10 h-10 rounded-full bg-gradient-to-r ${grad} flex items-center justify-center text-white font-semibold`;
-            avatarDiv.innerHTML = chat.name.charAt(0);
-        } else {
-            avatarDiv.innerHTML = chat.avatar;
-        }
-        chat.unread = 0;
-        renderChatsList();
-    }
+    // Инициализация
+    document.getElementById('loginBtn').addEventListener('click', () => { let username = document.getElementById('loginName').value.trim(); if(!username) username = "Гость"; currentUser.username = username; const selected = document.querySelector('.avatar-option.border-blue-500'); if(selected) currentUser.avatarStyle = selected.getAttribute('data-avatar'); const fileUp = document.getElementById('avatarUpload').files[0]; if(fileUp){ const reader = new FileReader(); reader.onload = (e) => { currentUser.avatarUrl = e.target.result; updateAllUI(); }; reader.readAsDataURL(fileUp); }
+        allChats = []; const support = { id:"support", name:"Telegram Support", avatar:"TS", avatarStyle:"A1", type:"support", isOnline:true, lastMessage:"Добро пожаловать!", lastTime:"сейчас", messages:[], unread:0, verified:true, link:null }; allChats.push(support); const welcomeMsg = { id:Date.now()+"_w", text: `Приветствуем, ${currentUser.username}! Ваш аккаунт активирован. Вам бесплатно подключен Telegram Premium и зачислено 1000 звёзд ⭐️. Приятного общения!`, sender:"support", time:new Date().toLocaleTimeString([],{hour:'2-digit', minute:'2-digit'}), status:"read" }; support.messages.push(welcomeMsg); support.lastMessage = welcomeMsg.text; activeChatId = "support"; renderChatsList(); renderMessagesForActiveChat(); document.getElementById('authScreen').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden'); updateAllUI(); setTimeout(scrollToBottom, 200); });
+    document.querySelectorAll('.avatar-option').forEach(opt => opt.addEventListener('click', function(){ document.querySelectorAll('.avatar-option').forEach(o=>o.classList.remove('border-blue-500')); this.classList.add('border-blue-500'); }));
     
-    function renderChatsList() {
-        const container = document.getElementById('chatsListContainer');
-        if(!container) return;
-        container.innerHTML = '';
-        allChats.forEach(chat => {
-            const isActive = activeChatId === chat.id;
-            const unreadBadge = chat.unread > 0 ? `<span class="bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">${chat.unread}</span>` : '';
-            const div = document.createElement('div');
-            div.className = `flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive ? 'bg-gray-100 dark:bg-gray-700/80' : ''}`;
-            let avatarHtml = '';
-            if(chat.avatarStyle) {
-                const grad = getAvatarGradient(chat.avatarStyle);
-                avatarHtml = `<div class="w-12 h-12 rounded-full bg-gradient-to-r ${grad} flex items-center justify-center text-white font-bold">${chat.name.charAt(0)}</div>`;
-            } else {
-                avatarHtml = `<div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">${chat.avatar}</div>`;
-            }
-            div.innerHTML = `${avatarHtml}<div class="flex-1"><div class="flex justify-between"><span class="font-semibold">${escapeHtml(chat.name)} ${chat.verified ? '<i class="fas fa-check-circle text-blue-500 text-xs"></i>' : ''}</span><span class="text-xs text-gray-400">${chat.lastTime}</span></div><div class="flex justify-between"><span class="text-sm text-gray-500 truncate max-w-[150px]">${escapeHtml(chat.lastMessage)}</span>${unreadBadge}</div></div>`;
-            div.addEventListener('click', () => {
-                activeChatId = chat.id;
-                renderMessagesForActiveChat();
-                renderChatsList();
-                scrollToBottom();
-                if(window.innerWidth < 768) document.getElementById('appContainer').classList.add('mobile-chat-active');
-            });
-            container.appendChild(div);
-        });
-    }
-    
-    function scrollToBottom() { setTimeout(() => { const area = document.getElementById('messagesAreaDetail'); if(area) area.scrollTop = area.scrollHeight; }, 50); }
-    
-    function applyTheme() {
-        if(darkMode) { document.documentElement.classList.add('dark'); document.body.classList.add('dark'); document.getElementById('themeIconMain').className = "fas fa-sun text-xl"; }
-        else { document.documentElement.classList.remove('dark'); document.body.classList.remove('dark'); document.getElementById('themeIconMain').className = "fas fa-moon text-xl"; }
-        localStorage.setItem("telegram_theme", darkMode ? "dark" : "light");
-    }
-    
-    // ИНИЦИАЛИЗАЦИЯ
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        const nameInput = document.getElementById('loginName');
-        let username = nameInput.value.trim();
-        if(!username) username = "Гость";
-        currentUser.username = username;
-        const selectedAvatar = document.querySelector('.avatar-option.border-blue-500');
-        if(selectedAvatar) currentUser.avatarStyle = selectedAvatar.getAttribute('data-avatar');
-        const fileInput = document.getElementById('avatarUpload');
-        if(fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => { currentUser.avatarUrl = e.target.result; updateAllUserInterfaces(); };
-            reader.readAsDataURL(fileInput.files[0]);
-        }
-        // Создаём чаты: только Telegram Support и потом динамические
-        allChats = [];
-        const supportChat = {
-            id: "support", name: "Telegram Support", avatar: "TS", avatarStyle: "A1", status: "официальный", isOnline: true, lastMessage: "Добро пожаловать!", lastTime: "сейчас", messages: [], unread: 0, verified: true
-        };
-        allChats.push(supportChat);
-        const welcomeMessage = { id: Date.now()+"_w", text: `Приветствуем, ${currentUser.username}! Ваш аккаунт успешно активирован. Вам бесплатно подключен Telegram Premium, а на баланс зачислено 1000 звёзд (⭐️). Приятного пользования!`, sender: "support", time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), status: "read" };
-        supportChat.messages.push(welcomeMessage);
-        supportChat.lastMessage = welcomeMessage.text;
-        activeChatId = "support";
-        renderChatsList();
-        renderMessagesForActiveChat();
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('mainApp').classList.remove('hidden');
-        updateAllUserInterfaces();
-        setTimeout(scrollToBottom, 100);
-    });
-    document.querySelectorAll('.avatar-option').forEach(opt => { opt.addEventListener('click', function(){ document.querySelectorAll('.avatar-option').forEach(o=>o.classList.remove('border-blue-500')); this.classList.add('border-blue-500'); }); });
-    document.getElementById('avatarUpload').addEventListener('change', function(e){ if(e.target.files[0]){ document.querySelectorAll('.avatar-option').forEach(o=>o.classList.remove('border-blue-500')); } });
-    
-    // Поиск и добавление пользователей
-    document.getElementById('searchUserBtn')?.addEventListener('click', () => {
-        const query = document.getElementById('globalSearchInput').value.trim();
-        if(query && query !== "") {
-            const newId = "user_" + (++nextUserId);
-            const newName = query.startsWith('@') ? query.substring(1) : query;
-            if(!allChats.some(c => c.name === newName)) {
-                addNewChat(newId, newName, "A2", true);
-                alert(`Пользователь ${newName} добавлен в чаты!`);
-                document.getElementById('globalSearchInput').value = '';
-            } else alert("Такой чат уже существует");
-        } else alert("Введите имя пользователя");
-    });
-    
-    // Боковое меню бургер
-    const slideMenu = document.getElementById('slideMenu');
-    const overlay = document.getElementById('menuOverlay');
-    function openMenu() { slideMenu.classList.remove('-translate-x-full'); overlay.classList.add('active'); }
-    function closeMenu() { slideMenu.classList.add('-translate-x-full'); overlay.classList.remove('active'); }
-    document.getElementById('burgerMenuBtn').addEventListener('click', openMenu);
-    document.getElementById('closeMenuBtn').addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-    document.getElementById('themeMenuToggle').addEventListener('click', () => { darkMode = !darkMode; applyTheme(); closeMenu(); });
-    document.getElementById('themeToggleMain').addEventListener('click', () => { darkMode = !darkMode; applyTheme(); });
-    
-    // Профиль модалка
-    const profileModal = document.getElementById('profileModal');
-    document.getElementById('profileSettingsBtn').addEventListener('click', () => {
-        document.getElementById('profileNameInput').value = currentUser.username;
-        profileModal.classList.remove('hidden');
-        closeMenu();
-    });
-    document.getElementById('closeProfileBtn').addEventListener('click', () => profileModal.classList.add('hidden'));
-    document.getElementById('saveProfileBtn').addEventListener('click', () => {
-        let newName = document.getElementById('profileNameInput').value.trim();
-        if(newName) currentUser.username = newName;
-        const fileUp = document.getElementById('profileAvatarUpload').files[0];
-        if(fileUp) {
-            const reader = new FileReader();
-            reader.onload = (e) => { currentUser.avatarUrl = e.target.result; updateAllUserInterfaces(); profileModal.classList.add('hidden'); };
-            reader.readAsDataURL(fileUp);
-        } else { updateAllUserInterfaces(); profileModal.classList.add('hidden'); }
-    });
-    
-    document.getElementById('sendMsgBtn').addEventListener('click', sendMessageToActive);
-    document.getElementById('messageInputDetail').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessageToActive(); });
-    document.getElementById('mobileBackToList').addEventListener('click', () => { document.getElementById('appContainer').classList.remove('mobile-chat-active'); });
-    document.getElementById('emojiBtnDetail').addEventListener('click', () => alert("😊 Эмодзи панель в разработке"));
-    // стартовая тема
-    if(darkMode) applyTheme(); else applyTheme();
-</script>
-</body>
-                </html>
+    // Меню и модалки
+    const slideMenu = document.getElementById('slideMenu'), overlay = document.getElementById('menuOverlay'); function openMenu() { slideMenu.classList.remove('-translate-x-full'); overlay.classList.add('active'); } function closeMenu() { slideMenu.classList.add('-translate-x-full'); overlay.classList.remove('active'); }
+    document.getElementById('burgerMenuBtn').onclick = openMenu; document.getElementById('closeMenuBtn').onclick = closeMenu; overlay.onclick = closeMenu; document.getElementById('themeMenuToggle').onclick = () => { darkMode = !darkMode; applyTheme(); closeMenu(); }; document.getElementById('themeToggleMain').onclick = () => { darkMode = !darkMode; applyTheme(); };
+    document.getElementById('profileSettingsBtn').onclick = () => { document.getElementById('profileNameInput').value = currentUser.username; document.getElementById('profileModal').classList.remove('hidden'); closeMenu(); }; document.getElementById('closeProfileBtn').onclick = () => document.getElementById('profileModal').classList.add('hidden'); document.getElementById('saveProfileBtn').onclick = () => { const newName = document.getElementById('profileNameInput').value.trim(); if(newName) currentUser.username = newName; const file = document.getElementById('profileAvatarUpload').files[0]; if(file){ const reader = new FileReader(); reader.onload = (e) => { currentUser.avatarUrl = e.target.result; updateAllUI(); }; reader.readAsDataURL(file); } else updateAllUI(); document.getElementById('profileModal').classList.add('hidden'); };
+    document.getElementById('createGroupBtn').onclick = () => { document.getElementById('groupModalTitle').innerText = "Создать группу"; document.getElementById('groupNameInput').value = ""; document.getElementById('groupDescInput').value = ""; document.getElementById('groupModal').classList.remove('hidden'); closeMenu(); document.getElementById('confirmGroupBtn').onclick = () => { const gName = document.getElementById('groupNameInput').value.trim(); if(gName){ createGroup(gName, document.getElementById('groupDescInput').value); document.getElementById('groupModal').classList.add('hidden'); } else alert("Введите название"); }; }; document.getElementById('createChannelBtn').onclick = () => { document.getElementById('groupModalTitle').innerText

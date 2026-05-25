@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" class="h-full select-none">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -7,771 +7,862 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Кастомные оптимизации производительности и Telegram UI */
+        /* Специфические стили Telegram, анимации и темизация */
         :root {
             --tg-theme-bg: #ffffff;
             --tg-theme-text: #000000;
             --tg-theme-hint: #707579;
-            --tg-theme-link: #248bcf;
-            --tg-theme-primary: #248bcf;
-            --tg-theme-secondary-bg: #f1f1f1;
-            --tg-theme-header-bg: #ffffff;
-            --tg-theme-border: #e0e0e0;
-            --tg-chat-bg: #e7ebf0;
-            --tg-my-message: #eeffde;
-            --tg-peer-message: #ffffff;
+            --tg-theme-link: #2481cc;
+            --tg-theme-button: #2481cc;
+            --tg-theme-button-text: #ffffff;
+            --tg-theme-secondary-bg: #f1f5f9;
+            --tg-theme-border: #e5e7eb;
+            --tg-theme-chat-bg: #e7ebf0;
+            --tg-theme-msg-in: #ffffff;
+            --tg-theme-msg-out: #eeffde;
+            --tg-theme-msg-out-ticks: #4fae4e;
         }
 
-        .dark {
+        .dark-mode {
             --tg-theme-bg: #182533;
             --tg-theme-text: #ffffff;
-            --tg-theme-hint: #7e8b99;
+            --tg-theme-hint: #7e8b98;
             --tg-theme-link: #5288c1;
-            --tg-theme-primary: #5288c1;
-            --tg-theme-secondary-bg: #101921;
-            --tg-theme-header-bg: #1f2c3a;
-            --tg-theme-border: #101921;
-            --tg-chat-bg: #0f1721;
-            --tg-my-message: #2b5278;
-            --tg-peer-message: #182533;
+            --tg-theme-button: #5288c1;
+            --tg-theme-button-text: #ffffff;
+            --tg-theme-secondary-bg: #0f172a;
+            --tg-theme-border: #243447;
+            --tg-theme-chat-bg: #0f172a;
+            --tg-theme-msg-in: #182533;
+            --tg-theme-msg-out: #2b5278;
+            --tg-theme-msg-out-ticks: #4fae4e;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-bg);
             color: var(--tg-theme-text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
-            transition: background-color 0.25s ease, color 0.25s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
             -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* Оптимизация скролла */
-        .scrollable {
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        .scrollable::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Паттерн фона чата Telegram */
+        /* Кастомный паттерн фона чата Telegram */
         .chat-background {
-            background-color: var(--tg-chat-bg);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23b4c3d4' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm1-61c3.16 0 5.72-2.56 5.72-5.72 0-3.16-2.56-5.72-5.72-5.72-3.16 0-5.72 2.56-5.72 5.72 0 3.16 2.56 5.72 5.72 5.72zm45 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM9 57c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm52 21c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM23 44c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm5 30c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM44 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm21-45c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-40 3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm35 32c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM10 93c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm76-57c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM53 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-35 4c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM3 38c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm8 48c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm64-28c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-5-49c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-49 4c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm60 17c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM31 50c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm36 29c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM21 15c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm53 56c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm-4-48c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm-48 54c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm36-39c0-3.16-2.56-5.72-5.72-5.72-3.16 0-5.72 2.56-5.72 5.72 0 3.16 2.56 5.72 5.72 5.72 3.16 0 5.72-2.56 5.72-5.72zm-22 33c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm42-4c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm-19-46c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm19 59c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zM15 76c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm61-46c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zM46 12c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm22 62c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm-56-8c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm70-42c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm-46 54c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm36-54c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-60 18c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm66 52c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-27-37c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-12 18c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm29 19c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-53-37c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm64-24c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-50 7c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm43 47c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM24 82c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm51-54c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM10 24c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm70 48c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm-4-53c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm-58 63c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm36-39c0-3.866-3.134-7-7-7s-7 3.134-7 7 3.134 7 7 7 7-3.134 7-7z'/%3E%3C/g%3E%3C/svg%3E\");
+            background-color: var(--tg-theme-chat-bg);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%239bc3e2' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        .dark .chat-background {
-            background-color: var(--tg-chat-bg);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%230b1118' fill-opacity='0.6'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm1-61c3.16 0 5.72-2.56 5.72-5.72 0-3.16-2.56-5.72-5.72-5.72-3.16 0-5.72 2.56-5.72 5.72 0 3.16 2.56 5.72 5.72 5.72zm45 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM9 57c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm52 21c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM23 44c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm5 30c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM44 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm21-45c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-40 3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm35 32c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM10 93c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm76-57c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM53 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-35 4c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM3 38c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm8 48c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm64-28c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-5-49c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-49 4c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm60 17c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM31 50c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm36 29c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM21 15c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm53 56c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm-4-48c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm-48 54c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm36-39c0-3.16-2.56-5.72-5.72-5.72-3.16 0-5.72 2.56-5.72 5.72 0 3.16 2.56 5.72 5.72 5.72 3.16 0 5.72-2.56 5.72-5.72zm-22 33c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm42-4c0-2.21-1.79-4-4-4s-4 1.79-4 4 1.79 4 4 4 4-1.79 4-4zm-19-46c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm19 59c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zM15 76c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm61-46c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zM46 12c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm22 62c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm-56-8c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm70-42c0-1.105-.895-2-2-2s-2 .895-2 2 .895 2 2 2 2-.895 2-2zm-46 54c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm36-54c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-60 18c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm66 52c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-27-37c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-12 18c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm29 19c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-53-37c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm64-24c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-50 7c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm43 47c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM24 82c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm51-54c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM10 24c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm70 48c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm-4-53c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm-58 63c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5 5-2.24 5-5zm36-39c0-3.866-3.134-7-7-7s-7 3.134-7 7 3.134 7 7 7 7-3.134 7-7z'/%3E%3C/g%3E%3C/svg%3E\");
+        .dark-mode .chat-background {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23101921' fill-opacity='0.6'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Премиум звезда анимация градиента */
-        .premium-star {
-            background: linear-gradient(45deg, #007aff, #00c6ff, #007aff);
-            background-size: 200% 200%;
-            animation: gradientMove 3s ease infinite;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Плавные переходы для темной темы */
+        .theme-transition {
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Индивидуальный скроллбар для списков */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 2px;
+        }
+        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Системные стили модалок и переключателей */
-        .border-tg { border-color: var(--tg-theme-border); }
-        .bg-tg { background-color: var(--tg-theme-bg); }
-        .bg-tg-sec { background-color: var(--tg-theme-secondary-bg); }
-        .text-tg-hint { color: var(--tg-theme-hint); }
-
-        /* Всплывашка тостов */
-        #toast {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: translate(-50%, 20px);
+        /* Изоляция слоев для предотвращения мерцания рендеринга на GPU */
+        .gpu-accelerated {
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
-        #toast.show {
-            opacity: 1;
-            transform: translate(-50%, 0);
+
+        /* Премиум анимация сияния звезды */
+        @keyframes premium-glow {
+            0% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
+            50% { filter: drop-shadow(0 0 8px #60a5fa); text-shadow: 0 0 10px #60a5fa; }
+            100% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
+        }
+        .premium-star-anim {
+            animation: premium-glow 3s infinite ease-in-out;
+            color: #38bdf8;
         }
     </style>
 </head>
-<body class="h-full w-full flex flex-col justify-between antialiased">
+<body class="gpu-accelerated theme-transition select-none">
 
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-tg flex flex-col justify-between p-6 hidden">
-        <div id="auth-step-1" class="w-full flex flex-col space-y-6 flex-1 justify-center max-w-md mx-auto hidden">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold mb-2">Номер телефона</h2>
-                <p class="text-sm text-tg-hint">Проверьте код страны и введите свой номер телефона.</p>
+    <div id="auth-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden">
+        <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Номер телефона</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Проверьте код страны и введите свой номер телефона.</p>
+                
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-secondary-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Страна</label>
+                        <select class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-medium">
+                            <option value="KZ">Казахстан (+7)</option>
+                            <option value="RU">Россия (+7)</option>
+                            <option value="US">США (+1)</option>
+                            <option value="UZ">Узбекистан (+998)</option>
+                        </select>
+                    </div>
+
+                    <div class="border-2 border-[#2481cc] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[#2481cc] block mb-1">Номер телефона</label>
+                        <input type="tel" id="auth-phone-input" value="+" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-lg font-medium tracking-wide" placeholder="+7 707 123 4567">
+                    </div>
+
+                    <label class="flex items-center space-x-3 pt-2 cursor-pointer">
+                        <input type="checkbox" id="auth-sync-contacts" checked class="w-5 height-5 rounded border-[var(--tg-theme-border)] text-[#2481cc] focus:ring-0">
+                        <span class="text-sm text-[var(--tg-theme-text)]">Синхронизировать контакты</span>
+                    </label>
+                </div>
             </div>
-            <div class="space-y-4">
-                <div class="w-full border-b-2 border-tg py-2">
-                    <select id="country-select" class="w-full bg-transparent focus:outline-none text-lg">
-                        <option value="KZ">Казахстан (+7)</option>
-                        <option value="RU">Россия (+7)</option>
-                        <option value="US">США (+1)</option>
-                        <option value="UZ">Узбекистан (+998)</option>
-                    </select>
-                </div>
-                <div class="w-full border-b-2 border-blue-500 py-2 flex items-center">
-                    <span class="text-lg font-semibold mr-1">+</span>
-                    <input type="telephone" id="phone-input" placeholder="7771234567" class="w-full bg-transparent text-lg focus:outline-none font-semibold">
-                </div>
-                <div class="flex items-center space-x-3 pt-2">
-                    <input type="checkbox" id="sync-contacts" checked class="w-5 height-5 accent-blue-500">
-                    <label for="sync-contacts" class="text-sm text-tg-hint select-none">Синхронизировать контакты</label>
-                </div>
-            </div>
-            <div class="flex justify-end pt-6">
-                <button id="btn-next-step-1" class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors">
-                    <i class="fas fa-arrow-right text-xl"></i>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
+                <button id="btn-step-1-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </div>
 
-        <div id="auth-step-2" class="w-full flex flex-col space-y-6 flex-1 justify-center max-w-md mx-auto hidden">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold mb-2">Создайте облачный пароль</h2>
-                <p class="text-sm text-tg-hint">Двухэтапная аутентификация для защиты вашего аккаунта.</p>
-            </div>
-            <div class="space-y-4">
-                <div class="w-full border-b-2 border-tg py-2">
-                    <input type="password" id="password-1" placeholder="Введите пароль" class="w-full bg-transparent text-lg focus:outline-none">
+        <div id="auth-step-2" class="flex flex-col flex-1 p-6 justify-between hidden">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Создайте облачный пароль</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Двухэтапный пароль защитит ваш аккаунт мессенджера.</p>
+                
+                <div class="space-y-4">
+                    <div id="wrapper-pass1" class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Введите пароль</label>
+                        <input type="password" id="auth-pass" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
+                    </div>
+                    <div id="wrapper-pass2" class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Повторите пароль</label>
+                        <input type="password" id="auth-pass-confirm" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
+                    </div>
+                    <p id="error-step-2" class="text-xs text-red-500 font-medium hidden"></p>
                 </div>
-                <div class="w-full border-b-2 border-tg py-2">
-                    <input type="password" id="password-2" placeholder="Повторите пароль" class="w-full bg-transparent text-lg focus:outline-none">
-                </div>
-                <p id="password-error" class="text-xs text-red-500 hidden font-medium"></p>
             </div>
-            <div class="flex justify-between items-center pt-6">
-                <button id="btn-back-step-2" class="text-blue-500 font-semibold focus:outline-none">Назад</button>
-                <button id="btn-next-step-2" class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors">
-                    <i class="fas fa-arrow-right text-xl"></i>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
+                <button id="btn-step-2-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
+                <button id="btn-step-2-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
         </div>
 
-        <div id="auth-step-3" class="w-full flex flex-col space-y-6 flex-1 justify-center max-w-md mx-auto hidden">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold mb-2">О себе</h2>
-                <p class="text-sm text-tg-hint">Введите ваше имя и выберите уникальный юзернейм.</p>
-            </div>
-            <div class="space-y-4">
-                <div class="w-full border-b-2 border-tg py-2">
-                    <input type="text" id="profile-name" placeholder="Ваше Имя (Обязательно)" class="w-full bg-transparent text-lg focus:outline-none">
+        <div id="auth-step-3" class="flex flex-col flex-1 p-6 justify-between hidden">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">О себе</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите ваше имя и выберите свободный юзернейм.</p>
+                
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваше Имя</label>
+                        <input type="text" id="auth-name" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="Например: Даулет">
+                    </div>
+                    <div id="wrapper-username" class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Юзернейм</label>
+                        <input type="text" id="auth-username" value="@" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-mono" placeholder="@username">
+                    </div>
+                    <p id="error-step-3" class="text-xs text-red-500 font-medium hidden"></p>
                 </div>
-                <div class="w-full border-b-2 border-tg py-2 flex items-center">
-                    <span class="text-lg text-tg-hint mr-0.5">@</span>
-                    <input type="text" id="profile-username" placeholder="username" class="w-full bg-transparent text-lg focus:outline-none">
-                </div>
-                <p id="username-error" class="text-xs text-red-500 hidden font-medium"></p>
             </div>
-            <div class="flex justify-end pt-6">
-                <button id="btn-complete-auth" class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors">
-                    <i class="fas fa-check text-xl"></i>
+
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
+                <button id="btn-step-3-finish" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                    <i class="fas fa-check"></i>
                 </button>
             </div>
         </div>
     </div>
 
-
-    <div id="main-app" class="w-full h-full flex flex-col justify-between hidden relative">
+    <div id="app-layer" class="fixed inset-0 z-10 flex flex-col bg-[var(--tg-theme-bg)] hidden">
         
-        <header id="main-header" class="w-full h-14 px-4 border-b border-tg flex items-center justify-between sticky top-0 bg-tg z-40 shrink-0">
-            <h1 id="header-title" class="text-xl font-bold tracking-wide">Telegram</h1>
-            <div class="flex items-center space-x-5">
-                <button id="header-search-trigger" class="focus:outline-none hidden"><i class="fas fa-search text-lg"></i></button>
-                <div class="relative inline-block text-left">
-                    <button id="header-menu-btn" class="focus:outline-none p-1"><i class="fas fa-ellipsis-v text-lg"></i></button>
-                    <div id="header-dropdown" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-tg-sec border border-tg ring-1 ring-black ring-opacity-5 hidden z-50">
-                        <div class="py-1">
-                            <button id="drop-night-mode" class="w-full text-left px-4 py-2 text-sm hover:bg-tg flex items-center justify-between">
-                                <span>Ночной режим</span>
-                                <i class="fas fa-moon"></i>
-                            </button>
-                            <button id="drop-clear-cache" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-tg flex items-center justify-between">
-                                <span>Выйти из аккаунта</span>
-                                <i class="fas fa-sign-out-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <main class="w-full flex-1 scrollable pb-16 relative bg-tg">
+        <div id="main-content" class="flex-1 overflow-hidden relative">
             
-            <section id="view-chats" class="w-full flex flex-col hidden">
-                <div class="p-2 border-b border-tg bg-tg sticky top-0 z-30">
-                    <div class="w-full bg-tg-sec rounded-xl px-3 py-2 flex items-center space-x-2 border border-tg">
-                        <i class="fas fa-search text-tg-hint"></i>
-                        <input type="text" id="chat-search-input" placeholder="Поиск чатов или глобальных юзеров..." class="w-full bg-transparent focus:outline-none text-sm">
-                        <button id="chat-search-clear" class="focus:outline-none text-tg-hint hidden"><i class="fas fa-times-circle"></i></button>
+            <div id="tab-pane-chats" class="absolute inset-0 flex flex-col view-pane transition-opacity duration-200">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center justify-between bg-[var(--tg-theme-bg)] sticky top-0 z-20">
+                    <h1 class="text-xl font-bold tracking-tight text-[var(--tg-theme-text)]">Telegram</h1>
+                    <div class="flex items-center space-x-4">
+                        <button id="btn-main-menu" class="text-[var(--tg-theme-hint)] active:scale-90 transition-transform p-1">
+                            <i class="fas fa-ellipsis-v text-lg"></i>
+                        </button>
                     </div>
-                </div>
-                <div id="chats-container" class="w-full divide-y divide-tg">
-                    </div>
-            </section>
+                </header>
 
-            <section id="view-contacts" class="w-full flex flex-col p-4 hidden space-y-4">
-                <h2 class="text-xl font-bold">Контакты</h2>
-                <div class="w-full bg-tg-sec rounded-xl p-3 border border-tg flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">ПД</div>
-                    <div>
-                        <div class="font-semibold">Павел Дуров</div>
-                        <div class="text-xs text-green-500">в сети</div>
+                <div class="p-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)]">
+                    <div class="relative flex items-center bg-[var(--tg-theme-secondary-bg)] rounded-xl px-3 py-2">
+                        <i class="fas fa-search text-[var(--tg-theme-hint)] mr-3"></i>
+                        <input type="text" id="chat-search-input" placeholder="Поиск чатов или юзернеймов..." class="w-full bg-transparent border-none outline-none text-sm text-[var(--tg-theme-text)]">
                     </div>
                 </div>
-                <div class="w-full bg-tg-sec rounded-xl p-3 border border-tg flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">TS</div>
-                    <div>
-                        <div class="font-semibold">Telegram Support</div>
-                        <div class="text-xs text-tg-hint">официальная поддержка</div>
-                    </div>
-                </div>
-                <div id="custom-contacts-list" class="w-full flex flex-col space-y-3">
-                    </div>
-            </section>
 
-            <section id="view-settings" class="w-full flex flex-col p-4 hidden space-y-6">
-                <h2 class="text-xl font-bold">Настройки</h2>
-                
-                <div class="bg-tg-sec rounded-2xl p-4 border border-tg flex flex-col items-center space-y-4">
-                    <div class="relative w-24 h-24">
-                        <div id="settings-avatar" class="w-full h-full rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 text-white text-3xl font-bold flex items-center justify-center overflow-hidden">
-                            U
+                <div id="chats-list-container" class="flex-1 overflow-y-auto custom-scrollbar pb-24">
+                    </div>
+
+                <button id="btn-fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#2481cc] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30">
+                    <i class="fas fa-pencil-alt text-lg"></i>
+                </button>
+            </div>
+
+            <div id="tab-pane-contacts" class="absolute inset-0 flex flex-col view-pane hidden transition-opacity duration-200">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
+                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Контакты</h1>
+                </header>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4" id="contacts-list-container">
+                    </div>
+            </div>
+
+            <div id="tab-pane-settings" class="absolute inset-0 flex flex-col view-pane hidden transition-opacity duration-200">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
+                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Настройки</h1>
+                </header>
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-[var(--tg-theme-secondary-bg)]">
+                    <div class="bg-[var(--tg-theme-bg)] p-4 flex items-center space-x-4 border-b border-[var(--tg-theme-border)]">
+                        <div class="relative">
+                            <img id="settings-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full object-cover hidden">
+                            <div id="settings-avatar-placeholder" class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl"></div>
+                            <label class="absolute bottom-0 right-0 w-6 h-6 bg-[#2481cc] text-white rounded-full flex items-center justify-center text-xs cursor-pointer border-2 border-[var(--tg-theme-bg)]">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+                            </label>
                         </div>
-                        <label for="avatar-upload" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-500 border-2 border-tg flex items-center justify-center cursor-pointer text-white text-xs">
-                            <i class="fas fa-camera"></i>
-                        </label>
-                        <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h3 id="settings-name-display" class="font-bold text-lg text-[var(--tg-theme-text)]"></h3>
+                                <i class="fas fa-star premium-star-anim text-sm" title="Telegram Premium"></i>
+                            </div>
+                            <p id="settings-phone-display" class="text-sm text-[var(--tg-theme-hint)]"></p>
+                            <p id="settings-username-display" class="text-sm text-[#2481cc] font-mono"></p>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <h3 id="settings-name" class="text-lg font-bold flex items-center justify-center space-x-1">
-                            <span>Имя пользователя</span>
-                        </h3>
-                        <p id="settings-username" class="text-sm text-tg-hint">@username</p>
-                        <p id="settings-phone" class="text-xs text-tg-hint mt-1">+7 777 123 4567</p>
-                    </div>
-                </div>
 
-                <div class="bg-tg-sec rounded-2xl border border-tg divide-y divide-tg">
-                    <div class="p-4 flex items-center justify-between">
+                    <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 flex items-center justify-between border-y border-[var(--tg-theme-border)]">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-moon text-purple-500 text-lg"></i>
-                            <span class="font-medium">Ночной режим</span>
+                            <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-lg">
+                                ⭐️
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-[var(--tg-theme-text)]">Telegram Stars</h4>
+                                <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс аккаунта</p>
+                            </div>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-dark-mode" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
+                        <span id="settings-stars-balance" class="font-bold text-amber-500 text-lg">1000 ⭐️</span>
                     </div>
-                    <div class="p-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-star text-amber-500 text-lg"></i>
-                            <span class="font-medium">Статус подписки</span>
-                        </div>
-                        <span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 font-bold rounded-full">Premium Forever</span>
-                    </div>
-                </div>
-            </section>
 
-            <section id="view-profile" class="w-full flex flex-col p-4 hidden space-y-6">
-                <h2 class="text-xl font-bold">Мой профиль</h2>
-                
-                <div class="bg-tg-sec rounded-2xl p-6 border border-tg flex flex-col items-center text-center space-y-4">
-                    <div id="profile-avatar-big" class="w-28 h-28 rounded-full bg-blue-500 text-white text-4xl font-bold flex items-center justify-center overflow-hidden shadow-inner">
-                        U
-                    </div>
-                    <div>
-                        <h2 id="profile-display-name" class="text-xl font-bold flex items-center justify-center gap-1.5">
-                            <span>Имя</span>
-                            <i class="fas fa-star premium-star text-sm"></i>
-                        </h2>
-                        <p id="profile-display-username" class="text-sm text-tg-hint">@username</p>
-                    </div>
-                    
-                    <div class="w-full grid grid-cols-2 gap-3 pt-2">
-                        <div class="bg-tg border border-tg p-3 rounded-xl flex flex-col items-center">
-                            <span class="text-xs text-tg-hint font-medium">Баланс звезд</span>
-                            <span class="text-lg font-bold text-amber-500 flex items-center space-x-1 mt-0.5">
-                                <span>1000</span>
-                                <i class="fas fa-star"></i>
-                            </span>
-                        </div>
-                        <div class="bg-tg border border-tg p-3 rounded-xl flex flex-col items-center justify-center">
-                            <span class="text-xs text-tg-hint font-medium">Статус</span>
-                            <span class="text-sm font-bold text-blue-500 mt-0.5">Владелец</span>
+                    <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 border-y border-[var(--tg-theme-border)] space-y-4">
+                        <h4 class="text-xs font-semibold text-[#2481cc] uppercase tracking-wider">Настройки интерфейса</h4>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-moon text-lg text-[var(--tg-theme-hint)]"></i>
+                                <span class="text-[var(--tg-theme-text)] font-medium">Ночной режим</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-dark-mode" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2481cc]"></div>
+                            </label>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-tg-sec rounded-2xl p-4 border border-tg space-y-3">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-tg-hint">Возможности аккаунта</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex items-center space-x-2">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Управление личными ботами и сессиями</span>
-                        </li>
-                        <li class="flex items-center space-x-2">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Создание интерактивных групп и каналов</span>
-                        </li>
-                        <li class="flex items-center space-x-2">
-                            <i class="fas fa-check-circle text-green-500"></i>
-                            <span>Личный ИИ-ассистент во всех приватных чатах</span>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-
-        </main>
-
-        <button id="fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-2xl z-40 hover:bg-blue-600 transition-transform active:scale-95">
-            <i class="fas fa-pencil-alt text-xl"></i>
-        </button>
-
-        <div id="fab-menu" class="fixed bottom-36 right-6 bg-tg-sec border border-tg rounded-xl shadow-2xl p-2 hidden flex-col space-y-1 z-40 w-48">
-            <button id="menu-create-group" class="w-full text-left px-3 py-2 text-sm font-medium hover:bg-tg rounded-lg flex items-center space-x-2">
-                <i class="fas fa-users text-blue-500"></i>
-                <span>Создать группу</span>
-            </button>
-            <button id="menu-create-channel" class="w-full text-left px-3 py-2 text-sm font-medium hover:bg-tg rounded-lg flex items-center space-x-2">
-                <i class="fas fa-bullhorn text-meganta-500 text-purple-500"></i>
-                <span>Создать канал</span>
-            </button>
-        </div>
-
-        <div id="modal-container" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
-            <div class="bg-tg w-full max-w-sm rounded-2xl p-5 border border-tg space-y-4 shadow-2xl">
-                <h3 id="modal-title" class="text-lg font-bold">Создание</h3>
-                <input type="text" id="modal-input" placeholder="Введите название..." class="w-full bg-tg-sec border border-tg rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-sm">
-                <div class="flex justify-end space-x-3 text-sm font-semibold">
-                    <button id="modal-cancel" class="px-4 py-2 text-tg-hint hover:bg-tg-sec rounded-lg">Отмена</button>
-                    <button id="modal-submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Создать</button>
+                    <div class="mt-8 px-4">
+                        <button id="btn-logout" class="w-full bg-red-500/10 text-red-500 hover:bg-red-500/20 py-3 rounded-xl font-medium transition-colors text-center">
+                            Выйти из аккаунта
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <div id="tab-pane-profile" class="absolute inset-0 flex flex-col view-pane hidden transition-opacity duration-200">
+                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
+                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Мой Профиль</h1>
+                </header>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 flex flex-col items-center">
+                    <div class="relative w-32 h-32">
+                        <img id="profile-pane-avatar" src="" alt="Avatar" class="w-32 h-32 rounded-full object-cover hidden shadow-md">
+                        <div id="profile-pane-avatar-placeholder" class="w-32 h-32 rounded-full flex items-center justify-center text-white font-bold text-4xl shadow-md"></div>
+                        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs border-4 border-[var(--tg-theme-bg)]">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <div class="text-center space-y-1">
+                        <div class="flex items-center justify-center space-x-2">
+                            <h2 id="profile-pane-name" class="text-2xl font-bold text-[var(--tg-theme-text)]"></h2>
+                            <i class="fas fa-star premium-star-anim text-lg"></i>
+                        </div>
+                        <p class="text-sm bg-blue-500/10 text-[#2481cc] px-3 py-1 rounded-full inline-block font-semibold">
+                            Telegram Premium Действует
+                        </p>
+                    </div>
+
+                    <div class="w-full border-t border-[var(--tg-theme-border)] pt-4 space-y-4">
+                        <div>
+                            <label class="text-xs text-[var(--tg-theme-hint)]">Номер телефона</label>
+                            <p id="profile-pane-phone" class="text-base font-medium text-[var(--tg-theme-text)]"></p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-[var(--tg-theme-hint)]">Имя пользователя</label>
+                            <p id="profile-pane-username" class="text-base font-mono font-medium text-[#2481cc]"></p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-[var(--tg-theme-hint)]">О себе</label>
+                            <p class="text-sm text-[var(--tg-theme-text)]">Аккаунт разработчика Telegram Mobile SPA.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <nav class="fixed bottom-0 left-0 right-0 h-16 bg-tg border-t border-tg flex items-center justify-around z-40 shrink-0 select-none pb-safe">
-            <button data-target="view-chats" class="nav-btn flex flex-col items-center justify-center flex-1 h-full text-blue-500 relative">
+        <nav class="h-16 border-t border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] fixed bottom-0 left-0 right-0 flex items-center justify-around z-40 px-2 select-none">
+            <button data-tab="chats" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[#2481cc]">
                 <div class="relative">
                     <i class="fas fa-comment-alt text-xl"></i>
-                    <span id="chats-badge" class="absolute -top-1.5 -right-3.5 bg-blue-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-tg">32</span>
+                    <span id="chats-global-badge" class="absolute -top-2 -right-3.5 bg-[#2481cc] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-[var(--tg-theme-bg)]">32</span>
                 </div>
-                <span class="text-[11px] mt-1 font-medium">Чаты</span>
+                <span class="text-[11px] font-medium mt-1">Чаты</span>
             </button>
-            <button data-target="view-contacts" class="nav-btn flex flex-col items-center justify-center flex-1 h-full text-tg-hint">
+            <button data-tab="contacts" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
                 <i class="fas fa-address-book text-xl"></i>
-                <span class="text-[11px] mt-1 font-medium">Контакты</span>
+                <span class="text-[11px] font-medium mt-1">Контакты</span>
             </button>
-            <button data-target="view-settings" class="nav-btn flex flex-col items-center justify-center flex-1 h-full text-tg-hint">
+            <button data-tab="settings" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
                 <i class="fas fa-cog text-xl"></i>
-                <span class="text-[11px] mt-1 font-medium">Настройки</span>
+                <span class="text-[11px] font-medium mt-1">Настройки</span>
             </button>
-            <button data-target="view-profile" class="nav-btn flex flex-col items-center justify-center flex-1 h-full text-tg-hint">
-                <i class="fas fa-user-circle text-xl"></i>
-                <span class="text-[11px] mt-1 font-medium">Профиль</span>
+            <button data-tab="profile" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-[11px] font-medium mt-1">Профиль</span>
             </button>
         </nav>
     </div>
 
-
-    <div id="chat-window" class="fixed inset-0 z-50 bg-tg flex flex-col justify-between hidden">
-        <header class="w-full h-14 px-3 border-b border-tg flex items-center justify-between bg-tg sticky top-0 z-40 shrink-0">
+    <div id="chat-window-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden transform translate-x-full transition-transform duration-200">
+        <header class="h-14 px-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] flex items-center justify-between sticky top-0 z-20">
             <div class="flex items-center space-x-2">
-                <button id="chat-back-btn" class="p-2 -ml-2 text-blue-500 text-lg focus:outline-none active:scale-95 transition-transform">
-                    <i class="fas fa-arrow-left"></i>
+                <button id="btn-close-chat" class="w-8 h-8 flex items-center justify-center text-[#2481cc] active:scale-90 transition-transform">
+                    <i class="fas fa-arrow-left text-lg"></i>
                 </button>
-                <div id="chat-window-avatar" class="w-10 h-10 rounded-full text-white font-bold text-sm flex items-center justify-center overflow-hidden">
-                    ?
-                </div>
-                <div class="leading-tight">
-                    <h2 id="chat-window-title" class="font-bold text-sm flex items-center space-x-1">
-                        <span>Имя чата</span>
-                    </h2>
-                    <p id="chat-window-status" class="text-xs text-tg-hint">в сети</p>
+                <div id="chat-window-avatar-placeholder" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"></div>
+                <img id="chat-window-avatar-img" src="" alt="" class="w-10 h-10 rounded-full object-cover hidden">
+                <div class="flex flex-col" id="chat-header-info-click">
+                    <span id="chat-window-title" class="font-bold text-sm text-[var(--tg-theme-text)] truncate max-w-[180px]">Чат</span>
+                    <span id="chat-window-status" class="text-xs text-[var(--tg-theme-hint)]">не в сети</span>
                 </div>
             </div>
-            <div>
-                <button class="p-2 text-tg-hint"><i class="fas fa-search"></i></button>
+            <div class="flex items-center space-x-3 text-[var(--tg-theme-hint)]">
+                <i class="fas fa-phone active:scale-95"></i>
+                <i class="fas fa-ellipsis-v active:scale-95 px-1"></i>
             </div>
         </header>
 
-        <div id="chat-messages-box" class="flex-1 chat-background scrollable p-4 flex flex-col space-y-2.5">
+        <div id="chat-history-flow" class="flex-1 overflow-y-auto custom-scrollbar chat-background p-4 space-y-2">
             </div>
 
-        <footer class="w-full p-2 bg-tg border-t border-tg flex items-end space-x-2 relative z-40 pb-safe">
-            <button class="p-2.5 text-tg-hint focus:outline-none"><i class="far fa-paperclip text-xl"></i></button>
-            <div class="flex-1 bg-tg-sec border border-tg rounded-2xl px-3 py-1.5 flex items-end">
-                <textarea id="chat-input" rows="1" placeholder="Cообщение..." class="w-full bg-transparent focus:outline-none text-sm resize-none max-h-24 scrollable font-normal leading-tight py-1"></textarea>
-                <button class="p-1 text-tg-hint focus:outline-none ml-1"><i class="far fa-smile text-xl"></i></button>
-            </div>
-            <button id="chat-send-btn" class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md focus:outline-none shrink-0 active:scale-95 transition-transform">
-                <i class="fas fa-arrow-up text-base"></i>
+        <div class="p-2 bg-[var(--tg-theme-bg)] border-t border-[var(--tg-theme-border)] flex items-end space-x-2 sticky bottom-0 z-20">
+            <button class="w-10 h-10 flex items-center justify-center text-[var(--tg-theme-hint)] active:scale-90">
+                <i class="fas fa-paperclip text-lg"></i>
             </button>
-        </footer>
+            <div class="flex-1 bg-[var(--tg-theme-secondary-bg)] rounded-2xl px-3 py-2 flex items-end max-h-32">
+                <textarea id="chat-msg-input" rows="1" class="flex-1 bg-transparent border-none outline-none resize-none text-sm text-[var(--tg-theme-text)] max-h-24 py-0.5 custom-scrollbar" placeholder="Сообщение"></textarea>
+                <button class="text-[var(--tg-theme-hint)] px-1 active:scale-90">
+                    <i class="far fa-smile text-lg"></i>
+                </button>
+            </div>
+            <button id="btn-send-message" class="w-10 h-10 rounded-full bg-[#2481cc] text-white flex items-center justify-center active:scale-90 transition-transform">
+                <i class="fas fa-paper-plane text-sm"></i>
+            </button>
+        </div>
     </div>
 
+    <div id="modal-create-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden p-4">
+        <div class="bg-[var(--tg-theme-bg)] rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-xl">
+            <h3 id="modal-create-title" class="text-lg font-bold text-[var(--tg-theme-text)]">Создать</h3>
+            <div>
+                <label id="modal-input-label" class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название</label>
+                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none focus:border-[#2481cc]" placeholder="Введите имя...">
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button id="btn-modal-cancel" class="px-4 py-2 text-sm font-medium text-[var(--tg-theme-hint)]">Отмена</button>
+                <button id="btn-modal-submit" class="px-5 py-2 text-sm font-medium bg-[#2481cc] text-white rounded-xl active:scale-95">Создать</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl opacity-0 pointer-events-none z-50 font-medium tracking-wide">
+    <div id="toast-notification" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-md font-medium tracking-wide pointer-events-none opacity-0 transition-opacity duration-300">
         Ссылка скопирована в буфер обмена
     </div>
 
+    <div id="popup-menu-main" class="fixed top-12 right-4 z-40 bg-[var(--tg-theme-bg)] border border-[var(--tg-theme-border)] rounded-xl shadow-xl w-48 py-1 text-sm hidden">
+        <button id="pop-create-group" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
+            <i class="fas fa-users text-[var(--tg-theme-hint)] w-5"></i> <span>Создать группу</span>
+        </button>
+        <button id="pop-create-channel" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
+            <i class="fas fa-bullhorn text-[var(--tg-theme-hint)] w-5"></i> <span>Создать канал</span>
+        </button>
+        <button id="pop-clear-cache" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
+            <i class="fas fa-trash text-[var(--tg-theme-hint)] w-5"></i> <span>Очистить чаты</span>
+        </button>
+    </div>
 
     <script>
         (function() {
-            // Глобальное хранилище состояния приложения (State)
-            const state = {
+            // Глобальное хранилище состояния SPA
+            let state = {
                 user: null,
                 chats: [],
                 activeChatId: null,
-                isDarkMode: false,
-                reservedUsernames: ['@admin', '@telegram', '@support', '@durov', '@bot', '@crypto'],
-                modalAction: null, // 'group' или 'channel'
-                
-                // 30+ Реалистичных ответов для ИИ-собеседника на русском и казахском языках
-                aiReplies: [
-                    "Привет! Как дела?",
-                    "Не могу сейчас говорить, позже наберу.",
-                    "Круто, а ты что делаешь?",
-                    "Салам, не хабар?",
-                    "Я тут, слушаю тебя.",
-                    "Мәссаған, шынымен бе?!",
-                    "Давай завтра обсудим, сегодня занят сильно.",
-                    "Ой, я даже не знаю что ответить на это)",
-                    "Жақсы, өзің қалайсың?",
-                    "Хахаха, реально? Капец ты выдал конечно.",
-                    "Понятно. Слушай, а у тебя есть Telegram Premium?",
-                    "Керемет! Маған ұнады.",
-                    "Я на созвоне, напишу через полчаса.",
-                    "Ты видел новый дизайн? Просто пушка!",
-                    "Калайсын? Не истеп жатырсын?",
-                    "Да, полностью согласен с тобой.",
-                    "Сәлем! Иә, бәрі дұрыс.",
-                    "Осыны күткен едім!",
-                    "Что думаешь по поводу Дурова?",
-                    "Мм, ясно.",
-                    "Ничего себе новости!",
-                    "Буду через 10 минут, жди.",
-                    "Ахаха, күлкілі екен.",
-                    "Попробуй перезагрузить приложение.",
-                    "Все супер! Жизнь бьет ключом.",
-                    "Қайырлы күн! Қалың қалай?",
-                    "Ладно, давай позже созвонимся.",
-                    "Не гони, серьезно?!",
-                    "Это конфиденциальная информация, друг мой)",
-                    "Жарайды, сосын сөйлесерміз.",
-                    "Крутяк! Поздравляю с получением 1000 звёзд ⭐️"
-                ]
+                currentModalMode: null, // 'group' или 'channel'
+                isDarkMode: false
             };
 
-            // Генератор случайных градиентов для аватарок
-            const avatarGradients = [
-                'from-red-400 to-orange-500',
-                'from-green-400 to-teal-500',
-                'from-blue-400 to-indigo-500',
-                'from-purple-400 to-pink-500',
-                'from-yellow-400 to-amber-500',
-                'from-fuchsia-400 to-purple-600'
+            // Массив фейковых юзеров для проверки занятости юзернейма
+            const reservedUsernames = ['@admin', '@telegram', '@support', '@durov', '@bot', '@crypto'];
+
+            // Массив ответов ИИ (Умный чат 1 на 1) - Более 30 реалистичных фраз
+            const aiResponses = [
+                "Привет! Как дела?",
+                "Не могу сейчас говорить, позже наберу.",
+                "Круто, а ты что делаешь?",
+                "Салам, не хабар?",
+                "Я тут, слушаю тебя.",
+                "Мәссаған, шынымен бе?",
+                "Давай завтра обсудим, сейчас занят мал дец.",
+                "Ой, я забыл совсем! Калайсын?",
+                "Нормально гой, өзіңде не жаңалық?",
+                "Да ладно? Не гой дид?",
+                "Привет! Давно не общались.",
+                "Я на созвоне, напишу через полчаса.",
+                "Хаха, это реально смешно 😂",
+                "Мда, дела конечно... Че делаешь?",
+                "Жақсы, рахмет! Барі бәрі норм.",
+                "Слушай, а ты проект на Godot доделал?",
+                "Погнали в Блек Рашу катать вечерком?",
+                "Капец, ну ты выдал конечно.",
+                "Ахах, түсінікті.",
+                "Я сейчас в ИТ-колледже, освобожусь — наберу.",
+                "Где ты пропадал?",
+                "Посмотри код бота, там баг вылетает.",
+                "Всё отлично, спасибо за поддержку!",
+                "Вау, это крутая новость! Күшті екен.",
+                "Не знаю даже, надо подумать.",
+                "Давай созвонимся в Discord?",
+                "Кайырлы кун! Барі кушті.",
+                "Оппа, привет! Жетістіктер қалай?",
+                "Я спать ложусь, завтра спишемся.",
+                "Че там с балансом Stars?",
+                "Бот работает отлично, без лагов.",
+                "Куда подевался Дуров со своими обновлениями?",
+                "Жду тебя у входа, выходи."
             ];
 
+            // Градиенты для дефолтных аватарок
+            const avatarGradients = [
+                'from-red-400 to-red-600',
+                'from-orange-400 to-orange-600',
+                'from-green-400 to-green-600',
+                'from-teal-400 to-teal-600',
+                'from-blue-400 to-blue-600',
+                'from-indigo-400 to-indigo-600',
+                'from-purple-400 to-purple-600',
+                'from-pink-400 to-pink-600'
+            ];
+
+            // Хелпер генерации случайного градиента
             function getRandomGradient() {
                 return avatarGradients[Math.floor(Math.random() * avatarGradients.length)];
             }
 
-            // Инициализация DOM элементов
-            const el = {
-                authScreen: document.getElementById('auth-screen'),
-                authStep1: document.getElementById('auth-step-1'),
-                authStep2: document.getElementById('auth-step-2'),
-                authStep3: document.getElementById('auth-step-3'),
-                phoneInput: document.getElementById('phone-input'),
-                password1: document.getElementById('password-1'),
-                password2: document.getElementById('password-2'),
-                passwordError: document.getElementById('password-error'),
-                profileName: document.getElementById('profile-name'),
-                profileUsername: document.getElementById('profile-username'),
-                usernameError: document.getElementById('username-error'),
-                btnNextStep1: document.getElementById('btn-next-step-1'),
-                btnBackStep2: document.getElementById('btn-back-step-2'),
-                btnNextStep2: document.getElementById('btn-next-step-2'),
-                btnCompleteAuth: document.getElementById('btn-complete-auth'),
-
-                mainApp: document.getElementById('main-app'),
-                headerTitle: document.getElementById('header-title'),
-                headerMenuBtn: document.getElementById('header-menu-btn'),
-                headerDropdown: document.getElementById('header-dropdown'),
-                dropNightMode: document.getElementById('drop-night-mode'),
-                dropClearCache: document.getElementById('drop-clear-cache'),
-                chatSearchInput: document.getElementById('chat-search-input'),
-                chatSearchClear: document.getElementById('chat-search-clear'),
-                chatsContainer: document.getElementById('chats-container'),
-                toggleDarkMode: document.getElementById('toggle-dark-mode'),
-
-                settingsAvatar: document.getElementById('settings-avatar'),
-                avatarUpload: document.getElementById('avatar-upload'),
-                settingsName: document.getElementById('settings-name'),
-                settingsUsername: document.getElementById('settings-username'),
-                settingsPhone: document.getElementById('settings-phone'),
-                profileAvatarBig: document.getElementById('profile-avatar-big'),
-                profileDisplayName: document.getElementById('profile-display-name'),
-                profileDisplayUsername: document.getElementById('profile-display-username'),
-
-                fabCreate: document.getElementById('fab-create'),
-                fabMenu: document.getElementById('fab-menu'),
-                menuCreateGroup: document.getElementById('menu-create-group'),
-                menuCreateChannel: document.getElementById('menu-create-channel'),
-                modalContainer: document.getElementById('modal-container'),
-                modalTitle: document.getElementById('modal-title'),
-                modalInput: document.getElementById('modal-input'),
-                modalCancel: document.getElementById('modal-cancel'),
-                modalSubmit: document.getElementById('modal-submit'),
-
-                chatWindow: document.getElementById('chat-window'),
-                chatBackBtn: document.getElementById('chat-back-btn'),
-                chatWindowAvatar: document.getElementById('chat-window-avatar'),
-                chatWindowTitle: document.getElementById('chat-window-title'),
-                chatWindowStatus: document.getElementById('chat-window-status'),
-                chatMessagesBox: document.getElementById('chat-messages-box'),
-                chatInput: document.getElementById('chat-input'),
-                chatSendBtn: document.getElementById('chat-send-btn'),
-                toast: document.getElementById('toast')
-            };
-
-            // ТОСТ МЕНЕДЖЕР
-            function showToast(text) {
-                el.toast.innerText = text;
-                el.toast.classList.add('show');
-                setTimeout(() => { el.toast.classList.remove('show'); }, 2000);
+            // Хелпер форматирования текущего времени (ЧЧ:ММ)
+            function getFormattedTime() {
+                const now = new Date();
+                let hh = now.getHours();
+                let mm = now.getMinutes();
+                if (hh < 10) hh = '0' + hh;
+                if (mm < 10) mm = '0' + mm;
+                return `${hh}:${mm}`;
             }
 
-            // МГНОВЕННЫЙ СТАРТ И ПРОВЕРКА LOCALSTORAGE
-            function init() {
-                // Подгрузка темы
-                state.isDarkMode = localStorage.getItem('tg_dark_mode') === 'true';
-                if (state.isDarkMode) {
-                    document.documentElement.classList.add('dark');
-                    el.toggleDarkMode.checked = true;
-                }
+            // Инициализация при запуске
+            document.addEventListener("DOMContentLoaded", function() {
+                initTheme();
+                checkAuthorization();
+                setupEventListeners();
+                setupGroupActivitySimulation();
+            });
 
-                const savedUser = localStorage.getItem('tg_user_profile');
-                const savedChats = localStorage.getItem('tg_chats_data');
-
-                if (savedUser) {
-                    state.user = JSON.parse(savedUser);
-                    if (savedChats) {
-                        state.chats = JSON.parse(savedChats);
-                    } else {
-                        generateDefaultChats();
-                    }
-                    showMainApp();
+            // Темизация
+            function initTheme() {
+                const cachedTheme = localStorage.getItem('tg_spa_theme');
+                if (cachedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('toggle-dark-mode').checked = true;
+                    state.isDarkMode = true;
                 } else {
+                    document.body.classList.remove('dark-mode');
+                    document.getElementById('toggle-dark-mode').checked = false;
+                    state.isDarkMode = false;
+                }
+            }
+
+            function toggleTheme(isDark) {
+                if (isDark) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('tg_spa_theme', 'dark');
+                    state.isDarkMode = true;
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('tg_spa_theme', 'light');
+                    state.isDarkMode = false;
+                }
+            }
+
+            // Проверка авторизации localStorage (Мгновенная)
+            function checkAuthorization() {
+                const storedUser = localStorage.getItem('tg_spa_account');
+                if (storedUser) {
+                    try {
+                        state.user = JSON.parse(storedUser);
+                        loadApplicationData();
+                        showLayer('app-layer');
+                        switchTab('chats');
+                    } catch(e) {
+                        localStorage.removeItem('tg_spa_account');
+                        showLayer('auth-layer');
+                        showAuthStep(1);
+                    }
+                } else {
+                    showLayer('auth-layer');
                     showAuthStep(1);
                 }
-                setupNavigation();
-                setupEventListeners();
-                renderChatsList();
             }
 
-            // Генерация дефолтных чатов (Первый запуск)
-            function generateDefaultChats() {
-                state.chats = [
-                    {
-                        id: 'support_official',
-                        name: 'Telegram Support',
-                        username: '@support',
-                        avatar: '',
-                        gradient: 'from-blue-500 to-sky-600',
-                        type: 'private',
-                        verified: true,
-                        unreadCount: 1,
-                        messages: [
-                            {
-                                sender: 'them',
-                                text: `Приветствуем, ${state.user ? state.user.name : 'пользователь'}! Ваш аккаунт успешно активирован. Вам выдан Telegram Premium навсегда, а на баланс зачислено 1000 звёзд (⭐️). Приятного общения!`,
-                                time: getFormattedTime()
-                            }
-                        ]
-                    }
-                ];
-                saveChatsToStorage();
+            function showLayer(layerId) {
+                document.getElementById('auth-layer').classList.add('hidden');
+                document.getElementById('app-layer').classList.add('hidden');
+                document.getElementById(layerId).classList.remove('hidden');
+            }
+
+            function showAuthStep(stepNum) {
+                document.getElementById('auth-step-1').classList.add('hidden');
+                document.getElementById('auth-step-2').classList.add('hidden');
+                document.getElementById('auth-step-3').classList.add('hidden');
+                document.getElementById(`auth-step-${stepNum}`).classList.remove('hidden');
+            }
+
+            // Настройка и загрузка базовых чатов мессенджера
+            function loadApplicationData() {
+                const storedChats = localStorage.getItem(`tg_spa_chats_${state.user.username}`);
+                if (storedChats) {
+                    state.chats = JSON.parse(storedChats);
+                } else {
+                    // Стартовый официальный чат Telegram Support
+                    state.chats = [
+                        {
+                            id: 'tg_support_official',
+                            title: 'Telegram Support',
+                            type: 'official',
+                            username: '@support',
+                            status: 'в сети',
+                            gradient: 'from-blue-500 to-sky-600',
+                            verified: true,
+                            messages: [
+                                {
+                                    sender: 'them',
+                                    text: `Приветствуем, ${state.user.name}! Ваш аккаунт успешно активирован. Вам выдан Telegram Premium навсегда, а на баланс зачислено 1000 звёзд (⭐️). Приятного общения!`,
+                                    time: getFormattedTime()
+                                }
+                            ],
+                            unreadCount: 1,
+                            lastMsgTime: getFormattedTime()
+                        },
+                        {
+                            id: 'chat_durov_mock',
+                            title: 'Павел Дуров',
+                            type: 'private',
+                            username: '@durov',
+                            status: 'недавно был в сети',
+                            gradient: 'from-slate-700 to-slate-900',
+                            verified: true,
+                            messages: [
+                                { sender: 'them', text: 'Добро пожаловать в ультра-быстрый клиент мессенджера!', time: '12:00' }
+                            ],
+                            unreadCount: 32,
+                            lastMsgTime: '12:00'
+                        },
+                        {
+                            id: 'chat_crypto_mock',
+                            title: 'TON Alerts & Trading',
+                            type: 'channel',
+                            username: '@crypto',
+                            status: '450 000 подписчиков',
+                            gradient: 'from-amber-400 to-yellow-600',
+                            verified: false,
+                            messages: [
+                                { sender: 'them', text: 'TON достиг нового исторического максимума! 🚀', time: '09:14' }
+                            ],
+                            unreadCount: 694,
+                            lastMsgTime: '09:14'
+                        }
+                    ];
+                    saveChatsToStorage();
+                }
+                renderChatsList();
+                updateGlobalUnreadBadge();
+                fillSettingsAndProfilePanes();
             }
 
             function saveChatsToStorage() {
-                localStorage.setItem('tg_chats_data', JSON.stringify(state.chats));
-            }
-
-            // ПЕРЕКЛЮЧЕНИЕ СТЕКА ЭКРАНОВ РЕГИСТРАЦИИ
-            function showAuthStep(step) {
-                el.authScreen.classList.remove('hidden');
-                el.authStep1.classList.add('hidden');
-                el.authStep2.classList.add('hidden');
-                el.authStep3.classList.add('hidden');
-
-                if (step === 1) el.authStep1.classList.remove('hidden');
-                if (step === 2) el.authStep2.classList.remove('hidden');
-                if (step === 3) el.authStep3.classList.remove('hidden');
-            }
-
-            function showMainApp() {
-                el.authScreen.classList.add('hidden');
-                el.mainApp.classList.remove('hidden');
-                switchView('view-chats');
-                updateProfileUI();
-            }
-
-            function updateProfileUI() {
-                if (!state.user) return;
-                
-                // Обновление текстов настроек и профиля
-                el.settingsName.querySelector('span').innerText = state.user.name;
-                el.settingsUsername.innerText = state.user.username;
-                el.settingsPhone.innerText = state.user.phone;
-
-                el.profileDisplayName.querySelector('span').innerText = state.user.name;
-                el.profileDisplayUsername.innerText = state.user.username;
-
-                // Обновление аватарок по всему приложению
-                const avatarElements = [el.settingsAvatar, el.profileAvatarBig];
-                avatarElements.forEach(element => {
-                    if (state.user.avatar) {
-                        element.innerHTML = `<img src="${state.user.avatar}" class="w-full h-full object-cover">`;
-                    } else {
-                        element.innerHTML = state.user.name.charAt(0).toUpperCase();
-                        element.className = `w-full h-full rounded-full bg-gradient-to-tr ${state.user.gradient || 'from-blue-500 to-indigo-500'} text-white text-3xl font-bold flex items-center justify-center overflow-hidden`;
-                    }
-                });
-            }
-
-            // НАВИГАЦИЯ ПО В КЛАДКАМ (НИЖНЕЕ МЕНЮ)
-            function switchView(targetViewId) {
-                const views = ['view-chats', 'view-contacts', 'view-settings', 'view-profile'];
-                views.forEach(viewId => {
-                    document.getElementById(viewId).classList.add('hidden');
-                });
-                document.getElementById(targetViewId).classList.remove('hidden');
-
-                // Синхронизация таб-баров
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    if (btn.getAttribute('data-target') === targetViewId) {
-                        btn.classList.remove('text-tg-hint');
-                        btn.classList.add('text-blue-500');
-                    } else {
-                        btn.classList.remove('text-blue-500');
-                        btn.classList.add('text-tg-hint');
-                    }
-                });
-
-                // Изменение заголовка шапки
-                if (targetViewId === 'view-chats') {
-                    el.headerTitle.innerText = 'Telegram';
-                    el.fabCreate.classList.remove('hidden');
-                } else if (targetViewId === 'view-contacts') {
-                    el.headerTitle.innerText = 'Контакты';
-                    el.fabCreate.classList.add('hidden');
-                } else if (targetViewId === 'view-settings') {
-                    el.headerTitle.innerText = 'Настройки';
-                    el.fabCreate.classList.add('hidden');
-                } else if (targetViewId === 'view-profile') {
-                    el.headerTitle.innerText = 'Профиль';
-                    el.fabCreate.classList.add('hidden');
+                if (state.user) {
+                    localStorage.setItem(`tg_spa_chats_${state.user.username}`, JSON.stringify(state.chats));
                 }
-                el.fabMenu.classList.add('hidden');
             }
 
-            function setupNavigation() {
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const target = this.getAttribute('data-target');
-                        switchView(target);
-                    });
+            // Рендеринг интерфейса списков
+            function renderChatsList(filterKeyword = '') {
+                const container = document.getElementById('chats-list-container');
+                container.innerHTML = '';
+
+                const searchStr = filterKeyword.trim().toLowerCase();
+                const filtered = state.chats.filter(c => {
+                    return c.title.toLowerCase().includes(searchStr) || c.username.toLowerCase().includes(searchStr);
                 });
-            }
 
-            // ПОЛУЧЕНИЕ ВРЕМЕНИ В ФОРМАТЕ ЧЧ:ММ
-            function getFormattedTime() {
-                const now = new Date();
-                let hours = now.getHours();
-                let minutes = now.getMinutes();
-                if (hours < 10) hours = '0' + hours;
-                if (minutes < 10) minutes = '0' + minutes;
-                return `${hours}:${minutes}`;
-            }
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чаты не найдены.<br>Введите новый юзернейм для создания диалога.</div>`;
+                    return;
+                }
 
-            // РЕНДЕРИНГ СПИСКА ЧАТОВ
-            function renderChatsList(filter = '') {
-                el.chatsContainer.innerHTML = '';
-                let unreadTotal = 0;
-
-                const filteredChats = state.chats.filter(c => 
-                    c.name.toLowerCase().includes(filter.toLowerCase()) || 
-                    c.username.toLowerCase().includes(filter.toLowerCase())
-                );
-
-                filteredChats.forEach(chat => {
-                    unreadTotal += chat.unreadCount || 0;
-                    const lastMsg = chat.messages[chat.messages.length - 1];
-                    const lastMsgText = lastMsg ? lastMsg.text : 'Нет сообщений';
-                    const lastMsgTime = lastMsg ? lastMsg.time : '';
-
-                    const item = document.createElement('div');
-                    item.className = 'w-full px-4 py-3 flex items-center space-x-3 active:bg-tg-sec cursor-pointer transition-colors';
+                filtered.forEach(chat => {
+                    const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: 'Нет сообщений', time: '' };
                     
-                    let avatarMarkup = '';
-                    if (chat.id === 'support_official' && !chat.avatar) {
-                        avatarMarkup = `<div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-sky-600 text-white flex items-center justify-center font-bold shrink-0"><i class="fas fa-headset text-lg"></i></div>`;
+                    const item = document.createElement('div');
+                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors relative";
+                    item.onclick = () => openChatWindow(chat.id);
+
+                    // Аватарка
+                    let avatarHTML = '';
+                    if (chat.type === 'private' && chat.username === state.user.username && state.user.avatar) {
+                        avatarHTML = `<img src="${state.user.avatar}" class="w-12 h-12 rounded-full object-cover">`;
                     } else if (chat.avatar) {
-                        avatarMarkup = `<div class="w-12 h-12 rounded-full overflow-hidden shrink-0"><img src="${chat.avatar}" class="w-full h-full object-cover"></div>`;
+                        avatarHTML = `<img src="${chat.avatar}" class="w-12 h-12 rounded-full object-cover">`;
                     } else {
-                        const initial = chat.name.charAt(0).toUpperCase();
-                        avatarMarkup = `<div class="w-12 h-12 rounded-full bg-gradient-to-tr ${chat.gradient || 'from-gray-400 to-gray-600'} text-white flex items-center justify-center font-bold shrink-0 text-base">${initial}</div>`;
+                        const initial = chat.title.charAt(0).toUpperCase();
+                        avatarHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-lg select-none">${initial}</div>`;
                     }
 
-                    const badgeMarkup = chat.unreadCount > 0 
-                        ? `<span class="bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold ml-auto">${chat.unreadCount}</span>` 
-                        : '';
+                    // Бейдж верификации
+                    const verifiedHTML = chat.verified ? `<i class="fas fa-check-circle text-[#2481cc] ml-1 text-xs" title="Подтвержденный"></i>` : '';
 
-                    const verifiedMarkup = chat.verified ? `<i class="fas fa-check-circle text-blue-500 text-xs ml-1" title="Верифицировано"></i>` : '';
+                    // Счетчик непрочитанных
+                    let badgeHTML = '';
+                    if (chat.unreadCount > 0) {
+                        badgeHTML = `<span class="bg-[#2481cc] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">${chat.unreadCount}</span>`;
+                    }
 
                     item.innerHTML = `
-                        ${avatarMarkup}
-                        <div class="flex-1 min-w-0">
+                        <div class="flex-shrink-0 relative">${avatarHTML}</div>
+                        <div class="ml-3 flex-1 min-w-0">
                             <div class="flex items-center justify-between">
-                                <h4 class="font-bold text-sm truncate flex items-center">
-                                    <span>${chat.name}</span>
-                                    ${verifiedMarkup}
-                                </h4>
-                                <span class="text-xs text-tg-hint font-normal">${lastMsgTime}</span>
+                                <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate flex items-center">
+                                    ${chat.title} ${verifiedHTML}
+                                </h3>
+                                <span class="text-xs text-[var(--tg-theme-hint)] ml-2">${lastMsg.time}</span>
                             </div>
-                            <p class="text-xs text-tg-hint truncate mt-0.5 font-normal">${lastMsgText}</p>
+                            <div class="flex items-center justify-between mt-0.5">
+                                <p class="text-sm text-[var(--tg-theme-hint)] truncate pr-2">${lastMsg.text}</p>
+                                ${badgeHTML}
+                            </div>
                         </div>
-                        ${badgeMarkup}
                     `;
-
-                    item.addEventListener('click', () => {
-                        openChatWindow(chat.id);
-                    });
-
-                    el.chatsContainer.appendChild(item);
+                    container.appendChild(item);
                 });
+            }
 
-                // Обновление счетчиков непрочитанных
-                const badge = document.getElementById('chats-badge');
-                if (unreadTotal > 0) {
-                    badge.innerText = unreadTotal;
+            function updateGlobalUnreadBadge() {
+                const total = state.chats.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+                const badge = document.getElementById('chats-global-badge');
+                if (total > 0) {
+                    badge.textContent = total;
                     badge.classList.remove('hidden');
                 } else {
                     badge.classList.add('hidden');
                 }
             }
 
-            // ОТКРЫТИЕ ОКНА КОНКРЕТНОГО ЧАТА
+            function fillSettingsAndProfilePanes() {
+                if (!state.user) return;
+                
+                // Настройки вкладка
+                document.getElementById('settings-name-display').textContent = state.user.name;
+                document.getElementById('settings-phone-display').textContent = state.user.phone;
+                document.getElementById('settings-username-display').textContent = state.user.username;
+                
+                // Профиль вкладка
+                document.getElementById('profile-pane-name').textContent = state.user.name;
+                document.getElementById('profile-pane-phone').textContent = state.user.phone;
+                document.getElementById('profile-pane-username').textContent = state.user.username;
+
+                // Синхронизация аватарок по SPA
+                const imgSettings = document.getElementById('settings-avatar');
+                const placeholderSettings = document.getElementById('settings-avatar-placeholder');
+                const imgProfile = document.getElementById('profile-pane-avatar');
+                const placeholderProfile = document.getElementById('profile-pane-avatar-placeholder');
+
+                if (state.user.avatar) {
+                    imgSettings.src = state.user.avatar;
+                    imgSettings.classList.remove('hidden');
+                    placeholderSettings.classList.add('hidden');
+
+                    imgProfile.src = state.user.avatar;
+                    imgProfile.classList.remove('hidden');
+                    placeholderProfile.classList.add('hidden');
+                } else {
+                    imgSettings.classList.add('hidden');
+                    placeholderSettings.classList.remove('hidden');
+                    placeholderSettings.className = "w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl select-none";
+                    placeholderSettings.textContent = state.user.name.charAt(0).toUpperCase();
+
+                    imgProfile.classList.add('hidden');
+                    placeholderProfile.classList.remove('hidden');
+                    placeholderProfile.className = "w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-4xl select-none";
+                    placeholderProfile.textContent = state.user.name.charAt(0).toUpperCase();
+                }
+
+                // Рендер контактов на вкладке Контакты
+                renderContactsPane();
+            }
+
+            function renderContactsPane() {
+                const container = document.getElementById('contacts-list-container');
+                container.innerHTML = '';
+                
+                // Отображаем контакты на базе существующих чатов приватного типа
+                const privates = state.chats.filter(c => c.type === 'private' || c.type === 'official');
+                
+                if (privates.length === 0) {
+                    container.innerHTML = `<p class="text-sm text-[var(--tg-theme-hint)] text-center pt-8">Список контактов пуст</p>`;
+                    return;
+                }
+
+                privates.forEach(c => {
+                    const el = document.createElement('div');
+                    el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer transition-colors";
+                    el.onclick = () => {
+                        switchTab('chats');
+                        openChatWindow(c.id);
+                    };
+
+                    let av = '';
+                    if (c.avatar) {
+                        av = `<img src="${c.avatar}" class="w-10 h-10 rounded-full object-cover">`;
+                    } else {
+                        av = `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${c.gradient || 'from-gray-400 to-gray-600'} flex items-center justify-center text-white font-bold text-sm">${c.title.charAt(0).toUpperCase()}</div>`;
+                    }
+
+                    el.innerHTML = `
+                        ${av}
+                        <div>
+                            <h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${c.title}</h4>
+                            <p class="text-xs text-emerald-500">${c.status || 'в сети'}</p>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+
+            // Переключение вкладок нижнего навигационного меню
+            function switchTab(tabId) {
+                const panes = ['chats', 'contacts', 'settings', 'profile'];
+                panes.forEach(p => {
+                    document.getElementById(`tab-pane-${p}`).classList.add('hidden');
+                });
+                document.getElementById(`tab-pane-${tabId}`).classList.remove('hidden');
+
+                // Подсветка кнопок навигации
+                const items = document.querySelectorAll('.nav-item');
+                items.forEach(btn => {
+                    if (btn.getAttribute('data-tab') === tabId) {
+                        btn.classList.remove('text-[var(--tg-theme-hint)]');
+                        btn.classList.add('text-[#2481cc]');
+                    } else {
+                        btn.classList.remove('text-[#2481cc]');
+                        btn.classList.add('text-[var(--tg-theme-hint)]');
+                    }
+                });
+            }
+
+            // ОТКРЫТИЕ ОКНА ПЕРЕПИСКИ (ОКНО ЧАТА)
             function openChatWindow(chatId) {
                 const chat = state.chats.find(c => c.id === chatId);
                 if (!chat) return;
 
                 state.activeChatId = chatId;
+                chat.unreadCount = 0; // Сбрасываем непрочитанные при входе
+                saveChatsToStorage();
+                renderChatsList();
+                updateGlobalUnreadBadge();
+
+                // Заполнение заголовка окна чата
+                document.getElementById('chat-window-title').textContent = chat.title;
+                document.getElementById('chat-window-status').textContent = chat.status || 'не в сети';
+
+                const imgW = document.getElementById('chat-window-avatar-img');
+                const placeholderW = document.getElementById('chat-window-avatar-placeholder');
+
+                if (chat.avatar) {
+                    imgW.src = chat.avatar;
+                    imgW.classList.remove('hidden');
+                    placeholderW.classList.add('hidden');
+                } else {
+                    imgW.classList.add('hidden');
+                    placeholderW.classList.remove('hidden');
+                    placeholderW.className = `w-10 h-10 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-sm select-none`;
+                    placeholderW.textContent = chat.title.charAt(0).toUpperCase();
+                }
+
+                // Рендер истории сообщений
+                renderChatHistory(chat);
+
+                // Показ слоя чата с плавной анимацией выдвижения
+                const layer = document.getElementById('chat-window-layer');
+                layer.classList.remove('hidden');
+                setTimeout(() => {
+                    layer.classList.remove('translate-x-full');
+                }, 10);
+            }
+
+            function closeChatWindow() {
+                const layer = document.getElementById('chat-window-layer');
+                layer.classList.add('translate-x-full');
+                state.activeChatId = null;
+                setTimeout(() => {
+                    layer.classList.add('hidden');
+                }, 200);
+            }
+
+            function renderChatHistory(chat) {
+                const container = document.getElementById('chat-history-flow');
+                container.innerHTML = '';
+
+                if (chat.messages.length === 0) {
+                    container.innerHTML = `<div class="mx-auto text-center bg-black/20 text-white text-xs px-3 py-1 rounded-full w-max my-4">Нет сообщений</div>`;
+                    return;
+                }
+
+                chat.messages.forEach(msg => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `flex w-full ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`;
+
+                    let ticksHTML = '';
+                    if (msg.sender === 'me') {
+                        // Две синие галочки
+                        ticksHTML = `<i class="fas fa-check-double text-[var(--tg-theme-msg-out-ticks)

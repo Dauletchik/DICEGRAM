@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Специфические стили Telegram, анимации и темизация */
         :root {
             --tg-theme-bg: #ffffff;
             --tg-theme-text: #000000;
@@ -42,14 +41,13 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--tg-theme-bg);
             color: var(--tg-theme-text);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.25s ease, color 0.25s ease;
             -webkit-tap-highlight-color: transparent;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
         }
 
-        /* Кастомный паттерн фона чата Telegram */
         .chat-background {
             background-color: var(--tg-theme-chat-bg);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%239bc3e2' fill-opacity='0.15'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
@@ -59,12 +57,6 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23101921' fill-opacity='0.6'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Плавные переходы для темной темы */
-        .theme-transition {
-            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-        }
-
-        /* Индивидуальный скроллбар для списков */
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
@@ -76,13 +68,11 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Изоляция слоев для предотвращения мерцания рендеринга на GPU */
         .gpu-accelerated {
             transform: translateZ(0);
             backface-visibility: hidden;
         }
 
-        /* Премиум анимация сияния звезды */
         @keyframes premium-glow {
             0% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
             50% { filter: drop-shadow(0 0 8px #60a5fa); text-shadow: 0 0 10px #60a5fa; }
@@ -94,7 +84,7 @@
         }
     </style>
 </head>
-<body class="gpu-accelerated theme-transition select-none">
+<body class="gpu-accelerated select-none">
 
     <div id="auth-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden">
         <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between">
@@ -119,7 +109,7 @@
                     </div>
 
                     <label class="flex items-center space-x-3 pt-2 cursor-pointer">
-                        <input type="checkbox" id="auth-sync-contacts" checked class="w-5 height-5 rounded border-[var(--tg-theme-border)] text-[#2481cc] focus:ring-0">
+                        <input type="checkbox" id="auth-sync-contacts" checked class="w-5 h-5 rounded border-[var(--tg-theme-border)] text-[#2481cc] focus:ring-0">
                         <span class="text-sm text-[var(--tg-theme-text)]">Синхронизировать контакты</span>
                     </label>
                 </div>
@@ -188,7 +178,7 @@
         
         <div id="main-content" class="flex-1 overflow-hidden relative">
             
-            <div id="tab-pane-chats" class="absolute inset-0 flex flex-col view-pane transition-opacity duration-200">
+            <div id="tab-pane-chats" class="absolute inset-0 flex flex-col view-pane">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center justify-between bg-[var(--tg-theme-bg)] sticky top-0 z-20">
                     <h1 class="text-xl font-bold tracking-tight text-[var(--tg-theme-text)]">Telegram</h1>
                     <div class="flex items-center space-x-4">
@@ -213,7 +203,7 @@
                 </button>
             </div>
 
-            <div id="tab-pane-contacts" class="absolute inset-0 flex flex-col view-pane hidden transition-opacity duration-200">
+            <div id="tab-pane-contacts" class="absolute inset-0 flex flex-col view-pane hidden">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Контакты</h1>
                 </header>
@@ -221,7 +211,7 @@
                     </div>
             </div>
 
-            <div id="tab-pane-settings" class="absolute inset-0 flex flex-col view-pane hidden transition-opacity duration-200">
+            <div id="tab-pane-settings" class="absolute inset-0 flex flex-col view-pane hidden">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Настройки</h1>
                 </header>
@@ -247,9 +237,7 @@
 
                     <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 flex items-center justify-between border-y border-[var(--tg-theme-border)]">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-lg">
-                                ⭐️
-                            </div>
+                            <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 text-lg">⭐️</div>
                             <div>
                                 <h4 class="font-medium text-[var(--tg-theme-text)]">Telegram Stars</h4>
                                 <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс аккаунта</p>
@@ -280,7 +268,7 @@
                 </div>
             </div>
 
-            <div id="tab-pane-profile" class="absolute inset-0 flex flex-col view-pane hidden transition-opacity duration-200">
+            <div id="tab-pane-profile" class="absolute inset-0 flex flex-col view-pane hidden">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Мой Профиль</h1>
                 </header>
@@ -359,25 +347,21 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3 text-[var(--tg-theme-hint)]">
-                <i class="fas fa-phone active:scale-95"></i>
-                <i class="fas fa-ellipsis-v active:scale-95 px-1"></i>
+                <i class="fas fa-phone"></i>
+                <i class="fas fa-ellipsis-v px-1"></i>
             </div>
         </header>
 
-        <div id="chat-history-flow" class="flex-1 overflow-y-auto custom-scrollbar chat-background p-4 space-y-2">
-            </div>
+        <div id="chat-history-flow" class="flex-1 overflow-y-auto custom-scrollbar chat-background p-4 space-y-2"></div>
 
         <div class="p-2 bg-[var(--tg-theme-bg)] border-t border-[var(--tg-theme-border)] flex items-end space-x-2 sticky bottom-0 z-20">
-            <button class="w-10 h-10 flex items-center justify-center text-[var(--tg-theme-hint)] active:scale-90">
+            <button class="w-10 h-10 flex items-center justify-center text-[var(--tg-theme-hint)]">
                 <i class="fas fa-paperclip text-lg"></i>
             </button>
             <div class="flex-1 bg-[var(--tg-theme-secondary-bg)] rounded-2xl px-3 py-2 flex items-end max-h-32">
-                <textarea id="chat-msg-input" rows="1" class="flex-1 bg-transparent border-none outline-none resize-none text-sm text-[var(--tg-theme-text)] max-h-24 py-0.5 custom-scrollbar" placeholder="Сообщение"></textarea>
-                <button class="text-[var(--tg-theme-hint)] px-1 active:scale-90">
-                    <i class="far fa-smile text-lg"></i>
-                </button>
+                <textarea id="chat-msg-input" rows="1" class="w-full bg-transparent border-none outline-none resize-none text-sm text-[var(--tg-theme-text)] max-h-24 py-0.5 custom-scrollbar" placeholder="Сообщение"></textarea>
             </div>
-            <button id="btn-send-message" class="w-10 h-10 rounded-full bg-[#2481cc] text-white flex items-center justify-center active:scale-90 transition-transform">
+            <button id="btn-send-message" class="w-10 h-10 rounded-full bg-[#2481cc] text-white flex items-center justify-center transition-transform">
                 <i class="fas fa-paper-plane text-sm"></i>
             </button>
         </div>
@@ -388,18 +372,16 @@
             <h3 id="modal-create-title" class="text-lg font-bold text-[var(--tg-theme-text)]">Создать</h3>
             <div>
                 <label id="modal-input-label" class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название</label>
-                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none focus:border-[#2481cc]" placeholder="Введите имя...">
+                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none">
             </div>
             <div class="flex justify-end space-x-3 pt-2">
                 <button id="btn-modal-cancel" class="px-4 py-2 text-sm font-medium text-[var(--tg-theme-hint)]">Отмена</button>
-                <button id="btn-modal-submit" class="px-5 py-2 text-sm font-medium bg-[#2481cc] text-white rounded-xl active:scale-95">Создать</button>
+                <button id="btn-modal-submit" class="px-5 py-2 text-sm font-medium bg-[#2481cc] text-white rounded-xl">Создать</button>
             </div>
         </div>
     </div>
 
-    <div id="toast-notification" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-md font-medium tracking-wide pointer-events-none opacity-0 transition-opacity duration-300">
-        Ссылка скопирована в буфер обмена
-    </div>
+    <div id="toast-notification" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-md pointer-events-none opacity-0 transition-opacity duration-300"></div>
 
     <div id="popup-menu-main" class="fixed top-12 right-4 z-40 bg-[var(--tg-theme-bg)] border border-[var(--tg-theme-border)] rounded-xl shadow-xl w-48 py-1 text-sm hidden">
         <button id="pop-create-group" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
@@ -415,119 +397,51 @@
 
     <script>
         (function() {
-            // Глобальное хранилище состояния SPA
-            let state = {
-                user: null,
-                chats: [],
-                activeChatId: null,
-                currentModalMode: null, // 'group' или 'channel'
-                isDarkMode: false
-            };
-
-            // Массив фейковых юзеров для проверки занятости юзернейма
+            let state = { user: null, chats: [], activeChatId: null, currentModalMode: null, isDarkMode: false };
             const reservedUsernames = ['@admin', '@telegram', '@support', '@durov', '@bot', '@crypto'];
+            const aiResponses = ["Привет! Как дела?", "Не могу сейчас говорить, позже наберу.", "Круто, а ты что делаешь?", "Салам, не хабар?", "Я тут, слушаю тебя.", "Мәссаған, шынымен бе?", "Давай завтра обсудим", "Хаха, это реально смешно 😂", "Жақсы, рахмет! Барі норм.", "Погнали в Блек Рашу катать вечерком?", "Че там с балансом Stars?", "Бот работает отлично, без лагов."];
+            const avatarGradients = ['from-red-400 to-red-600', 'from-orange-400 to-orange-600', 'from-green-400 to-green-600', 'from-teal-400 to-teal-600', 'from-blue-400 to-blue-600', 'from-purple-400 to-purple-600'];
 
-            // Массив ответов ИИ (Умный чат 1 на 1) - Более 30 реалистичных фраз
-            const aiResponses = [
-                "Привет! Как дела?",
-                "Не могу сейчас говорить, позже наберу.",
-                "Круто, а ты что делаешь?",
-                "Салам, не хабар?",
-                "Я тут, слушаю тебя.",
-                "Мәссаған, шынымен бе?",
-                "Давай завтра обсудим, сейчас занят мал дец.",
-                "Ой, я забыл совсем! Калайсын?",
-                "Нормально гой, өзіңде не жаңалық?",
-                "Да ладно? Не гой дид?",
-                "Привет! Давно не общались.",
-                "Я на созвоне, напишу через полчаса.",
-                "Хаха, это реально смешно 😂",
-                "Мда, дела конечно... Че делаешь?",
-                "Жақсы, рахмет! Барі бәрі норм.",
-                "Слушай, а ты проект на Godot доделал?",
-                "Погнали в Блек Рашу катать вечерком?",
-                "Капец, ну ты выдал конечно.",
-                "Ахах, түсінікті.",
-                "Я сейчас в ИТ-колледже, освобожусь — наберу.",
-                "Где ты пропадал?",
-                "Посмотри код бота, там баг вылетает.",
-                "Всё отлично, спасибо за поддержку!",
-                "Вау, это крутая новость! Күшті екен.",
-                "Не знаю даже, надо подумать.",
-                "Давай созвонимся в Discord?",
-                "Кайырлы кун! Барі кушті.",
-                "Оппа, привет! Жетістіктер қалай?",
-                "Я спать ложусь, завтра спишемся.",
-                "Че там с балансом Stars?",
-                "Бот работает отлично, без лагов.",
-                "Куда подевался Дуров со своими обновлениями?",
-                "Жду тебя у входа, выходи."
-            ];
-
-            // Градиенты для дефолтных аватарок
-            const avatarGradients = [
-                'from-red-400 to-red-600',
-                'from-orange-400 to-orange-600',
-                'from-green-400 to-green-600',
-                'from-teal-400 to-teal-600',
-                'from-blue-400 to-blue-600',
-                'from-indigo-400 to-indigo-600',
-                'from-purple-400 to-purple-600',
-                'from-pink-400 to-pink-600'
-            ];
-
-            // Хелпер генерации случайного градиента
-            function getRandomGradient() {
-                return avatarGradients[Math.floor(Math.random() * avatarGradients.length)];
-            }
-
-            // Хелпер форматирования текущего времени (ЧЧ:ММ)
             function getFormattedTime() {
                 const now = new Date();
-                let hh = now.getHours();
-                let mm = now.getMinutes();
-                if (hh < 10) hh = '0' + hh;
-                if (mm < 10) mm = '0' + mm;
-                return `${hh}:${mm}`;
+                let hh = now.getHours(), mm = now.getMinutes();
+                return `${hh < 10 ? '0'+hh : hh}:${mm < 10 ? '0'+mm : mm}`;
             }
 
-            // Инициализация при запуске
             document.addEventListener("DOMContentLoaded", function() {
                 initTheme();
                 checkAuthorization();
                 setupEventListeners();
-                setupGroupActivitySimulation();
+                setInterval(setupGroupActivitySimulation, 12000);
             });
 
-            // Темизация
             function initTheme() {
-                const cachedTheme = localStorage.getItem('tg_spa_theme');
-                if (cachedTheme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    document.getElementById('toggle-dark-mode').checked = true;
-                    state.isDarkMode = true;
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    document.getElementById('toggle-dark-mode').checked = false;
-                    state.isDarkMode = false;
-                }
+                try {
+                    const cachedTheme = localStorage.getItem('tg_spa_theme');
+                    if (cachedTheme === 'dark') {
+                        document.body.classList.add('dark-mode');
+                        document.getElementById('toggle-dark-mode').checked = true;
+                        state.isDarkMode = true;
+                    }
+                } catch(e) {}
             }
 
             function toggleTheme(isDark) {
                 if (isDark) {
                     document.body.classList.add('dark-mode');
-                    localStorage.setItem('tg_spa_theme', 'dark');
+                    try { localStorage.setItem('tg_spa_theme', 'dark'); } catch(e) {}
                     state.isDarkMode = true;
                 } else {
                     document.body.classList.remove('dark-mode');
-                    localStorage.setItem('tg_spa_theme', 'light');
+                    try { localStorage.setItem('tg_spa_theme', 'light'); } catch(e) {}
                     state.isDarkMode = false;
                 }
             }
 
-            // Проверка авторизации localStorage (Мгновенная)
             function checkAuthorization() {
-                const storedUser = localStorage.getItem('tg_spa_account');
+                let storedUser = null;
+                try { storedUser = localStorage.getItem('tg_spa_account'); } catch(e) {}
+                
                 if (storedUser) {
                     try {
                         state.user = JSON.parse(storedUser);
@@ -535,7 +449,6 @@
                         showLayer('app-layer');
                         switchTab('chats');
                     } catch(e) {
-                        localStorage.removeItem('tg_spa_account');
                         showLayer('auth-layer');
                         showAuthStep(1);
                     }
@@ -558,60 +471,16 @@
                 document.getElementById(`auth-step-${stepNum}`).classList.remove('hidden');
             }
 
-            // Настройка и загрузка базовых чатов мессенджера
             function loadApplicationData() {
-                const storedChats = localStorage.getItem(`tg_spa_chats_${state.user.username}`);
+                let storedChats = null;
+                try { storedChats = localStorage.getItem(`tg_spa_chats_${state.user.username}`); } catch(e) {}
+                
                 if (storedChats) {
                     state.chats = JSON.parse(storedChats);
                 } else {
-                    // Стартовый официальный чат Telegram Support
                     state.chats = [
-                        {
-                            id: 'tg_support_official',
-                            title: 'Telegram Support',
-                            type: 'official',
-                            username: '@support',
-                            status: 'в сети',
-                            gradient: 'from-blue-500 to-sky-600',
-                            verified: true,
-                            messages: [
-                                {
-                                    sender: 'them',
-                                    text: `Приветствуем, ${state.user.name}! Ваш аккаунт успешно активирован. Вам выдан Telegram Premium навсегда, а на баланс зачислено 1000 звёзд (⭐️). Приятного общения!`,
-                                    time: getFormattedTime()
-                                }
-                            ],
-                            unreadCount: 1,
-                            lastMsgTime: getFormattedTime()
-                        },
-                        {
-                            id: 'chat_durov_mock',
-                            title: 'Павел Дуров',
-                            type: 'private',
-                            username: '@durov',
-                            status: 'недавно был в сети',
-                            gradient: 'from-slate-700 to-slate-900',
-                            verified: true,
-                            messages: [
-                                { sender: 'them', text: 'Добро пожаловать в ультра-быстрый клиент мессенджера!', time: '12:00' }
-                            ],
-                            unreadCount: 32,
-                            lastMsgTime: '12:00'
-                        },
-                        {
-                            id: 'chat_crypto_mock',
-                            title: 'TON Alerts & Trading',
-                            type: 'channel',
-                            username: '@crypto',
-                            status: '450 000 подписчиков',
-                            gradient: 'from-amber-400 to-yellow-600',
-                            verified: false,
-                            messages: [
-                                { sender: 'them', text: 'TON достиг нового исторического максимума! 🚀', time: '09:14' }
-                            ],
-                            unreadCount: 694,
-                            lastMsgTime: '09:14'
-                        }
+                        { id: 'tg_support_official', title: 'Telegram Support', type: 'official', username: '@support', status: 'в сети', gradient: 'from-blue-500 to-sky-600', verified: true, messages: [{ sender: 'them', text: `Приветствуем, ${state.user.name}! Ваш аккаунт успешно активирован. Premium выдан навсегда, на балансе 1000 звёзд (⭐️).`, time: getFormattedTime() }], unreadCount: 1, lastMsgTime: getFormattedTime() },
+                        { id: 'chat_durov_mock', title: 'Павел Дуров', type: 'private', username: '@durov', status: 'недавно был в сети', gradient: 'from-slate-700 to-slate-900', verified: true, messages: [{ sender: 'them', text: 'Добро пожаловать в мессенджер SPA!', time: '12:00' }], unreadCount: 32, lastMsgTime: '12:00' }
                     ];
                     saveChatsToStorage();
                 }
@@ -622,64 +491,44 @@
 
             function saveChatsToStorage() {
                 if (state.user) {
-                    localStorage.setItem(`tg_spa_chats_${state.user.username}`, JSON.stringify(state.chats));
+                    try { localStorage.setItem(`tg_spa_chats_${state.user.username}`, JSON.stringify(state.chats)); } catch(e) {}
                 }
             }
 
-            // Рендеринг интерфейса списков
             function renderChatsList(filterKeyword = '') {
                 const container = document.getElementById('chats-list-container');
                 container.innerHTML = '';
-
                 const searchStr = filterKeyword.trim().toLowerCase();
-                const filtered = state.chats.filter(c => {
-                    return c.title.toLowerCase().includes(searchStr) || c.username.toLowerCase().includes(searchStr);
-                });
+                const filtered = state.chats.filter(c => c.title.toLowerCase().includes(searchStr) || c.username.toLowerCase().includes(searchStr));
 
                 if (filtered.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чаты не найдены.<br>Введите новый юзернейм для создания диалога.</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чаты не найдены.</div>`;
                     return;
                 }
 
                 filtered.forEach(chat => {
                     const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: 'Нет сообщений', time: '' };
-                    
                     const item = document.createElement('div');
-                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors relative";
+                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors";
                     item.onclick = () => openChatWindow(chat.id);
 
-                    // Аватарка
                     let avatarHTML = '';
-                    if (chat.type === 'private' && chat.username === state.user.username && state.user.avatar) {
-                        avatarHTML = `<img src="${state.user.avatar}" class="w-12 h-12 rounded-full object-cover">`;
-                    } else if (chat.avatar) {
+                    if (chat.avatar) {
                         avatarHTML = `<img src="${chat.avatar}" class="w-12 h-12 rounded-full object-cover">`;
                     } else {
-                        const initial = chat.title.charAt(0).toUpperCase();
-                        avatarHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-lg select-none">${initial}</div>`;
-                    }
-
-                    // Бейдж верификации
-                    const verifiedHTML = chat.verified ? `<i class="fas fa-check-circle text-[#2481cc] ml-1 text-xs" title="Подтвержденный"></i>` : '';
-
-                    // Счетчик непрочитанных
-                    let badgeHTML = '';
-                    if (chat.unreadCount > 0) {
-                        badgeHTML = `<span class="bg-[#2481cc] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">${chat.unreadCount}</span>`;
+                        avatarHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-lg">${chat.title.charAt(0).toUpperCase()}</div>`;
                     }
 
                     item.innerHTML = `
-                        <div class="flex-shrink-0 relative">${avatarHTML}</div>
+                        <div class="flex-shrink-0">${avatarHTML}</div>
                         <div class="ml-3 flex-1 min-w-0">
                             <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate flex items-center">
-                                    ${chat.title} ${verifiedHTML}
-                                </h3>
+                                <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate flex items-center">${chat.title} ${chat.verified ? '<i class="fas fa-check-circle text-[#2481cc] ml-1 text-xs"></i>':''}</h3>
                                 <span class="text-xs text-[var(--tg-theme-hint)] ml-2">${lastMsg.time}</span>
                             </div>
                             <div class="flex items-center justify-between mt-0.5">
                                 <p class="text-sm text-[var(--tg-theme-hint)] truncate pr-2">${lastMsg.text}</p>
-                                ${badgeHTML}
+                                ${chat.unreadCount > 0 ? `<span class="bg-[#2481cc] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">${chat.unreadCount}</span>`:''}
                             </div>
                         </div>
                     `;
@@ -700,169 +549,216 @@
 
             function fillSettingsAndProfilePanes() {
                 if (!state.user) return;
-                
-                // Настройки вкладка
                 document.getElementById('settings-name-display').textContent = state.user.name;
                 document.getElementById('settings-phone-display').textContent = state.user.phone;
                 document.getElementById('settings-username-display').textContent = state.user.username;
-                
-                // Профиль вкладка
                 document.getElementById('profile-pane-name').textContent = state.user.name;
                 document.getElementById('profile-pane-phone').textContent = state.user.phone;
                 document.getElementById('profile-pane-username').textContent = state.user.username;
 
-                // Синхронизация аватарок по SPA
-                const imgSettings = document.getElementById('settings-avatar');
-                const placeholderSettings = document.getElementById('settings-avatar-placeholder');
-                const imgProfile = document.getElementById('profile-pane-avatar');
-                const placeholderProfile = document.getElementById('profile-pane-avatar-placeholder');
+                const imgS = document.getElementById('settings-avatar'), plcS = document.getElementById('settings-avatar-placeholder');
+                const imgP = document.getElementById('profile-pane-avatar'), plcP = document.getElementById('profile-pane-avatar-placeholder');
 
                 if (state.user.avatar) {
-                    imgSettings.src = state.user.avatar;
-                    imgSettings.classList.remove('hidden');
-                    placeholderSettings.classList.add('hidden');
-
-                    imgProfile.src = state.user.avatar;
-                    imgProfile.classList.remove('hidden');
-                    placeholderProfile.classList.add('hidden');
+                    imgS.src = state.user.avatar; imgS.classList.remove('hidden'); plcS.classList.add('hidden');
+                    imgP.src = state.user.avatar; imgP.classList.remove('hidden'); plcP.classList.add('hidden');
                 } else {
-                    imgSettings.classList.add('hidden');
-                    placeholderSettings.classList.remove('hidden');
-                    placeholderSettings.className = "w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl select-none";
-                    placeholderSettings.textContent = state.user.name.charAt(0).toUpperCase();
-
-                    imgProfile.classList.add('hidden');
-                    placeholderProfile.classList.remove('hidden');
-                    placeholderProfile.className = "w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-4xl select-none";
-                    placeholderProfile.textContent = state.user.name.charAt(0).toUpperCase();
+                    imgS.classList.add('hidden'); plcS.classList.remove('hidden');
+                    plcS.className = "w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl";
+                    plcS.textContent = state.user.name.charAt(0).toUpperCase();
+                    imgP.classList.add('hidden'); plcP.classList.remove('hidden');
+                    plcP.className = "w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-4xl";
+                    plcP.textContent = state.user.name.charAt(0).toUpperCase();
                 }
-
-                // Рендер контактов на вкладке Контакты
                 renderContactsPane();
             }
 
             function renderContactsPane() {
                 const container = document.getElementById('contacts-list-container');
                 container.innerHTML = '';
-                
-                // Отображаем контакты на базе существующих чатов приватного типа
-                const privates = state.chats.filter(c => c.type === 'private' || c.type === 'official');
-                
-                if (privates.length === 0) {
-                    container.innerHTML = `<p class="text-sm text-[var(--tg-theme-hint)] text-center pt-8">Список контактов пуст</p>`;
-                    return;
-                }
-
-                privates.forEach(c => {
+                state.chats.forEach(c => {
                     const el = document.createElement('div');
-                    el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer transition-colors";
-                    el.onclick = () => {
-                        switchTab('chats');
-                        openChatWindow(c.id);
-                    };
-
-                    let av = '';
-                    if (c.avatar) {
-                        av = `<img src="${c.avatar}" class="w-10 h-10 rounded-full object-cover">`;
-                    } else {
-                        av = `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${c.gradient || 'from-gray-400 to-gray-600'} flex items-center justify-center text-white font-bold text-sm">${c.title.charAt(0).toUpperCase()}</div>`;
-                    }
-
-                    el.innerHTML = `
-                        ${av}
-                        <div>
-                            <h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${c.title}</h4>
-                            <p class="text-xs text-emerald-500">${c.status || 'в сети'}</p>
-                        </div>
-                    `;
+                    el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer";
+                    el.onclick = () => { switchTab('chats'); openChatWindow(c.id); };
+                    el.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${c.gradient || 'from-blue-500 to-blue-600'} flex items-center justify-center text-white font-bold text-sm">${c.title.charAt(0).toUpperCase()}</div><div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${c.title}</h4><p class="text-xs text-emerald-500">в сети</p></div>`;
                     container.appendChild(el);
                 });
             }
 
-            // Переключение вкладок нижнего навигационного меню
             function switchTab(tabId) {
-                const panes = ['chats', 'contacts', 'settings', 'profile'];
-                panes.forEach(p => {
-                    document.getElementById(`tab-pane-${p}`).classList.add('hidden');
-                });
+                ['chats', 'contacts', 'settings', 'profile'].forEach(p => document.getElementById(`tab-pane-${p}`).classList.add('hidden'));
                 document.getElementById(`tab-pane-${tabId}`).classList.remove('hidden');
-
-                // Подсветка кнопок навигации
-                const items = document.querySelectorAll('.nav-item');
-                items.forEach(btn => {
+                document.querySelectorAll('.nav-item').forEach(btn => {
                     if (btn.getAttribute('data-tab') === tabId) {
-                        btn.classList.remove('text-[var(--tg-theme-hint)]');
-                        btn.classList.add('text-[#2481cc]');
+                        btn.classList.remove('text-[var(--tg-theme-hint)]'); btn.classList.add('text-[#2481cc]');
                     } else {
-                        btn.classList.remove('text-[#2481cc]');
-                        btn.classList.add('text-[var(--tg-theme-hint)]');
+                        btn.classList.remove('text-[#2481cc]'); btn.classList.add('text-[var(--tg-theme-hint)]');
                     }
                 });
             }
 
-            // ОТКРЫТИЕ ОКНА ПЕРЕПИСКИ (ОКНО ЧАТА)
             function openChatWindow(chatId) {
                 const chat = state.chats.find(c => c.id === chatId);
                 if (!chat) return;
-
                 state.activeChatId = chatId;
-                chat.unreadCount = 0; // Сбрасываем непрочитанные при входе
-                saveChatsToStorage();
-                renderChatsList();
-                updateGlobalUnreadBadge();
+                chat.unreadCount = 0;
+                saveChatsToStorage(); renderChatsList(); updateGlobalUnreadBadge();
 
-                // Заполнение заголовка окна чата
                 document.getElementById('chat-window-title').textContent = chat.title;
-                document.getElementById('chat-window-status').textContent = chat.status || 'не в сети';
-
-                const imgW = document.getElementById('chat-window-avatar-img');
-                const placeholderW = document.getElementById('chat-window-avatar-placeholder');
+                document.getElementById('chat-window-status').textContent = chat.status;
+                const imgW = document.getElementById('chat-window-avatar-img'), plcW = document.getElementById('chat-window-avatar-placeholder');
 
                 if (chat.avatar) {
-                    imgW.src = chat.avatar;
-                    imgW.classList.remove('hidden');
-                    placeholderW.classList.add('hidden');
+                    imgW.src = chat.avatar; imgW.classList.remove('hidden'); plcW.classList.add('hidden');
                 } else {
-                    imgW.classList.add('hidden');
-                    placeholderW.classList.remove('hidden');
-                    placeholderW.className = `w-10 h-10 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-sm select-none`;
-                    placeholderW.textContent = chat.title.charAt(0).toUpperCase();
+                    imgW.classList.add('hidden'); plcW.classList.remove('hidden');
+                    plcW.className = `w-10 h-10 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-sm`;
+                    plcW.textContent = chat.title.charAt(0).toUpperCase();
                 }
 
-                // Рендер истории сообщений
                 renderChatHistory(chat);
-
-                // Показ слоя чата с плавной анимацией выдвижения
                 const layer = document.getElementById('chat-window-layer');
                 layer.classList.remove('hidden');
-                setTimeout(() => {
-                    layer.classList.remove('translate-x-full');
-                }, 10);
+                setTimeout(() => layer.classList.remove('translate-x-full'), 10);
             }
 
             function closeChatWindow() {
                 const layer = document.getElementById('chat-window-layer');
                 layer.classList.add('translate-x-full');
                 state.activeChatId = null;
-                setTimeout(() => {
-                    layer.classList.add('hidden');
-                }, 200);
+                setTimeout(() => layer.classList.add('hidden'), 200);
             }
 
             function renderChatHistory(chat) {
                 const container = document.getElementById('chat-history-flow');
                 container.innerHTML = '';
-
-                if (chat.messages.length === 0) {
-                    container.innerHTML = `<div class="mx-auto text-center bg-black/20 text-white text-xs px-3 py-1 rounded-full w-max my-4">Нет сообщений</div>`;
-                    return;
-                }
-
                 chat.messages.forEach(msg => {
                     const wrapper = document.createElement('div');
-                    wrapper.className = `flex w-full ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`;
+                    wrapper.className = `flex w-full ${msg.sender === 'me' ? 'justify-end':'justify-start'}`;
+                    const bubble = msg.sender === 'me' ? 'bg-[var(--tg-theme-msg-out)] text-slate-900':'bg-[var(--tg-theme-msg-in)] text-[var(--tg-theme-text)]';
+                    wrapper.innerHTML = `<div class="max-w-[75%] rounded-2xl px-3 py-1.5 shadow-sm text-sm break-words ${bubble}"><p>${msg.text}</p><div class="text-[10px] text-gray-500 float-right mt-1 ml-4">${msg.time} ${msg.sender==='me'?'<i class="fas fa-check-double text-[var(--tg-theme-msg-out-ticks)]"></i>':''}</div></div>`;
+                    container.appendChild(wrapper);
+                });
+                container.scrollTop = container.scrollHeight;
+            }
 
-                    let ticksHTML = '';
-                    if (msg.sender === 'me') {
-                        // Две синие галочки
-                        ticksHTML = `<i class="fas fa-check-double text-[var(--tg-theme-msg-out-ticks)
+            function handleSendMessage() {
+                const input = document.getElementById('chat-msg-input');
+                const text = input.value.trim();
+                if (!text || !state.activeChatId) return;
+                const chat = state.chats.find(c => c.id === state.activeChatId);
+                if (!chat) return;
+
+                const timeStr = getFormattedTime();
+                chat.messages.push({ sender: 'me', text: text, time: timeStr });
+                input.value = '';
+                renderChatHistory(chat); saveChatsToStorage(); renderChatsList();
+
+                if (chat.type === 'private' && chat.id !== 'chat_durov_mock') {
+                    setTimeout(() => {
+                        if (state.activeChatId === chat.id) document.getElementById('chat-window-status').textContent = 'печатает...';
+                        setTimeout(() => {
+                            const ans = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                            chat.messages.push({ sender: 'them', text: ans, time: getFormattedTime() });
+                            if (state.activeChatId === chat.id) {
+                                document.getElementById('chat-window-status').textContent = chat.status;
+                                renderChatHistory(chat);
+                            } else { chat.unreadCount++; }
+                            saveChatsToStorage(); renderChatsList(); updateGlobalUnreadBadge();
+                        }, 1500);
+                    }, 500);
+                }
+            }
+
+            function setupGroupActivitySimulation() {
+                const groups = state.chats.filter(c => c.type === 'group');
+                if (groups.length === 0) return;
+                const grp = groups[Math.floor(Math.random() * groups.length)];
+                const ans = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                grp.messages.push({ sender: 'them', text: `[Участник]: ${ans}`, time: getFormattedTime() });
+                if (state.activeChatId === grp.id) renderChatHistory(grp); else grp.unreadCount++;
+                saveChatsToStorage(); renderChatsList(); updateGlobalUnreadBadge();
+            }
+
+            function setupEventListeners() {
+                document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', function() { switchTab(this.getAttribute('data-tab')); }));
+                
+                const pm = document.getElementById('popup-menu-main');
+                document.getElementById('btn-main-menu').addEventListener('click', function(e) { e.stopPropagation(); pm.classList.toggle('hidden'); });
+                document.addEventListener('click', function() { pm.classList.add('hidden'); });
+
+                document.getElementById('chat-search-input').addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && this.value.trim()) {
+                        let val = this.value.trim();
+                        if (!val.startsWith('@')) val = '@' + val;
+                        const exist = state.chats.find(c => c.username.toLowerCase() === val.toLowerCase());
+                        if (exist) { openChatWindow(exist.id); } 
+                        else {
+                            const nc = { id: 'c_'+Date.now(), title: val.substring(1), type: 'private', username: val, status: 'в сети', gradient: 'from-teal-400 to-teal-600', messages: [], unreadCount: 0 };
+                            state.chats.unshift(nc); saveChatsToStorage(); renderChatsList(); openChatWindow(nc.id);
+                        }
+                        this.value = '';
+                    }
+                });
+
+                document.getElementById('btn-close-chat').addEventListener('click', closeChatWindow);
+                document.getElementById('btn-send-message').addEventListener('click', handleSendMessage);
+
+                document.getElementById('btn-fab-create').addEventListener('click', () => openModal('group'));
+                document.getElementById('pop-create-group').addEventListener('click', () => openModal('group'));
+                document.getElementById('pop-create-channel').addEventListener('click', () => openModal('channel'));
+                document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-create-layer').classList.add('hidden'));
+                document.getElementById('btn-modal-submit').addEventListener('click', submitModal);
+
+                document.getElementById('avatar-file-input').addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file || file.size > 400*1024) return;
+                    const rd = new FileReader();
+                    rd.onload = function(ev) {
+                        state.user.avatar = ev.target.result;
+                        try { localStorage.setItem('tg_spa_account', JSON.stringify(state.user)); } catch(err) {}
+                        fillSettingsAndProfilePanes(); renderChatsList();
+                    };
+                    rd.readAsDataURL(file);
+                });
+
+                document.getElementById('toggle-dark-mode').addEventListener('change', function() { toggleTheme(this.checked); });
+                document.getElementById('btn-logout').addEventListener('click', () => { try{localStorage.clear();}catch(e){} location.reload(); });
+
+                // Регистрация
+                document.getElementById('btn-step-1-next').addEventListener('click', () => { if(document.getElementById('auth-phone-input').value.length > 4) showAuthStep(2); });
+                document.getElementById('btn-step-2-back').addEventListener('click', () => showAuthStep(1));
+                document.getElementById('btn-step-2-next').addEventListener('click', () => {
+                    const p1 = document.getElementById('auth-pass').value, p2 = document.getElementById('auth-pass-confirm').value;
+                    if (p1 && p1 === p2) showAuthStep(3); else alert("Пароли не совпадают");
+                });
+                document.getElementById('btn-step-3-finish').addEventListener('click', () => {
+                    const name = document.getElementById('auth-name').value.trim();
+                    let user = document.getElementById('auth-username').value.trim();
+                    if (!name || user.length < 3) return;
+                    if (reservedUsernames.includes(user)) { alert("Юзернейм занят"); return; }
+                    state.user = { name: name, username: user, phone: document.getElementById('auth-phone-input').value, avatar: null };
+                    try { localStorage.setItem('tg_spa_account', JSON.stringify(state.user)); } catch(e) {}
+                    loadApplicationData(); showLayer('app-layer'); switchTab('chats');
+                });
+            }
+
+            function openModal(mode) {
+                state.currentModalMode = mode;
+                document.getElementById('modal-create-title').textContent = mode === 'group' ? 'Создать группу':'Создать канал';
+                document.getElementById('modal-create-input').value = '';
+                document.getElementById('modal-create-layer').classList.remove('hidden');
+            }
+
+            function submitModal() {
+                const name = document.getElementById('modal-create-input').value.trim();
+                if (!name) return;
+                const nc = { id: 'm_'+Date.now(), title: name, type: state.currentModalMode, username: '@'+name, status: 'участники', gradient: 'from-orange-400 to-orange-600', messages: [{ sender: 'them', text: 'Создано', time: getFormattedTime() }], unreadCount: 0 };
+                state.chats.unshift(nc); saveChatsToStorage(); renderChatsList();
+                document.getElementById('modal-create-layer').classList.add('hidden');
+                openChatWindow(nc.id);
+            }
+        })();
+    </script>
+</body>
+</html>

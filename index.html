@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Telegram Mobile SPA</title>
+    <title>Telegram Advanced SPA</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -57,31 +57,17 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23101921' fill-opacity='0.6'%3E%3Cpath fill-rule='evenodd' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 9c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm1-61c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 2px;
-        }
-        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .gpu-accelerated {
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 2px; }
+        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+        .gpu-accelerated { transform: translateZ(0); backface-visibility: hidden; }
+        
         @keyframes premium-glow {
             0% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
             50% { filter: drop-shadow(0 0 8px #60a5fa); text-shadow: 0 0 10px #60a5fa; }
             100% { filter: drop-shadow(0 0 2px #2481cc); text-shadow: 0 0 4px #2481cc; }
         }
-        .premium-star-anim {
-            animation: premium-glow 3s infinite ease-in-out;
-            color: #38bdf8;
-        }
+        .premium-star-anim { animation: premium-glow 3s infinite ease-in-out; color: #38bdf8; }
     </style>
 </head>
 <body class="gpu-accelerated select-none">
@@ -90,33 +76,45 @@
         <div id="auth-step-1" class="flex flex-col flex-1 p-6 justify-between">
             <div class="w-full max-w-sm mx-auto pt-12">
                 <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Номер телефона</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Проверьте код страны и введите свой номер телефона.</p>
-                
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите номер. Если аккаунт существует, система запросит пароль.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-secondary-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Страна</label>
-                        <select class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-medium">
+                        <select id="auth-country" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-medium">
                             <option value="KZ">Казахстан (+7)</option>
                             <option value="RU">Россия (+7)</option>
-                            <option value="US">США (+1)</option>
                             <option value="UZ">Узбекистан (+998)</option>
                         </select>
                     </div>
-
                     <div class="border-2 border-[#2481cc] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[#2481cc] block mb-1">Номер телефона</label>
-                        <input type="tel" id="auth-phone-input" value="+" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-lg font-medium tracking-wide" placeholder="+7 707 123 4567">
+                        <input type="tel" id="auth-phone-input" value="+7" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-lg font-medium tracking-wide">
                     </div>
-
-                    <label class="flex items-center space-x-3 pt-2 cursor-pointer">
-                        <input type="checkbox" id="auth-sync-contacts" checked class="w-5 h-5 rounded border-[var(--tg-theme-border)] text-[#2481cc] focus:ring-0">
-                        <span class="text-sm text-[var(--tg-theme-text)]">Синхронизировать контакты</span>
-                    </label>
+                    <p id="error-step-1" class="text-xs text-red-500 font-medium hidden"></p>
                 </div>
             </div>
-
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
-                <button id="btn-step-1-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                <button id="btn-step-1-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="auth-step-login" class="flex flex-col flex-1 p-6 justify-between hidden">
+            <div class="w-full max-w-sm mx-auto pt-12">
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Введите пароль</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Этот номер телефона уже зарегистрирован. Введите ваш облачный пароль.</p>
+                <div class="space-y-4">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Пароль</label>
+                        <input type="password" id="login-pass-input" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
+                    </div>
+                    <p id="error-login" class="text-xs text-red-500 font-medium hidden"></p>
+                </div>
+            </div>
+            <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
+                <button id="btn-login-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
+                <button id="btn-login-submit" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
@@ -124,25 +122,23 @@
 
         <div id="auth-step-2" class="flex flex-col flex-1 p-6 justify-between hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
-                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Создайте облачный пароль</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Двухэтапный пароль защитит ваш аккаунт мессенджера.</p>
-                
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Создайте пароль</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Двухэтапный пароль защитит ваш аккаунт в будущем.</p>
                 <div class="space-y-4">
-                    <div id="wrapper-pass1" class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
-                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Введите пароль</label>
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                        <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Придумайте пароль</label>
                         <input type="password" id="auth-pass" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
                     </div>
-                    <div id="wrapper-pass2" class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Повторите пароль</label>
                         <input type="password" id="auth-pass-confirm" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="••••••••">
                     </div>
                     <p id="error-step-2" class="text-xs text-red-500 font-medium hidden"></p>
                 </div>
             </div>
-
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-between items-center">
                 <button id="btn-step-2-back" class="text-sm font-medium text-[#2481cc] px-4 py-2">Назад</button>
-                <button id="btn-step-2-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                <button id="btn-step-2-next" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
@@ -150,24 +146,22 @@
 
         <div id="auth-step-3" class="flex flex-col flex-1 p-6 justify-between hidden">
             <div class="w-full max-w-sm mx-auto pt-12">
-                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">О себе</h2>
-                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите ваше имя и выберите свободный юзернейм.</p>
-                
+                <h2 class="text-2xl font-semibold mb-2 text-center text-[var(--tg-theme-text)]">Данные профиля</h2>
+                <p class="text-sm text-[var(--tg-theme-hint)] text-center mb-8">Введите имя и уникальный юзернейм.</p>
                 <div class="space-y-4">
                     <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Ваше Имя</label>
                         <input type="text" id="auth-name" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base" placeholder="Например: Даулет">
                     </div>
-                    <div id="wrapper-username" class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
+                    <div class="border border-[var(--tg-theme-border)] rounded-xl p-3 bg-[var(--tg-theme-bg)]">
                         <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Юзернейм</label>
-                        <input type="text" id="auth-username" value="@" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-mono" placeholder="@username">
+                        <input type="text" id="auth-username" value="@" class="w-full bg-transparent border-none outline-none text-[var(--tg-theme-text)] text-base font-mono">
                     </div>
                     <p id="error-step-3" class="text-xs text-red-500 font-medium hidden"></p>
                 </div>
             </div>
-
             <div class="w-full max-w-sm mx-auto pb-8 flex justify-end">
-                <button id="btn-step-3-finish" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md active:scale-95 transition-transform">
+                <button id="btn-step-3-finish" class="w-14 h-14 rounded-full bg-[#2481cc] flex items-center justify-center text-white text-xl shadow-md">
                     <i class="fas fa-check"></i>
                 </button>
             </div>
@@ -175,30 +169,24 @@
     </div>
 
     <div id="app-layer" class="fixed inset-0 z-10 flex flex-col bg-[var(--tg-theme-bg)] hidden">
-        
         <div id="main-content" class="flex-1 overflow-hidden relative">
             
             <div id="tab-pane-chats" class="absolute inset-0 flex flex-col view-pane">
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center justify-between bg-[var(--tg-theme-bg)] sticky top-0 z-20">
                     <h1 class="text-xl font-bold tracking-tight text-[var(--tg-theme-text)]">Telegram</h1>
-                    <div class="flex items-center space-x-4">
-                        <button id="btn-main-menu" class="text-[var(--tg-theme-hint)] active:scale-90 transition-transform p-1">
-                            <i class="fas fa-ellipsis-v text-lg"></i>
-                        </button>
-                    </div>
+                    <button id="btn-main-menu" class="text-[var(--tg-theme-hint)] p-1"><i class="fas fa-ellipsis-v text-lg"></i></button>
                 </header>
 
                 <div class="p-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)]">
                     <div class="relative flex items-center bg-[var(--tg-theme-secondary-bg)] rounded-xl px-3 py-2">
                         <i class="fas fa-search text-[var(--tg-theme-hint)] mr-3"></i>
-                        <input type="text" id="chat-search-input" placeholder="Поиск чатов или юзернеймов..." class="w-full bg-transparent border-none outline-none text-sm text-[var(--tg-theme-text)]">
+                        <input type="text" id="chat-search-input" placeholder="Поиск по @юзернейму или названию..." class="w-full bg-transparent border-none outline-none text-sm text-[var(--tg-theme-text)]">
                     </div>
                 </div>
 
-                <div id="chats-list-container" class="flex-1 overflow-y-auto custom-scrollbar pb-24">
-                    </div>
+                <div id="chats-list-container" class="flex-1 overflow-y-auto custom-scrollbar pb-24"></div>
 
-                <button id="btn-fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#2481cc] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform z-30">
+                <button id="btn-fab-create" class="fixed bottom-20 right-6 w-14 h-14 rounded-full bg-[#2481cc] text-white flex items-center justify-center shadow-lg z-30">
                     <i class="fas fa-pencil-alt text-lg"></i>
                 </button>
             </div>
@@ -207,8 +195,7 @@
                 <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
                     <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Контакты</h1>
                 </header>
-                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4" id="contacts-list-container">
-                    </div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4" id="contacts-list-container"></div>
             </div>
 
             <div id="tab-pane-settings" class="absolute inset-0 flex flex-col view-pane hidden">
@@ -217,18 +204,11 @@
                 </header>
                 <div class="flex-1 overflow-y-auto custom-scrollbar bg-[var(--tg-theme-secondary-bg)]">
                     <div class="bg-[var(--tg-theme-bg)] p-4 flex items-center space-x-4 border-b border-[var(--tg-theme-border)]">
-                        <div class="relative">
-                            <img id="settings-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full object-cover hidden">
-                            <div id="settings-avatar-placeholder" class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl"></div>
-                            <label class="absolute bottom-0 right-0 w-6 h-6 bg-[#2481cc] text-white rounded-full flex items-center justify-center text-xs cursor-pointer border-2 border-[var(--tg-theme-bg)]">
-                                <i class="fas fa-camera"></i>
-                                <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
-                            </label>
-                        </div>
+                        <div id="settings-avatar-placeholder" class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl bg-gradient-to-br from-blue-500 to-indigo-600"></div>
                         <div>
                             <div class="flex items-center space-x-2">
                                 <h3 id="settings-name-display" class="font-bold text-lg text-[var(--tg-theme-text)]"></h3>
-                                <i class="fas fa-star premium-star-anim text-sm" title="Telegram Premium"></i>
+                                <i class="fas fa-star premium-star-anim text-sm"></i>
                             </div>
                             <p id="settings-phone-display" class="text-sm text-[var(--tg-theme-hint)]"></p>
                             <p id="settings-username-display" class="text-sm text-[#2481cc] font-mono"></p>
@@ -243,11 +223,10 @@
                                 <p class="text-xs text-[var(--tg-theme-hint)]">Внутренний баланс аккаунта</p>
                             </div>
                         </div>
-                        <span id="settings-stars-balance" class="font-bold text-amber-500 text-lg">1000 ⭐️</span>
+                        <span class="font-bold text-amber-500 text-lg">1500 ⭐️</span>
                     </div>
 
                     <div class="bg-[var(--tg-theme-bg)] mt-4 p-4 border-y border-[var(--tg-theme-border)] space-y-4">
-                        <h4 class="text-xs font-semibold text-[#2481cc] uppercase tracking-wider">Настройки интерфейса</h4>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
                                 <i class="fas fa-moon text-lg text-[var(--tg-theme-hint)]"></i>
@@ -255,67 +234,22 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="toggle-dark-mode" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2481cc]"></div>
+                                <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2481cc]"></div>
                             </label>
                         </div>
                     </div>
 
                     <div class="mt-8 px-4">
-                        <button id="btn-logout" class="w-full bg-red-500/10 text-red-500 hover:bg-red-500/20 py-3 rounded-xl font-medium transition-colors text-center">
-                            Выйти из аккаунта
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-pane-profile" class="absolute inset-0 flex flex-col view-pane hidden">
-                <header class="h-14 px-4 border-b border-[var(--tg-theme-border)] flex items-center bg-[var(--tg-theme-bg)]">
-                    <h1 class="text-xl font-bold text-[var(--tg-theme-text)]">Мой Профиль</h1>
-                </header>
-                <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 flex flex-col items-center">
-                    <div class="relative w-32 h-32">
-                        <img id="profile-pane-avatar" src="" alt="Avatar" class="w-32 h-32 rounded-full object-cover hidden shadow-md">
-                        <div id="profile-pane-avatar-placeholder" class="w-32 h-32 rounded-full flex items-center justify-center text-white font-bold text-4xl shadow-md"></div>
-                        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs border-4 border-[var(--tg-theme-bg)]">
-                            <i class="fas fa-check"></i>
-                        </div>
-                    </div>
-
-                    <div class="text-center space-y-1">
-                        <div class="flex items-center justify-center space-x-2">
-                            <h2 id="profile-pane-name" class="text-2xl font-bold text-[var(--tg-theme-text)]"></h2>
-                            <i class="fas fa-star premium-star-anim text-lg"></i>
-                        </div>
-                        <p class="text-sm bg-blue-500/10 text-[#2481cc] px-3 py-1 rounded-full inline-block font-semibold">
-                            Telegram Premium Действует
-                        </p>
-                    </div>
-
-                    <div class="w-full border-t border-[var(--tg-theme-border)] pt-4 space-y-4">
-                        <div>
-                            <label class="text-xs text-[var(--tg-theme-hint)]">Номер телефона</label>
-                            <p id="profile-pane-phone" class="text-base font-medium text-[var(--tg-theme-text)]"></p>
-                        </div>
-                        <div>
-                            <label class="text-xs text-[var(--tg-theme-hint)]">Имя пользователя</label>
-                            <p id="profile-pane-username" class="text-base font-mono font-medium text-[#2481cc]"></p>
-                        </div>
-                        <div>
-                            <label class="text-xs text-[var(--tg-theme-hint)]">О себе</label>
-                            <p class="text-sm text-[var(--tg-theme-text)]">Аккаунт разработчика Telegram Mobile SPA.</p>
-                        </div>
+                        <button id="btn-logout" class="w-full bg-red-500/10 text-red-500 py-3 rounded-xl font-medium text-center">Выйти из аккаунта</button>
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <nav class="h-16 border-t border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] fixed bottom-0 left-0 right-0 flex items-center justify-around z-40 px-2 select-none">
+        <nav class="h-16 border-t border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] fixed bottom-0 left-0 right-0 flex items-center justify-around z-40 px-2">
             <button data-tab="chats" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[#2481cc]">
-                <div class="relative">
-                    <i class="fas fa-comment-alt text-xl"></i>
-                    <span id="chats-global-badge" class="absolute -top-2 -right-3.5 bg-[#2481cc] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-[var(--tg-theme-bg)]">32</span>
-                </div>
+                <i class="fas fa-comment-alt text-xl"></i>
                 <span class="text-[11px] font-medium mt-1">Чаты</span>
             </button>
             <button data-tab="contacts" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
@@ -326,53 +260,47 @@
                 <i class="fas fa-cog text-xl"></i>
                 <span class="text-[11px] font-medium mt-1">Настройки</span>
             </button>
-            <button data-tab="profile" class="nav-item flex flex-col items-center justify-center flex-1 py-1 text-[var(--tg-theme-hint)]">
-                <i class="fas fa-user text-xl"></i>
-                <span class="text-[11px] font-medium mt-1">Профиль</span>
-            </button>
         </nav>
     </div>
 
     <div id="chat-window-layer" class="fixed inset-0 z-50 flex flex-col bg-[var(--tg-theme-bg)] hidden transform translate-x-full transition-transform duration-200">
         <header class="h-14 px-3 border-b border-[var(--tg-theme-border)] bg-[var(--tg-theme-bg)] flex items-center justify-between sticky top-0 z-20">
-            <div class="flex items-center space-x-2">
-                <button id="btn-close-chat" class="w-8 h-8 flex items-center justify-center text-[#2481cc] active:scale-90 transition-transform">
-                    <i class="fas fa-arrow-left text-lg"></i>
-                </button>
-                <div id="chat-window-avatar-placeholder" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"></div>
-                <img id="chat-window-avatar-img" src="" alt="" class="w-10 h-10 rounded-full object-cover hidden">
-                <div class="flex flex-col" id="chat-header-info-click">
-                    <span id="chat-window-title" class="font-bold text-sm text-[var(--tg-theme-text)] truncate max-w-[180px]">Чат</span>
-                    <span id="chat-window-status" class="text-xs text-[var(--tg-theme-hint)]">не в сети</span>
+            <div class="flex items-center space-x-2 flex-1 min-w-0">
+                <button id="btn-close-chat" class="w-8 h-8 flex items-center justify-center text-[#2481cc]"><i class="fas fa-arrow-left text-lg"></i></button>
+                <div id="chat-window-avatar" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-blue-500"></div>
+                <div class="flex flex-col flex-1 min-w-0">
+                    <span id="chat-window-title" class="font-bold text-sm text-[var(--tg-theme-text)] truncate"></span>
+                    <span id="chat-window-status" class="text-xs text-[var(--tg-theme-hint)] truncate"></span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3 text-[var(--tg-theme-hint)]">
-                <i class="fas fa-phone"></i>
-                <i class="fas fa-ellipsis-v px-1"></i>
+            <div class="flex items-center space-x-4 text-[var(--tg-theme-hint)]">
+                <button id="btn-toggle-contact" class="text-sm font-medium text-[#2481cc] hidden">Добавить</button>
+                <i class="fas fa-ellipsis-v"></i>
             </div>
         </header>
 
         <div id="chat-history-flow" class="flex-1 overflow-y-auto custom-scrollbar chat-background p-4 space-y-2"></div>
 
-        <div class="p-2 bg-[var(--tg-theme-bg)] border-t border-[var(--tg-theme-border)] flex items-end space-x-2 sticky bottom-0 z-20">
-            <button class="w-10 h-10 flex items-center justify-center text-[var(--tg-theme-hint)]">
-                <i class="fas fa-paperclip text-lg"></i>
-            </button>
-            <div class="flex-1 bg-[var(--tg-theme-secondary-bg)] rounded-2xl px-3 py-2 flex items-end max-h-32">
-                <textarea id="chat-msg-input" rows="1" class="w-full bg-transparent border-none outline-none resize-none text-sm text-[var(--tg-theme-text)] max-h-24 py-0.5 custom-scrollbar" placeholder="Сообщение"></textarea>
+        <div class="p-2 bg-[var(--tg-theme-bg)] border-t border-[var(--tg-theme-border)] flex items-end space-x-2">
+            <div class="flex-1 bg-[var(--tg-theme-secondary-bg)] rounded-2xl px-3 py-2 flex items-end">
+                <textarea id="chat-msg-input" rows="1" class="w-full bg-transparent border-none outline-none resize-none text-sm text-[var(--tg-theme-text)] max-h-24" placeholder="Сообщение"></textarea>
             </div>
-            <button id="btn-send-message" class="w-10 h-10 rounded-full bg-[#2481cc] text-white flex items-center justify-center transition-transform">
-                <i class="fas fa-paper-plane text-sm"></i>
-            </button>
+            <button id="btn-send-message" class="w-10 h-10 rounded-full bg-[#2481cc] text-white flex items-center justify-center"><i class="fas fa-paper-plane text-sm"></i></button>
         </div>
+    </div>
+
+    <div id="msg-context-menu" class="fixed z-50 bg-[var(--tg-theme-bg)] border border-[var(--tg-theme-border)] rounded-xl shadow-xl w-40 py-1 text-sm hidden">
+        <button id="btn-delete-msg" class="w-full text-left px-4 py-2 hover:bg-[var(--tg-theme-secondary-bg)] text-red-500 flex items-center space-x-2">
+            <i class="fas fa-trash"></i> <span>Удалить</span>
+        </button>
     </div>
 
     <div id="modal-create-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden p-4">
         <div class="bg-[var(--tg-theme-bg)] rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-xl">
-            <h3 id="modal-create-title" class="text-lg font-bold text-[var(--tg-theme-text)]">Создать</h3>
+            <h3 class="text-lg font-bold text-[var(--tg-theme-text)]">Создать группу</h3>
             <div>
-                <label id="modal-input-label" class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название</label>
-                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none">
+                <label class="text-xs text-[var(--tg-theme-hint)] block mb-1">Название группы</label>
+                <input type="text" id="modal-create-input" class="w-full border border-[var(--tg-theme-border)] rounded-xl p-2.5 bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] outline-none" placeholder="Например: Разработчики">
             </div>
             <div class="flex justify-end space-x-3 pt-2">
                 <button id="btn-modal-cancel" class="px-4 py-2 text-sm font-medium text-[var(--tg-theme-hint)]">Отмена</button>
@@ -381,212 +309,107 @@
         </div>
     </div>
 
-    <div id="toast-notification" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-md pointer-events-none opacity-0 transition-opacity duration-300"></div>
-
     <div id="popup-menu-main" class="fixed top-12 right-4 z-40 bg-[var(--tg-theme-bg)] border border-[var(--tg-theme-border)] rounded-xl shadow-xl w-48 py-1 text-sm hidden">
         <button id="pop-create-group" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
             <i class="fas fa-users text-[var(--tg-theme-hint)] w-5"></i> <span>Создать группу</span>
         </button>
-        <button id="pop-create-channel" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
-            <i class="fas fa-bullhorn text-[var(--tg-theme-hint)] w-5"></i> <span>Создать канал</span>
-        </button>
-        <button id="pop-clear-cache" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-[var(--tg-theme-text)] flex items-center space-x-3">
-            <i class="fas fa-trash text-[var(--tg-theme-hint)] w-5"></i> <span>Очистить чаты</span>
+        <button id="pop-reset-db" class="w-full text-left px-4 py-2.5 hover:bg-[var(--tg-theme-secondary-bg)] text-red-500 flex items-center space-x-3">
+            <i class="fas fa-sync w-5"></i> <span>Обнулить всю БД</span>
         </button>
     </div>
 
     <script>
         (function() {
-            let state = { user: null, chats: [], activeChatId: null, currentModalMode: null, isDarkMode: false };
-            const reservedUsernames = ['@admin', '@telegram', '@support', '@durov', '@bot', '@crypto'];
-            const aiResponses = ["Привет! Как дела?", "Не могу сейчас говорить, позже наберу.", "Круто, а ты что делаешь?", "Салам, не хабар?", "Я тут, слушаю тебя.", "Мәссаған, шынымен бе?", "Давай завтра обсудим", "Хаха, это реально смешно 😂", "Жақсы, рахмет! Барі норм.", "Погнали в Блек Рашу катать вечерком?", "Че там с балансом Stars?", "Бот работает отлично, без лагов."];
-            const avatarGradients = ['from-red-400 to-red-600', 'from-orange-400 to-orange-600', 'from-green-400 to-green-600', 'from-teal-400 to-teal-600', 'from-blue-400 to-blue-600', 'from-purple-400 to-purple-600'];
+            // Глобальная имитация серверной базы данных в LocalStorage
+            let db = { users: [], groups: [] };
+            let state = { currentUser: null, activeChatId: null, selectedMsgId: null, isDarkMode: false };
+
+            const gradients = ['from-red-400 to-red-600', 'from-orange-400 to-orange-600', 'from-green-400 to-green-600', 'from-teal-400 to-teal-600', 'from-blue-400 to-blue-600', 'from-purple-400 to-purple-600'];
+
+            function loadDB() {
+                try {
+                    const saved = localStorage.getItem('tg_mock_db');
+                    if (saved) {
+                        db = JSON.parse(saved);
+                    } else {
+                        // Системные боты и пользователи по умолчанию
+                        db.users = [
+                            { phone: "+77071111111", password: "123", name: "Павел Дуров", username: "@durov", contacts: [], chats: [] },
+                            { phone: "+77072222222", password: "123", name: "Telegram Support", username: "@support", contacts: [], chats: [] }
+                        ];
+                        saveDB();
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            function saveDB() {
+                try { localStorage.setItem('tg_mock_db', JSON.stringify(db)); } catch(e){}
+            }
 
             function getFormattedTime() {
                 const now = new Date();
-                let hh = now.getHours(), mm = now.getMinutes();
-                return `${hh < 10 ? '0'+hh : hh}:${mm < 10 ? '0'+mm : mm}`;
+                return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             }
 
             document.addEventListener("DOMContentLoaded", function() {
+                loadDB();
                 initTheme();
-                checkAuthorization();
+                checkSession();
                 setupEventListeners();
-                setInterval(setupGroupActivitySimulation, 12000);
             });
 
             function initTheme() {
                 try {
-                    const cachedTheme = localStorage.getItem('tg_spa_theme');
-                    if (cachedTheme === 'dark') {
+                    if (localStorage.getItem('tg_spa_theme') === 'dark') {
                         document.body.classList.add('dark-mode');
                         document.getElementById('toggle-dark-mode').checked = true;
                         state.isDarkMode = true;
                     }
-                } catch(e) {}
+                } catch(e){}
             }
 
-            function toggleTheme(isDark) {
-                if (isDark) {
-                    document.body.classList.add('dark-mode');
-                    try { localStorage.setItem('tg_spa_theme', 'dark'); } catch(e) {}
-                    state.isDarkMode = true;
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    try { localStorage.setItem('tg_spa_theme', 'light'); } catch(e) {}
-                    state.isDarkMode = false;
-                }
-            }
-
-            function checkAuthorization() {
-                let storedUser = null;
-                try { storedUser = localStorage.getItem('tg_spa_account'); } catch(e) {}
-                
-                if (storedUser) {
-                    try {
-                        state.user = JSON.parse(storedUser);
-                        loadApplicationData();
-                        showLayer('app-layer');
-                        switchTab('chats');
-                    } catch(e) {
-                        showLayer('auth-layer');
-                        showAuthStep(1);
+            function checkSession() {
+                try {
+                    const session = localStorage.getItem('tg_active_session_phone');
+                    if (session) {
+                        const user = db.users.find(u => u.phone === session);
+                        if (user) {
+                            state.currentUser = user;
+                            launchApp();
+                            return;
+                        }
                     }
-                } else {
-                    showLayer('auth-layer');
-                    showAuthStep(1);
-                }
+                } catch(e){}
+                showLayer('auth-layer');
+                showAuthStep(1);
             }
 
-            function showLayer(layerId) {
+            function showLayer(id) {
                 document.getElementById('auth-layer').classList.add('hidden');
                 document.getElementById('app-layer').classList.add('hidden');
-                document.getElementById(layerId).classList.remove('hidden');
+                document.getElementById(id).classList.remove('hidden');
             }
 
-            function showAuthStep(stepNum) {
-                document.getElementById('auth-step-1').classList.add('hidden');
-                document.getElementById('auth-step-2').classList.add('hidden');
-                document.getElementById('auth-step-3').classList.add('hidden');
-                document.getElementById(`auth-step-${stepNum}`).classList.remove('hidden');
+            function showAuthStep(step) {
+                ['1', 'login', '2', '3'].forEach(s => document.getElementById(`auth-step-${s}`).classList.add('hidden'));
+                document.getElementById(`auth-step-${step}`).classList.remove('hidden');
             }
 
-            function loadApplicationData() {
-                let storedChats = null;
-                try { storedChats = localStorage.getItem(`tg_spa_chats_${state.user.username}`); } catch(e) {}
-                
-                if (storedChats) {
-                    state.chats = JSON.parse(storedChats);
-                } else {
-                    state.chats = [
-                        { id: 'tg_support_official', title: 'Telegram Support', type: 'official', username: '@support', status: 'в сети', gradient: 'from-blue-500 to-sky-600', verified: true, messages: [{ sender: 'them', text: `Приветствуем, ${state.user.name}! Ваш аккаунт успешно активирован. Premium выдан навсегда, на балансе 1000 звёзд (⭐️).`, time: getFormattedTime() }], unreadCount: 1, lastMsgTime: getFormattedTime() },
-                        { id: 'chat_durov_mock', title: 'Павел Дуров', type: 'private', username: '@durov', status: 'недавно был в сети', gradient: 'from-slate-700 to-slate-900', verified: true, messages: [{ sender: 'them', text: 'Добро пожаловать в мессенджер SPA!', time: '12:00' }], unreadCount: 32, lastMsgTime: '12:00' }
-                    ];
-                    saveChatsToStorage();
-                }
+            function launchApp() {
+                showLayer('app-layer');
+                switchTab('chats');
                 renderChatsList();
-                updateGlobalUnreadBadge();
-                fillSettingsAndProfilePanes();
-            }
-
-            function saveChatsToStorage() {
-                if (state.user) {
-                    try { localStorage.setItem(`tg_spa_chats_${state.user.username}`, JSON.stringify(state.chats)); } catch(e) {}
-                }
-            }
-
-            function renderChatsList(filterKeyword = '') {
-                const container = document.getElementById('chats-list-container');
-                container.innerHTML = '';
-                const searchStr = filterKeyword.trim().toLowerCase();
-                const filtered = state.chats.filter(c => c.title.toLowerCase().includes(searchStr) || c.username.toLowerCase().includes(searchStr));
-
-                if (filtered.length === 0) {
-                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чаты не найдены.</div>`;
-                    return;
-                }
-
-                filtered.forEach(chat => {
-                    const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: 'Нет сообщений', time: '' };
-                    const item = document.createElement('div');
-                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors";
-                    item.onclick = () => openChatWindow(chat.id);
-
-                    let avatarHTML = '';
-                    if (chat.avatar) {
-                        avatarHTML = `<img src="${chat.avatar}" class="w-12 h-12 rounded-full object-cover">`;
-                    } else {
-                        avatarHTML = `<div class="w-12 h-12 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-lg">${chat.title.charAt(0).toUpperCase()}</div>`;
-                    }
-
-                    item.innerHTML = `
-                        <div class="flex-shrink-0">${avatarHTML}</div>
-                        <div class="ml-3 flex-1 min-w-0">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate flex items-center">${chat.title} ${chat.verified ? '<i class="fas fa-check-circle text-[#2481cc] ml-1 text-xs"></i>':''}</h3>
-                                <span class="text-xs text-[var(--tg-theme-hint)] ml-2">${lastMsg.time}</span>
-                            </div>
-                            <div class="flex items-center justify-between mt-0.5">
-                                <p class="text-sm text-[var(--tg-theme-hint)] truncate pr-2">${lastMsg.text}</p>
-                                ${chat.unreadCount > 0 ? `<span class="bg-[#2481cc] text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">${chat.unreadCount}</span>`:''}
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(item);
-                });
-            }
-
-            function updateGlobalUnreadBadge() {
-                const total = state.chats.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-                const badge = document.getElementById('chats-global-badge');
-                if (total > 0) {
-                    badge.textContent = total;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            }
-
-            function fillSettingsAndProfilePanes() {
-                if (!state.user) return;
-                document.getElementById('settings-name-display').textContent = state.user.name;
-                document.getElementById('settings-phone-display').textContent = state.user.phone;
-                document.getElementById('settings-username-display').textContent = state.user.username;
-                document.getElementById('profile-pane-name').textContent = state.user.name;
-                document.getElementById('profile-pane-phone').textContent = state.user.phone;
-                document.getElementById('profile-pane-username').textContent = state.user.username;
-
-                const imgS = document.getElementById('settings-avatar'), plcS = document.getElementById('settings-avatar-placeholder');
-                const imgP = document.getElementById('profile-pane-avatar'), plcP = document.getElementById('profile-pane-avatar-placeholder');
-
-                if (state.user.avatar) {
-                    imgS.src = state.user.avatar; imgS.classList.remove('hidden'); plcS.classList.add('hidden');
-                    imgP.src = state.user.avatar; imgP.classList.remove('hidden'); plcP.classList.add('hidden');
-                } else {
-                    imgS.classList.add('hidden'); plcS.classList.remove('hidden');
-                    plcS.className = "w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl";
-                    plcS.textContent = state.user.name.charAt(0).toUpperCase();
-                    imgP.classList.add('hidden'); plcP.classList.remove('hidden');
-                    plcP.className = "w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-4xl";
-                    plcP.textContent = state.user.name.charAt(0).toUpperCase();
-                }
-                renderContactsPane();
-            }
-
-            function renderContactsPane() {
-                const container = document.getElementById('contacts-list-container');
-                container.innerHTML = '';
-                state.chats.forEach(c => {
-                    const el = document.createElement('div');
-                    el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer";
-                    el.onclick = () => { switchTab('chats'); openChatWindow(c.id); };
-                    el.innerHTML = `<div class="w-10 h-10 rounded-full bg-gradient-to-br ${c.gradient || 'from-blue-500 to-blue-600'} flex items-center justify-center text-white font-bold text-sm">${c.title.charAt(0).toUpperCase()}</div><div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${c.title}</h4><p class="text-xs text-emerald-500">в сети</p></div>`;
-                    container.appendChild(el);
-                });
+                
+                document.getElementById('settings-name-display').textContent = state.currentUser.name;
+                document.getElementById('settings-phone-display').textContent = state.currentUser.phone;
+                document.getElementById('settings-username-display').textContent = state.currentUser.username;
+                
+                const plc = document.getElementById('settings-avatar-placeholder');
+                plc.textContent = state.currentUser.name.charAt(0).toUpperCase();
             }
 
             function switchTab(tabId) {
-                ['chats', 'contacts', 'settings', 'profile'].forEach(p => document.getElementById(`tab-pane-${p}`).classList.add('hidden'));
+                ['chats', 'contacts', 'settings'].forEach(t => document.getElementById(`tab-pane-${t}`).classList.add('hidden'));
                 document.getElementById(`tab-pane-${tabId}`).classList.remove('hidden');
                 document.querySelectorAll('.nav-item').forEach(btn => {
                     if (btn.getAttribute('data-tab') === tabId) {
@@ -595,170 +418,404 @@
                         btn.classList.remove('text-[#2481cc]'); btn.classList.add('text-[var(--tg-theme-hint)]');
                     }
                 });
+                if (tabId === 'contacts') renderContactsList();
             }
 
-            function openChatWindow(chatId) {
-                const chat = state.chats.find(c => c.id === chatId);
-                if (!chat) return;
-                state.activeChatId = chatId;
-                chat.unreadCount = 0;
-                saveChatsToStorage(); renderChatsList(); updateGlobalUnreadBadge();
+            // Получение всех активных диалогов (Личные чаты + Группы)
+            function getActiveChats() {
+                let userChats = state.currentUser.chats || [];
+                // Находим группы, где текущий пользователь является создателем или участником
+                let userGroups = db.groups.filter(g => g.creator === state.currentUser.username);
+                
+                let merged = [];
+                userChats.forEach(c => merged.push({ ...c, isGroup: false }));
+                userGroups.forEach(g => merged.push({ ...g, isGroup: true }));
+                
+                return merged.sort((a,b) => b.id - a.id);
+            }
 
-                document.getElementById('chat-window-title').textContent = chat.title;
-                document.getElementById('chat-window-status').textContent = chat.status;
-                const imgW = document.getElementById('chat-window-avatar-img'), plcW = document.getElementById('chat-window-avatar-placeholder');
+            function renderChatsList(filter = '') {
+                const container = document.getElementById('chats-list-container');
+                container.innerHTML = '';
+                const cleanFilter = filter.trim().toLowerCase();
 
-                if (chat.avatar) {
-                    imgW.src = chat.avatar; imgW.classList.remove('hidden'); plcW.classList.add('hidden');
-                } else {
-                    imgW.classList.add('hidden'); plcW.classList.remove('hidden');
-                    plcW.className = `w-10 h-10 rounded-full bg-gradient-to-br ${chat.gradient || 'from-blue-400 to-blue-600'} flex items-center justify-center text-white font-bold text-sm`;
-                    plcW.textContent = chat.title.charAt(0).toUpperCase();
+                // Поиск по всей базе данных, если строка начинается с @
+                if (cleanFilter.startsWith('@') && cleanFilter.length > 2) {
+                    renderGlobalSearchResults(cleanFilter, container);
+                    return;
                 }
 
-                renderChatHistory(chat);
-                const layer = document.getElementById('chat-window-layer');
-                layer.classList.remove('hidden');
-                setTimeout(() => layer.classList.remove('translate-x-full'), 10);
+                const list = getActiveChats().filter(c => c.title.toLowerCase().includes(cleanFilter) || c.username.toLowerCase().includes(cleanFilter));
+
+                if (list.length === 0) {
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Чатов пока нет. Введите @username в поиск, чтобы найти кого-то!</div>`;
+                    return;
+                }
+
+                list.forEach(chat => {
+                    const item = document.createElement('div');
+                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)] transition-colors";
+                    item.onclick = () => openChatWindow(chat.username, chat.isGroup);
+
+                    const lastMsg = chat.messages && chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : { text: chat.isGroup ? 'Группа создана' : 'Нет сообщений', time: '' };
+                    const grad = chat.isGroup ? 'from-orange-400 to-red-500' : 'from-blue-400 to-indigo-600';
+
+                    item.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br ${grad} flex items-center justify-center text-white font-bold text-lg">${chat.title.charAt(0).toUpperCase()}</div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-[var(--tg-theme-text)] truncate">${chat.title}</h3>
+                                <span class="text-xs text-[var(--tg-theme-hint)] ml-2">${lastMsg.time}</span>
+                            </div>
+                            <p class="text-sm text-[var(--tg-theme-hint)] truncate mt-0.5">${lastMsg.text}</p>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
             }
 
-            function closeChatWindow() {
-                const layer = document.getElementById('chat-window-layer');
-                layer.classList.add('translate-x-full');
-                state.activeChatId = null;
-                setTimeout(() => layer.classList.add('hidden'), 200);
+            function renderGlobalSearchResults(query, container) {
+                // Ищем людей
+                let foundUsers = db.users.filter(u => u.username.toLowerCase().includes(query) && u.username !== state.currentUser.username);
+                // Ищем группы
+                let foundGroups = db.groups.filter(g => g.username.toLowerCase().includes(query));
+
+                if (foundUsers.length === 0 && foundGroups.length === 0) {
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Ничего не найдено по запросу ${query}</div>`;
+                    return;
+                }
+
+                let heading = document.createElement('div');
+                heading.className = "px-4 py-2 text-xs font-semibold text-[#2481cc] bg-[var(--tg-theme-secondary-bg)] uppercase";
+                heading.textContent = "Глобальный поиск";
+                container.appendChild(heading);
+
+                foundUsers.forEach(u => {
+                    const item = document.createElement('div');
+                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)]";
+                    item.onclick = () => { openChatWindow(u.username, false); document.getElementById('chat-search-input').value = ''; };
+                    item.innerHTML = `
+                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center text-white font-bold">${u.name.charAt(0).toUpperCase()}</div>
+                        <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${u.name}</h4><p class="text-xs text-[#2481cc] font-mono">${u.username}</p></div>
+                    `;
+                    container.appendChild(item);
+                });
+
+                foundGroups.forEach(g => {
+                    const item = document.createElement('div');
+                    item.className = "flex items-center px-4 py-3 border-b border-[var(--tg-theme-border)] cursor-pointer hover:bg-[var(--tg-theme-secondary-bg)]";
+                    item.onclick = () => { openChatWindow(g.username, true); document.getElementById('chat-search-input').value = ''; };
+                    item.innerHTML = `
+                        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-red-500 flex items-center justify-center text-white font-bold">👥</div>
+                        <div class="ml-3"><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${g.title}</h4><p class="text-xs text-gray-400 font-mono">${g.username} (Ссылка)</p></div>
+                    `;
+                    container.appendChild(item);
+                });
             }
 
-            function renderChatHistory(chat) {
+            function renderContactsList() {
+                const container = document.getElementById('contacts-list-container');
+                container.innerHTML = '';
+                const myContacts = state.currentUser.contacts || [];
+
+                if (myContacts.length === 0) {
+                    container.innerHTML = `<div class="p-8 text-center text-sm text-[var(--tg-theme-hint)]">Список контактов пуст.</div>`;
+                    return;
+                }
+
+                myContacts.forEach(username => {
+                    const target = db.users.find(u => u.username === username);
+                    if (!target) return;
+                    const el = document.createElement('div');
+                    el.className = "flex items-center space-x-3 p-2 rounded-xl hover:bg-[var(--tg-theme-secondary-bg)] cursor-pointer";
+                    el.onclick = () => { openChatWindow(target.username, false); };
+                    el.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">${target.name.charAt(0).toUpperCase()}</div>
+                        <div><h4 class="text-sm font-bold text-[var(--tg-theme-text)]">${target.name}</h4><p class="text-xs text-emerald-500">в сети</p></div>
+                    `;
+                    container.appendChild(el);
+                });
+            }
+
+            function openChatWindow(targetUsername, isGroup = false) {
+                state.activeChatId = { username: targetUsername, isGroup: isGroup };
+                const win = document.getElementById('chat-window-layer');
+                const titleNode = document.getElementById('chat-window-title');
+                const statusNode = document.getElementById('chat-window-status');
+                const av = document.getElementById('chat-window-avatar');
+                const contactBtn = document.getElementById('btn-toggle-contact');
+
+                if (isGroup) {
+                    const group = db.groups.find(g => g.username === targetUsername);
+                    titleNode.textContent = group.title;
+                    statusNode.textContent = `${group.username} • клик для инфо`;
+                    av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-orange-400 to-red-500";
+                    av.textContent = "👥";
+                    contactBtn.classList.add('hidden');
+                    renderChatHistory(group.messages);
+                } else {
+                    const targetUser = db.users.find(u => u.username === targetUsername);
+                    titleNode.textContent = targetUser.name;
+                    statusNode.textContent = "онлайн";
+                    av.className = "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br from-blue-400 to-indigo-600";
+                    av.textContent = targetUser.name.charAt(0).toUpperCase();
+
+                    // Проверка контактов
+                    if ((state.currentUser.contacts || []).includes(targetUsername)) {
+                        contactBtn.textContent = "Удалить";
+                        contactBtn.classList.remove('hidden');
+                    } else {
+                        contactBtn.textContent = "Добавить";
+                        contactBtn.classList.remove('hidden');
+                    }
+
+                    // Находим или создаем локальный массив сообщений внутри структуры текущего юзера
+                    if (!state.currentUser.chats) state.currentUser.chats = [];
+                    let chatData = state.currentUser.chats.find(c => c.username === targetUsername);
+                    if (!chatData) {
+                        chatData = { id: Date.now(), title: targetUser.name, username: targetUsername, messages: [] };
+                        state.currentUser.chats.push(chatData);
+                        saveDB();
+                    }
+                    renderChatHistory(chatData.messages);
+                }
+
+                win.classList.remove('hidden');
+                setTimeout(() => win.classList.remove('translate-x-full'), 10);
+            }
+
+            function renderChatHistory(messages = []) {
                 const container = document.getElementById('chat-history-flow');
                 container.innerHTML = '';
-                chat.messages.forEach(msg => {
+                
+                messages.forEach(msg => {
                     const wrapper = document.createElement('div');
-                    wrapper.className = `flex w-full ${msg.sender === 'me' ? 'justify-end':'justify-start'}`;
-                    const bubble = msg.sender === 'me' ? 'bg-[var(--tg-theme-msg-out)] text-slate-900':'bg-[var(--tg-theme-msg-in)] text-[var(--tg-theme-text)]';
-                    wrapper.innerHTML = `<div class="max-w-[75%] rounded-2xl px-3 py-1.5 shadow-sm text-sm break-words ${bubble}"><p>${msg.text}</p><div class="text-[10px] text-gray-500 float-right mt-1 ml-4">${msg.time} ${msg.sender==='me'?'<i class="fas fa-check-double text-[var(--tg-theme-msg-out-ticks)]"></i>':''}</div></div>`;
+                    wrapper.className = `flex w-full ${msg.sender === state.currentUser.username ? 'justify-end' : 'justify-start'}`;
+                    
+                    const isMe = msg.sender === state.currentUser.username;
+                    const bubbleClass = isMe ? 'bg-[var(--tg-theme-msg-out)] text-slate-900' : 'bg-[var(--tg-theme-msg-in)] text-[var(--tg-theme-text)]';
+                    
+                    wrapper.innerHTML = `
+                        <div data-id="${msg.id}" class="chat-bubble max-w-[75%] rounded-2xl px-3 py-1.5 shadow-sm text-sm break-words ${bubbleClass} cursor-pointer relative">
+                            ${state.activeChatId.isGroup && !isMe ? `<p class="text-[11px] font-bold text-[#2481cc] mb-0.5">${msg.senderName}</p>` : ''}
+                            <p>${msg.text}</p>
+                            <div class="text-[10px] text-gray-400 float-right mt-1 ml-4 select-none">
+                                ${msg.time} ${isMe ? '<i class="fas fa-check-double text-[var(--tg-theme-msg-out-ticks)]"></i>':''}
+                            </div>
+                        </div>
+                    `;
+
+                    // Событие клика на сообщение для его удаления
+                    wrapper.querySelector('.chat-bubble').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (isMe) {
+                            state.selectedMsgId = msg.id;
+                            const menu = document.getElementById('msg-context-menu');
+                            menu.style.top = `${e.clientY}px`;
+                            menu.style.left = `${Math.min(e.clientX, window.innerWidth - 170)}px`;
+                            menu.classList.remove('hidden');
+                        }
+                    });
+
                     container.appendChild(wrapper);
                 });
                 container.scrollTop = container.scrollHeight;
             }
 
-            function handleSendMessage() {
+            function sendMessage() {
                 const input = document.getElementById('chat-msg-input');
                 const text = input.value.trim();
-                if (!text || !state.activeChatId) return;
-                const chat = state.chats.find(c => c.id === state.activeChatId);
-                if (!chat) return;
+                if (!text) return;
 
-                const timeStr = getFormattedTime();
-                chat.messages.push({ sender: 'me', text: text, time: timeStr });
-                input.value = '';
-                renderChatHistory(chat); saveChatsToStorage(); renderChatsList();
+                const time = getFormattedTime();
+                const msgId = Date.now() + Math.random();
+                const newMsg = { id: msgId, sender: state.currentUser.username, senderName: state.currentUser.name, text: text, time: time };
 
-                if (chat.type === 'private' && chat.id !== 'chat_durov_mock') {
-                    setTimeout(() => {
-                        if (state.activeChatId === chat.id) document.getElementById('chat-window-status').textContent = 'печатает...';
-                        setTimeout(() => {
-                            const ans = aiResponses[Math.floor(Math.random() * aiResponses.length)];
-                            chat.messages.push({ sender: 'them', text: ans, time: getFormattedTime() });
-                            if (state.activeChatId === chat.id) {
-                                document.getElementById('chat-window-status').textContent = chat.status;
-                                renderChatHistory(chat);
-                            } else { chat.unreadCount++; }
-                            saveChatsToStorage(); renderChatsList(); updateGlobalUnreadBadge();
-                        }, 1500);
-                    }, 500);
+                if (state.activeChatId.isGroup) {
+                    const group = db.groups.find(g => g.username === state.activeChatId.username);
+                    group.messages.push(newMsg);
+                    saveDB();
+                    renderChatHistory(group.messages);
+                } else {
+                    let myChat = state.currentUser.chats.find(c => c.username === state.activeChatId.username);
+                    myChat.messages.push(newMsg);
+
+                    // Синхронизируем это же сообщение в структуру получателя, чтобы он его увидел при входе
+                    const opponent = db.users.find(u => u.username === state.activeChatId.username);
+                    if (opponent) {
+                        if (!opponent.chats) opponent.chats = [];
+                        let oppChat = opponent.chats.find(c => c.username === state.currentUser.username);
+                        if (!oppChat) {
+                            oppChat = { id: Date.now(), title: state.currentUser.name, username: state.currentUser.username, messages: [] };
+                            opponent.chats.push(oppChat);
+                        }
+                        oppChat.messages.push(newMsg);
+                    }
+                    saveDB();
+                    renderChatHistory(myChat.messages);
                 }
-            }
-
-            function setupGroupActivitySimulation() {
-                const groups = state.chats.filter(c => c.type === 'group');
-                if (groups.length === 0) return;
-                const grp = groups[Math.floor(Math.random() * groups.length)];
-                const ans = aiResponses[Math.floor(Math.random() * aiResponses.length)];
-                grp.messages.push({ sender: 'them', text: `[Участник]: ${ans}`, time: getFormattedTime() });
-                if (state.activeChatId === grp.id) renderChatHistory(grp); else grp.unreadCount++;
-                saveChatsToStorage(); renderChatsList(); updateGlobalUnreadBadge();
+                input.value = '';
             }
 
             function setupEventListeners() {
-                document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', function() { switchTab(this.getAttribute('data-tab')); }));
-                
-                const pm = document.getElementById('popup-menu-main');
-                document.getElementById('btn-main-menu').addEventListener('click', function(e) { e.stopPropagation(); pm.classList.toggle('hidden'); });
-                document.addEventListener('click', function() { pm.classList.add('hidden'); });
+                // Закрытие контекстных окон по клику на экран
+                document.addEventListener('click', () => {
+                    document.getElementById('popup-menu-main').classList.add('hidden');
+                    document.getElementById('msg-context-menu').classList.add('hidden');
+                });
 
-                document.getElementById('chat-search-input').addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && this.value.trim()) {
-                        let val = this.value.trim();
-                        if (!val.startsWith('@')) val = '@' + val;
-                        const exist = state.chats.find(c => c.username.toLowerCase() === val.toLowerCase());
-                        if (exist) { openChatWindow(exist.id); } 
-                        else {
-                            const nc = { id: 'c_'+Date.now(), title: val.substring(1), type: 'private', username: val, status: 'в сети', gradient: 'from-teal-400 to-teal-600', messages: [], unreadCount: 0 };
-                            state.chats.unshift(nc); saveChatsToStorage(); renderChatsList(); openChatWindow(nc.id);
+                // Переключение нижних вкладок
+                document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', function() {
+                    switchTab(this.getAttribute('data-tab'));
+                }));
+
+                // Шапка — Три точки
+                document.getElementById('btn-main-menu').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.getElementById('popup-menu-main').classList.toggle('hidden');
+                });
+
+                // Поиск
+                document.getElementById('chat-search-input').addEventListener('input', function() {
+                    renderChatsList(this.value);
+                });
+
+                // Создание группы кнопки
+                document.getElementById('btn-fab-create').addEventListener('click', () => document.getElementById('modal-create-layer').classList.remove('hidden'));
+                document.getElementById('pop-create-group').addEventListener('click', () => document.getElementById('modal-create-layer').classList.remove('hidden'));
+                document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-create-layer').classList.add('hidden'));
+                
+                document.getElementById('btn-modal-submit').addEventListener('click', () => {
+                    const title = document.getElementById('modal-create-input').value.trim();
+                    if (!title) return;
+                    const randomHash = Math.random().toString(36).substring(2, 7);
+                    const groupUrl = `@t_me_joinchat_${randomHash}`;
+
+                    db.groups.push({
+                        id: Date.now(),
+                        title: title,
+                        username: groupUrl,
+                        creator: state.currentUser.username,
+                        messages: []
+                    });
+                    saveDB();
+                    document.getElementById('modal-create-layer').classList.add('hidden');
+                    document.getElementById('modal-create-input').value = '';
+                    renderChatsList();
+                    openChatWindow(groupUrl, true);
+                });
+
+                // Удаление сообщения
+                document.getElementById('btn-delete-msg').addEventListener('click', () => {
+                    if (!state.selectedMsgId) return;
+                    if (state.activeChatId.isGroup) {
+                        const group = db.groups.find(g => g.username === state.activeChatId.username);
+                        group.messages = group.messages.filter(m => m.id !== state.selectedMsgId);
+                        saveDB();
+                        renderChatHistory(group.messages);
+                    } else {
+                        const myChat = state.currentUser.chats.find(c => c.username === state.activeChatId.username);
+                        myChat.messages = myChat.messages.filter(m => m.id !== state.selectedMsgId);
+
+                        // Удаляем и у оппонента
+                        const opponent = db.users.find(u => u.username === state.activeChatId.username);
+                        if (opponent && opponent.chats) {
+                            const oppChat = opponent.chats.find(c => c.username === state.currentUser.username);
+                            if (oppChat) oppChat.messages = oppChat.messages.filter(m => m.id !== state.selectedMsgId);
                         }
-                        this.value = '';
+                        saveDB();
+                        renderChatHistory(myChat.messages);
                     }
                 });
 
-                document.getElementById('btn-close-chat').addEventListener('click', closeChatWindow);
-                document.getElementById('btn-send-message').addEventListener('click', handleSendMessage);
+                // Управление контактами
+                document.getElementById('btn-toggle-contact').addEventListener('click', function() {
+                    if (!state.activeChatId || state.activeChatId.isGroup) return;
+                    if (!state.currentUser.contacts) state.currentUser.contacts = [];
 
-                document.getElementById('btn-fab-create').addEventListener('click', () => openModal('group'));
-                document.getElementById('pop-create-group').addEventListener('click', () => openModal('group'));
-                document.getElementById('pop-create-channel').addEventListener('click', () => openModal('channel'));
-                document.getElementById('btn-modal-cancel').addEventListener('click', () => document.getElementById('modal-create-layer').classList.add('hidden'));
-                document.getElementById('btn-modal-submit').addEventListener('click', submitModal);
-
-                document.getElementById('avatar-file-input').addEventListener('change', function(e) {
-                    const file = e.target.files[0];
-                    if (!file || file.size > 400*1024) return;
-                    const rd = new FileReader();
-                    rd.onload = function(ev) {
-                        state.user.avatar = ev.target.result;
-                        try { localStorage.setItem('tg_spa_account', JSON.stringify(state.user)); } catch(err) {}
-                        fillSettingsAndProfilePanes(); renderChatsList();
-                    };
-                    rd.readAsDataURL(file);
+                    const target = state.activeChatId.username;
+                    if (state.currentUser.contacts.includes(target)) {
+                        state.currentUser.contacts = state.currentUser.contacts.filter(c => c !== target);
+                        this.textContent = "Добавить";
+                    } else {
+                        state.currentUser.contacts.push(target);
+                        this.textContent = "Удалить";
+                    }
+                    saveDB();
                 });
 
-                document.getElementById('toggle-dark-mode').addEventListener('change', function() { toggleTheme(this.checked); });
-                document.getElementById('btn-logout').addEventListener('click', () => { try{localStorage.clear();}catch(e){} location.reload(); });
+                // Отправка сообщений
+                document.getElementById('btn-send-message').addEventListener('click', sendMessage);
+                document.getElementById('btn-close-chat').addEventListener('click', () => {
+                    document.getElementById('chat-window-layer').classList.add('translate-x-full');
+                    state.activeChatId = null;
+                    renderChatsList();
+                });
 
-                // Регистрация
-                document.getElementById('btn-step-1-next').addEventListener('click', () => { if(document.getElementById('auth-phone-input').value.length > 4) showAuthStep(2); });
-                document.getElementById('btn-step-2-back').addEventListener('click', () => showAuthStep(1));
+                // Обнуление базы данных мессенджера
+                document.getElementById('pop-reset-db').addEventListener('click', () => {
+                    localStorage.removeItem('tg_mock_db');
+                    localStorage.removeItem('tg_active_session_phone');
+                    location.reload();
+                });
+
+                // Выход из системы
+                document.getElementById('btn-logout').addEventListener('click', () => {
+                    localStorage.removeItem('tg_active_session_phone');
+                    location.reload();
+                });
+
+                // Переключение Темы
+                document.getElementById('toggle-dark-mode').addEventListener('change', function() {
+                    if (this.checked) {
+                        document.body.classList.add('dark-mode');
+                        localStorage.setItem('tg_spa_theme', 'dark');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                        localStorage.setItem('tg_spa_theme', 'light');
+                    }
+                });
+
+                // Регистрация / Логика Шаг 1 (Номер телефона)
+                document.getElementById('btn-step-1-next').addEventListener('click', () => {
+                    const phone = document.getElementById('auth-phone-input').value.trim();
+                    const err = document.getElementById('error-step-1');
+                    err.classList.add('hidden');
+
+                    if (phone.length < 7) {
+                        err.textContent = "Введите корректный номер телефона";
+                        err.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Проверяем существование номера
+                    const existingUser = db.users.find(u => u.phone === phone);
+                    state.tempAuthPhone = phone;
+
+                    if (existingUser) {
+                        showAuthStep('login'); // Аккаунт найден -> просим пароль
+                    } else {
+                        showAuthStep('2'); // Номер новый -> регистрация
+                    }
+                });
+
+                // Шаг Логин: Проверка пароля существующего аккаунта
+                document.getElementById('btn-login-submit').addEventListener('click', () => {
+                    const pass = document.getElementById('login-pass-input').value;
+                    const err = document.getElementById('error-login');
+                    const user = db.users.find(u => u.phone === state.tempAuthPhone);
+
+                    if (user && user.password === pass) {
+                        state.currentUser = user;
+                        localStorage.setItem('tg_active_session_phone', user.phone);
+                        launchApp();
+                    } else {
+                        err.textContent = "Неверный облачный пароль";
+                        err.classList.remove('hidden');
+                    }
+                });
+                document.getElementById('btn-login-back').addEventListener('click', () => showAuthStep('1'));
+
+                // Шаг Регистрации 2: Установка нового пароля
                 document.getElementById('btn-step-2-next').addEventListener('click', () => {
-                    const p1 = document.getElementById('auth-pass').value, p2 = document.getElementById('auth-pass-confirm').value;
-                    if (p1 && p1 === p2) showAuthStep(3); else alert("Пароли не совпадают");
-                });
-                document.getElementById('btn-step-3-finish').addEventListener('click', () => {
-                    const name = document.getElementById('auth-name').value.trim();
-                    let user = document.getElementById('auth-username').value.trim();
-                    if (!name || user.length < 3) return;
-                    if (reservedUsernames.includes(user)) { alert("Юзернейм занят"); return; }
-                    state.user = { name: name, username: user, phone: document.getElementById('auth-phone-input').value, avatar: null };
-                    try { localStorage.setItem('tg_spa_account', JSON.stringify(state.user)); } catch(e) {}
-                    loadApplicationData(); showLayer('app-layer'); switchTab('chats');
-                });
-            }
-
-            function openModal(mode) {
-                state.currentModalMode = mode;
-                document.getElementById('modal-create-title').textContent = mode === 'group' ? 'Создать группу':'Создать канал';
-                document.getElementById('modal-create-input').value = '';
-                document.getElementById('modal-create-layer').classList.remove('hidden');
-            }
-
-            function submitModal() {
-                const name = document.getElementById('modal-create-input').value.trim();
-                if (!name) return;
-                const nc = { id: 'm_'+Date.now(), title: name, type: state.currentModalMode, username: '@'+name, status: 'участники', gradient: 'from-orange-400 to-orange-600', messages: [{ sender: 'them', text: 'Создано', time: getFormattedTime() }], unreadCount: 0 };
-                state.chats.unshift(nc); saveChatsToStorage(); renderChatsList();
-                document.getElementById('modal-create-layer').classList.add('hidden');
-                openChatWindow(nc.id);
-            }
-        })();
-    </script>
-</body>
-</html>
+                    const

@@ -1,872 +1,513 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Telegram Web3</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            telegram: '#3390ec',
-            telegramDark: '#0f172a',
-            tgBg: '#0e1621',
-            tgPanel: '#17212b',
-            tgInput: '#242f3d'
-          },
-          boxShadow: {
-            glow: '0 0 20px rgba(51,144,236,.45)',
-            nft: '0 0 18px rgba(168,85,247,.55)'
-          },
-          animation: {
-            float: 'float 5s ease-in-out infinite',
-            glow: 'glow 2s infinite alternate',
-            typing: 'typing 1s infinite'
-          },
-          keyframes: {
-            float: {
-              '0%,100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-8px)' }
-            },
-            glow: {
-              from: { boxShadow: '0 0 10px rgba(168,85,247,.3)' },
-              to: { boxShadow: '0 0 22px rgba(59,130,246,.7)' }
-            },
-            typing: {
-              '0%': { opacity: '.4' },
-              '50%': { opacity: '1' },
-              '100%': { opacity: '.4' }
-            }
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Telegram Web — Modern Messenger</title>
+    <!-- Tailwind CSS + Font Awesome + Inter Font -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Кастомизация Tailwind для динамических тем -->
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
         }
-      }
-    }
-  </script>
-
-  <style>
-    * {
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      overflow: hidden;
-    }
-
-    .telegram-pattern {
-      background-color: #0b141a;
-      background-image:
-      radial-gradient(circle at 25px 25px, rgba(255,255,255,0.03) 2%, transparent 0%),
-      radial-gradient(circle at 75px 75px, rgba(255,255,255,0.03) 2%, transparent 0%);
-      background-size: 100px 100px;
-    }
-
-    .custom-scroll::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    .custom-scroll::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.12);
-      border-radius: 10px;
-    }
-
-    .message-appear {
-      animation: msg .25s ease;
-    }
-
-    @keyframes msg {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0px) scale(1);
-      }
-    }
-
-    .fade-out {
-      animation: fadeOut .5s forwards;
-    }
-
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
-    }
-
-    .nft-ring {
-      background:
-      linear-gradient(#111,#111) padding-box,
-      linear-gradient(135deg,#06b6d4,#8b5cf6,#ec4899) border-box;
-      border: 2px solid transparent;
-      animation: glow 2s infinite alternate;
-    }
-
-    .glass {
-      backdrop-filter: blur(18px);
-      background: rgba(23,33,43,.85);
-    }
-
-    .light .telegram-pattern {
-      background-color: #e7edf5;
-    }
-
-    .light .chat-bubble-in {
-      background: white;
-      color: #111827;
-    }
-
-    .light .chat-bubble-out {
-      background: #d9fdd3;
-      color: #111827;
-    }
-
-    .chat-bubble-in {
-      background: #1f2937;
-    }
-
-    .chat-bubble-out {
-      background: #2b5278;
-    }
-
-    .mobile-hidden {
-      display: none;
-    }
-
-    @media(max-width: 768px){
-      .sidebar-mobile-hide {
-        transform: translateX(-100%);
-      }
-
-      .mobile-hidden {
-        display: flex;
-      }
-    }
-  </style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.2s ease, color 0.2s;
+        }
+        /* Стили для кастомного скролла (Telegram style) */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(136, 136, 136, 0.4);
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(136, 136, 136, 0.7);
+        }
+        /* Паттерн фона чата (светлый/тёмный) */
+        .chat-bg-pattern {
+            background-image: radial-gradient(circle at 10% 20%, rgba(0, 0, 0, 0.02) 2%, transparent 2.5%);
+            background-size: 28px 28px;
+        }
+        .dark .chat-bg-pattern {
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.03) 2%, transparent 2.5%);
+        }
+        /* Анимация для новых сообщений */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .message-animate {
+            animation: fadeSlideUp 0.2s ease-out;
+        }
+        /* Адаптив: на маленьких экранах скрываем правую панель если чат не выбран */
+        @media (max-width: 768px) {
+            .chat-view-active {
+                display: flex;
+            }
+            .chat-list-mobile-hidden {
+                display: none;
+            }
+        }
+        /* Индикатор онлайн */
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #31b545;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1.5px solid white;
+        }
+        .dark .online-dot {
+            border-color: #1f2a3e;
+        }
+        /* Стиль для поля ввода */
+        .message-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
+        }
+        .send-btn-active {
+            transition: all 0.15s;
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        /* переходы темы */
+        .dark {
+            color-scheme: dark;
+        }
+    </style>
 </head>
-
-<body class="bg-[#0b141a] dark:bg-[#0b141a] text-white transition-all duration-300">
-
-<!-- LOGIN SCREEN -->
-<div id="loginScreen"
-class="fixed inset-0 z-50 flex items-center justify-center telegram-pattern">
-
-  <div class="absolute inset-0 bg-black/50"></div>
-
-  <div class="relative glass border border-white/10 w-[92%] max-w-md rounded-3xl p-8 shadow-2xl">
-
-    <div class="flex flex-col items-center">
-      <div class="w-24 h-24 rounded-full bg-gradient-to-br from-sky-400 to-blue-700 flex items-center justify-center text-4xl font-bold shadow-glow animate-float"
-      id="loginAvatar">
-        D
-      </div>
-
-      <h1 class="text-3xl font-bold mt-6">Telegram Web3</h1>
-      <p class="text-gray-400 mt-2 text-center">
-        Войдите без номера телефона и получите доступ к Web3-мессенджеру.
-      </p>
-
-      <div class="w-full mt-8 space-y-4">
-
-        <div>
-          <label class="text-sm text-gray-400">Username</label>
-          <input
-          id="usernameInput"
-          type="text"
-          placeholder="@username"
-          class="w-full mt-2 bg-[#1e293b] border border-white/10 rounded-2xl px-4 py-3 outline-none focus:border-sky-500 transition"
-          />
-        </div>
-
-        <button
-        id="randomAvatarBtn"
-        class="w-full bg-white/10 hover:bg-white/20 rounded-2xl py-3 transition-all">
-          <i class="fa-solid fa-shuffle mr-2"></i>
-          Случайный аватар
-        </button>
-
-        <button
-        id="loginBtn"
-        class="w-full bg-telegram hover:scale-[1.02] active:scale-[.98] rounded-2xl py-3 font-semibold transition-all shadow-glow">
-          Войти
-        </button>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MAIN APP -->
-<div class="flex h-screen overflow-hidden">
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar"
-  class="w-full md:w-[420px] bg-[#17212b] border-r border-white/5 flex flex-col transition-all duration-300">
-
-    <!-- HEADER -->
-    <div class="p-4 border-b border-white/5">
-
-      <div class="flex items-center justify-between mb-4">
-
-        <button class="w-11 h-11 rounded-full hover:bg-white/10 transition">
-          <i class="fa-solid fa-bars text-lg"></i>
-        </button>
-
-        <div class="font-semibold text-lg">
-          Telegram
-        </div>
-
-        <button id="themeToggle"
-        class="w-11 h-11 rounded-full hover:bg-white/10 transition">
-          <i class="fa-solid fa-moon"></i>
-        </button>
-
-      </div>
-
-      <div class="relative">
-        <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-
-        <input
-        type="text"
-        placeholder="Поиск"
-        class="w-full bg-[#242f3d] rounded-2xl py-3 pl-12 pr-4 outline-none focus:ring-2 focus:ring-sky-500 transition"
-        />
-      </div>
-
-      <!-- TABS -->
-      <div class="flex gap-2 mt-4 overflow-x-auto custom-scroll">
-
-        <button class="tab-btn active-tab px-4 py-2 rounded-xl bg-telegram text-white whitespace-nowrap"
-        data-tab="all">
-          Все чаты
-        </button>
-
-        <button class="tab-btn px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 whitespace-nowrap"
-        data-tab="groups">
-          Группы
-        </button>
-
-        <button class="tab-btn px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 whitespace-nowrap"
-        data-tab="channels">
-          Каналы
-        </button>
-
-        <button class="tab-btn px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 whitespace-nowrap"
-        data-tab="nft">
-          NFT-Чаты
-        </button>
-
-      </div>
-    </div>
-
-    <!-- CHAT LIST -->
-    <div id="chatList"
-    class="flex-1 overflow-y-auto custom-scroll"></div>
-
-  </aside>
-
-  <!-- CHAT AREA -->
-  <main class="flex-1 telegram-pattern relative flex flex-col">
-
-    <!-- EMPTY STATE -->
-    <div id="emptyState"
-    class="absolute inset-0 flex flex-col items-center justify-center text-center z-10">
-
-      <div class="w-32 h-32 rounded-full bg-white/5 flex items-center justify-center text-5xl shadow-2xl">
-        <i class="fa-brands fa-telegram"></i>
-      </div>
-
-      <h2 class="text-3xl font-bold mt-6">
-        Выберите чат
-      </h2>
-
-      <p class="text-gray-400 mt-2 max-w-md">
-        Начните общение, выбрав диалог слева. Telegram Web3 поддерживает NFT-чаты, ботов и Web3-функции.
-      </p>
-    </div>
-
-    <!-- CHAT HEADER -->
-    <div id="chatHeader"
-    class="hidden h-20 border-b border-white/5 bg-[#17212be0] backdrop-blur-xl px-5 flex items-center justify-between">
-
-      <div class="flex items-center gap-4">
-
-        <button id="backBtn"
-        class="mobile-hidden w-10 h-10 rounded-full hover:bg-white/10">
-          <i class="fa-solid fa-arrow-left"></i>
-        </button>
-
-        <div id="chatAvatar"
-        class="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center font-bold">
-          T
-        </div>
-
-        <div>
-          <div id="chatName" class="font-semibold text-lg">
-            Telegram
-          </div>
-
-          <div id="chatStatus"
-          class="text-sm text-gray-400">
-            online
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-
-        <button class="w-11 h-11 rounded-full hover:bg-white/10 transition">
-          <i class="fa-solid fa-search"></i>
-        </button>
-
-        <button class="w-11 h-11 rounded-full hover:bg-white/10 transition">
-          <i class="fa-solid fa-circle-info"></i>
-        </button>
-
-      </div>
-    </div>
-
-    <!-- MESSAGES -->
-    <div id="messagesContainer"
-    class="hidden flex-1 overflow-y-auto px-4 md:px-10 py-6 custom-scroll"></div>
-
-    <!-- INPUT -->
-    <div id="inputArea"
-    class="hidden p-4 border-t border-white/5 bg-[#17212be0] backdrop-blur-xl">
-
-      <div class="flex items-end gap-3">
-
-        <button class="w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 transition">
-          <i class="fa-solid fa-paperclip"></i>
-        </button>
-
-        <div class="flex-1 relative">
-
-          <textarea
-          id="messageInput"
-          rows="1"
-          placeholder="Сообщение..."
-          class="w-full resize-none rounded-3xl bg-[#242f3d] px-5 py-4 pr-14 outline-none focus:ring-2 focus:ring-sky-500 transition"></textarea>
-
-          <button class="absolute right-3 bottom-3 text-gray-400 hover:text-white transition">
-            <i class="fa-regular fa-face-smile text-xl"></i>
-          </button>
-        </div>
-
-        <button id="sendBtn"
-        class="w-14 h-14 rounded-full bg-telegram hover:scale-105 active:scale-95 transition-all shadow-glow">
-
-          <i id="sendIcon" class="fa-solid fa-microphone"></i>
-
-        </button>
-
-      </div>
-    </div>
-
-  </main>
-
-</div>
-
-<script>
-
-const avatars = [
-  "A","B","C","D","E","F","G","H","I","J","K","L"
-];
-
-const chats = [
-{
-  id:1,
-  type:"groups",
-  name:"Crypto Alpha",
-  nft:true,
-  status:"1 248 участников",
-  avatar:"C",
-  last:"BTC снова растет 🚀",
-  time:"12:44",
-  unread:8,
-  messages:[
-    {from:"them",text:"Сегодня будет листинг нового токена",time:"12:30"},
-    {from:"me",text:"Уже закупился 😎",time:"12:31"},
-    {from:"them",text:"Ждем памп 🚀",time:"12:32"}
-  ]
-},
-{
-  id:2,
-  type:"channels",
-  name:"Telegram News",
-  nft:false,
-  status:"Официальный канал",
-  avatar:"T",
-  last:"Обновление Telegram Web3",
-  time:"11:59",
-  unread:0,
-  messages:[
-    {from:"them",text:"Вышло новое обновление интерфейса.",time:"11:40"}
-  ]
-},
-{
-  id:3,
-  type:"groups",
-  name:"Design Community",
-  nft:false,
-  status:"562 участника",
-  avatar:"D",
-  last:"Кто делает UI в Figma?",
-  time:"09:22",
-  unread:3,
-  messages:[
-    {from:"them",text:"Нужен дизайнер для Web3 проекта",time:"09:10"},
-    {from:"me",text:"Могу помочь 👌",time:"09:11"}
-  ]
-},
-{
-  id:4,
-  type:"nft",
-  name:"NFT Legends",
-  nft:true,
-  status:"VIP NFT Holders",
-  avatar:"N",
-  last:"Mint через 20 минут",
-  time:"08:11",
-  unread:12,
-  messages:[
-    {from:"them",text:"Whitelist открыт!",time:"08:01"},
-    {from:"me",text:"Залетаем 🔥",time:"08:02"}
-  ]
-},
-{
-  id:5,
-  type:"channels",
-  name:"TON Ecosystem",
-  nft:true,
-  status:"TON Channel",
-  avatar:"T",
-  last:"Новая коллекция TON NFT",
-  time:"07:40",
-  unread:1,
-  messages:[
-    {from:"them",text:"TON активно развивается.",time:"07:20"}
-  ]
-},
-{
-  id:6,
-  type:"groups",
-  name:"Gamers Hub",
-  nft:false,
-  status:"2 944 участника",
-  avatar:"G",
-  last:"Кто в CS2?",
-  time:"06:50",
-  unread:0,
-  messages:[
-    {from:"them",text:"Сегодня турнир вечером",time:"06:30"}
-  ]
-},
-{
-  id:7,
-  type:"all",
-  name:"AI Assistant Bot",
-  nft:false,
-  status:"бот",
-  avatar:"A",
-  last:"Чем помочь?",
-  time:"05:40",
-  unread:0,
-  messages:[
-    {from:"them",text:"Привет! Я AI бот 🤖",time:"05:30"}
-  ]
-},
-{
-  id:8,
-  type:"groups",
-  name:"Developers",
-  nft:false,
-  status:"9 100 участников",
-  avatar:"DEV",
-  last:"React или Vue?",
-  time:"04:18",
-  unread:6,
-  messages:[
-    {from:"them",text:"Tailwind сейчас везде",time:"04:10"}
-  ]
-},
-{
-  id:9,
-  type:"nft",
-  name:"CyberPunks DAO",
-  nft:true,
-  status:"DAO Community",
-  avatar:"CP",
-  last:"Floor price растет",
-  time:"03:12",
-  unread:2,
-  messages:[
-    {from:"them",text:"ETH NFT оживают 👀",time:"03:00"}
-  ]
-},
-{
-  id:10,
-  type:"channels",
-  name:"Music Waves",
-  nft:false,
-  status:"Музыкальный канал",
-  avatar:"M",
-  last:"Новый synthwave playlist",
-  time:"02:01",
-  unread:0,
-  messages:[
-    {from:"them",text:"Слушайте новый альбом 🎵",time:"01:55"}
-  ]
-}
-];
-
-let currentChat = null;
-
-const chatList = document.getElementById('chatList');
-const messagesContainer = document.getElementById('messagesContainer');
-const chatHeader = document.getElementById('chatHeader');
-const inputArea = document.getElementById('inputArea');
-const emptyState = document.getElementById('emptyState');
-
-function renderChats(filter="all"){
-
-  chatList.innerHTML = "";
-
-  chats.forEach(chat=>{
-
-    if(filter !== "all" && chat.type !== filter) return;
-
-    const div = document.createElement('div');
-
-    div.className = `
-    flex items-center gap-4 px-4 py-4 hover:bg-white/5 cursor-pointer transition-all border-b border-white/5
-    `;
-
-    div.innerHTML = `
-      <div class="${chat.nft ? 'nft-ring' : ''} w-14 h-14 rounded-full p-[2px]">
-        <div class="w-full h-full rounded-full bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center font-bold">
-          ${chat.avatar}
-        </div>
-      </div>
-
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center justify-between">
-
-          <div class="flex items-center gap-2">
-
-            <div class="font-semibold truncate">
-              ${chat.name}
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
+
+    <div id="app" class="flex h-screen w-full max-w-full overflow-hidden relative">
+        <!-- LEFT SIDEBAR (Список чатов + поиск) -->
+        <aside id="sidebar" class="w-full sm:w-96 md:w-96 lg:w-96 xl:w-96 flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full shadow-sm z-10 transition-all duration-200">
+            <!-- Шапка левой панели: меню, профиль, тема -->
+            <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
+                <button id="menuBtn" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-bars text-xl text-gray-600 dark:text-gray-300"></i>
+                </button>
+                <div class="text-xl font-bold bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">Telegram</div>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <i id="themeIcon" class="fas fa-moon text-xl text-gray-600 dark:text-yellow-300"></i>
+                </button>
+            </div>
+            <!-- Поиск и Архив -->
+            <div class="p-3 space-y-2">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="searchChats" placeholder="Поиск" class="w-full bg-gray-100 dark:bg-gray-700 rounded-full py-2.5 pl-10 pr-4 text-sm focus:outline-none transition">
+                </div>
+                <button id="archiveBtn" class="flex items-center gap-3 w-full px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300">
+                    <i class="fas fa-archive text-lg"></i>
+                    <span class="text-sm font-medium">Архив</span>
+                </button>
+            </div>
+            <!-- Список диалогов (динамический) -->
+            <div class="flex-1 overflow-y-auto custom-scroll" id="chatsList">
+                <!-- чаты будут рендериться JS -->
+            </div>
+            <!-- нижняя часть: подпись версии -->
+            <div class="p-3 text-center text-xs text-gray-400 border-t border-gray-100 dark:border-gray-700">
+                v1.0 — Telegram Web Clone
+            </div>
+        </aside>
+
+        <!-- RIGHT PANEL (Окно чата) -->
+        <main id="chatPanel" class="flex-1 flex flex-col bg-white dark:bg-gray-900 relative w-full chat-bg-pattern">
+            <!-- Шапка чата -->
+            <div id="chatHeader" class="bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 px-5 py-3 flex items-center justify-between shadow-sm z-10">
+                <div class="flex items-center gap-3">
+                    <button id="mobileBackBtn" class="md:hidden p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </button>
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xl font-semibold shadow-md" id="chatAvatar">
+                        T
+                    </div>
+                    <div>
+                        <h2 id="chatName" class="font-semibold text-lg leading-tight">Telegram Support</h2>
+                        <div class="flex items-center gap-1 text-xs">
+                            <span id="chatStatus" class="text-gray-500 dark:text-gray-400 text-sm">онлайн</span>
+                            <span class="online-dot ml-1"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-phone-alt text-gray-600 dark:text-gray-300"></i></button>
+                    <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"><i class="fas fa-info-circle text-gray-600 dark:text-gray-300"></i></button>
+                </div>
             </div>
 
-            ${chat.nft ? `
-            <i class="fa-solid fa-hexagon text-violet-400 text-xs"></i>
-            ` : ''}
+            <!-- Область сообщений (история) -->
+            <div id="messagesArea" class="flex-1 overflow-y-auto custom-scroll p-4 flex flex-col-reverse chat-bg-pattern">
+                <div id="messagesContainer" class="flex flex-col space-y-2.5">
+                    <!-- сообщения будут вставляться сюда (flex-col) -->
+                </div>
+            </div>
 
-          </div>
-
-          <div class="text-xs text-gray-400">
-            ${chat.time}
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between mt-1">
-
-          <div class="text-sm text-gray-400 truncate">
-            ${chat.last}
-          </div>
-
-          ${
-            chat.unread > 0 ?
-            `<div class="min-w-[22px] h-[22px] rounded-full bg-telegram text-xs flex items-center justify-center px-1">
-            ${chat.unread}
-            </div>` :
-            `<i class="fa-solid fa-check-double text-sky-400 text-xs"></i>`
-          }
-
-        </div>
-      </div>
-    `;
-
-    div.onclick = ()=>openChat(chat);
-
-    chatList.appendChild(div);
-
-  });
-
-}
-
-renderChats();
-
-function openChat(chat){
-
-  currentChat = chat;
-
-  emptyState.classList.add('hidden');
-  chatHeader.classList.remove('hidden');
-  inputArea.classList.remove('hidden');
-  messagesContainer.classList.remove('hidden');
-
-  document.getElementById('chatName').innerHTML = `
-  ${chat.name}
-  ${chat.nft ? `<i class="fa-solid fa-hexagon text-violet-400 text-sm ml-1"></i>` : ''}
-  `;
-
-  document.getElementById('chatStatus').innerText = chat.status;
-
-  const avatar = document.getElementById('chatAvatar');
-
-  avatar.innerHTML = chat.avatar;
-
-  if(chat.nft){
-    avatar.classList.add('nft-ring');
-  } else {
-    avatar.classList.remove('nft-ring');
-  }
-
-  messagesContainer.innerHTML = "";
-
-  chat.messages.forEach(msg=>{
-    renderMessage(msg.from,msg.text,msg.time);
-  });
-
-  if(window.innerWidth < 768){
-    document.getElementById('sidebar').classList.add('sidebar-mobile-hide');
-  }
-
-}
-
-function renderMessage(side,text,time,read=true){
-
-  const wrap = document.createElement('div');
-
-  wrap.className = `
-  flex ${side === 'me' ? 'justify-end' : 'justify-start'} mb-4 message-appear
-  `;
-
-  wrap.innerHTML = `
-    <div class="
-    max-w-[85%] md:max-w-[60%]
-    px-4 py-3 rounded-2xl shadow-md
-    ${side === 'me' ? 'chat-bubble-out rounded-br-md' : 'chat-bubble-in rounded-bl-md'}
-    ">
-
-      <div class="break-words">
-        ${text}
-      </div>
-
-      <div class="flex items-center justify-end gap-1 mt-2 text-xs text-gray-300">
-
-        <span>${time}</span>
-
-        ${
-          side === 'me' ?
-          `<i class="fa-solid fa-check-double ${read ? 'text-sky-400' : 'text-gray-400'}"></i>`
-          :
-          ''
-        }
-
-      </div>
-
+            <!-- Панель ввода сообщения -->
+            <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 p-3 flex items-center gap-2 shadow-inner">
+                <button id="attachBtn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-paperclip text-xl"></i>
+                </button>
+                <div class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 flex items-center">
+                    <input type="text" id="messageInput" placeholder="Сообщение..." class="message-input w-full bg-transparent border-0 focus:ring-0 text-sm outline-none" autocomplete="off">
+                    <button id="emojiBtn" class="p-1 text-gray-500"><i class="far fa-smile-wink text-xl"></i></button>
+                </div>
+                <button id="sendBtn" class="p-2 rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition send-btn-active">
+                    <i class="fas fa-paper-plane text-lg"></i>
+                </button>
+                <button id="micBtn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition md:block hidden">
+                    <i class="fas fa-microphone text-xl"></i>
+                </button>
+            </div>
+        </main>
     </div>
-  `;
 
-  messagesContainer.appendChild(wrap);
-
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-}
-
-function currentTime(){
-  const d = new Date();
-  return d.getHours().toString().padStart(2,'0') + ":" +
-         d.getMinutes().toString().padStart(2,'0');
-}
-
-const messageInput = document.getElementById('messageInput');
-const sendBtn = document.getElementById('sendBtn');
-const sendIcon = document.getElementById('sendIcon');
-
-messageInput.addEventListener('input',()=>{
-
-  if(messageInput.value.trim()){
-    sendIcon.className = 'fa-solid fa-paper-plane';
-  } else {
-    sendIcon.className = 'fa-solid fa-microphone';
-  }
-
-});
-
-function sendMessage(){
-
-  const text = messageInput.value.trim();
-
-  if(!text || !currentChat) return;
-
-  renderMessage('me',text,currentTime(),false);
-
-  messageInput.value = "";
-  sendIcon.className = 'fa-solid fa-microphone';
-
-  setTimeout(()=>{
-
-    const lastMsg = messagesContainer.lastElementChild;
-
-    if(lastMsg){
-      const icon = lastMsg.querySelector('.fa-check-double');
-      if(icon){
-        icon.classList.remove('text-gray-400');
-        icon.classList.add('text-sky-400');
-      }
-    }
-
-  },1000);
-
-  const replies = [
-    "Интересная мысль 👀",
-    "Согласен 🔥",
-    "Сейчас проверю.",
-    "Это выглядит круто.",
-    "TON сейчас очень активен.",
-    "NFT рынок оживает 🚀",
-    "Хороший вопрос.",
-    "Уже видел это сегодня.",
-    "Выглядит как premium UI 😎",
-    "Скоро будет обновление."
-  ];
-
-  const isBotOrGroup =
-  currentChat.status.includes('бот') ||
-  currentChat.status.includes('участ');
-
-  if(isBotOrGroup){
-
-    document.getElementById('chatStatus').innerHTML = `
-    <span class="animate-typing text-sky-400">
-      печатает...
-    </span>
-    `;
-
-    setTimeout(()=>{
-
-      renderMessage(
-        'them',
-        replies[Math.floor(Math.random()*replies.length)],
-        currentTime()
-      );
-
-      document.getElementById('chatStatus').innerText = currentChat.status;
-
-    },1500 + Math.random()*1500);
-
-  }
-
-}
-
-sendBtn.onclick = sendMessage;
-
-messageInput.addEventListener('keydown',(e)=>{
-
-  if(e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    sendMessage();
-  }
-
-});
-
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-
-  btn.onclick = ()=>{
-
-    document.querySelectorAll('.tab-btn').forEach(b=>{
-      b.classList.remove('bg-telegram','text-white');
-      b.classList.add('bg-white/5');
-    });
-
-    btn.classList.add('bg-telegram','text-white');
-
-    renderChats(btn.dataset.tab);
-
-  };
-
-});
-
-document.getElementById('themeToggle').onclick = ()=>{
-
-  document.body.classList.toggle('light');
-
-  const html = document.documentElement;
-
-  if(html.classList.contains('dark')){
-    html.classList.remove('dark');
-  } else {
-    html.classList.add('dark');
-  }
-
-};
-
-document.getElementById('backBtn').onclick = ()=>{
-
-  document.getElementById('sidebar').classList.remove('sidebar-mobile-hide');
-
-};
-
-const usernameInput = document.getElementById('usernameInput');
-const loginAvatar = document.getElementById('loginAvatar');
-
-document.getElementById('randomAvatarBtn').onclick = ()=>{
-
-  const rand = avatars[Math.floor(Math.random()*avatars.length)];
-
-  loginAvatar.innerText = rand;
-
-};
-
-document.getElementById('loginBtn').onclick = ()=>{
-
-  const name = usernameInput.value.trim();
-
-  if(!name){
-    usernameInput.focus();
-    usernameInput.classList.add('ring-2','ring-red-500');
-
-    setTimeout(()=>{
-      usernameInput.classList.remove('ring-2','ring-red-500');
-    },1200);
-
-    return;
-  }
-
-  sessionStorage.setItem('telegram_user',name);
-
-  document.getElementById('loginScreen').classList.add('fade-out');
-
-};
-
-window.addEventListener('load',()=>{
-
-  const saved = sessionStorage.getItem('telegram_user');
-
-  if(saved){
-    document.getElementById('loginScreen').style.display = 'none';
-  }
-
-});
-
-</script>
-
+    <script>
+        // ---------- ДАННЫЕ ----------
+        // Системное сообщение от бота после регистрации/старта
+        // Юзернейм по умолчанию (автоматическая регистрация)
+        let currentUser = {
+            id: "me",
+            username: "Алексей",
+            isBot: false
+        };
+        // Глобальные переменные
+        let activeChatId = "support"; // первый активный чат (Telegram Support)
+        let darkMode = localStorage.getItem("telegram_theme") === "dark" || window.matchMedia("(prefers-color-scheme: dark)").matches;
+        
+        // Структура чатов
+        let chats = [
+            {
+                id: "support",
+                name: "Telegram Support",
+                avatar: "TS",
+                status: "официальный бот",
+                isOnline: true,
+                lastMessage: "Добро пожаловать в Telegram!",
+                lastTime: "13:42",
+                messages: [
+                    { id: "m1", text: "Здравствуйте! Вы успешно зарегистрировались в Telegram Web Clon.", sender: "support", time: "13:40", status: "read" },
+                    { id: "m2", text: "Это тестовый чат с поддержкой. Здесь можно общаться, отправлять сообщения, бот отвечает автоматически.", sender: "support", time: "13:41", status: "read" },
+                    { id: "m3", text: "Попробуйте написать что-нибудь! 😊", sender: "support", time: "13:42", status: "read" }
+                ],
+                unread: 0
+            },
+            {
+                id: "botfather",
+                name: "BotFather",
+                avatar: "BF",
+                status: "бот",
+                isOnline: true,
+                lastMessage: "Используйте /newbot для создания нового бота.",
+                lastTime: "вчера",
+                messages: [
+                    { id: "bf1", text: "Привет! Я BotFather. Управляй своими ботами.", sender: "botfather", time: "10:15", status: "read" },
+                    { id: "bf2", text: "Чтобы начать, отправь /start", sender: "botfather", time: "10:16", status: "read" }
+                ],
+                unread: 0
+            },
+            {
+                id: "alice",
+                name: "Алиса",
+                avatar: "A",
+                status: "была недавно",
+                isOnline: false,
+                lastMessage: "Привет! Как дела?)",
+                lastTime: "19:20",
+                messages: [
+                    { id: "al1", text: "Привет! Давно не виделись", sender: "alice", time: "19:15", status: "read" },
+                    { id: "al2", text: "Как настроение?", sender: "alice", time: "19:20", status: "read" }
+                ],
+                unread: 2
+            },
+            {
+                id: "technews",
+                name: "Tech News Bot",
+                avatar: "TN",
+                status: "бот",
+                isOnline: true,
+                lastMessage: "Новая статья: GPT-5 анонсирован",
+                lastTime: "08:30",
+                messages: [
+                    { id: "tn1", text: "Подписывайтесь на новости технологий! 🚀", sender: "technews", time: "08:30", status: "read" }
+                ],
+                unread: 0
+            }
+        ];
+        
+        // Функция автоответа от ботов (имитация входящего сообщения)
+        function simulateBotReply(chatId, userMessageText) {
+            const chat = chats.find(c => c.id === chatId);
+            if (!chat) return;
+            // Определим кто отвечает (бот или поддержка)
+            const isSupportChat = chatId === "support";
+            const isBotFather = chatId === "botfather";
+            const isTechNews = chatId === "technews";
+            let replyText = "";
+            if (isSupportChat) {
+                replyText = `Спасибо за сообщение! Наш оператор скоро ответит. Вы написали: "${userMessageText.substring(0, 50)}"`;
+            } else if (isBotFather) {
+                replyText = `Я понял ваш запрос. Для создания бота используйте /newbot. Если нужно помочь, напишите подробнее.`;
+            } else if (isTechNews) {
+                replyText = `Интересно! 🔥 Следите за обновлениями в мире IT. Спасибо за отклик!`;
+            } else if (chatId === "alice") {
+                replyText = `О, привет! Рада слышать! 😊 Твое сообщение: "${userMessageText}" — как у тебя дела?`;
+            } else {
+                replyText = `Автоматический ответ: получил ваше сообщение. Спасибо!`;
+            }
+            // Добавляем входящее сообщение через задержку (1.5 - 2.5 сек)
+            setTimeout(() => {
+                // Проверим, что чат всё еще существует и активен
+                const existingChat = chats.find(c => c.id === chatId);
+                if (!existingChat) return;
+                const newMsg = {
+                    id: Date.now() + "_reply",
+                    text: replyText,
+                    sender: chatId,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' }),
+                    status: "delivered"
+                };
+                existingChat.messages.push(newMsg);
+                existingChat.lastMessage = replyText;
+                existingChat.lastTime = newMsg.time;
+                // Обновляем непрочитанные если активный чат не этот
+                if (activeChatId !== chatId) {
+                    existingChat.unread = (existingChat.unread || 0) + 1;
+                }
+                // Перерисовка списка чатов и активного чата
+                renderChatsList();
+                if (activeChatId === chatId) {
+                    renderMessagesForActiveChat();
+                }
+                // Прокрутка вниз если активный чат
+                if (activeChatId === chatId) scrollMessagesToBottom();
+            }, 1500 + Math.random() * 1000);
+        }
+        
+        // Отправка нового сообщения
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
+            const activeChat = chats.find(c => c.id === activeChatId);
+            if (!activeChat) return;
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
+            const newMsg = {
+                id: Date.now().toString(),
+                text: text,
+                sender: "me",
+                time: timeStr,
+                status: "sent"
+            };
+            activeChat.messages.push(newMsg);
+            // обновим последнее сообщение в списке чатов
+            activeChat.lastMessage = text;
+            activeChat.lastTime = timeStr;
+            activeChat.unread = 0;
+            // Изменяем статус на "прочитано" через мгновение (имитация галочки)
+            setTimeout(() => {
+                const msgIndex = activeChat.messages.findIndex(m => m.id === newMsg.id);
+                if (msgIndex !== -1) activeChat.messages[msgIndex].status = "read";
+                if (activeChatId === activeChat.id) renderMessagesForActiveChat();
+            }, 300);
+            // Обновление интерфейса
+            renderChatsList();
+            renderMessagesForActiveChat();
+            input.value = "";
+            scrollMessagesToBottom();
+            // Бот отвечает через 1.5-3 секунды (кроме случая если это не бот чат)
+            simulateBotReply(activeChatId, text);
+        }
+        
+        // отрисовка сообщений активного чата
+        function renderMessagesForActiveChat() {
+            const activeChat = chats.find(c => c.id === activeChatId);
+            if (!activeChat) return;
+            const container = document.getElementById('messagesContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            // копия сообщений и сортировка по времени (по id как симуляция)
+            const msgs = [...activeChat.messages];
+            msgs.sort((a,b) => new Date(a.id) - new Date(b.id));
+            msgs.forEach(msg => {
+                const isMe = msg.sender === "me";
+                const bubbleClass = isMe ? "bg-blue-500 text-white rounded-br-none rounded-tl-xl rounded-tr-xl" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-bl-none rounded-tl-xl rounded-tr-xl";
+                const alignClass = isMe ? "items-end" : "items-start";
+                const statusIcon = !isMe ? "" : (msg.status === "read" ? '<i class="fas fa-check-double text-xs text-blue-200 ml-1"></i>' : '<i class="fas fa-check text-xs text-blue-200 ml-1"></i>');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `flex flex-col ${alignClass} max-w-[75%] w-fit message-animate`;
+                messageDiv.innerHTML = `
+                    <div class="${bubbleClass} px-4 py-2 shadow-sm relative">
+                        <p class="text-sm whitespace-pre-wrap break-words">${escapeHtml(msg.text)}</p>
+                        <div class="flex justify-end items-center gap-0.5 mt-1">
+                            <span class="text-[10px] ${isMe ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}">${msg.time}</span>
+                            ${isMe ? statusIcon : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(messageDiv);
+            });
+            if (msgs.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 text-sm py-10">Напишите первое сообщение ✨</div>';
+            }
+            // обновляем шапку и статус
+            document.getElementById('chatName').innerText = activeChat.name;
+            document.getElementById('chatAvatar').innerText = activeChat.avatar.charAt(0).toUpperCase();
+            const statusSpan = document.getElementById('chatStatus');
+            if (activeChat.isOnline) statusSpan.innerText = "онлайн";
+            else statusSpan.innerText = activeChat.status || "офлайн";
+            // сброс непрочитанных
+            activeChat.unread = 0;
+            renderChatsList(); // обновить индикаторы непрочитанных
+        }
+        
+        function renderChatsList(filterText = "") {
+            const container = document.getElementById('chatsList');
+            if (!container) return;
+            let filteredChats = [...chats];
+            if (filterText) {
+                filteredChats = filteredChats.filter(c => c.name.toLowerCase().includes(filterText.toLowerCase()));
+            }
+            container.innerHTML = '';
+            filteredChats.forEach(chat => {
+                const isActive = activeChatId === chat.id;
+                const unreadBadge = chat.unread > 0 ? `<span class="bg-blue-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">${chat.unread}</span>` : '';
+                const div = document.createElement('div');
+                div.className = `flex items-center gap-3 p-3 cursor-pointer transition hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive ? 'bg-gray-100 dark:bg-gray-700/80' : ''}`;
+                div.setAttribute('data-chat-id', chat.id);
+                div.innerHTML = `
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center text-white font-semibold text-lg">${chat.avatar.charAt(0)}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline">
+                            <span class="font-semibold truncate">${escapeHtml(chat.name)}</span>
+                            <span class="text-xs text-gray-400">${chat.lastTime}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[160px]">${escapeHtml(chat.lastMessage)}</span>
+                            ${unreadBadge}
+                        </div>
+                    </div>
+                `;
+                div.addEventListener('click', () => {
+                    activeChatId = chat.id;
+                    renderMessagesForActiveChat();
+                    renderChatsList();
+                    scrollMessagesToBottom();
+                    // На мобилках скрыть сайдбар и показать чат
+                    if (window.innerWidth < 768) {
+                        document.getElementById('sidebar').classList.add('chat-list-mobile-hidden');
+                        document.getElementById('chatPanel').classList.add('chat-view-active');
+                    }
+                });
+                container.appendChild(div);
+            });
+        }
+        
+        function scrollMessagesToBottom() {
+            setTimeout(() => {
+                const area = document.getElementById('messagesArea');
+                if (area) area.scrollTop = area.scrollHeight;
+            }, 50);
+        }
+        
+        // утилиты
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+        
+        // Применение темы
+        function applyTheme() {
+            if (darkMode) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+                document.getElementById('themeIcon').className = "fas fa-sun text-xl text-yellow-300";
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+                document.getElementById('themeIcon').className = "fas fa-moon text-xl text-gray-600";
+            }
+            localStorage.setItem("telegram_theme", darkMode ? "dark" : "light");
+        }
+        
+        // Обработчики событий и инициализация
+        window.onload = () => {
+            // применение темы
+            if (darkMode) applyTheme(); else applyTheme();
+            // Проверка: системное сообщение при регистрации - "Telegram Support" напишет успешную регистрацию
+            // Добавим служебное сообщение от support после запуска (имитация: вы успешно зарегистрированы)
+            const supportChat = chats.find(c => c.id === "support");
+            if (supportChat && !supportChat.messages.some(m => m.text.includes("успешно зарегистрировали"))) {
+                const welcomeMsg = {
+                    id: Date.now() + "_reg",
+                    text: "✅ Вы успешно зарегистрировали аккаунт @" + currentUser.username + ". Добро пожаловать в Telegram!",
+                    sender: "support",
+                    time: new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
+                    status: "read"
+                };
+                supportChat.messages.push(welcomeMsg);
+                supportChat.lastMessage = welcomeMsg.text;
+                supportChat.lastTime = welcomeMsg.time;
+            }
+            // Рендер
+            renderChatsList();
+            renderMessagesForActiveChat();
+            scrollMessagesToBottom();
+            
+            // Событие отправки
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('messageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+            // Тема переключения
+            document.getElementById('themeToggle').addEventListener('click', () => { darkMode = !darkMode; applyTheme(); });
+            // Поиск чатов
+            document.getElementById('searchChats').addEventListener('input', (e) => { renderChatsList(e.target.value); });
+            // Кнопка архив (демо уведомление)
+            document.getElementById('archiveBtn').addEventListener('click', () => { alert("Архив: (демо) В реальном Telegram тут были бы архивированные чаты."); });
+            // Меню кнопка (показать уведомление)
+            document.getElementById('menuBtn').addEventListener('click', () => { alert("Меню: настройки, контакты, экспорт."); });
+            // Мобильный бэк
+            document.getElementById('mobileBackBtn').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('chat-list-mobile-hidden');
+                document.getElementById('chatPanel').classList.remove('chat-view-active');
+            });
+            // Эмуляция скрепки, микрофон, смайлы (уведомления)
+            document.getElementById('attachBtn').addEventListener('click', () => alert("Прикрепление файла (демо)"));
+            document.getElementById('micBtn').addEventListener('click', () => alert("Голосовое сообщение (демо)"));
+            document.getElementById('emojiBtn').addEventListener('click', () => alert("Эмодзи панель (полноценная реализация в будущем)"));
+            // Адаптив: при широком экране не скрываем сайдбар
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    document.getElementById('sidebar').classList.remove('chat-list-mobile-hidden');
+                    document.getElementById('chatPanel').classList.remove('chat-view-active');
+                }
+            });
+        };
+    </script>
 </body>
-    </html>
+                          </html>

@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Онлайн Бутылочка Мультиплеер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
@@ -14,49 +14,51 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             height: 100vh;
             overflow: hidden;
         }
         .game-header {
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             background: #1c1c1e;
             border-bottom: 1px solid #2c2c2e;
-            z-index: 110;
+            flex-shrink: 0;
         }
         .status-msg {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #ffd32a;
             min-height: 20px;
         }
+        
+        /* ЖЕЛЕЗНО ФИКСИРОВАННЫЙ КОНТЕЙНЕР СТОЛА */
         .board-container {
             position: relative;
             width: 100%;
-            height: 50vh; 
+            height: 48vh; 
+            max-height: 48vh;
+            min-height: 48vh;
             background-color: #d1b894; 
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.4);
+            flex-shrink: 0;
             overflow: hidden;
         }
+        
         .bottle-node {
             position: absolute;
-            width: 45px;
-            height: 135px;
-            top: calc(50% - 67.5px);
-            left: calc(50% - 22.5px);
+            width: 42px;
+            height: 126px;
+            top: calc(50% - 63px);
+            left: calc(50% - 21px);
             z-index: 100;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 3.8s cubic-bezier(0.2, 1, 0.2, 1), opacity 0.4s;
+            transition: transform 3.8s cubic-bezier(0.15, 1, 0.2, 1), opacity 0.4s;
             transform: rotate(0deg);
         }
         .bottle-node.hidden { opacity: 0; pointer-events: none; }
-        .bottle-img { width: 100%; height: 100%; filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.5)); }
+        .bottle-img { width: 100%; height: 100%; filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.4)); }
 
-        /* Игровые ячейки по периметру стола */
+        /* Игровые ячейки по фиксированным процентам */
         .grid-player {
             position: absolute;
             width: 65px;
@@ -65,30 +67,59 @@
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            opacity: 0.3; /* Тусклые, если пустые */
+            opacity: 0.3;
             transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s;
         }
         .grid-player.occupied { opacity: 1; }
+        
+        /* Контейнер для аватарки с относительным позиционированием */
+        .avatar-wrapper {
+            position: relative;
+            width: 54px;
+            height: 54px;
+        }
+        
         .square-avatar {
-            width: 52px;
-            height: 52px;
+            width: 100%;
+            height: 100%;
             background: #34495e;
-            border-radius: 12px; 
+            border-radius: 14px; 
             border: 3px solid #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
         .grid-player.active-spinner .square-avatar { border-color: #ffd32a; box-shadow: 0 0 12px #ffd32a; }
         .grid-player.active-target .square-avatar { border-color: #ff4757; box-shadow: 0 0 12px #ff4757; }
         
+        /* КРАСИВЫЙ СЧЕТЧИК ПОЦЕЛУЕВ НА АВАТАРКЕ */
+        .kisses-badge {
+            position: absolute;
+            bottom: -5px;
+            right: -6px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #ff4757;
+            color: #ffffff;
+            padding: 1px 4px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            z-index: 5;
+            white-space: nowrap;
+        }
+
         .meta-name {
             font-size: 10px;
             color: #1e1e24; 
             font-weight: bold;
-            margin-top: 3px;
+            margin-top: 4px;
             text-align: center;
             width: 100%;
             white-space: nowrap;
@@ -96,26 +127,26 @@
             text-overflow: ellipsis;
         }
 
-        /* Позиционирование 12 мест */
-        #user-p0 { top: 12px; left: 8%; }
-        #user-p1 { top: 12px; left: 32%; }
-        #user-p2 { top: 12px; left: 58%; }
-        #user-p3 { top: 12px; left: 82%; }
-        #user-p4 { top: 35%; right: 8%; }
-        #user-p5 { top: 62%; right: 8%; }
-        #user-p6 { bottom: 12px; left: 82%; }
-        #user-p7 { bottom: 12px; left: 58%; }
-        #user-p8 { bottom: 12px; left: 32%; }
-        #user-p9 { bottom: 12px; left: 8%; }
-        #user-p10 { top: 62%; left: 8%; }
-        #user-p11 { top: 35%; left: 8%; }
+        /* Жесткие координаты мест за круглым столом (%) */
+        #user-p0  { top: 4%;   left: 42%; }
+        #user-p1  { top: 10%;  left: 68%; }
+        #user-p2  { top: 28%;  left: 83%; }
+        #user-p3  { top: 52%;  left: 83%; }
+        #user-p4  { top: 72%;  left: 68%; }
+        #user-p5  { top: 78%;  left: 42%; }
+        #user-p6  { top: 72%;  left: 16%; }
+        #user-p7  { top: 52%;  left: 2%;  }
+        #user-p8  { top: 28%;  left: 2%;  }
+        #user-p9  { top: 10%;  left: 16%; }
+        #user-p10 { top: 4%;   left: 22%; } /* Резервные места */
+        #user-p11 { top: 4%;   left: 62%; }
 
         .vote-bubble {
             position: absolute;
-            top: -22px;
+            top: -24px;
             background: #ffffff;
             color: #000000;
-            padding: 2px 6px;
+            padding: 2px 7px;
             border-radius: 6px;
             font-size: 11px;
             font-weight: bold;
@@ -124,10 +155,10 @@
             z-index: 150;
         }
 
-        /* Кнопки выбора поцелуев */
+        /* Кнопки выбора */
         .choice-panel-box {
             position: absolute;
-            bottom: 25px;
+            bottom: 20px;
             display: none;
             flex-direction: column;
             align-items: center;
@@ -138,34 +169,54 @@
             font-size: 14px;
             font-weight: bold;
             color: #ffffff;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             padding: 5px 14px;
             border-radius: 10px;
             margin-bottom: 8px;
         }
-        .choice-row-btns { display: flex; gap: 20px; }
+        .choice-row-btns { display: flex; gap: 25px; }
         .act-btn {
-            width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 24px;
+            width: 54px; height: 54px; border-radius: 50%; border: none; font-size: 24px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: transform 0.1s;
         }
+        .act-btn:active { transform: scale(0.9); }
         .btn-heart { background: #2ecc71; color: white; }
         .btn-cross { background: #e74c3c; color: white; }
 
-        /* Чат секция */
+        /* ИЗОЛИРОВАННЫЙ НЕЗАВИСИМЫЙ ЧАТ */
         .chat-section {
-            flex: 1; background: #1c1c1e; border-top: 2px solid #2c2c2e;
-            display: flex; flex-direction: column; justify-content: space-between; height: 38vh;
+            flex: 1; 
+            background: #1c1c1e; 
+            border-top: 2px solid #2c2c2e;
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
         }
-        .chat-messages { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-messages { 
+            flex: 1; 
+            padding: 12px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
         .chat-row { display: flex; align-items: flex-start; gap: 8px; }
         .chat-mini-avatar {
             width: 28px; height: 28px; border-radius: 50%; background: #485e74;
             display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
         }
-        .chat-body-text { background: #2c2c2e; padding: 6px 10px; border-radius: 12px; font-size: 13px; max-width: 85%; }
+        .chat-body-text { background: #2c2c2e; padding: 6px 12px; border-radius: 12px; font-size: 13px; max-width: 85%; word-break: break-word; }
         .chat-sender-name { font-weight: bold; color: #ff9f43; margin-right: 5px; }
-        .chat-input-bar { display: flex; padding: 8px; background: #141416; gap: 8px; }
+        
+        .chat-input-bar { 
+            display: flex; 
+            padding: 8px 12px; 
+            background: #141416; 
+            gap: 8px; 
+            flex-shrink: 0;
+        }
         .chat-input-field {
             flex: 1; background: #2c2c2e; border: 1px solid #3a3a3c;
             border-radius: 20px; padding: 10px 15px; color: white; font-size: 14px; outline: none;
@@ -173,8 +224,9 @@
         .chat-submit-btn {
             width: 38px; height: 38px; background: #ff4757; border: none;
             border-radius: 50%; color: white; font-size: 16px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
+        
         .fx-heart {
             position: absolute; font-size: 26px; animation: fly 1s ease-out forwards; pointer-events: none; z-index: 300;
         }
@@ -188,7 +240,7 @@
 <body>
 
     <div class="game-header">
-        <div class="status-msg" id="game-status-label">Подключение к серверу стола...</div>
+        <div class="status-msg" id="game-status-label">Подключение к серверу...</div>
     </div>
 
     <div class="board-container" id="board">
@@ -201,18 +253,18 @@
             </svg>
         </div>
 
-        <div class="grid-player" id="user-p0"><div class="vote-bubble" id="b-0"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p1"><div class="vote-bubble" id="b-1"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p2"><div class="vote-bubble" id="b-2"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p3"><div class="vote-bubble" id="b-3"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p4"><div class="vote-bubble" id="b-4"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p5"><div class="vote-bubble" id="b-5"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p6"><div class="vote-bubble" id="b-6"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p7"><div class="vote-bubble" id="b-7"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p8"><div class="vote-bubble" id="b-8"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p9"><div class="vote-bubble" id="b-9"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p10"><div class="vote-bubble" id="b-10"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p11"><div class="vote-bubble" id="b-11"></div><div class="square-avatar">🪑</div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p0"><div class="vote-bubble" id="b-0"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-0">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p1"><div class="vote-bubble" id="b-1"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-1">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p2"><div class="vote-bubble" id="b-2"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-2">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p3"><div class="vote-bubble" id="b-3"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-3">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p4"><div class="vote-bubble" id="b-4"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-4">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p5"><div class="vote-bubble" id="b-5"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-5">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p6"><div class="vote-bubble" id="b-6"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-6">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p7"><div class="vote-bubble" id="b-7"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-7">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p8"><div class="vote-bubble" id="b-8"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-8">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p9"><div class="vote-bubble" id="b-9"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-9">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p10"><div class="vote-bubble" id="b-10"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-10">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p11"><div class="vote-bubble" id="b-11"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="kisses-badge" id="k-11">💋 0</div></div><div class="meta-name">Свободно</div></div>
 
         <div class="choice-panel-box" id="kiss-ui-panel">
             <div class="choice-txt" id="kiss-ui-title">Поцеловать?</div>
@@ -232,15 +284,14 @@
     </div>
 
     <script>
-        // УКАЖИТЕ АДРЕС ВАШЕГО ЗАПУЩЕННОГО БОТА/БЭКЕНДА
-        const BACKEND_URL = "https://a38182-6d28.j.jrnm.app";
- 
+        // Твой жестко заданный URL хостинга
+        const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
         
         const socket = io(BACKEND_URL);
         const tg = window.Telegram.WebApp;
         
         let myNickname = "@Player";
-        let myAvatar = "👑";
+        let myAvatar = "😎";
         let myAssignedSeat = null;
         let isMyTurn = false;
         let localRotation = 0;
@@ -250,18 +301,23 @@
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 myNickname = `@${user.username || user.first_name}`;
-                myAvatar = ["😎","🔥","✨","🍀","🎲"][Math.floor(Math.random() * 5)];
+                myAvatar = ["😎","🔥","✨","🍀","🎲","⚡","🍿"][Math.floor(Math.random() * 7)];
             }
         }
 
         socket.on("connect", () => {
             document.getElementById('game-status-label').innerText = "Вход за игровой стол...";
-            socket.emit("join_table", { username: myNickname, avatar: myAvatar });
+            // Передаем initData для авторизации и сохранения поцелуев в БД
+            socket.emit("join_table", { 
+                username: myNickname, 
+                avatar: myAvatar,
+                initData: tg ? tg.initData : "" 
+            });
         });
 
         socket.on("join_response", (data) => {
             if (data.status === "spectator") {
-                document.getElementById('game-status-label').innerText = "Все места заняты. Вы в режиме зрителя.";
+                document.getElementById('game-status-label').innerText = "Все места заняты. Режим зрителя.";
                 myAssignedSeat = null;
             } else {
                 myAssignedSeat = data.seat;
@@ -273,7 +329,7 @@
             const currentTurn = data.current_turn;
             const state = data.game_state;
 
-            // Сброс визуального отображения мест
+            // Полный ререндер мест
             for (let i = 0; i < 12; i++) {
                 const node = document.getElementById(`user-p${i}`);
                 const pData = seats[i];
@@ -281,11 +337,19 @@
                     node.classList.add('occupied');
                     node.querySelector('.square-avatar').innerText = pData.avatar;
                     node.querySelector('.meta-name').innerText = pData.name;
+                    
+                    // Обновляем счетчик поцелуев из БД
+                    const kBadge = document.getElementById(`k-${i}`);
+                    kBadge.innerText = `💋 ${pData.kisses || 0}`;
+                    kBadge.style.display = "flex";
                 } else {
                     node.classList.remove('occupied', 'active-spinner', 'active-target');
                     node.querySelector('.square-avatar').innerText = "🪑";
                     node.querySelector('.meta-name').innerText = "Свободно";
-                    node.style.transform = "translate(0,0)";
+                    document.getElementById(`k-${i}`).style.display = "none";
+                    
+                    // ФИКС: Возвращаем игрока обратно на свои точные координаты!
+                    node.style.transform = "none"; 
                 }
             }
 
@@ -295,7 +359,6 @@
                 return;
             }
 
-            // Установка активного ходящего
             for (let i = 0; i < 12; i++) {
                 document.getElementById(`user-p${i}`).classList.remove('active-spinner', 'active-target');
                 const bubble = document.getElementById(`b-${i}`);
@@ -318,6 +381,11 @@
             if (state === "IDLE") {
                 document.getElementById('bottle').classList.remove('hidden');
                 document.getElementById('kiss-ui-panel').style.display = 'none';
+                
+                // Возвращаем всех на места после окончания взаимодействия
+                for (let i = 0; i < 12; i++) {
+                    document.getElementById(`user-p${i}`).style.transform = "none";
+                }
             }
         });
 
@@ -335,14 +403,13 @@
             localRotation += extraRotations + data.target_angle - (localRotation % 360);
             bottle.style.transform = `rotate(${localRotation}deg)`;
 
-            // По завершении кручения плавно сближаем игроков в центре
             setTimeout(() => {
                 socket.emit("trigger_interaction_phase", {});
 
                 document.getElementById(`user-p${data.target_seat}`).classList.add('active-target');
                 bottle.classList.add('hidden');
 
-                // Плавное сдвижение аватарок в центр стола
+                // Плавное сближение участников в центре стола (с фиксацией)
                 const spinnerNode = document.getElementById(`user-p${data.spinner_seat}`);
                 const targetNode = document.getElementById(`user-p${data.target_seat}`);
                 const rectBoard = document.getElementById('board').getBoundingClientRect();
@@ -360,7 +427,6 @@
                 spinnerNode.style.transform = `translate(${sDx}px, ${sDy}px)`;
                 targetNode.style.transform = `translate(${tDx}px, ${tDy}px)`;
 
-                // Показываем плашку кнопок тем, кто участвует в событии
                 if (myAssignedSeat === data.spinner_seat || myAssignedSeat === data.target_seat) {
                     document.getElementById('kiss-ui-title').innerText = "Ваш выбор:";
                     document.getElementById('kiss-ui-panel').style.display = 'flex';
@@ -395,7 +461,6 @@
             b.style.display = "block";
         }
 
-        /* Системный онлайн чат */
         function sendChatMessage() {
             const input = document.getElementById('chat-input');
             const txt = input.value.trim();
@@ -439,3 +504,4 @@
     </script>
 </body>
 </html>
+

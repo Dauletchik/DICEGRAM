@@ -17,21 +17,46 @@
             height: 100vh;
             overflow: hidden;
         }
+
+        /* КРУТАЯ ВЕРХНЯЯ ПАНЕЛЬ ИЗ СКРИНШОТА */
         .game-header {
-            text-align: center;
-            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
             background: #1c1c1e;
             border-bottom: 1px solid #2c2c2e;
             flex-shrink: 0;
-        }
-        .status-msg {
-            font-size: 15px;
-            font-weight: bold;
-            color: #ffd32a;
-            min-height: 20px;
+            position: relative;
         }
         
-        /* ЖЕЛЕЗНО ФИКСИРОВАННЫЙ КОНТЕЙНЕР СТОЛА */
+        /* Кнопка баланса вверху слева */
+        .hearts-balance-top {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid #ff4757;
+            padding: 6px 14px;
+            border-radius: 18px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            gap: 6px;
+            transition: transform 0.1s;
+        }
+        .hearts-balance-top:active { transform: scale(0.95); }
+        .hearts-balance-top span { color: #ff4757; font-size: 18px; }
+
+        .status-msg {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffd32a;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        /* КОНТЕЙНЕР СТОЛА */
         .board-container {
             position: relative;
             width: 100%;
@@ -58,7 +83,40 @@
         .bottle-node.hidden { opacity: 0; pointer-events: none; }
         .bottle-img { width: 100%; height: 100%; filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.4)); }
 
-        /* Игровые ячейки по фиксированным процентам */
+        /* ИНДИКАТОР ХОДА С ПОДПИСЬЮ И СТРЕЛОЧКОЙ */
+        .hint-arrow-box {
+            position: absolute;
+            top: calc(50% - 100px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 110;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+            animation: bounceUpDown 1.2s infinite ease-in-out;
+        }
+        .hint-text {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .hint-arrow {
+            font-size: 20px;
+            color: #ffffff;
+            margin-top: -2px;
+        }
+
+        @keyframes bounceUpDown {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -8px); }
+        }
+
+        /* Игровые кресла */
         .grid-player {
             position: absolute;
             width: 65px;
@@ -72,7 +130,6 @@
         }
         .grid-player.occupied { opacity: 1; }
         
-        /* Контейнер для аватарки с относительным позиционированием */
         .avatar-wrapper {
             position: relative;
             width: 54px;
@@ -90,12 +147,25 @@
             justify-content: center;
             font-size: 24px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: border-color 0.3s, box-shadow 0.3s;
+            position: relative;
+            z-index: 2;
         }
-        .grid-player.active-spinner .square-avatar { border-color: #ffd32a; box-shadow: 0 0 12px #ffd32a; }
-        .grid-player.active-target .square-avatar { border-color: #ff4757; box-shadow: 0 0 12px #ff4757; }
+
+        /* ЭФФЕКТ СВЕЧЕНИЯ ВОКРУГ ХОДЯЩЕГО ИГРОКА ИЗ СКРИНШОТА */
+        .grid-player.active-spinner .square-avatar {
+            border-color: #24b0ff; 
+            animation: cyanGlowPulse 1.5s infinite ease-in-out;
+        }
+        .grid-player.active-target .square-avatar { 
+            border-color: #ff4757; 
+            box-shadow: 0 0 14px #ff4757; 
+        }
+
+        @keyframes cyanGlowPulse {
+            0%, 100% { box-shadow: 0 0 6px #24b0ff, inset 0 0 4px #24b0ff; }
+            50% { box-shadow: 0 0 18px #24b0ff, inset 0 0 8px #24b0ff; }
+        }
         
-        /* КРАСИВЫЙ СЧЕТЧИК ПОЦЕЛУЕВ НА АВАТАРКЕ */
         .kisses-badge {
             position: absolute;
             bottom: -5px;
@@ -127,7 +197,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Жесткие координаты мест за круглым столом (%) */
+        /* Абсолютные координаты стола */
         #user-p0  { top: 4%;   left: 42%; }
         #user-p1  { top: 10%;  left: 68%; }
         #user-p2  { top: 28%;  left: 83%; }
@@ -138,7 +208,7 @@
         #user-p7  { top: 52%;  left: 2%;  }
         #user-p8  { top: 28%;  left: 2%;  }
         #user-p9  { top: 10%;  left: 16%; }
-        #user-p10 { top: 4%;   left: 22%; } /* Резервные места */
+        #user-p10 { top: 4%;   left: 22%; }
         #user-p11 { top: 4%;   left: 62%; }
 
         .vote-bubble {
@@ -155,7 +225,7 @@
             z-index: 150;
         }
 
-        /* Кнопки выбора */
+        /* Панель поцелуя */
         .choice-panel-box {
             position: absolute;
             bottom: 20px;
@@ -179,13 +249,11 @@
             width: 54px; height: 54px; border-radius: 50%; border: none; font-size: 24px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            transition: transform 0.1s;
         }
-        .act-btn:active { transform: scale(0.9); }
         .btn-heart { background: #2ecc71; color: white; }
         .btn-cross { background: #e74c3c; color: white; }
 
-        /* ИЗОЛИРОВАННЫЙ НЕЗАВИСИМЫЙ ЧАТ */
+        /* ЧАТ */
         .chat-section {
             flex: 1; 
             background: #1c1c1e; 
@@ -194,14 +262,7 @@
             flex-direction: column; 
             overflow: hidden; 
         }
-        .chat-messages { 
-            flex: 1; 
-            padding: 12px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-        }
+        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .chat-row { display: flex; align-items: flex-start; gap: 8px; }
         .chat-mini-avatar {
             width: 28px; height: 28px; border-radius: 50%; background: #485e74;
@@ -210,26 +271,77 @@
         .chat-body-text { background: #2c2c2e; padding: 6px 12px; border-radius: 12px; font-size: 13px; max-width: 85%; word-break: break-word; }
         .chat-sender-name { font-weight: bold; color: #ff9f43; margin-right: 5px; }
         
-        .chat-input-bar { 
-            display: flex; 
-            padding: 8px 12px; 
-            background: #141416; 
-            gap: 8px; 
-            flex-shrink: 0;
-        }
+        .chat-input-bar { display: flex; padding: 8px 12px; background: #141416; gap: 8px; flex-shrink: 0; }
         .chat-input-field {
             flex: 1; background: #2c2c2e; border: 1px solid #3a3a3c;
             border-radius: 20px; padding: 10px 15px; color: white; font-size: 14px; outline: none;
         }
         .chat-submit-btn {
             width: 38px; height: 38px; background: #ff4757; border: none;
-            border-radius: 50%; color: white; font-size: 16px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            border-radius: 50%; color: white; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
+
+        /* МОДАЛЬНОЕ ОКНО МАГАЗИНА СЕРДЕЧЕК ИЗ СКРИНШОТА */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .shop-modal {
+            background: linear-gradient(145deg, #ff758c, #ff7eb3);
+            width: 100%;
+            max-width: 360px;
+            border-radius: 24px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            color: #fff;
+            text-align: center;
+        }
+        .close-shop-btn {
+            position: absolute;
+            top: -12px; right: -12px;
+            width: 34px; height: 34px;
+            background: #fff; color: #000;
+            border-radius: 50%; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 16px;
+        }
+        .shop-title {
+            font-size: 20px; font-weight: bold; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .shop-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;
+        }
+        .shop-item {
+            background: #fff; color: #333; border-radius: 16px; padding: 12px 6px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .item-badge {
+            position: absolute; top: -8px; background: #ff007f; color: #fff;
+            font-size: 8px; font-weight: bold; padding: 2px 6px; border-radius: 8px; text-transform: uppercase;
+        }
+        .item-title { font-size: 12px; color: #777; font-weight: 600; margin-bottom: 4px; }
+        .item-value { font-size: 16px; font-weight: bold; color: #000; display: flex; align-items: center; gap: 2px; }
+        .item-icon { font-size: 28px; margin: 6px 0; }
         
-        .fx-heart {
-            position: absolute; font-size: 26px; animation: fly 1s ease-out forwards; pointer-events: none; z-index: 300;
+        .buy-btn {
+            width: 100%; border: none; border-radius: 10px; padding: 6px 0;
+            font-weight: bold; font-size: 13px; cursor: pointer; color: #fff;
+            display: flex; align-items: center; justify-content: center; gap: 2px;
         }
+        .btn-blue { background: #24b0ff; }
+        .btn-green { background: #2ecc71; }
+        .star-icon { font-size: 11px; }
+
+        .fx-heart { position: absolute; font-size: 26px; animation: fly 1s ease-out forwards; pointer-events: none; z-index: 300; }
         @keyframes fly {
             0% { transform: translate(0,0) scale(0.6); opacity: 0; }
             20% { opacity: 1; }
@@ -240,10 +352,18 @@
 <body>
 
     <div class="game-header">
-        <div class="status-msg" id="game-status-label">Подключение к серверу...</div>
+        <div class="hearts-balance-top" onclick="openShopModal()">
+            <span>❤️</span> <div id="my-hearts-display">0</div>
+        </div>
+        <div class="status-msg" id="game-status-label">Подключение...</div>
     </div>
 
     <div class="board-container" id="board">
+        <div class="hint-arrow-box" id="turn-hint">
+            <div class="hint-text">Крути бутылочку!</div>
+            <div class="hint-arrow">▼</div>
+        </div>
+
         <div class="bottle-node" id="bottle" onclick="clientRequestSpin()">
             <svg class="bottle-img" viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg">
                 <path d="M42,15 L58,15 L58,65 L42,65 Z" fill="#1b4d3e" stroke="#0d261f" stroke-width="3"/>
@@ -283,10 +403,67 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="shop-modal-view">
+        <div class="shop-modal">
+            <div class="close-shop-btn" onclick="closeShopModal()">✕</div>
+            <div class="shop-title">Купить сердечки</div>
+            
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <div class="item-title">VIP статус</div>
+                    <div class="item-icon">👑</div>
+                    <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-title">Получи ❤️20</div>
+                    <div class="item-icon">👥</div>
+                    <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-badge">Выгодно</div>
+                    <div class="item-value">❤️12.5к</div>
+                    <div class="item-icon">📦</div>
+                    <button class="buy-btn btn-green">⭐ 5000</button>
+                </div>
+
+                <div class="shop-item">
+                    <div class="item-value">❤️6000</div>
+                    <div class="item-icon">🏺</div>
+                    <button class="buy-btn btn-green">⭐ 2500</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-badge">Хит</div>
+                    <div class="item-value">❤️2200</div>
+                    <div class="item-icon">🎒</div>
+                    <button class="buy-btn btn-green">⭐ 1000</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-value">❤️500</div>
+                    <div class="item-icon">🎁</div>
+                    <button class="buy-btn btn-green">⭐ 250 border</button>
+                </div>
+
+                <div class="shop-item">
+                    <div class="item-value">❤️10</div>
+                    <div class="item-icon">💝</div>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(10, 1)">⭐ 1</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-value">20</div>
+                    <div class="item-icon">🦘</div>
+                    <button class="buy-btn btn-green">Gönder</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-value">❤️20</div>
+                    <div class="item-icon">🦘</div>
+                    <button class="buy-btn btn-green">Gönder</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Твой жестко заданный URL хостинга
         const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
-        
         const socket = io(BACKEND_URL);
         const tg = window.Telegram.WebApp;
         
@@ -305,23 +482,30 @@
             }
         }
 
+        function openShopModal() { document.getElementById('shop-modal-view').style.display = 'flex'; }
+        function closeShopModal() { document.getElementById('shop-modal-view').style.display = 'none'; }
+
+        // Имитация или вызов нативной платежки Telegram Stars
+        function triggerStarsBuy(amount, starsCost) {
+            if (tg && tg.openInvoice) {
+                // Для полноценного релиза здесь открывается инвойс от BotFather.
+                // Сейчас напрямую начислим баланс через сокет для теста:
+                socket.emit("buy_hearts_stars", { amount: amount });
+                closeShopModal();
+            } else {
+                // Тест в браузере
+                socket.emit("buy_hearts_stars", { amount: amount });
+                closeShopModal();
+            }
+        }
+
         socket.on("connect", () => {
-            document.getElementById('game-status-label').innerText = "Вход за игровой стол...";
-            // Передаем initData для авторизации и сохранения поцелуев в БД
-            socket.emit("join_table", { 
-                username: myNickname, 
-                avatar: myAvatar,
-                initData: tg ? tg.initData : "" 
-            });
+            document.getElementById('game-status-label').innerText = "Вход за стол...";
+            socket.emit("join_table", { username: myNickname, avatar: myAvatar, initData: tg ? tg.initData : "" });
         });
 
         socket.on("join_response", (data) => {
-            if (data.status === "spectator") {
-                document.getElementById('game-status-label').innerText = "Все места заняты. Режим зрителя.";
-                myAssignedSeat = null;
-            } else {
-                myAssignedSeat = data.seat;
-            }
+            if (data.status !== "spectator") myAssignedSeat = data.seat;
         });
 
         socket.on("table_update", (data) => {
@@ -329,7 +513,7 @@
             const currentTurn = data.current_turn;
             const state = data.game_state;
 
-            // Полный ререндер мест
+            // Рендер игроков
             for (let i = 0; i < 12; i++) {
                 const node = document.getElementById(`user-p${i}`);
                 const pData = seats[i];
@@ -338,39 +522,47 @@
                     node.querySelector('.square-avatar').innerText = pData.avatar;
                     node.querySelector('.meta-name').innerText = pData.name;
                     
-                    // Обновляем счетчик поцелуев из БД
                     const kBadge = document.getElementById(`k-${i}`);
                     kBadge.innerText = `💋 ${pData.kisses || 0}`;
                     kBadge.style.display = "flex";
+
+                    // Обновляем верхний левый счетчик ТЕКУЩЕГО игрока
+                    if (myAssignedSeat === i) {
+                        document.getElementById('my-hearts-display').innerText = pData.hearts || 0;
+                    }
                 } else {
                     node.classList.remove('occupied', 'active-spinner', 'active-target');
                     node.querySelector('.square-avatar').innerText = "🪑";
                     node.querySelector('.meta-name').innerText = "Свободно";
                     document.getElementById(`k-${i}`).style.display = "none";
-                    
-                    // ФИКС: Возвращаем игрока обратно на свои точные координаты!
                     node.style.transform = "none"; 
                 }
             }
 
-            if (state === "WAITING") {
-                document.getElementById('game-status-label').innerText = "Ожидание реальных игроков (минимум 2)...";
-                isMyTurn = false;
-                return;
-            }
-
+            // Сброс рамок ходов перед обновлением
             for (let i = 0; i < 12; i++) {
                 document.getElementById(`user-p${i}`).classList.remove('active-spinner', 'active-target');
                 const bubble = document.getElementById(`b-${i}`);
                 if(state !== "INTERACTION") bubble.style.display = 'none';
             }
 
+            document.getElementById('turn-hint').style.display = 'none';
+
+            if (state === "WAITING") {
+                document.getElementById('game-status-label').innerText = "Ожидание игроков (минимум 2)...";
+                isMyTurn = false;
+                return;
+            }
+
             const currentSpinner = seats[currentTurn];
             if (currentSpinner) {
+                // Включаем пульсирующую рамку ходящему
                 document.getElementById(`user-p${currentTurn}`).classList.add('active-spinner');
                 
                 if (myAssignedSeat === currentTurn) {
-                    document.getElementById('game-status-label').innerText = "Ваш ход! Нажмите на бутылочку!";
+                    document.getElementById('game-status-label').innerText = "Твой ход!";
+                    // Показываем подсказку со стрелочкой над бутылкой
+                    if(state === "IDLE") document.getElementById('turn-hint').style.display = 'flex';
                     isMyTurn = true;
                 } else {
                     document.getElementById('game-status-label').innerText = `Ходит ${currentSpinner.name}`;
@@ -381,35 +573,30 @@
             if (state === "IDLE") {
                 document.getElementById('bottle').classList.remove('hidden');
                 document.getElementById('kiss-ui-panel').style.display = 'none';
-                
-                // Возвращаем всех на места после окончания взаимодействия
-                for (let i = 0; i < 12; i++) {
-                    document.getElementById(`user-p${i}`).style.transform = "none";
-                }
+                for (let i = 0; i < 12; i++) document.getElementById(`user-p${i}`).style.transform = "none";
             }
         });
 
         function clientRequestSpin() {
             if (!isMyTurn) return;
             isMyTurn = false;
+            document.getElementById('turn-hint').style.display = 'none';
             socket.emit("request_spin");
         }
 
         socket.on("bottle_spin_command", (data) => {
+            document.getElementById('turn-hint').style.display = 'none';
             document.getElementById('game-status-label').innerText = "Бутылочка крутится...";
             const bottle = document.getElementById('bottle');
             
-            const extraRotations = 2160; 
-            localRotation += extraRotations + data.target_angle - (localRotation % 360);
+            localRotation += 2160 + data.target_angle - (localRotation % 360);
             bottle.style.transform = `rotate(${localRotation}deg)`;
 
             setTimeout(() => {
                 socket.emit("trigger_interaction_phase", {});
-
                 document.getElementById(`user-p${data.target_seat}`).classList.add('active-target');
                 bottle.classList.add('hidden');
 
-                // Плавное сближение участников в центре стола (с фиксацией)
                 const spinnerNode = document.getElementById(`user-p${data.spinner_seat}`);
                 const targetNode = document.getElementById(`user-p${data.target_seat}`);
                 const rectBoard = document.getElementById('board').getBoundingClientRect();
@@ -475,9 +662,7 @@
             row.className = 'chat-row';
             row.innerHTML = `
                 <div class="chat-mini-avatar">${data.avatar}</div>
-                <div class="chat-body-text">
-                    <span class="chat-sender-name">${data.name}:</span>${data.text}
-                </div>
+                <div class="chat-body-text"><span class="chat-sender-name">${data.name}:</span>${data.text}</div>
             `;
             chatBox.appendChild(row);
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -489,10 +674,8 @@
             const board = document.getElementById('board');
             for (let i = 0; i < 10; i++) {
                 const h = document.createElement('div');
-                h.className = 'fx-heart';
-                h.innerText = '❤️';
-                h.style.left = 'calc(50% - 13px)';
-                h.style.top = 'calc(50% - 13px)';
+                h.className = 'fx-heart'; h.innerText = '❤️';
+                h.style.left = 'calc(50% - 13px)'; h.style.top = 'calc(50% - 13px)';
                 const angle = Math.random() * Math.PI * 2;
                 const dist = 60 + Math.random() * 80;
                 h.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);

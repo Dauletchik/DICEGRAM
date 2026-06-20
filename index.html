@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Онлайн Бутылочка</title>
+    <title>Онлайн Бутылочка - Spin the Bottle</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -12,263 +12,341 @@
             padding: 0;
         }
         body {
-            background-color: #1e1e24;
+            background-color: #141416;
             color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: space-between;
             height: 100vh;
-            padding: 20px 10px;
             overflow: hidden;
         }
-        
-        /* Верхняя панель */
-        .header-container {
+
+        /* Шапка игры */
+        .game-header {
             text-align: center;
-            width: 100%;
+            padding: 10px;
+            background: #1c1c1e;
+            border-bottom: 1px solid #2c2c2e;
             z-index: 10;
         }
-        .header-container h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .status-bar {
+        .status-msg {
             font-size: 16px;
-            font-weight: 600;
-            color: #f1c40f;
-            margin-bottom: 8px;
-            min-height: 22px;
+            font-weight: bold;
+            color: #ffd32a;
+            min-height: 20px;
+            margin-bottom: 4px;
         }
-        .counter {
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 14px;
-            border-radius: 20px;
+        .kisses-panel {
+            font-size: 13px;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            padding: 3px 12px;
+            border-radius: 12px;
             display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: bold;
         }
 
-        /* Игровое поле */
-        .game-zone {
+        /* Прямоугольная игровая зона (Песочный фон) */
+        .board-container {
             position: relative;
-            width: 340px;
-            height: 340px;
+            width: 100%;
+            height: 48vh; /* Ограничиваем высоту, чтобы осталось место под чат */
+            background-color: #d1b894; /* Песочный/светло-коричневый фон */
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: auto 0;
-        }
-        .purple-table {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle, #8e44ad, #6c3483);
-            border-radius: 50%;
-            border: 6px solid #512562;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0,0,0,0.4);
-            z-index: 1;
         }
 
-        /* Бутылочка */
-        .bottle-container {
+        /* Бутылочка по центру */
+        .bottle-node {
             position: absolute;
-            width: 40px;
-            height: 120px;
-            z-index: 10;
+            width: 45px;
+            height: 135px;
+            z-index: 100;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 3.5s cubic-bezier(0.25, 1, 0.2, 1), opacity 0.5s ease;
-            opacity: 1;
+            transition: transform 3.8s cubic-bezier(0.2, 1, 0.2, 1), opacity 0.4s;
         }
-        .bottle-container.hidden {
+        .bottle-node.hidden {
             opacity: 0;
             pointer-events: none;
         }
-        .bottle-svg {
+        .bottle-img {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.4));
+            filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.5));
         }
 
-        /* Игроки и их плавное перемещение */
-        .player-seat {
+        /* Квадратные аватарки игроков */
+        .grid-player {
             position: absolute;
-            width: 70px;
-            height: 90px;
+            width: 62px;
+            height: 82px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            z-index: 5;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        .avatar-circle {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: #34495e;
+        .square-avatar {
+            width: 50px;
+            height: 50px;
+            background: #2c3e50;
+            border-radius: 12px; /* Квадрат с закругленными углами */
             border: 3px solid #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             transition: border-color 0.3s, box-shadow 0.3s;
+            overflow: hidden;
         }
-        .player-seat.current-turn .avatar-circle {
-            border-color: #f1c40f;
-            box-shadow: 0 0 15px #f1c40f;
+        .grid-player.active-spinner .square-avatar {
+            border-color: #ffd32a;
+            box-shadow: 0 0 12px #ffd32a;
         }
-        .player-seat.targeted .avatar-circle {
-            border-color: #e74c3c;
-            box-shadow: 0 0 15px #e74c3c;
+        .grid-player.active-target .square-avatar {
+            border-color: #ff4757;
+            box-shadow: 0 0 12px #ff4757;
         }
-        .player-name {
-            font-size: 11px;
-            margin-top: 4px;
+        .meta-name {
+            font-size: 10px;
+            color: #1e1e24; /* Темный текст на песочном фоне */
+            font-weight: bold;
+            margin-top: 3px;
             text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 2px 6px;
-            border-radius: 8px;
-            max-width: 75px;
+            width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .choice-bubble {
+
+        /* Расстановка 12 мест по периметру прямоугольного экрана */
+        /* Сверху (4 игрока) */
+        #user-p0 { top: 10px; left: 12%; }
+        #user-p1 { top: 10px; left: 37%; }
+        #user-p2 { top: 10px; left: 62%; }
+        #user-p3 { top: 10px; left: 86%; }
+        /* Справа (2 игрока) */
+        #user-p4 { top: 32%; right: 10px; }
+        #user-p5 { top: 60%; right: 10px; }
+        /* Снизу (4 игрока) */
+        #user-p6 { bottom: 10px; left: 86%; }
+        #user-p7 { bottom: 10px; left: 62%; }
+        #user-p8 { bottom: 10px; left: 37%; }
+        #user-p9 { bottom: 10px; left: 12%; }
+        /* Слева (2 игрока) */
+        #user-p10 { top: 60%; left: 10px; }
+        #user-p11 { top: 32%; left: 10px; }
+
+        /* Локальные облачка выбора */
+        .vote-bubble {
             position: absolute;
-            top: -20px;
-            background: #fff;
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
+            top: -22px;
+            background: #ffffff;
+            color: #000000;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: bold;
             display: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            z-index: 20;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 150;
         }
 
-        /* Кнопка снизу */
-        .action-button {
-            width: 90%;
-            max-width: 320px;
-            background: linear-gradient(135deg, #ff4757, #ff6b81);
-            border: none;
-            color: #ffffff;
-            padding: 16px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
-            transition: background 0.2s, transform 0.1s;
-            z-index: 10;
-        }
-        .action-button:active {
-            transform: scale(0.96);
-        }
-        .action-button:disabled {
-            background: #7f8c8d;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        /* Интерактивная зона поцелуя в центре */
-        .kiss-panel {
+        /* Выезд аватарок в центр */
+        .choice-panel-box {
             position: absolute;
-            bottom: 25px;
+            bottom: 30px;
             display: none;
             flex-direction: column;
             align-items: center;
+            z-index: 200;
             width: 100%;
-            z-index: 30;
         }
-        .kiss-prompt-text {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 10px;
+        .choice-txt {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            background: rgba(0,0,0,0.75);
+            padding: 4px 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
-        .kiss-buttons {
+        .choice-row-btns {
             display: flex;
-            justify-content: center;
             gap: 20px;
-            width: 100%;
         }
-        .k-btn {
-            width: 60px;
-            height: 60px;
+        .act-btn {
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             border: none;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
-        .k-btn:active { transform: scale(0.9); }
-        .k-btn-yes { background: #2ecc71; color: white; }
-        .k-btn-no { background: #e74c3c; color: white; }
+        .btn-heart { background: #2ecc71; color: white; }
+        .btn-cross { background: #e74c3c; color: white; }
 
-        /* Эффект разлетающихся сердец */
-        .heart-fx {
-            position: absolute;
-            font-size: 30px;
-            animation: floatUp 1s ease-out forwards;
-            opacity: 0;
-            z-index: 40;
-            pointer-events: none;
+        /* Игровой чат под столом */
+        .chat-section {
+            flex: 1;
+            background: #1c1c1e;
+            border-top: 2px solid #2c2c2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 42vh;
         }
-        @keyframes floatUp {
-            0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            animation: fadeInMsg 0.3s ease-out;
+        }
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .chat-mini-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #485e74;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .chat-body-text {
+            background: #2c2c2e;
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            max-width: 82%;
+            line-height: 1.3;
+        }
+        .chat-sender-name {
+            font-weight: bold;
+            color: #ff9f43;
+            margin-right: 5px;
+        }
+
+        /* Поле ввода сообщения чата */
+        .chat-input-bar {
+            display: flex;
+            padding: 8px;
+            background: #141416;
+            gap: 8px;
+            align-items: center;
+        }
+        .chat-input-field {
+            flex: 1;
+            background: #2c2c2e;
+            border: 1px solid #3a3a3c;
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-submit-btn {
+            width: 38px;
+            height: 38px;
+            background: #ff4757;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Анимация летящих сердец */
+        .fx-heart {
+            position: absolute;
+            font-size: 26px;
+            animation: fly 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 300;
+        }
+        @keyframes fly {
+            0% { transform: translate(0,0) scale(0.6); opacity: 0; }
             20% { opacity: 1; }
-            100% { transform: translate(var(--x), var(--y)) scale(1.3); opacity: 0; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <h1>Онлайн Бутылочка</h1>
-        <div class="status-bar" id="game-status">Подготовка игры...</div>
-        <div class="counter">Поцелуи: <span id="kiss-value">0</span> 😘</div>
+    <div class="game-header">
+        <div class="status-msg" id="game-status-label">Загрузка игровой комнаты...</div>
+        <div class="kisses-panel">Поцелуи: <span id="kisses-score">0</span> 😘</div>
     </div>
 
-    <div class="game-zone" id="stage">
-        <div class="purple-table"></div>
+    <div class="board-container" id="board">
         
-        <div class="bottle-container" id="game-bottle">
-            <svg class="bottle-svg" viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg">
-                <path d="M40,20 L60,20 L60,70 L40,70 Z" fill="#2d5a27" stroke="#1e3c1a" stroke-width="3"/>
-                <path d="M40,70 C20,100 20,120 20,150 L20,260 C20,275 30,285 50,285 C70,285 80,275 80,260 L80,150 C80,120 80,100 60,70 Z" fill="#387330" stroke="#1e3c1a" stroke-width="4"/>
-                <rect x="25" y="140" width="50" height="50" rx="5" fill="#e74c3c"/>
-                <circle cx="50" cy="165" r="12" fill="#ffffff"/>
+        <div class="bottle-node" id="bottle" onclick="handleBottleClick()">
+            <svg class="bottle-img" viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg">
+                <path d="M42,15 L58,15 L58,65 L42,65 Z" fill="#1b4d3e" stroke="#0d261f" stroke-width="3"/>
+                <path d="M42,65 C22,95 22,115 22,145 L22,265 C22,278 32,288 50,288 C68,288 78,278 78,265 L78,145 C78,115 78,95 58,65 Z" fill="#2c6b56" stroke="#0d261f" stroke-width="4"/>
+                <rect x="27" y="135" width="46" height="50" rx="4" fill="#e74c3c"/>
+                <circle cx="50" cy="160" r="10" fill="#ffffff"/>
             </svg>
         </div>
-        
-        <div class="player-seat" id="seat-0"><div class="choice-bubble" id="choice-0"></div><div class="avatar-circle">👑</div><div class="player-name" id="user-my-name">Зверопо...</div></div>
-        <div class="player-seat" id="seat-1"><div class="choice-bubble" id="choice-1"></div><div class="avatar-circle">💃</div><div class="player-name">Mira_doll</div></div>
-        <div class="player-seat" id="seat-2"><div class="choice-bubble" id="choice-2"></div><div class="avatar-circle">😎</div><div class="player-name">Behruz</div></div>
-        <div class="player-seat" id="seat-3"><div class="choice-bubble" id="choice-3"></div><div class="avatar-circle">💬</div><div class="player-name">ZAHID</div></div>
-        <div class="player-seat" id="seat-4"><div class="choice-bubble" id="choice-4"></div><div class="avatar-circle">🦄</div><div class="player-name">Alina</div></div>
-        <div class="player-seat" id="seat-5"><div class="choice-bubble" id="choice-5"></div><div class="avatar-circle">🔥</div><div class="player-name">Дмитрий</div></div>
+
+        <div class="grid-player" id="user-p0"><div class="vote-bubble" id="b-0"></div><div class="square-avatar">👑</div><div class="meta-name" id="my-profile-name">@Зверопо... , 18</div></div>
+        <div class="grid-player" id="user-p1"><div class="vote-bubble" id="b-1"></div><div class="square-avatar">💃</div><div class="meta-name">@Mira_doll , 20</div></div>
+        <div class="grid-player" id="user-p2"><div class="vote-bubble" id="b-2"></div><div class="square-avatar">😎</div><div class="meta-name">@Behruz , 22</div></div>
+        <div class="grid-player" id="user-p3"><div class="vote-bubble" id="b-3"></div><div class="square-avatar">💬</div><div class="meta-name">@ZAHID , 19</div></div>
+        <div class="grid-player" id="user-p4"><div class="vote-bubble" id="b-4"></div><div class="square-avatar">🦄</div><div class="meta-name">@Alina , 18</div></div>
+        <div class="grid-player" id="user-p5"><div class="vote-bubble" id="b-5"></div><div class="square-avatar">🔥</div><div class="meta-name">@Дмитрий , 25</div></div>
+        <div class="grid-player" id="user-p6"><div class="vote-bubble" id="b-6"></div><div class="square-avatar">🐱</div><div class="meta-name">@Sapi , 21</div></div>
+        <div class="grid-player" id="user-p7"><div class="vote-bubble" id="b-7"></div><div class="square-avatar">🎮</div><div class="meta-name">@Tolanov , 23</div></div>
+        <div class="grid-player" id="user-p8"><div class="vote-bubble" id="b-8"></div><div class="square-avatar">💎</div><div class="meta-name">@Madi , 20</div></div>
+        <div class="grid-player" id="user-p9"><div class="vote-bubble" id="b-9"></div><div class="square-avatar">🍀</div><div class="meta-name">@Aruzhan , 19</div></div>
+        <div class="grid-player" id="user-p10"><div class="vote-bubble" id="b-10"></div><div class="square-avatar">🦊</div><div class="meta-name">@Askar , 26</div></div>
+        <div class="grid-player" id="user-p11"><div class="vote-bubble" id="b-11"></div><div class="square-avatar">✨</div><div class="meta-name">@Aya , 18</div></div>
+
+        <div class="choice-panel-box" id="kiss-ui-panel">
+            <div class="choice-txt" id="kiss-ui-title">Поцеловать?</div>
+            <div class="choice-row-btns">
+                <button class="act-btn btn-heart" id="act-yes" onclick="submitUserChoice(true)">❤️</button>
+                <button class="act-btn btn-cross" id="act-no" onclick="submitUserChoice(false)">❌</button>
+            </div>
+        </div>
     </div>
 
-    <button class="action-button" id="spin-action-btn" onclick="humanSpinRequest()">КРУТИТЬ!</button>
+    <div class="chat-section">
+        <div class="chat-messages" id="chat-box">
+            <div class="chat-row">
+                <div class="chat-mini-avatar">📢</div>
+                <div class="chat-body-text"><span class="chat-sender-name">Система:</span>Добро пожаловать в общий стол! Игра начнется автоматически.</div>
+            </div>
+        </div>
 
-    <div class="kiss-panel" id="action-kiss-panel">
-        <div class="kiss-prompt-text" id="kiss-prompt-title">Поцеловать?</div>
-        <div class="kiss-buttons">
-            <button class="k-btn k-btn-yes" id="k-yes" onclick="submitHumanChoice(true)">❤️</button>
-            <button class="k-btn k-btn-no" id="k-no" onclick="submitHumanChoice(false)">❌</button>
+        <div class="chat-input-bar">
+            <input type="text" class="chat-input-field" id="chat-input" placeholder="Написать сообщение..." onkeypress="handleChatKey(event)">
+            <button class="chat-submit-btn" onclick="sendUserMessage()">➔</button>
         </div>
     </div>
 
@@ -276,243 +354,271 @@
         const tg = window.Telegram.WebApp;
         if (tg) {
             tg.expand();
-            const telegramUser = tg.initDataUnsafe?.user;
-            if (telegramUser) {
-                document.getElementById('user-my-name').innerText = telegramUser.first_name;
+            const webUser = tg.initDataUnsafe?.user;
+            if (webUser) {
+                document.getElementById('my-profile-name').innerText = `@${webUser.username || webUser.first_name} , 18`;
             }
         }
 
-        // Позиции по кругу (радиус орбиты 125px)
-        const orbitRadius = 125;
-        const players = [
-            { id: 0, name: "Ты", avatar: "👑", angle: 0, x: 0, y: -orbitRadius },
-            { id: 1, name: "Mira_doll", avatar: "💃", angle: 60, x: 110, y: -65 },
-            { id: 2, name: "Behruz", avatar: "😎", angle: 120, x: 110, y: 65 },
-            { id: 3, name: "ZAHID", avatar: "💬", angle: 180, x: 0, y: orbitRadius },
-            { id: 4, name: "Alina", avatar: "🦄", angle: 240, x: -110, y: 65 },
-            { id: 5, name: "Дмитрий", avatar: "🔥", angle: 300, x: -110, y: -65 }
+        // Пул случайных фраз ботов в чат
+        const botPhrases = [
+            "всем привет!", "ботекс екан 😂", "кто из Алматы?", "крути давай))", 
+            "целуем всех ❤️", "ого, неожиданно", "Медиа тут?", "Норм тема", 
+            "У кого сколько поцелуев?", "Жми на бутылку!", "Удачи игрокам 🍾", "красиво крутит"
         ];
 
-        let currentTurnIndex = 0; 
-        let currentRotation = 0;
-        let myKisses = parseInt(localStorage.getItem('saved_kisses')) || 0;
+        // Массив 12 игроков с углами вращения для правильного указания горлышка
+        const roomPlayers = [
+            { id: 0, name: "Ты", avatar: "👑", angle: 0, xPercent: 12, yPercent: 10, isTop: true, isBottom: false },
+            { id: 1, name: "Mira_doll", avatar: "💃", angle: 30, xPercent: 37, yPercent: 10, isTop: true },
+            { id: 2, name: "Behruz", avatar: "😎", angle: 60, xPercent: 62, yPercent: 10, isTop: true },
+            { id: 3, name: "ZAHID", avatar: "💬", angle: 90, xPercent: 86, yPercent: 10, isTop: true },
+            { id: 4, name: "Alina", avatar: "🦄", angle: 130, right: 10, topPercent: 32 },
+            { id: 5, name: "Дмитрий", avatar: "🔥", angle: 160, right: 10, topPercent: 60 },
+            { id: 6, name: "Sapi", avatar: "🐱", angle: 180, xPercent: 86, yPercent: 10, isBottom: true },
+            { id: 7, name: "Tolanov", avatar: "🎮", angle: 210, xPercent: 62, yPercent: 10, isBottom: true },
+            { id: 8, name: "Madi", avatar: "💎", angle: 240, xPercent: 37, yPercent: 10, isBottom: true },
+            { id: 9, name: "Aruzhan", avatar: "🍀", angle: 270, xPercent: 12, yPercent: 10, isBottom: true },
+            { id: 10, name: "Askar", avatar: "🦊", angle: 310, left: 10, topPercent: 60 },
+            { id: 11, name: "Aya", avatar: "✨", angle: 330, left: 10, topPercent: 32 }
+        ];
+
+        let currentTurn = 0;
+        let rotationDegrees = 0;
+        let kissesScore = parseInt(localStorage.getItem('saved_kisses')) || 0;
         
-        // Переменные текущего раунда
-        let activeSpinner = null;
-        let activeTarget = null;
-        let spinnerChoice = null;
-        let targetChoice = null;
+        let spinnerObj = null;
+        let targetObj = null;
+        let choiceSpinner = null;
+        let choiceTarget = null;
+        let bottleClickable = false;
 
-        document.getElementById('kiss-value').innerText = myKisses;
+        document.getElementById('kisses-score').innerText = kissesScore;
 
-        // Первоначальный рендеринг позиций игроков на орбите стола
-        function initPositions() {
-            players.forEach(p => {
-                const el = document.getElementById(`seat-${p.id}`);
-                el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-            });
-            // Старт со случайного игрока
-            currentTurnIndex = Math.floor(Math.random() * players.length);
-            nextTurn();
+        function initRoom() {
+            // Запуск автоматических реплик ботов раз в 7 секунд
+            setInterval(triggerBotChatMessage, 7000);
+            
+            // Начинаем игровой цикл
+            currentTurn = Math.floor(Math.random() * roomPlayers.length);
+            processNextRound();
         }
 
-        // Управление очередью ходов
-        function nextTurn() {
-            // Очищаем стили раунда
-            players.forEach(p => {
-                const el = document.getElementById(`seat-${p.id}`);
-                el.classList.remove('current-turn', 'targeted');
-                document.getElementById(`choice-${p.id}`).style.display = 'none';
+        function processNextRound() {
+            // Сброс всех анимаций и смещений
+            roomPlayers.forEach(p => {
+                const node = document.getElementById(`user-p${p.id}`);
+                node.classList.remove('active-spinner', 'active-target');
+                document.getElementById(`b-${p.id}`).style.display = 'none';
+                
+                // Возврат позиций по CSS стилям периметра
+                node.style.transform = "translate(0, 0)";
             });
-            document.getElementById('game-bottle').classList.remove('hidden');
-            document.getElementById('action-kiss-panel').style.display = 'none';
 
-            activeSpinner = players[currentTurnIndex];
-            document.getElementById(`seat-${activeSpinner.id}`).classList.add('current-turn');
+            document.getElementById('bottle').classList.remove('hidden');
+            document.getElementById('kiss-ui-panel').style.display = 'none';
 
-            if (activeSpinner.id === 0) {
-                // Ход игрока
-                document.getElementById('game-status').innerText = "Ваш ход! Вращайте бутылочку!";
-                document.getElementById('spin-action-btn').style.display = "block";
-                document.getElementById('spin-action-btn').disabled = false;
+            spinnerObj = roomPlayers[currentTurn];
+            document.getElementById(`user-p${spinnerObj.id}`).classList.add('active-spinner');
+
+            if (spinnerObj.id === 0) {
+                document.getElementById('game-status-label').innerText = "Ваш ход! Нажмите на бутылочку!";
+                bottleClickable = true;
             } else {
-                // Ход бота
-                document.getElementById('game-status').innerText = `Ход игрока ${activeSpinner.name}...`;
-                document.getElementById('spin-action-btn').style.display = "block";
-                document.getElementById('spin-action-btn').disabled = true;
-                // Бот думает 2 секунды перед вращением
-                setTimeout(botSpinRequest, 2000);
+                document.getElementById('game-status-label').innerText = `Ход игрока ${spinnerObj.name}...`;
+                bottleClickable = false;
+                setTimeout(executeSystemSpin, 2500); // Бот крутит через 2.5 сек
             }
         }
 
-        // Вращение игроком
-        function humanSpinRequest() {
-            document.getElementById('spin-action-btn').disabled = true;
-            processSpin();
+        function handleBottleClick() {
+            if (!bottleClickable) return;
+            bottleClickable = false;
+            executeSystemSpin();
         }
 
-        // Вращение ботом
-        function botSpinRequest() {
-            processSpin();
-        }
+        function executeSystemSpin() {
+            let potentialTargets = roomPlayers.filter(p => p.id !== spinnerObj.id);
+            targetObj = potentialTargets[Math.floor(Math.random() * potentialTargets.length)];
 
-        // Общая логика расчета траектории бутылочки
-        function processSpin() {
-            // Исключаем крутящего игрока из списка целей
-            let validTargets = players.filter(p => p.id !== activeSpinner.id);
-            activeTarget = validTargets[Math.floor(Math.random() * validTargets.length)];
-
-            // Считаем угол вращения
-            const extraSpins = 1800; // 5 полных кругов
-            currentRotation += extraSpins + activeTarget.angle - (currentRotation % 360);
+            const extraRotations = 2160; // 6 полных кругов скорости
+            rotationDegrees += extraRotations + targetObj.angle - (rotationDegrees % 360);
             
-            const bottle = document.getElementById('game-bottle');
-            bottle.style.transform = `rotate(${currentRotation}deg)`;
+            document.getElementById('bottle').style.transform = `rotate(${rotationDegrees}deg)`;
 
-            // Ждем завершения вращения
-            setTimeout(gatherInCenter, 3500);
+            // Ждем завершения анимации вращения
+            setTimeout(animateCloserLook, 3800);
         }
 
-        // Сближение участников в центре
-        function gatherInCenter() {
-            document.getElementById(`seat-${activeTarget.id}`).classList.add('targeted');
-            document.getElementById('game-bottle').classList.add('hidden');
-            document.getElementById('spin-action-btn').style.display = "none";
+        function animateCloserLook() {
+            document.getElementById(`user-p${targetObj.id}`).classList.add('active-target');
+            document.getElementById('bottle').classList.add('hidden');
 
-            // Плавно сдвигаем аватаров в центр стола
-            // Распределяем их немного по бокам от центра: крутящий чуть левее (-40px), цель чуть правее (40px)
-            document.getElementById(`seat-${activeSpinner.id}`).style.transform = `translate(-40px, 0px)`;
-            document.getElementById(`seat-${activeTarget.id}`).style.transform = `translate(40px, 0px)`;
+            // Расчет сближения аватарок в центр (смещение через translate относительно исходных позиций)
+            // Центр экрана рассчитывается на бэкенде верстки, смещаем на фиксированные значения
+            const spinnerNode = document.getElementById(`user-p${spinnerObj.id}`);
+            const targetNode = document.getElementById(`user-p${targetObj.id}`);
 
-            setTimeout(startInteractionPhase, 700);
+            // Элементарное сближение: перемещаем в абсолютные координаты центра таблицы
+            const rectBoard = document.getElementById('board').getBoundingClientRect();
+            const sRect = spinnerNode.getBoundingClientRect();
+            const tRect = targetNode.getBoundingClientRect();
+
+            const targetCenterX = rectBoard.width / 2;
+            const targetCenterY = rectBoard.height / 2;
+
+            const sDx = targetCenterX - (sRect.left - rectBoard.left + sRect.width / 2) - 35;
+            const sDy = targetCenterY - (sRect.top - rectBoard.top + sRect.height / 2);
+            
+            const tDx = targetCenterX - (tRect.left - rectBoard.left + tRect.width / 2) + 35;
+            const tDy = targetCenterY - (tRect.top - rectBoard.top + tRect.height / 2);
+
+            spinnerNode.style.transform = `translate(${sDx}px, ${sDy}px)`;
+            targetNode.style.transform = `translate(${tDx}px, ${tDy}px)`;
+
+            setTimeout(evaluateInteractions, 700);
         }
 
-        // Фаза принятия решений (Поцелуй / Отказ)
-        function startInteractionPhase() {
-            spinnerChoice = null;
-            targetChoice = null;
+        function evaluateInteractions() {
+            choiceSpinner = null;
+            choiceTarget = null;
 
-            // Сценарий 1: Крутил ТЫ
-            if (activeSpinner.id === 0) {
-                document.getElementById('game-status').innerText = `Вы выбрали: ${activeTarget.name}`;
-                showHumanKissControls(`Поцеловать ${activeTarget.name}?`);
-                // Бот-цель генерирует свой ответ (70% — ДА)
-                targetChoice = Math.random() < 0.7;
-            } 
-            // Сценарий 2: Бот крутил ТЕБЯ
-            else if (activeTarget.id === 0) {
-                document.getElementById('game-status').innerText = `${activeSpinner.name} выбрал Вас!`;
-                showHumanKissControls(`${activeSpinner.name} хочет поцеловать Вас?`);
-                // Бот-ротатор делает выбор
-                spinnerChoice = Math.random() < 0.7;
-            } 
-            // Сценарий 3: Бот крутил Бота (Полный автопилот)
-            else {
-                document.getElementById('game-status').innerText = `${activeSpinner.name} выбирает ${activeTarget.name}`;
-                spinnerChoice = Math.random() < 0.7;
-                targetChoice = Math.random() < 0.7;
-                
+            if (spinnerObj.id === 0) {
+                // Игрок крутил бота
+                document.getElementById('game-status-label').innerText = `Вы выбрали: ${targetObj.name}`;
+                showKissControls(`Поцеловать ${targetObj.name}?`);
+                choiceTarget = Math.random() < 0.75; // Решение бота в ответ
+            } else if (targetObj.id === 0) {
+                // Бот крутил игрока
+                document.getElementById('game-status-label').innerText = `${spinnerObj.name} выбрал Вас!`;
+                showKissControls(`${spinnerObj.name} ждет поцелуя!`);
+                choiceSpinner = Math.random() < 0.75;
+            } else {
+                // Бот крутил бота
+                document.getElementById('game-status-label').innerText = `${spinnerObj.name} и ${targetObj.name}`;
+                choiceSpinner = Math.random() < 0.70;
+                choiceTarget = Math.random() < 0.70;
+
                 setTimeout(() => {
-                    displayChoiceBubble(activeSpinner.id, spinnerChoice);
-                    displayChoiceBubble(activeTarget.id, targetChoice);
-                    setTimeout(evaluateResults, 1500);
-                }, 1500);
+                    revealBubble(spinnerObj.id, choiceSpinner);
+                    revealBubble(targetObj.id, choiceTarget);
+                    setTimeout(compileRoundResults, 1500);
+                }, 1200);
             }
         }
 
-        function showHumanKissControls(titleText) {
-            document.getElementById('kiss-prompt-title').innerText = titleText;
-            document.getElementById('action-kiss-panel').style.display = "flex";
+        function showKissControls(promptText) {
+            document.getElementById('kiss-ui-title').innerText = promptText;
+            document.getElementById('kiss-ui-panel').style.display = 'flex';
         }
 
-        // Выбор сделан реальным пользователем
-        function submitHumanChoice(choice) {
-            document.getElementById('action-kiss-panel').style.display = "none";
-            
-            if (activeSpinner.id === 0) {
-                spinnerChoice = choice;
-            } else if (activeTarget.id === 0) {
-                targetChoice = choice;
-            }
+        function submitUserChoice(isYes) {
+            document.getElementById('kiss-ui-panel').style.display = 'none';
 
-            // Показываем бабблы выбора на экране
-            displayChoiceBubble(activeSpinner.id, spinnerChoice);
-            displayChoiceBubble(activeTarget.id, targetChoice);
-
-            setTimeout(evaluateResults, 1200);
+            if (spinnerObj.id === 0) choiceSummary(isYes, choiceTarget);
+            else choiceSummary(choiceSpinner, isYes);
         }
 
-        function displayChoiceBubble(playerId, isYes) {
-            const bubble = document.getElementById(`choice-${playerId}`);
-            bubble.innerText = isYes ? "❤️ Да" : "❌ Нет";
-            bubble.style.background = isYes ? "#2ecc71" : "#e74c3c";
-            bubble.style.color = "#ffffff";
-            bubble.style.display = "block";
+        function choiceSummary(sChoice, tChoice) {
+            choiceSpinner = sChoice;
+            choiceTarget = tChoice;
+
+            revealBubble(spinnerObj.id, choiceSpinner);
+            revealBubble(targetObj.id, choiceTarget);
+
+            setTimeout(compileRoundResults, 1200);
         }
 
-        // Подсчет итогов взаимности
-        function evaluateResults() {
-            const mutual = spinnerChoice && targetChoice;
+        function revealBubble(pid, isYes) {
+            const b = document.getElementById(`b-${pid}`);
+            b.innerText = isYes ? "❤️ Да" : "❌ Нет";
+            b.style.background = isYes ? "#2ecc71" : "#e74c3c";
+            b.style.color = "#ffffff";
+            b.style.display = "block";
+        }
 
-            if (mutual) {
-                document.getElementById('game-status').innerText = "Взаимный поцелуй! Найс! 💋";
-                spawnHeartsAnimation();
-                
-                // Начисляем поцелуй, если в процессе участвовал ТЫ
-                if (activeSpinner.id === 0 || activeTarget.id === 0) {
-                    myKisses++;
-                    localStorage.setItem('saved_kisses', myKisses);
-                    document.getElementById('kiss-value').innerText = myKisses;
+        function compileRoundResults() {
+            if (choiceSpinner && choiceTarget) {
+                document.getElementById('game-status-label').innerText = "Взаимно! 💋";
+                generateHearts();
+
+                if (spinnerObj.id === 0 || targetObj.id === 0) {
+                    kissesScore++;
+                    localStorage.setItem('saved_kisses', kissesScore);
+                    document.getElementById('kisses-score').innerText = kissesScore;
                     if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 }
             } else {
-                document.getElementById('game-status').innerText = "Поцелуй не состоялся... 💔";
+                document.getElementById('game-status-label').innerText = "Отказ... 💔";
             }
 
-            // Ждем 2 секунды демонстрации результата и возвращаем всех на места
-            setTimeout(returnSeatsToOrbit, 2000);
+            setTimeout(() => {
+                currentTurn = (currentTurn + 1) % roomPlayers.length;
+                processNextRound();
+            }, 2000);
         }
 
-        // Возвращение игроков на исходные позиции
-        function returnSeatsToOrbit() {
-            players.forEach(p => {
-                document.getElementById(`seat-${p.id}`).style.transform = `translate(${p.x}px, ${p.y}px)`;
-                document.getElementById(`choice-${p.id}`).style.display = 'none';
-            });
-
-            // Передаем ход следующему по кругу
-            currentTurnIndex = (currentTurnIndex + 1) % players.length;
-            setTimeout(nextTurn, 800);
-        }
-
-        // Анимация разлетающихся сердечек из центра
-        function spawnHeartsAnimation() {
-            const stage = document.getElementById('stage');
-            for (let i = 0; i < 12; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'heart-fx';
-                heart.innerText = ['❤️', '💖', '💝', '😘'][Math.floor(Math.random() * 4)];
+        function generateHearts() {
+            const board = document.getElementById('board');
+            for (let i = 0; i < 10; i++) {
+                const h = document.createElement('div');
+                h.className = 'fx-heart';
+                h.innerText = ['❤️','💖','💋'][Math.floor(Math.random() * 3)];
+                h.style.left = 'calc(50% - 13px)';
+                h.style.top = 'calc(50% - 13px)';
                 
-                // Случайные векторы разлета во все стороны
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 60 + Math.random() * 90;
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
+                const rAngle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 80;
+                h.style.setProperty('--dx', `${Math.cos(rAngle) * distance}px`);
+                h.style.setProperty('--dy', `${Math.sin(rAngle) * distance}px`);
 
-                heart.style.setProperty('--x', `${x}px`);
-                heart.style.setProperty('--y', `${y}px`);
-                
-                // Смещение точки спавна (центр)
-                heart.style.left = 'calc(50% - 15px)';
-                heart.style.top = 'calc(50% - 15px)';
-
-                stage.appendChild(heart);
-                setTimeout(() => heart.remove(), 1000);
+                board.appendChild(h);
+                setTimeout(() => h.remove(), 1000);
             }
         }
 
-        // Запуск симуляции при загрузке страницы
-        window.onload = initPositions;
+        /* Логика чата */
+        def appendMessageToContainer(senderName, textString, avatarEmoticon) {
+            // Обходная функция для рендера
+        }
+
+        function pushMessageToDOM(name, txt, av) {
+            const chatBox = document.getElementById('chat-box');
+            const row = document.createElement('div');
+            row.className = 'chat-row';
+            row.innerHTML = `
+                <div class="chat-mini-avatar">${av}</div>
+                <div class="chat-body-text">
+                    <span class="chat-sender-name">${name}:</span>${txt}
+                </div>
+            `;
+            chatBox.appendChild(row);
+            chatBox.scrollTop = chatBox.scrollHeight; // Скролл вниз
+        }
+
+        function sendUserMessage() {
+            const input = document.getElementById('chat-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            const myName = document.getElementById('my-profile-name').innerText.split(' ,')[0];
+            pushMessageToDOM(myName, val, "👑");
+            input.value = "";
+        }
+
+        function handleChatKey(e) {
+            if (e.key === 'Enter') sendUserMessage();
+        }
+
+        function triggerBotChatMessage() {
+            // Выбираем случайного бота и случайную фразу
+            const randBot = roomPlayers[Math.floor(Math.random() * (roomPlayers.length - 1)) + 1];
+            const randPhrase = botPhrases[Math.floor(Math.random() * botPhrases.length)];
+            pushMessageToDOM(`@${randBot.name}`, randPhrase, randBot.avatar);
+        }
+
+        window.onload = initRoom;
     </script>
 </body>
 </html>
+

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Онлайн Бутылочка Мультиплеер</title>
-    <script src="Https://a38182-6d28.j.jrnm.app/"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +18,7 @@
             overflow: hidden;
         }
 
-        /* КРУТАЯ ВЕРХНЯЯ ПАНЕЛЬ ИЗ СКРИНШОТА */
+        /* ВЕРХНЯЯ ПАНЕЛЬ С БАЛАНСОМ */
         .game-header {
             display: flex;
             align-items: center;
@@ -30,7 +30,6 @@
             position: relative;
         }
         
-        /* Кнопка баланса вверху слева */
         .hearts-balance-top {
             display: flex;
             align-items: center;
@@ -56,7 +55,7 @@
             margin: 0 10px;
         }
         
-        /* КОНТЕЙНЕР СТОЛА */
+        /* ИГРОВОЙ СТОЛ */
         .board-container {
             position: relative;
             width: 100%;
@@ -83,7 +82,7 @@
         .bottle-node.hidden { opacity: 0; pointer-events: none; }
         .bottle-img { width: 100%; height: 100%; filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.4)); }
 
-        /* ИНДИКАТОР ХОДА С ПОДПИСЬЮ И СТРЕЛОЧКОЙ */
+        /* ИНДИКАТОР ХОДА */
         .hint-arrow-box {
             position: absolute;
             top: calc(50% - 100px);
@@ -116,7 +115,7 @@
             50% { transform: translate(-50%, -8px); }
         }
 
-        /* Игровые кресла */
+        /* КРЕСЛА ИГРОКОВ */
         .grid-player {
             position: absolute;
             width: 65px;
@@ -151,7 +150,7 @@
             z-index: 2;
         }
 
-        /* ЭФФЕКТ СВЕЧЕНИЯ ВОКРУГ ХОДЯЩЕГО ИГРОКА ИЗ СКРИНШОТА */
+        /* ЭФФЕКТЫ ХОДА И ВЫБОРА */
         .grid-player.active-spinner .square-avatar {
             border-color: #24b0ff; 
             animation: cyanGlowPulse 1.5s infinite ease-in-out;
@@ -197,7 +196,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Абсолютные координаты стола */
+        /* РАССТАНОВКА СТУЛЬЕВ НА СТОЛЕ */
         #user-p0  { top: 4%;   left: 42%; }
         #user-p1  { top: 10%;  left: 68%; }
         #user-p2  { top: 28%;  left: 83%; }
@@ -225,7 +224,7 @@
             z-index: 150;
         }
 
-        /* Панель поцелуя */
+        /* ПАНЕЛЬ ВЫБОРА ПОЦЕЛУЯ */
         .choice-panel-box {
             position: absolute;
             bottom: 20px;
@@ -253,7 +252,7 @@
         .btn-heart { background: #2ecc71; color: white; }
         .btn-cross { background: #e74c3c; color: white; }
 
-        /* ЧАТ */
+        /* ИГРОВОЙ ЧАТ */
         .chat-section {
             flex: 1; 
             background: #1c1c1e; 
@@ -281,7 +280,7 @@
             border-radius: 50%; color: white; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
 
-        /* МОДАЛЬНОЕ ОКНО МАГАЗИНА СЕРДЕЧЕК ИЗ СКРИНШОТА */
+        /* МАГАЗИН СЕРДЕЧЕК */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -339,7 +338,6 @@
         }
         .btn-blue { background: #24b0ff; }
         .btn-green { background: #2ecc71; }
-        .star-icon { font-size: 11px; }
 
         .fx-heart { position: absolute; font-size: 26px; animation: fly 1s ease-out forwards; pointer-events: none; z-index: 300; }
         @keyframes fly {
@@ -415,7 +413,7 @@
                     <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
                 </div>
                 <div class="shop-item">
-                    <div class="item-title">Получи ❤️20</div>
+                    <div class="item-title">Бонус +20</div>
                     <div class="item-icon">👥</div>
                     <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
                 </div>
@@ -423,24 +421,24 @@
                     <div class="item-badge">Выгодно</div>
                     <div class="item-value">❤️12.5к</div>
                     <div class="item-icon">📦</div>
-                    <button class="buy-btn btn-green">⭐ 5000</button>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(12500, 5000)">⭐ 5000</button>
                 </div>
 
                 <div class="shop-item">
                     <div class="item-value">❤️6000</div>
                     <div class="item-icon">🏺</div>
-                    <button class="buy-btn btn-green">⭐ 2500</button>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(6000, 2500)">⭐ 2500</button>
                 </div>
                 <div class="shop-item">
                     <div class="item-badge">Хит</div>
                     <div class="item-value">❤️2200</div>
                     <div class="item-icon">🎒</div>
-                    <button class="buy-btn btn-green">⭐ 1000</button>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(2200, 1000)">⭐ 1000</button>
                 </div>
                 <div class="shop-item">
                     <div class="item-value">❤️500</div>
                     <div class="item-icon">🎁</div>
-                    <button class="buy-btn btn-green">⭐ 250 border</button>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(500, 250)">⭐ 250</button>
                 </div>
 
                 <div class="shop-item">
@@ -449,14 +447,14 @@
                     <button class="buy-btn btn-green" onclick="triggerStarsBuy(10, 1)">⭐ 1</button>
                 </div>
                 <div class="shop-item">
-                    <div class="item-value">20</div>
-                    <div class="item-icon">🦘</div>
-                    <button class="buy-btn btn-green">Gönder</button>
+                    <div class="item-value">❤️20</div>
+                    <div class="item-icon">💖</div>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(20, 2)">⭐ 2</button>
                 </div>
                 <div class="shop-item">
-                    <div class="item-value">❤️20</div>
-                    <div class="item-icon">🦘</div>
-                    <button class="buy-btn btn-green">Gönder</button>
+                    <div class="item-value">❤️50</div>
+                    <div class="item-icon">❤️</div>
+                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(50, 5)">⭐ 5</button>
                 </div>
             </div>
         </div>
@@ -485,18 +483,9 @@
         function openShopModal() { document.getElementById('shop-modal-view').style.display = 'flex'; }
         function closeShopModal() { document.getElementById('shop-modal-view').style.display = 'none'; }
 
-        // Имитация или вызов нативной платежки Telegram Stars
         function triggerStarsBuy(amount, starsCost) {
-            if (tg && tg.openInvoice) {
-                // Для полноценного релиза здесь открывается инвойс от BotFather.
-                // Сейчас напрямую начислим баланс через сокет для теста:
-                socket.emit("buy_hearts_stars", { amount: amount });
-                closeShopModal();
-            } else {
-                // Тест в браузере
-                socket.emit("buy_hearts_stars", { amount: amount });
-                closeShopModal();
-            }
+            socket.emit("buy_hearts_stars", { amount: amount });
+            closeShopModal();
         }
 
         socket.on("connect", () => {
@@ -513,7 +502,6 @@
             const currentTurn = data.current_turn;
             const state = data.game_state;
 
-            // Рендер игроков
             for (let i = 0; i < 12; i++) {
                 const node = document.getElementById(`user-p${i}`);
                 const pData = seats[i];
@@ -526,7 +514,6 @@
                     kBadge.innerText = `💋 ${pData.kisses || 0}`;
                     kBadge.style.display = "flex";
 
-                    // Обновляем верхний левый счетчик ТЕКУЩЕГО игрока
                     if (myAssignedSeat === i) {
                         document.getElementById('my-hearts-display').innerText = pData.hearts || 0;
                     }
@@ -539,7 +526,6 @@
                 }
             }
 
-            // Сброс рамок ходов перед обновлением
             for (let i = 0; i < 12; i++) {
                 document.getElementById(`user-p${i}`).classList.remove('active-spinner', 'active-target');
                 const bubble = document.getElementById(`b-${i}`);
@@ -556,12 +542,10 @@
 
             const currentSpinner = seats[currentTurn];
             if (currentSpinner) {
-                // Включаем пульсирующую рамку ходящему
                 document.getElementById(`user-p${currentTurn}`).classList.add('active-spinner');
                 
                 if (myAssignedSeat === currentTurn) {
                     document.getElementById('game-status-label').innerText = "Твой ход!";
-                    // Показываем подсказку со стрелочкой над бутылкой
                     if(state === "IDLE") document.getElementById('turn-hint').style.display = 'flex';
                     isMyTurn = true;
                 } else {

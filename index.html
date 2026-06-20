@@ -2,392 +2,106 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Dauprohost — Хостинг ботов</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin the Bottle</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        /* Контейнер */
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-        }
-
-        /* Логотип и шапка */
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .logo {
-            font-size: 64px;
-            margin-bottom: 12px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .header .badge {
-            display: inline-block;
-            background: var(--tg-theme-secondary-bg-color, #eef2ff);
-            color: var(--tg-theme-text-color, #1f2937);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        /* Карточка основной информации */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 24px;
-            padding: 32px 24px;
-            margin-bottom: 24px;
+            background: #1a1a1a;
             color: white;
-            text-align: center;
-        }
-
-        .hero h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .hero p {
-            font-size: 15px;
-            opacity: 0.9;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-
-        .hero-stats {
+            font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            gap: 32px;
-            margin-top: 16px;
+            height: 100vh;
+            overflow: hidden;
         }
-
-        .stat {
-            text-align: center;
+        #table {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            background: #8B5A2B;
+            border-radius: 50%;
+            border: 8px solid #5c3a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 700;
+        #bottle {
+            width: 40px;
+            height: 140px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/c/cf/Coca-Cola_Glass_Bottle.svg') no-repeat center;
+            background-size: contain;
+            transition: transform 3s cubic-bezier(0.1, 0.8, 0.1, 1);
         }
-
-        .stat-label {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        /* Кнопка создания сервера */
-        .btn-create {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #ff4757;
             border: none;
-            border-radius: 16px;
-            padding: 16px 24px;
-            font-size: 18px;
-            font-weight: 600;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
+            font-size: 18px;
+            border-radius: 25px;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-            margin-bottom: 24px;
+            font-weight: bold;
         }
-
-        .btn-create:active {
-            transform: scale(0.98);
+        .player {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #555;
+            border-radius: 50%;
+            border: 2px solid #fff;
         }
-
-        /* Карточка преимуществ */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .feature-card {
-            background: var(--tg-theme-secondary-bg-color, #f3f4f6);
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .feature-emoji {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .feature-title {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .feature-desc {
-            font-size: 11px;
-            opacity: 0.7;
-        }
-
-        /* Карточка тарифов */
-        .tariffs {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .tariff-card {
-            background: var(--tg-theme-secondary-bg-color, #f3f4f6);
-            border-radius: 16px;
-            padding: 16px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tariff-card:active {
-            transform: scale(0.96);
-        }
-
-        .tariff-emoji {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .tariff-name {
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .tariff-price {
-            font-size: 13px;
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        /* Инфо панель */
-        .info-card {
-            background: var(--tg-theme-secondary-bg-color, #f3f4f6);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .info-card p {
-            font-size: 13px;
-            opacity: 0.8;
-        }
-
-        /* Кнопка поддержки */
-        .btn-support {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--tg-theme-button-color, #667eea);
-            border-radius: 16px;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--tg-theme-button-color, #667eea);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 16px;
-        }
-
-        .btn-support:active {
-            opacity: 0.7;
-        }
-
-        /* Подвал */
-        .footer {
-            text-align: center;
-            font-size: 11px;
-            opacity: 0.5;
-            padding: 16px 0;
-        }
-
-        /* Анимация появления */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .container {
-            animation: fadeIn 0.5s ease-out;
-        }
+        /* Примерное расположение 4 игроков вокруг стола */
+        #p1 { top: 10px; left: 135px; }
+        #p2 { top: 135px; right: 10px; }
+        #p3 { bottom: 10px; left: 135px; }
+        #p4 { top: 135px; left: 10px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Шапка -->
-        <div class="header">
-            <div class="logo">🚀</div>
-            <h1>Dauprohost</h1>
-            <span class="badge">⚡️ 24/7</span>
-        </div>
 
-        <!-- Герой блок -->
-        <div class="hero">
-            <h2>Хостинг ботов для мессенджеров</h2>
-            <p>Размещайте и управляйте ботами для Telegram на надежном хостинге. Автоматический деплой, SSL и мониторинг 24/7.</p>
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-number">99.9%</div>
-                    <div class="stat-label">Аптайм</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Поддержка</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">⭐️</div>
-                    <div class="stat-label">Оплата</div>
-                </div>
-            </div>
-        </div>
+    <h2>Поцелуев: <span id="kisses">0</span></h2>
 
-        <!-- Кнопка Создать сервер -->
-        <button class="btn-create" onclick="sendEvent('create_server')">
-            <span>➕</span>
-            <span>Создать сервер</span>
-            <span>→</span>
-        </button>
-
-        <!-- Преимущества -->
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-emoji">🚀</div>
-                <div class="feature-title">Быстрый деплой</div>
-                <div class="feature-desc">Загрузка через ZIP</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-emoji">🔧</div>
-                <div class="feature-title">Файловый менеджер</div>
-                <div class="feature-desc">Управление кодом</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-emoji">📊</div>
-                <div class="feature-title">Логи 24/7</div>
-                <div class="feature-desc">Мониторинг работы</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-emoji">💎</div>
-                <div class="feature-title">Реферальная система</div>
-                <div class="feature-desc">Зарабатывай с нами</div>
-            </div>
-        </div>
-
-        <!-- Тарифы -->
-        <div class="tariffs">
-            <div class="tariff-card" onclick="sendEvent('tariff_Старт')">
-                <div class="tariff-emoji">🚀</div>
-                <div class="tariff-name">Старт</div>
-                <div class="tariff-price">50 ⭐/мес</div>
-            </div>
-            <div class="tariff-card" onclick="sendEvent('tariff_Стандарт')">
-                <div class="tariff-emoji">⚙️</div>
-                <div class="tariff-name">Стандарт</div>
-                <div class="tariff-price">120 ⭐/мес</div>
-            </div>
-            <div class="tariff-card" onclick="sendEvent('tariff_Про')">
-                <div class="tariff-emoji">💎</div>
-                <div class="tariff-name">Премиум</div>
-                <div class="tariff-price">300 ⭐/мес</div>
-            </div>
-        </div>
-
-        <!-- Инфо блок -->
-        <div class="info-card">
-            <p>✨ <strong>Только у нас:</strong> до 5 серверов на аккаунт</p>
-            <p>🎁 За каждого приглашённого — 10 ⭐ на баланс</p>
-            <p>💳 Оплата через Telegram Stars</p>
-        </div>
-
-        <!-- Кнопка поддержки -->
-        <button class="btn-support" onclick="sendEvent('support')">
-            <span>🆘</span>
-            <span>Поддержка</span>
-        </button>
-
-        <!-- Подвал -->
-        <div class="footer">
-            © 2026 Dauprohost | Все права защищены
-        </div>
+    <div id="table">
+        <div class="player" id="p1"></div>
+        <div class="player" id="p2"></div>
+        <div class="player" id="p3"></div>
+        <div class="player" id="p4"></div>
+        
+        <div id="bottle"></div>
     </div>
 
+    <button class="btn" onclick="spinBottle()">Крутить!</button>
+
     <script>
-        // Инициализация Telegram Web App
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        
-        // Расширяем на весь экран
-        tg.expand();
-        
-        // Показываем кнопку "Закрыть" для мини-приложения
-        tg.MainButton.hide();
-        tg.BackButton.hide();
-        
-        // Устанавливаем цвет фона под тему Telegram
-        tg.setHeaderColor('bg_color');
-        
-        // Функция отправки события в бот
-        function sendEvent(action) {
-            // Отправляем данные в бот
-            tg.sendData(JSON.stringify({
-                action: action,
-                user_id: tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : null
-            }));
+        tg.expand(); // Расширяем на весь экран
+
+        let currentAngle = 0;
+
+        function spinBottle() {
+            // Генерируем случайный угол (минимум 3 полных оборота + случайный остаток)
+            const randomDegrees = Math.floor(Math.random() * 360) + 1080;
+            currentAngle += randomDegrees;
             
-            // Закрываем мини-приложение (опционально)
-            // tg.close();
+            const bottle = document.getElementById('bottle');
+            bottle.style.transform = `rotate(${currentAngle}deg)`;
+
+            // После остановки (3 секунды) можно отправлять результат на сервер
+            setTimeout(() => {
+                let finalAngle = currentAngle % 360;
+                // Логика определения на кого указала бутылочка...
+                alert("Бутылочка остановилась!");
+            }, 3000);
         }
-        
-        // При загрузке страницы можно отправить событие
-        console.log('Dauprohost Web App загружен');
-        console.log('User ID:', tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : 'Не авторизован');
-        
-        // Обработчик для кнопки "Назад" в Telegram
-        tg.onEvent('backButtonClicked', function() {
-            // Можно отправить событие закрытия или вернуться
-            sendEvent('back');
-        });
     </script>
 </body>
 </html>
+

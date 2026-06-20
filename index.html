@@ -2,106 +2,302 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin the Bottle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Онлайн Бутылочка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background: #1a1a1a;
+        }
+        body {
+            background: radial-gradient(circle, #2c3e50, #1a252f);
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             height: 100vh;
+            padding: 20px;
             overflow: hidden;
         }
-        #table {
+        .header {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .header h1 {
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .score-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 15px;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        /* Игровой стол */
+        .table-container {
             position: relative;
             width: 320px;
             height: 320px;
-            background: #8B5A2B;
+            margin: auto;
+        }
+        .game-table {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            background: #8e44ad;
+            border: 8px solid #732d91;
             border-radius: 50%;
-            border: 8px solid #5c3a1a;
+            top: 40px;
+            left: 40px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.5);
+        }
+        /* Бутылочка */
+        .bottle {
+            position: absolute;
+            width: 34px;
+            height: 120px;
+            top: 100px;
+            left: 143px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/c/cf/Coca-Cola_Glass_Bottle.svg') no-repeat center;
+            background-size: contain;
+            transform-origin: center center;
+            transition: transform 4s cubic-bezier(0.25, 1, 0.2 miniature5, 1);
+            z-index: 10;
+        }
+        /* Стили игроков вокруг стола */
+        .player {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+        }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            background: #34495e;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            object-fit: cover;
         }
-        #bottle {
-            width: 40px;
-            height: 140px;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/c/cf/Coca-Cola_Glass_Bottle.svg') no-repeat center;
-            background-size: contain;
-            transition: transform 3s cubic-bezier(0.1, 0.8, 0.1, 1);
+        .player.active .avatar {
+            border-color: #e74c3c;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #e74c3c;
         }
-        .btn {
-            margin-top: 20px;
-            padding: 12px 30px;
-            background: #ff4757;
+        .username {
+            font-size: 11px;
+            margin-top: 4px;
+            text-align: center;
+            max-width: 65px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: rgba(0,0,0,0.6);
+            padding: 2px 4px;
+            border-radius: 5px;
+        }
+        /* Позиционирование 6 мест вокруг круглого стола */
+        #pos0 { top: 0; left: 130px; }
+        #pos1 { top: 50px; right: 10px; }
+        #pos2 { bottom: 50px; right: 10px; }
+        #pos3 { bottom: 0; left: 130px; }
+        #pos4 { bottom: 50px; left: 10px; }
+        #pos5 { top: 50px; left: 10px; }
+
+        /* Кнопка */
+        .spin-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
             border: none;
             color: white;
+            padding: 15px 40px;
             font-size: 18px;
-            border-radius: 25px;
-            cursor: pointer;
             font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            margin-bottom: 20px;
+            width: 80%;
+            max-width: 300px;
+            transition: 0.2s;
         }
-        .player {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: #555;
+        .spin-btn:active {
+            transform: scale(0.95);
+        }
+        .spin-btn:disabled {
+            background: #7f8c8d;
+            box-shadow: none;
+        }
+
+        /* Модальное окно (Поцелуй) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #2c3e50;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+            border: 2px solid #e74c3c;
+        }
+        .modal-avatar {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 2px solid #fff;
+            margin-bottom: 15px;
+            border: 3px solid #ff4757;
         }
-        /* Примерное расположение 4 игроков вокруг стола */
-        #p1 { top: 10px; left: 135px; }
-        #p2 { top: 135px; right: 10px; }
-        #p3 { bottom: 10px; left: 135px; }
-        #p4 { top: 135px; left: 10px; }
+        .modal-btns {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .modal-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 45%;
+        }
+        .btn-yes { background: #2ecc71; color: white; }
+        .btn-no { background: #e74c3c; color: white; }
     </style>
 </head>
 <body>
 
-    <h2>Поцелуев: <span id="kisses">0</span></h2>
-
-    <div id="table">
-        <div class="player" id="p1"></div>
-        <div class="player" id="p2"></div>
-        <div class="player" id="p3"></div>
-        <div class="player" id="p4"></div>
-        
-        <div id="bottle"></div>
+    <div class="header">
+        <h1>Онлайн Бутылочка 🍾</h1>
+        <div class="score-box">Поцелуи: <span id="kisses-count">0</span> 😘</div>
     </div>
 
-    <button class="btn" onclick="spinBottle()">Крутить!</button>
+    <div class="table-container">
+        <div class="game-table"></div>
+        <div class="bottle" id="bottle"></div>
+        
+        <div class="player" id="pos0"><div class="avatar">👨‍💻</div><div class="username" id="name0">Ты</div></div>
+        <div class="player" id="pos1"><div class="avatar">💃</div><div class="username" id="name1">Mira_doll</div></div>
+        <div class="player" id="pos2"><div class="avatar">😎</div><div class="username" id="name2">Behruz</div></div>
+        <div class="player" id="pos3"><div class="avatar">👑</div><div class="username" id="name3">ZAHID</div></div>
+        <div class="player" id="pos4"><div class="avatar">🦄</div><div class="username" id="name4">Alina</div></div>
+        <div class="player" id="pos5"><div class="avatar">🔥</div><div class="username" id="name5">Дмитрий</div></div>
+    </div>
+
+    <button class="spin-btn" id="spin-btn" onclick="startSpin()">КРУТИТЬ!</button>
+
+    <div class="modal" id="kiss-modal">
+        <div class="modal-content">
+            <div id="modal-avatar-placeholder"></div>
+            <h3 id="modal-text">Бутылочка выбрала игрока!</h3>
+            <div class="modal-btns">
+                <button class="modal-btn btn-yes" onclick="answerKiss(true)">Да 😘</button>
+                <button class="modal-btn btn-no" onclick="answerKiss(false)">Нет 💔</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяем на весь экран
+        tg.expand(); // Открываем приложение на весь экран телефона
 
-        let currentAngle = 0;
+        // Получаем реальные данные игрока из Telegram
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('name0').innerText = user.first_name;
+            if (user.photo_url) {
+                document.getElementById('pos0').querySelector('.avatar').innerHTML = `<img src="${user.photo_url}" class="avatar" style="border:none; width:100%; height:100%;">`;
+            } else {
+                document.getElementById('pos0').querySelector('.avatar').innerText = user.first_name.substring(0,2).toUpperCase();
+            }
+        }
 
-        function spinBottle() {
-            // Генерируем случайный угол (минимум 3 полных оборота + случайный остаток)
-            const randomDegrees = Math.floor(Math.random() * 360) + 1080;
-            currentAngle += randomDegrees;
+        // Список онлайн-игроков за столом
+        const players = [
+            { id: 0, name: user ? user.first_name : "Ты", avatar: "👨‍💻" },
+            { id: 1, name: "Mira_dolll", avatar: "💃" },
+            { id: 2, name: "Behruz", avatar: "😎" },
+            { id: 3, name: "ZAHID", avatar: "👑" },
+            { id: 4, name: "Alina", avatar: "🦄" },
+            { id: 5, name: "Дмитрий", avatar: "🔥" }
+        ];
+
+        let currentRotation = 0;
+        let totalKisses = int(localStorage.getItem('kisses')) || 0;
+        document.getElementById('kisses-count').innerText = totalKisses;
+
+        function startSpin() {
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+
+            // Очищаем предыдущую подсветку активности
+            players.forEach(p => document.getElementById(`pos${p.id}`).classList.remove('active'));
+
+            // Выбираем случайного игрока (но не себя, т.е. от 1 до 5)
+            const targetPlayerId = Math.floor(Math.random() * 5) + 1;
             
-            const bottle = document.getElementById('bottle');
-            bottle.style.transform = `rotate(${currentAngle}deg)`;
+            // Расчет угла: каждое место занимает 60 градусов (360 / 6 мест)
+            // Позиции по часовой стрелке: pos0=0°, pos1=60°, pos2=120°, pos3=180°, pos4=240°, pos5=300°
+            const targetAngle = targetPlayerId * 60;
+            
+            # Добавляем 4 полных оборота (1440 градусов) для красивого эффекта скорости
+            const randomSpins = 1440; 
+            currentRotation += randomSpins + targetAngle - (currentRotation % 360);
 
-            // После остановки (3 секунды) можно отправлять результат на сервер
+            const bottle = document.getElementById('bottle');
+            bottle.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Ждем окончания анимации вращения (4 секунды)
             setTimeout(() => {
-                let finalAngle = currentAngle % 360;
-                // Логика определения на кого указала бутылочка...
-                alert("Бутылочка остановилась!");
-            }, 3000);
+                showKissModal(players[targetPlayerId]);
+            }, 4000);
+        }
+
+        function showKissModal(targetPlayer) {
+            document.getElementById(`pos${targetPlayer.id}`).classList.add('active');
+            
+            const modal = document.getElementById('kiss-modal');
+            const modalText = document.getElementById('modal-text');
+            const avatarPlaceholder = document.getElementById('modal-avatar-placeholder');
+
+            avatarPlaceholder.innerHTML = `<div class="avatar" style="width:70px; height:70px; margin:0 auto 15px auto; font-size:28px;">${targetPlayer.avatar}</div>`;
+            modalText.innerText = `Бутылочка указала на ${targetPlayer.name}! Поцелуешь?`;
+            
+            modal.style.display = 'flex';
+        }
+
+        function answerKiss(isYes) {
+            document.getElementById('kiss-modal').style.display = 'none';
+            document.getElementById('spin-btn').disabled = false;
+
+            if (isYes) {
+                totalKisses++;
+                localStorage.setItem('kisses', totalKisses); // Сохраняем прогресс поцелуев
+                document.getElementById('kisses-count').innerText = totalKisses;
+                tg.HapticFeedback.notificationOccurred('success'); // Вибрация смартфона при поцелуе
+            }
         }
     </script>
 </body>
 </html>
-

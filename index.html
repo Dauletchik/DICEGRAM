@@ -997,42 +997,66 @@ here<!DOCTYPE html>
             console.log("🔄 Попытка переподключения #", connectionAttempts);
         });
 
-        // ---- ТОП ИГРОКОВ ----
-        function openTopModal() {
-            document.getElementById('top-modal-view').classList.add('show');
-            document.getElementById('top-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:#555;">⏳ Загрузка...</div>';
-            socket.emit("get_top_players", {});
-        }
+        // ---- ТОП ИГРОКОВ (исправленный) ----
+function openTopModal() {
+    document.getElementById('top-modal-view').classList.add('show');
+    document.getElementById('top-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:#555;">⏳ Загрузка...</div>';
+    console.log("📊 Запрос топа...");
+    socket.emit("get_top_players", {});
+}
 
-        function closeTopModal() {
-            document.getElementById('top-modal-view').classList.remove('show');
-        }
+function closeTopModal() {
+    document.getElementById('top-modal-view').classList.remove('show');
+}
 
-        socket.on("top_players_response", (data) => {
-            const container = document.getElementById('top-list-container');
-            if (!data.top || data.top.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:20px;color:#555;">😢 Пока нет игроков</div>';
-                return;
+socket.on("top_players_response", (data) => {
+    console.log("📊 Получен топ:", data);
+    const container = document.getElementById('top-list-container');
+    
+    if (!data.top || data.top.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center;padding:30px 20px;color:#555;">
+                <div style="font-size:40px;margin-bottom:10px;">😢</div>
+                <div>Пока нет игроков с поцелуями</div>
+                <div style="font-size:12px;margin-top:10px;color:#333;">Первый поцелуй будет твоим!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    const medals = ['🥇', '🥈', '🥉'];
+    let html = '<ul class="top-list">';
+    data.top.forEach((player, index) => {
+        const rank = index < 3 ? medals[index] : `#${index + 1}`;
+        const isCreatorPlayer = player.telegram_id === CREATOR_ID;
+        const avatar = isCreatorPlayer ? "👑" : "😎";
+        const displayName = player.username || 'Аноним';
+        html += `
+            <li class="top-item">
+                <span class="rank">${rank}</span>
+                <span class="top-avatar">${avatar}</span>
+                <span class="top-name">${displayName} ${isCreatorPlayer ? '👑' : ''}</span>
+                <span class="top-kisses">💋 ${player.kisses}</span>
+            </li>
+        `;
+    });
+    html += '</ul>';
+    container.innerHTML = html;
+    
+    // Если ты в топе - подсветка
+    if (myTelegramId) {
+        const items = container.querySelectorAll('.top-item');
+        items.forEach(item => {
+            const name = item.querySelector('.top-name')?.textContent || '';
+            if (name.includes(myNickname) || name.includes('@')) {
+                item.style.background = 'rgba(255, 215, 0, 0.1)';
+                item.style.border = '1px solid #ffd700';
+                item.style.borderRadius = '12px';
+                item.style.margin = '4px 0';
             }
-            
-            const medals = ['🥇', '🥈', '🥉'];
-            let html = '<ul class="top-list">';
-            data.top.forEach((player, index) => {
-                const rank = index < 3 ? medals[index] : `#${index + 1}`;
-                const isCreatorPlayer = player.telegram_id === CREATOR_ID;
-                const avatar = isCreatorPlayer ? "👑" : "😎";
-                html += `
-                    <li class="top-item">
-                        <span class="rank">${rank}</span>
-                        <span class="top-avatar">${avatar}</span>
-                        <span class="top-name">${player.username || 'Аноним'} ${isCreatorPlayer ? '👑' : ''}</span>
-                        <span class="top-kisses">💋 ${player.kisses}</span>
-                    </li>
-                `;
-            });
-            html += '</ul>';
-            container.innerHTML = html;
         });
+    }
+});
 
         // ---- СЕКРЕТНАЯ КНОПКА ДЛЯ СОЗДАТЕЛЯ ----
         function giveCreatorGift(seatIndex) {

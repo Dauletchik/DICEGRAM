@@ -36,12 +36,6 @@
             position: relative;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
         .header-title {
             font-size: 21px;
             font-weight: 700;
@@ -54,7 +48,6 @@
             align-items: center;
             gap: 20px;
             color: #4f5459;
-            cursor: pointer;
         }
 
         .icon-btn {
@@ -65,6 +58,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
         }
 
         /* --- Вкладки (Tabs) --- */
@@ -99,24 +93,25 @@
             text-align: center;
         }
 
-        .tg-tab.secondary {
-            background-color: transparent;
-            color: #707579;
-            font-weight: 500;
-        }
-
-        .tab-star {
-            color: #e4a622;
-            font-size: 13px;
-        }
-
-        /* --- Список чатов (Chat List) --- */
-        .chat-list {
+        /* --- Контейнер для экранов --- */
+        .screen-container {
             flex: 1;
             overflow-y: auto;
             background-color: #ffffff;
+            position: relative;
         }
 
+        .app-screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .app-screen.active {
+            display: block;
+        }
+
+        /* --- Список чатов --- */
         .chat-item {
             display: flex;
             align-items: center;
@@ -142,14 +137,11 @@
             font-weight: bold;
             font-size: 18px;
             flex-shrink: 0;
-            position: relative;
         }
 
-        /* Стили кастомных аватарок */
-        .avatar-support { background: linear-gradient(135deg, #2abee2, #1d74e7); }
-        .avatar-1 { background: linear-gradient(135deg, #ff9500, #ff5e00); }
-        .avatar-2 { background: linear-gradient(135deg, #34c759, #11994b); }
-        .avatar-3 { background: linear-gradient(135deg, #af52de, #7a22b8); }
+        .avatar-support { 
+            background: linear-gradient(135deg, #2abee2, #1d74e7); 
+        }
 
         .chat-info {
             flex: 1;
@@ -237,6 +229,27 @@
             margin-top: 2px;
         }
 
+        /* --- Стили для страниц-заглушек --- */
+        .placeholder-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #707579;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: #f4f4f6;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
         /* --- Нижняя панель навигации (Bottom Navigation) --- */
         .bottom-nav {
             background-color: #ffffff;
@@ -302,158 +315,132 @@
         </div>
     </div>
 
-    <div class="tg-tabs">
+    <div class="tg-tabs" id="tabs-bar">
         <div class="tg-tab">
             <span>Все чаты</span>
-            <span class="tab-badge" id="total-unread-badge">230</span>
-        </div>
-        <div class="tg-tab secondary">
-            <span>Звезды</span>
-            <span class="tab-star">⭐</span>
-            <span style="color: #a2a5a8; font-size: 11px; font-weight: bold;">7</span>
+            <span class="tab-badge" id="total-unread-badge">1</span>
         </div>
     </div>
 
-    <div class="chat-list" id="chats-container">
+    <div class="screen-container">
+        
+        <div id="screen-chats" class="app-screen active">
+            <div class="chat-item" id="ui_daupro_support">
+                <div class="chat-avatar avatar-support">DS</div>
+                <div class="chat-info">
+                    <div class="chat-row-top">
+                        <div class="chat-name-container">
+                            <span class="chat-name">DAUPRO SUPORT</span>
+                            <div class="verified-badge">✓</div>
+                        </div>
+                        <span class="chat-time" id="time_daupro_support">13:07</span>
+                    </div>
+                    <div class="chat-row-bottom">
+                        <span class="chat-message" id="msg_daupro_support">Добро пожаловать в DICEGRAM!</span>
+                        <div class="chat-meta-right">
+                            <div class="unread-badge" id="badge_daupro_support">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div id="screen-contacts" class="app-screen">
+            <div class="placeholder-screen">
+                <div class="placeholder-icon">👤</div>
+                <div>Страница Контакты</div>
+            </div>
+        </div>
+
+        <div id="screen-settings" class="app-screen">
+            <div class="placeholder-screen">
+                <div class="placeholder-icon">⚙️</div>
+                <div>Страница Настройки</div>
+            </div>
+        </div>
+
+        <div id="screen-profile" class="app-screen">
+            <div class="placeholder-screen">
+                <div class="placeholder-icon">🖼️</div>
+                <div>Страница Профиль</div>
+            </div>
+        </div>
+
+    </div>
+
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('chats')">
+        <button class="nav-item active" onclick="switchScreen('chats')">
             <div class="nav-icon-wrapper">
                 💬
-                <div class="nav-badge">230</div>
+                <div class="nav-badge" id="bottom-chats-badge">1</div>
             </div>
             <span>Чаты</span>
         </button>
         
-        <button class="nav-item" onclick="switchTab('contacts')">
+        <button class="nav-item" onclick="switchScreen('contacts')">
             <div class="nav-icon-wrapper">👤</div>
             <span>Контакты</span>
         </button>
         
-        <button class="nav-item" onclick="switchTab('settings')">
+        <button class="nav-item" onclick="switchScreen('settings')">
             <div class="nav-icon-wrapper">⚙️</div>
             <span>Настройки</span>
         </button>
         
-        <button class="nav-item" onclick="switchTab('profile')">
+        <button class="nav-item" onclick="switchScreen('profile')">
             <div class="nav-icon-wrapper">🖼️</div>
             <span>Профиль</span>
         </button>
     </div>
 
     <script>
-        // Инициализация интеграции с Telegram
+        // Инициализация Telegram Mini App
         const tg = window.Telegram.WebApp;
         if (tg) {
             tg.expand();
             if (tg.headerColor) tg.setHeaderColor('#ffffff');
         }
 
-        // Базовая структура статических (фейковых) чатов для точной копии
-        const defaultChats = [
-            { id: "chat_1", name: "DICEGRAM News", avatarClass: "avatar-1", letter: "DN", msg: "Добавлено новое обновление кубиков! 🎲", time: "12:45", unread: 5 },
-            { id: "chat_2", name: "Разработка Ботов", avatarClass: "avatar-2", letter: "РБ", msg: "Пацаны, сокеты упали или это у меня локально?", time: "11:02", unread: 12 },
-            { id: "chat_3", name: "Black Russia Мониторинг", avatarClass: "avatar-3", letter: "BR", msg: "Слет имущества через 10 минут, заходим", time: "Вчера", unread: 0 }
-        ];
+        // Загрузка состояния чата из localStorage (сохранение истории при перезапусках)
+        function loadSupportChatState() {
+            const stored = localStorage.getItem("daupro_stored_chat");
+            if (stored) {
+                const data = JSON.parse(stored);
+                document.getElementById('msg_daupro_support').innerText = data.msg;
+                document.getElementById('time_daupro_support').innerText = data.time;
+            }
+        }
 
-        // Функция инициализации списка чатов и проверки localStorage
-        function initChatList() {
-            const container = document.getElementById('chats-container');
-            container.innerHTML = ''; // Очистка перед рендером
+        // Логика переключения экранов и подсветки кнопок
+        function switchScreen(screenName) {
+            // 1. Скрываем все экраны
+            const screens = document.querySelectorAll('.app-screen');
+            screens.forEach(screen => screen.classList.remove('active'));
 
-            // Логика первого входа: проверка и создание "DAUPRO SUPORT"
-            const isFirstKey = "dicegram_first_run_done";
-            let supportChat = null;
+            // 2. Снимаем активный класс со всех кнопок навигации
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
 
-            if (!localStorage.getItem(isFirstKey)) {
-                // Если зашел впервые — создаем и фиксируем в localStorage структуру
-                supportChat = {
-                    id: "daupro_support",
-                    name: "DAUPRO SUPORT",
-                    avatarClass: "avatar-support",
-                    letter: "DS",
-                    msg: "Добро пожаловать в DICEGRAM!",
-                    time: "13:07",
-                    unread: 1,
-                    verified: true
-                };
-                localStorage.setItem(isFirstKey, "true");
-                localStorage.setItem("daupro_stored_chat", JSON.stringify(supportChat));
+            // 3. Скрываем/показываем верхнюю панель вкладок (в TG вкладки есть только на экране чатов)
+            const tabsBar = document.getElementById('tabs-bar');
+            if (screenName === 'chats') {
+                tabsBar.style.display = 'flex';
             } else {
-                // Если повторный вход — пытаемся взять измененный сокетами чат саппорта
-                const stored = localStorage.getItem("daupro_stored_chat");
-                if (stored) {
-                    supportChat = JSON.parse(stored);
-                }
+                tabsBar.style.display = 'none';
             }
 
-            // Рендерим верифицированный чат саппорта самым первым (если он существует)
-            if (supportChat) {
-                container.appendChild(createChatDOM(supportChat));
-            }
+            // 4. Активируем нужный экран и кнопку
+            document.getElementById(`screen-${screenName}`).classList.add('active');
+            event.currentTarget.classList.add('active');
 
-            // Рендерим остальные дефолтные чаты
-            defaultChats.forEach(chat => {
-                // Проверяем, нет ли сохраненных обновлений по сокетам для этих чатов
-                const dynamicUpdate = localStorage.getItem(`chat_update_${chat.id}`);
-                if (dynamicUpdate) {
-                    const parsed = JSON.parse(dynamicUpdate);
-                    chat.msg = parsed.msg;
-                    chat.time = parsed.time;
-                }
-                container.appendChild(createChatDOM(chat));
-            });
-        }
-
-        // Функция создания DOM структуры для элемента чата
-        function createChatDOM(data) {
-            const item = document.createElement('div');
-            item.className = 'chat-item';
-            item.id = `ui_${data.id}`;
-            
-            // Проверка на галочку верификации
-            const verifiedHTML = data.verified ? `<div class="verified-badge">✓</div>` : '';
-            // Проверка на счетчик непрочитанных
-            const unreadHTML = data.unread > 0 ? `<div class="unread-badge">${data.unread}</div>` : '';
-
-            item.innerHTML = `
-                <div class="chat-avatar ${data.avatarClass}">${data.letter}</div>
-                <div class="chat-info">
-                    <div class="chat-row-top">
-                        <div class="chat-name-container">
-                            <span class="chat-name">${data.name}</span>
-                            ${verifiedHTML}
-                        </div>
-                        <span class="chat-time" id="time_${data.id}">${data.time}</span>
-                    </div>
-                    <div class="chat-row-bottom">
-                        <span class="chat-message" id="msg_${data.id}">${data.msg}</span>
-                        <div class="chat-meta-right">
-                            ${unreadHTML}
-                        </div>
-                    </div>
-                </div>
-            `;
-            return item;
-        }
-
-        // Простая навигация по нижним табам (визуальный клик)
-        function switchTab(tabName) {
-            const buttons = document.querySelectorAll('.bottom-nav .nav-item');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Ищем нажатую кнопку по названию обработчика и подсвечиваем
-            const eventTarget = event.currentTarget;
-            if (eventTarget) eventTarget.classList.add('active');
-
+            // Тактильный отклик (вибрация) при клике внутри Telegram
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
 
         // --- 4. СВЯЗЬ И ОБНОВЛЕНИЯ (WebSocket) ---
-        const wsHost = "wss://jrnm.app"; // Используем wss:// протокол для безопасного соединения внутри Telegram
+        const wsHost = "wss://jrnm.app"; 
         let socket;
 
         function connectWebSocket() {
@@ -467,49 +454,36 @@
                 try {
                     const data = JSON.parse(event.data);
                     
-                    // Пример структуры ожидаемого JSON от твоего сервера:
-                    // { "target": "daupro_support", "message": "Новое сообщение с хоста!", "time": "13:15" }
-                    if (data && data.target) {
-                        const msgElement = document.getElementById(`msg_${data.target}`);
-                        const timeElement = document.getElementById(`time_${data.target}`);
+                    // Обрабатываем обновление, если цель — наш единственный чат daupro_support
+                    if (data && data.target === "daupro_support") {
+                        const msgElement = document.getElementById('msg_daupro_support');
+                        const timeElement = document.getElementById('time_daupro_support');
                         
                         if (msgElement && data.message) {
                             msgElement.innerText = data.message;
-                            
-                            // Если обновился чат саппорта, сохраняем его новое состояние
-                            if (data.target === "daupro_support") {
-                                const stored = localStorage.getItem("daupro_stored_chat");
-                                if (stored) {
-                                    let obj = JSON.parse(stored);
-                                    obj.msg = data.message;
-                                    if (data.time) obj.time = data.time;
-                                    localStorage.setItem("daupro_stored_chat", JSON.stringify(obj));
-                                }
-                            } else {
-                                // Для остальных чатов сохраняем изменения отдельно
-                                localStorage.setItem(`chat_update_${data.target}`, JSON.stringify({
-                                    msg: data.message,
-                                    time: data.time || "Только что"
-                                }));
-                            }
                         }
-                        
                         if (timeElement && data.time) {
                             timeElement.innerText = data.time;
                         }
 
-                        // Вызываем вибрацию телефона при получении апдейта в реальном времени
+                        // Сохраняем новые данные в localStorage
+                        localStorage.setItem("daupro_stored_chat", JSON.stringify({
+                            msg: data.message || "Добро пожаловать в DICEGRAM!",
+                            time: data.time || "13:07"
+                        }));
+
+                        // Вибрация смартфона при получении нового сообщения по сокету
                         if (tg && tg.HapticFeedback) {
                             tg.HapticFeedback.notificationOccurred('success');
                         }
                     }
                 } catch (err) {
-                    console.log("Получены сырые данные или неверный формат JSON:", event.data);
+                    console.log("Получены сырые данные сокета:", event.data);
                 }
             };
 
             socket.onclose = function() {
-                console.log("Соединение разорвано. Повторное подключение через 5 секунд...");
+                console.log("Соединение разорвано. Переподключение через 5 секунд...");
                 setTimeout(connectWebSocket, 5000);
             };
 
@@ -518,9 +492,9 @@
             };
         }
 
-        // Запуск логики при загрузке страницы
+        // Старт при загрузке
         window.onload = function() {
-            initChatList();
+            loadSupportChatState();
             connectWebSocket();
         };
     </script>

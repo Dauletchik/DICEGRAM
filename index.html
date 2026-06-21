@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DICEGRAM</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -789,7 +790,6 @@
         // ==================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ====================
 
         function switchScreen(screenName, element) {
-            // Закрываем чат если открыт
             if (document.getElementById('screen-chat-view').classList.contains('active')) {
                 closeChatView();
             }
@@ -829,11 +829,8 @@
             event.stopPropagation();
             if (username === myUsername) return;
 
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    action: 'find_user',
-                    username: username
-                }));
+            if (socket && socket.connected) {
+                socket.emit('find_user', { username: username });
             }
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
@@ -852,7 +849,6 @@
             const text = input.value.trim();
             if (!text || !currentChatId) return;
 
-            // Определяем получателя
             const parts = currentChatId.split('_');
             const receiverId = parts[0] === String(myId) ? parseInt(parts[1]) : parseInt(parts[0]);
 
@@ -864,12 +860,12 @@
                 activeChats[currentChatId].time = timeStr;
             }
 
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    action: 'send_msg',
+            if (socket && socket.connected) {
+                socket.emit('send_message', {
+                    sender_id: myId,
                     receiver_id: receiverId,
-                    message: text
-                }));
+                    text: text
+                });
             }
 
             input.value = '';
@@ -902,11 +898,11 @@
 
             document.getElementById('chat-messages-box').innerHTML = '';
             
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    action: 'get_history',
-                    chat_id: chatId
-                }));
+            if (socket && socket.connected) {
+                socket.emit('get_history', {
+                    chat_id: chatId,
+                    user_id: myId
+                });
             }
 
             updateChatsListView();
@@ -922,11 +918,7 @@
             updateChatsListView();
         }
 
-        // ==================== WEB SOCKET ====================
-
-        const WS_URL = 'wss://a38182-6d28.j.jrnm.app';
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 10;
+        // ==================== SOCKET.IO ====================
 
         function showLockScreen(title, desc) {
             document.getElementById('lock-title').innerText = title;
@@ -938,74 +930,45 @@
             document.getElementById('ws-lock-overlay').style.display = 'none';
         }
 
-        function connectWebSocket() {
-            showLockScreen(
-                'Соединение с сервером...',
-                'Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.'
-            );
+        function initSocket() {
+            const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+            
+            // Формируем URL с данными пользователя в query string
+            const socketUrl = 'https://jrnm.app';
+            const queryParams = new URLSearchParams({
+                user_id: myId || 0,
+                username: myUsername || 'guest',
+                first_name: myFirstName || '',
+                last_name: myLastName || '',
+                photo_url: user ? user.photo_url || '' : ''
+            });
 
-            try {
-                socket = new WebSocket(WS_URL);
+            socket = io(socketUrl, {
+                transports: ['websocket'],
+                query: queryParams.toString(),
+                reconnection: true,
+                reconnectionAttempts: 10,
+                reconnectionDelay: 2000
+            });
 
-                socket.onopen = function() {
-                    isConnected = true;
-                    reconnectAttempts = 0;
-                    hideLockScreen();
-                    
-                    const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
-                    socket.send(JSON.stringify({
-                        action: 'auth',
-                        user_id: myId,
-                        username: myUsername,
-                        first_name: myFirstName,
-                        last_name: myLastName,
-                        photo_url: user ? user.photo_url : ''
-                    }));
-                };
+            socket.on('connect', function() {
+                isConnected = true;
+                hideLockScreen();
+                console.log('✅ Socket.IO connected');
+            });
 
-                socket.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        handleSocketMessage(data);
-                    } catch (err) {
-                        console.error('Error parsing message:', err);
-                    }
-                };
+            socket.on('disconnect', function() {
+                isConnected = false;
+                showLockScreen(
+                    'Сервер DICEGRAM временно недоступен',
+                    'Пожалуйста, проверьте соединение и перезагрузите страницу.'
+                );
+                console.log('❌ Socket.IO disconnected');
+            });
 
-                socket.onclose = function() {
-                    isConnected = false;
-                    showLockScreen(
-                        'Сервер DICEGRAM временно недоступен',
-                        'Пожалуйста, запустите бота на сервере или в Pydroid 3.'
-                    );
-
-                    if (reconnectAttempts < maxReconnectAttempts) {
-                        reconnectAttempts++;
-                        const delay = Math.min(2000 * reconnectAttempts, 30000);
-                        setTimeout(connectWebSocket, delay);
-                    }
-                };
-
-                socket.onerror = function() {
-                    isConnected = false;
-                    showLockScreen(
-                        'Ошибка подключения к серверу',
-                        'Проверьте интернет-соединение и статус сервера.'
-                    );
-                };
-
-            } catch (e) {
-                console.error('WebSocket connection error:', e);
-                setTimeout(connectWebSocket, 5000);
-            }
-        }
-
-        function handleSocketMessage(data) {
-            const type = data.type;
-
-            if (type === 'auth_success') {
-                console.log('Auth successful');
-                // Добавляем чат с ботом если его нет
+            socket.on('auth_success', function(data) {
+                console.log('Auth success:', data);
+                // Добавляем чат с ботом
                 const botChatId = createChatId(myId, 0);
                 if (!activeChats[botChatId]) {
                     activeChats[botChatId] = {
@@ -1014,14 +977,14 @@
                         name: 'DAUPRO SUPORT',
                         verified: true,
                         unread: 0,
-                        lastMessage: 'Загрузка...',
+                        lastMessage: 'Добро пожаловать!',
                         time: '--:--'
                     };
                 }
                 updateChatsListView();
-            }
+            });
 
-            if (type === 'new_msg') {
+            socket.on('new_message', function(data) {
                 const chatId = data.chat_id;
                 const senderId = data.sender_id;
                 const isFromMe = senderId === myId;
@@ -1049,12 +1012,11 @@
                     const type = isFromMe ? 'outgoing' : 'incoming';
                     appendBubble(data.text, formatTime(data.timestamp), type);
                     
-                    // Помечаем как прочитанные
-                    if (socket && socket.readyState === WebSocket.OPEN && !isFromMe) {
-                        socket.send(JSON.stringify({
-                            action: 'mark_read',
-                            chat_id: chatId
-                        }));
+                    if (socket && socket.connected && !isFromMe) {
+                        socket.emit('mark_read', {
+                            chat_id: chatId,
+                            user_id: myId
+                        });
                     }
                 } else if (!isFromMe) {
                     activeChats[chatId].unread = (activeChats[chatId].unread || 0) + 1;
@@ -1065,9 +1027,9 @@
                 if (tg && tg.HapticFeedback && !isFromMe) {
                     tg.HapticFeedback.notificationOccurred('success');
                 }
-            }
+            });
 
-            if (type === 'user_found') {
+            socket.on('user_found', function(data) {
                 const userId = data.user_id;
                 const chatId = createChatId(myId, userId);
                 
@@ -1085,19 +1047,19 @@
                     updateChatsListView();
                 }
                 openChatView(chatId);
-            }
+            });
 
-            if (type === 'user_not_found') {
+            socket.on('user_not_found', function(data) {
                 if (tg && tg.showPopup) {
                     tg.showPopup({
                         title: 'Пользователь не найден',
-                        message: `Пользователь @${data.username} не найден`,
+                        message: `Пользователь @${data.username} не найден в системе`,
                         buttons: [{type: 'close'}]
                     });
                 }
-            }
+            });
 
-            if (type === 'history') {
+            socket.on('chat_history', function(data) {
                 const box = document.getElementById('chat-messages-box');
                 box.innerHTML = '';
                 
@@ -1107,11 +1069,22 @@
                         appendBubble(m.text, formatTime(m.timestamp), mType);
                     });
                 }
-            }
+            });
 
-            if (type === 'msg_sent') {
-                // Сообщение успешно отправлено
-            }
+            socket.on('message_sent', function(data) {
+                console.log('Message sent:', data);
+            });
+
+            socket.on('error', function(data) {
+                console.error('Socket error:', data);
+                if (tg && tg.showPopup) {
+                    tg.showPopup({
+                        title: 'Ошибка',
+                        message: data.message || 'Произошла ошибка',
+                        buttons: [{type: 'close'}]
+                    });
+                }
+            });
         }
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -1120,7 +1093,6 @@
             if (e.key === 'Enter') sendUserMessage();
         });
 
-        // Запуск при загрузке
         window.onload = function() {
             setupUserProfile();
             
@@ -1137,9 +1109,13 @@
             };
             updateChatsListView();
             
-            // Подключаемся к WebSocket
-            connectWebSocket();
+            // Подключаем Socket.IO
+            showLockScreen(
+                'Соединение с сервером...',
+                'Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.'
+            );
+            initSocket();
         };
     </script>
 </body>
-    </html>
+</html>

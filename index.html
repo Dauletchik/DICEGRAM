@@ -36,11 +36,24 @@
             position: relative;
         }
 
+        .header-title-container {
+            display: flex;
+            flex-direction: column;
+        }
+
         .header-title {
             font-size: 21px;
             font-weight: 700;
             color: #2481cc;
             letter-spacing: -0.2px;
+        }
+
+        /* Статус WebSocket подключения */
+        .connection-status {
+            font-size: 13px;
+            color: #707579;
+            font-weight: 400;
+            margin-top: -2px;
         }
 
         .header-actions {
@@ -173,7 +186,6 @@
             text-overflow: ellipsis;
         }
 
-        /* Синяя галочка верификации */
         .verified-badge {
             width: 15px;
             height: 15px;
@@ -227,6 +239,174 @@
             min-width: 18px;
             text-align: center;
             margin-top: 2px;
+        }
+
+        /* --- ПОЛНОЦЕННОЕ ОКНО ПЕРЕПИСКИ (Chat View) --- */
+        .chat-view-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #e7ebf0; /* Классический фон чата Telegram */
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* Дефолтный паттерн */
+        }
+
+        .chat-view-header {
+            background-color: #ffffff;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #dcdce0;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #2481cc;
+            cursor: pointer;
+        }
+
+        .chat-view-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Стили бабблов сообщений */
+        .msg-bubble {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .msg-bubble.incoming {
+            background-color: #ffffff;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            color: #000000;
+        }
+
+        .msg-bubble.outgoing {
+            background-color: #effdde; /* Фирменный зеленый цвет исходящих */
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            color: #000000;
+        }
+
+        .msg-time {
+            font-size: 11px;
+            color: #a3a3a3;
+            float: right;
+            margin-top: 4px;
+            margin-left: 8px;
+        }
+
+        /* Поле ввода сообщений */
+        .chat-view-input-bar {
+            background-color: #ffffff;
+            padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #dcdce0;
+        }
+
+        .message-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background-color: #f4f4f6;
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            color: #000000;
+        }
+
+        .send-msg-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #2481cc;
+            cursor: pointer;
+        }
+
+        /* --- ИНТЕРФЕЙС СТРАНИЦЫ ПРОФИЛЯ --- */
+        .profile-screen {
+            background-color: #f4f4f6;
+            height: 100%;
+        }
+
+        .profile-card {
+            background-color: #ffffff;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e7;
+        }
+
+        .profile-avatar-big {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007aff, #00c6ff);
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .profile-username {
+            font-size: 14px;
+            color: #707579;
+        }
+
+        .profile-section {
+            background-color: #ffffff;
+            margin-top: 12px;
+            border-top: 1px solid #e5e5e7;
+            border-bottom: 1px solid #e5e5e7;
+        }
+
+        .profile-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            font-size: 16px;
+            border-bottom: 0.5px solid #f4f4f6;
+        }
+
+        .profile-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-list-label {
+            color: #000000;
+        }
+
+        .profile-list-value {
+            color: #707579;
         }
 
         /* --- Стили для страниц-заглушек --- */
@@ -305,9 +485,10 @@
 </head>
 <body>
 
-    <div class="tg-header">
-        <div class="header-left">
-            <div class="header-title">Telegram</div>
+    <div class="tg-header" id="main-header">
+        <div class="header-title-container">
+            <div class="header-title" id="app-title-text">Telegram</div>
+            <div class="connection-status" id="conn-status-text" style="display: none;">Обновление...</div>
         </div>
         <div class="header-actions">
             <button class="icon-btn">🔍</button>
@@ -325,7 +506,7 @@
     <div class="screen-container">
         
         <div id="screen-chats" class="app-screen active">
-            <div class="chat-item" id="ui_daupro_support">
+            <div class="chat-item" id="ui_daupro_support" onclick="openChatView()">
                 <div class="chat-avatar avatar-support">DS</div>
                 <div class="chat-info">
                     <div class="chat-row-top">
@@ -345,6 +526,32 @@
             </div>
         </div>
 
+        <div id="screen-chat-view" class="app-screen">
+            <div class="chat-view-container">
+                <div class="chat-view-header">
+                    <button class="back-btn" onclick="closeChatView()">←</button>
+                    <div class="chat-avatar avatar-support" style="width: 40px; height: 40px; font-size: 14px;">DS</div>
+                    <div class="chat-info">
+                        <div class="chat-name-container">
+                            <span class="chat-name" style="font-size: 16px;">DAUPRO SUPORT</span>
+                            <div class="verified-badge">✓</div>
+                        </div>
+                        <span style="font-size: 12px; color: #707579;">бот</span>
+                    </div>
+                </div>
+                <div class="chat-view-messages" id="chat-messages-box">
+                    <div class="msg-bubble incoming">
+                        Добро пожаловать в DICEGRAM!
+                        <span class="msg-time">13:07</span>
+                    </div>
+                </div>
+                <div class="chat-view-input-bar">
+                    <input type="text" class="message-input" id="msg-input-field" placeholder="Сообщение" autocomplete="off">
+                    <button class="send-msg-btn" onclick="sendUserMessage()">➔</button>
+                </div>
+            </div>
+        </div>
+
         <div id="screen-contacts" class="app-screen">
             <div class="placeholder-screen">
                 <div class="placeholder-icon">👤</div>
@@ -360,15 +567,29 @@
         </div>
 
         <div id="screen-profile" class="app-screen">
-            <div class="placeholder-screen">
-                <div class="placeholder-icon">🖼️</div>
-                <div>Страница Профиль</div>
+            <div class="profile-screen">
+                <div class="profile-card">
+                    <div class="profile-avatar-big" id="prof-avatar-icon">U</div>
+                    <div class="profile-name" id="prof-full-name">Пользователь</div>
+                    <div class="profile-username" id="prof-username">@username</div>
+                </div>
+                
+                <div class="profile-section">
+                    <div class="profile-list-item">
+                        <span class="profile-list-label">Идентификатор ID</span>
+                        <span class="profile-list-value" id="prof-id">00000000</span>
+                    </div>
+                    <div class="profile-list-item">
+                        <span class="profile-list-label">Язык аккаунта</span>
+                        <span class="profile-list-value" id="prof-lang">ru</span>
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <div class="bottom-nav">
+    <div class="bottom-nav" id="main-bottom-navigation">
         <button class="nav-item active" onclick="switchScreen('chats')">
             <div class="nav-icon-wrapper">
                 💬
@@ -394,85 +615,208 @@
     </div>
 
     <script>
-        // Инициализация Telegram Mini App
+        // Инициализация Telegram Mini App и парсинг профиля пользователя
         const tg = window.Telegram.WebApp;
         if (tg) {
             tg.expand();
             if (tg.headerColor) tg.setHeaderColor('#ffffff');
         }
 
-        // Загрузка состояния чата из localStorage (сохранение истории при перезапусках)
+        // Парсинг данных пользователя из API Telegram WebApp
+        function setupUserProfile() {
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                
+                // Формируем имя
+                const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || "Пользователь";
+                document.getElementById('prof-full-name').innerText = fullName;
+                
+                // Юзернейм
+                const username = user.username ? `@${user.username}` : '@не указан';
+                document.getElementById('prof-username').innerText = username;
+                
+                // ID и язык
+                document.getElementById('prof-id').innerText = user.id || "Неизвестно";
+                document.getElementById('prof-lang').innerText = user.language_code || "ru";
+
+                // Первая буква для аватара
+                document.getElementById('prof-avatar-icon').innerText = fullName.charAt(0).toUpperCase();
+            }
+        }
+
+        // Загрузка состояния чата из localStorage
         function loadSupportChatState() {
             const stored = localStorage.getItem("daupro_stored_chat");
             if (stored) {
                 const data = JSON.parse(stored);
                 document.getElementById('msg_daupro_support').innerText = data.msg;
                 document.getElementById('time_daupro_support').innerText = data.time;
+                
+                // Добавляем сообщение в историю переписки, если оно новое
+                if(data.msg !== "Добро пожаловать в DICEGRAM!") {
+                    appendMessageToBox(data.msg, data.time, 'incoming');
+                }
             }
         }
 
-        // Логика переключения экранов и подсветки кнопок
+        // Логика переключения экранов нижней панели
         function switchScreen(screenName) {
-            // 1. Скрываем все экраны
+            // Если открыто окно переписки, принудительно выходим из него
+            closeChatView();
+
             const screens = document.querySelectorAll('.app-screen');
             screens.forEach(screen => screen.classList.remove('active'));
 
-            // 2. Снимаем активный класс со всех кнопок навигации
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => item.classList.remove('active'));
 
-            // 3. Скрываем/показываем верхнюю панель вкладок (в TG вкладки есть только на экране чатов)
             const tabsBar = document.getElementById('tabs-bar');
+            const mainHeader = document.getElementById('main-header');
+
             if (screenName === 'chats') {
                 tabsBar.style.display = 'flex';
+                mainHeader.style.display = 'flex';
             } else {
                 tabsBar.style.display = 'none';
+                if(screenName === 'profile') {
+                    mainHeader.style.display = 'none'; // Убираем глобальную шапку в профиле
+                } else {
+                    mainHeader.style.display = 'flex';
+                }
             }
 
-            // 4. Активируем нужный экран и кнопку
             document.getElementById(`screen-${screenName}`).classList.add('active');
             event.currentTarget.classList.add('active');
 
-            // Тактильный отклик (вибрация) при клике внутри Telegram
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
         }
 
-        // --- 4. СВЯЗЬ И ОБНОВЛЕНИЯ (WebSocket) ---
+        // --- ЛОГИКА ОКНА ПЕРЕПИСКИ ---
+        function openChatView() {
+            document.getElementById('screen-chats').classList.remove('active');
+            document.getElementById('screen-chat-view').classList.add('active');
+            document.getElementById('tabs-bar').style.display = 'none';
+            document.getElementById('main-header').style.display = 'none';
+            document.getElementById('main-bottom-navigation').style.display = 'none';
+
+            // Убираем счетчики непрочитанных при входе
+            document.getElementById('badge_daupro_support').style.display = 'none';
+            document.getElementById('total-unread-badge').style.display = 'none';
+            document.getElementById('bottom-chats-badge').style.display = 'none';
+
+            // Скроллим вниз
+            const box = document.getElementById('chat-messages-box');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function closeChatView() {
+            document.getElementById('screen-chat-view').classList.remove('active');
+            document.getElementById('screen-chats').classList.add('active');
+            document.getElementById('tabs-bar').style.display = 'flex';
+            document.getElementById('main-header').style.display = 'flex';
+            document.getElementById('main-bottom-navigation').style.display = 'flex';
+        }
+
+        function appendMessageToBox(text, time, type) {
+            const box = document.getElementById('chat-messages-box');
+            const bubble = document.createElement('div');
+            bubble.className = `msg-bubble ${type}`;
+            bubble.innerHTML = `${text} <span class="msg-time">${time}</span>`;
+            box.appendChild(bubble);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendUserMessage() {
+            const input = document.getElementById('msg-input-field');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            // Отображаем локально
+            appendMessageToBox(text, timeStr, 'outgoing');
+            
+            // Обновляем превью в списке чатов
+            document.getElementById('msg_daupro_support').innerText = text;
+            document.getElementById('time_daupro_support').innerText = timeStr;
+
+            // Отправляем через WebSocket
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    action: "client_message",
+                    target: "daupro_support",
+                    message: text,
+                    time: timeStr,
+                    user: tg.initDataUnsafe?.user?.username || "Guest"
+                }));
+            }
+
+            input.value = '';
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
+
+        // Отправка по нажатию Enter
+        document.getElementById('msg-input-field').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendUserMessage();
+            }
+        });
+
+
+        // --- 4. СВЯЗЬ И ИНДИКАТОР ОБНОВЛЕНИЯ (WebSocket) ---
         const wsHost = "wss://jrnm.app"; 
         let socket;
 
         function connectWebSocket() {
+            // При старте подключения показываем статус "Обновление..."
+            document.getElementById('conn-status-text').style.display = 'block';
+
             socket = new WebSocket(wsHost);
 
             socket.onopen = function() {
                 console.log("WebSocket подключен к хосту " + wsHost);
+                // Прячем индикатор обновления при успешном коннекте
+                document.getElementById('conn-status-text').style.display = 'none';
             };
 
             socket.onmessage = function(event) {
                 try {
                     const data = JSON.parse(event.data);
                     
-                    // Обрабатываем обновление, если цель — наш единственный чат daupro_support
                     if (data && data.target === "daupro_support") {
                         const msgElement = document.getElementById('msg_daupro_support');
                         const timeElement = document.getElementById('time_daupro_support');
+                        const timeStr = data.time || "13:07";
                         
                         if (msgElement && data.message) {
                             msgElement.innerText = data.message;
+                            
+                            // Если окно чата открыто в данный момент, рендерим баббл сообщения онлайн
+                            if(document.getElementById('screen-chat-view').classList.contains('active')) {
+                                appendMessageToBox(data.message, timeStr, 'incoming');
+                            } else {
+                                // Если закрыто — показываем бабблы пропущенных
+                                document.getElementById('badge_daupro_support').style.display = 'block';
+                                document.getElementById('total-unread-badge').style.display = 'block';
+                                document.getElementById('bottom-chats-badge').style.display = 'block';
+                            }
                         }
-                        if (timeElement && data.time) {
-                            timeElement.innerText = data.time;
+                        if (timeElement) {
+                            timeElement.innerText = timeStr;
                         }
 
-                        // Сохраняем новые данные в localStorage
+                        // Сохраняем состояние
                         localStorage.setItem("daupro_stored_chat", JSON.stringify({
                             msg: data.message || "Добро пожаловать в DICEGRAM!",
-                            time: data.time || "13:07"
+                            time: timeStr
                         }));
 
-                        // Вибрация смартфона при получении нового сообщения по сокету
                         if (tg && tg.HapticFeedback) {
                             tg.HapticFeedback.notificationOccurred('success');
                         }
@@ -483,21 +827,24 @@
             };
 
             socket.onclose = function() {
-                console.log("Соединение разорвано. Переподключение через 5 секунд...");
+                console.log("Соединение разорвано. Включаем индикатор...");
+                // Показываем статус "Обновление..." при дисконнекте
+                document.getElementById('conn-status-text').style.display = 'block';
                 setTimeout(connectWebSocket, 5000);
             };
 
             socket.onerror = function(error) {
                 console.error("Ошибка сокета: ", error);
+                document.getElementById('conn-status-text').style.display = 'block';
             };
         }
 
-        // Старт при загрузке
+        // Старт при полной загрузке страницы
         window.onload = function() {
+            setupUserProfile();
             loadSupportChatState();
             connectWebSocket();
         };
     </script>
 </body>
 </html>
-

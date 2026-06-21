@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -56,14 +56,14 @@ here<!DOCTYPE html>
             background: rgba(255, 215, 0, 0.15);
             border: 1px solid #ffd700;
             color: #ffd700;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 18px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             transition: all 0.3s;
         }
         .top-btn:active { transform: scale(0.95); background: rgba(255, 215, 0, 0.3); }
@@ -571,68 +571,142 @@ here<!DOCTYPE html>
         .btn-blue { background: linear-gradient(135deg, #24b0ff, #0984e3); }
         .btn-green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
 
-        /* ТОП МОДАЛКА */
+        /* ===== ТОП МОДАЛКА (НОВАЯ) ===== */
         .top-modal {
-            background: #12121a;
-            width: 100%; max-width: 340px;
-            border-radius: 24px; padding: 20px;
-            position: relative; color: #fff;
-            max-height: 80vh;
+            background: linear-gradient(145deg, #12121a, #1a1a2e);
+            width: 100%; max-width: 380px;
+            border-radius: 28px; 
+            padding: 24px 20px 20px;
+            position: relative; 
+            color: #fff;
+            max-height: 85vh;
             overflow-y: auto;
             border: 1px solid #2a2a3a;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            animation: slideUp 0.4s ease;
         }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
         .top-modal::-webkit-scrollbar { width: 4px; }
+        .top-modal::-webkit-scrollbar-track { background: transparent; }
         .top-modal::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
         
         .top-modal .close-top-btn {
-            position: sticky; top: 0; float: right;
-            width: 32px; height: 32px; 
+            position: sticky; 
+            top: 0; 
+            float: right;
+            width: 34px; 
+            height: 34px; 
             background: linear-gradient(135deg, #ff4757, #c0392b); 
             color: #fff;
-            border-radius: 50%; font-weight: bold; border: none;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-        }
-        .top-title { 
-            font-size: 22px; 
+            border-radius: 50%; 
             font-weight: bold; 
+            border: none;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .top-modal .close-top-btn:active { transform: scale(0.9); }
+        
+        .top-title { 
+            font-size: 24px; 
+            font-weight: 900; 
             text-align: center; 
-            margin-bottom: 16px; 
+            margin: 0 0 20px 0;
             background: linear-gradient(135deg, #ffd700, #ff6b00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            letter-spacing: 1px;
         }
-        .top-list { list-style: none; padding: 0; }
+        
+        .top-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0;
+        }
+        
         .top-item {
             display: flex; 
             align-items: center; 
             justify-content: space-between;
-            padding: 12px 14px; 
-            border-bottom: 1px solid #1a1a2e;
-            gap: 10px;
-            border-radius: 12px;
+            padding: 10px 14px; 
+            margin-bottom: 4px;
+            border-radius: 14px;
             transition: background 0.2s;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid transparent;
         }
-        .top-item:hover { background: #1a1a2e; }
+        .top-item:hover { 
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.05);
+        }
+        
         .top-item .rank {
-            font-weight: bold; font-size: 18px; min-width: 34px;
-            color: #ffd700;
+            font-weight: bold; 
+            font-size: 20px; 
+            min-width: 38px;
+            text-align: center;
         }
-        .top-item .top-avatar { font-size: 26px; min-width: 36px; }
-        .top-item .top-name { flex: 1; font-weight: 500; font-size: 14px; }
+        .top-item .rank.gold { color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        .top-item .rank.silver { color: #c0c0c0; }
+        .top-item .rank.bronze { color: #cd7f32; }
+        .top-item .rank.normal { color: #666; font-size: 16px; }
+        
+        .top-item .top-avatar { 
+            font-size: 28px; 
+            min-width: 40px; 
+            text-align: center;
+        }
+        
+        .top-item .top-name { 
+            flex: 1; 
+            font-weight: 600; 
+            font-size: 15px;
+            padding: 0 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .top-item .top-name .creator-badge {
+            color: #ffd700;
+            font-size: 14px;
+            margin-left: 4px;
+        }
+        
         .top-item .top-kisses {
             background: rgba(255, 71, 87, 0.15);
-            padding: 4px 12px; 
-            border-radius: 14px;
+            padding: 4px 14px; 
+            border-radius: 20px;
             color: #ff4757; 
-            font-weight: bold;
-            font-size: 13px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            white-space: nowrap;
         }
-        .top-item:nth-child(1) .rank { color: #ffd700; font-size: 22px; text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        .top-item:nth-child(2) .rank { color: #c0c0c0; font-size: 20px; }
-        .top-item:nth-child(3) .rank { color: #cd7f32; font-size: 18px; }
+        
+        .top-item.my-rank {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .top-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        .top-empty .big-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+        .top-empty .sub-text { font-size: 13px; color: #444; margin-top: 6px; }
 
+        /* Анимации */
         .fx-heart { 
             position: absolute; 
             font-size: 26px; 
@@ -688,10 +762,10 @@ here<!DOCTYPE html>
             background: linear-gradient(135deg, #ffd700, #ff6b00);
             border: none;
             color: #1a1a2e;
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 3px 10px;
+            border-radius: 10px;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             cursor: pointer;
             margin-top: 2px;
             transition: transform 0.2s;
@@ -841,13 +915,16 @@ here<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- ТОП МОДАЛКА -->
+    <!-- ===== ТОП МОДАЛКА (НОВАЯ) ===== -->
     <div class="modal-overlay" id="top-modal-view">
         <div class="top-modal">
             <button class="close-top-btn" onclick="closeTopModal()">✕</button>
-            <div class="top-title">🏆 ТОП ПОЦЕЛУЕВ</div>
+            <div class="top-title">🏆 ТОП-10 ИГРОКОВ</div>
             <div id="top-list-container">
-                <div style="text-align:center;padding:20px;color:#555;">⏳ Загрузка...</div>
+                <div class="top-empty">
+                    <span class="big-emoji">⏳</span>
+                    Загрузка...
+                </div>
             </div>
         </div>
     </div>
@@ -997,66 +1074,82 @@ here<!DOCTYPE html>
             console.log("🔄 Попытка переподключения #", connectionAttempts);
         });
 
-        // ---- ТОП ИГРОКОВ (исправленный) ----
-function openTopModal() {
-    document.getElementById('top-modal-view').classList.add('show');
-    document.getElementById('top-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:#555;">⏳ Загрузка...</div>';
-    console.log("📊 Запрос топа...");
-    socket.emit("get_top_players", {});
-}
+        // ===== ТОП ИГРОКОВ (НОВАЯ ЛОГИКА) =====
+        function openTopModal() {
+            console.log("🏆 Открытие топа...");
+            const modal = document.getElementById('top-modal-view');
+            const container = document.getElementById('top-list-container');
+            
+            // Показываем загрузку
+            container.innerHTML = `
+                <div class="top-empty">
+                    <span class="big-emoji">⏳</span>
+                    Загрузка топа...
+                </div>
+            `;
+            
+            modal.classList.add('show');
+            
+            // Отправляем запрос на сервер
+            console.log("📤 Отправка запроса get_top");
+            socket.emit("get_top", {});
+        }
 
-function closeTopModal() {
-    document.getElementById('top-modal-view').classList.remove('show');
-}
+        function closeTopModal() {
+            document.getElementById('top-modal-view').classList.remove('show');
+        }
 
-socket.on("top_players_response", (data) => {
-    console.log("📊 Получен топ:", data);
-    const container = document.getElementById('top-list-container');
-    
-    if (!data.top || data.top.length === 0) {
-        container.innerHTML = `
-            <div style="text-align:center;padding:30px 20px;color:#555;">
-                <div style="font-size:40px;margin-bottom:10px;">😢</div>
-                <div>Пока нет игроков с поцелуями</div>
-                <div style="font-size:12px;margin-top:10px;color:#333;">Первый поцелуй будет твоим!</div>
-            </div>
-        `;
-        return;
-    }
-    
-    const medals = ['🥇', '🥈', '🥉'];
-    let html = '<ul class="top-list">';
-    data.top.forEach((player, index) => {
-        const rank = index < 3 ? medals[index] : `#${index + 1}`;
-        const isCreatorPlayer = player.telegram_id === CREATOR_ID;
-        const avatar = isCreatorPlayer ? "👑" : "😎";
-        const displayName = player.username || 'Аноним';
-        html += `
-            <li class="top-item">
-                <span class="rank">${rank}</span>
-                <span class="top-avatar">${avatar}</span>
-                <span class="top-name">${displayName} ${isCreatorPlayer ? '👑' : ''}</span>
-                <span class="top-kisses">💋 ${player.kisses}</span>
-            </li>
-        `;
-    });
-    html += '</ul>';
-    container.innerHTML = html;
-    
-    // Если ты в топе - подсветка
-    if (myTelegramId) {
-        const items = container.querySelectorAll('.top-item');
-        items.forEach(item => {
-            const name = item.querySelector('.top-name')?.textContent || '';
-            if (name.includes(myNickname) || name.includes('@')) {
-                item.style.background = 'rgba(255, 215, 0, 0.1)';
-                item.style.border = '1px solid #ffd700';
-                item.style.borderRadius = '12px';
-                item.style.margin = '4px 0';
+        // Обработчик ответа от сервера
+        socket.on("top_response", (data) => {
+            console.log("📥 Получен топ:", data);
+            const container = document.getElementById('top-list-container');
+            
+            if (!data.top || data.top.length === 0) {
+                container.innerHTML = `
+                    <div class="top-empty">
+                        <span class="big-emoji">😢</span>
+                        Пока нет игроков с поцелуями
+                        <div class="sub-text">Первый поцелуй будет твоим!</div>
+                    </div>
+                `;
+                return;
             }
+            
+            const medals = ['🥇', '🥈', '🥉'];
+            const rankClasses = ['gold', 'silver', 'bronze'];
+            let html = '<ul class="top-list">';
+            
+            data.top.forEach((player, index) => {
+                const rank = index < 3 ? medals[index] : `#${index + 1}`;
+                const rankClass = index < 3 ? rankClasses[index] : 'normal';
+                const isCreatorPlayer = player.telegram_id === CREATOR_ID;
+                const isMe = player.telegram_id === myTelegramId;
+                const avatar = isCreatorPlayer ? "👑" : "😎";
+                const displayName = player.username || 'Аноним';
+                const creatorBadge = isCreatorPlayer ? '<span class="creator-badge">👑</span>' : '';
+                const myClass = isMe ? 'my-rank' : '';
+                
+                html += `
+                    <li class="top-item ${myClass}">
+                        <span class="rank ${rankClass}">${rank}</span>
+                        <span class="top-avatar">${avatar}</span>
+                        <span class="top-name">${displayName} ${creatorBadge}</span>
+                        <span class="top-kisses">💋 ${player.kisses}</span>
+                    </li>
+                `;
+            });
+            
+            html += '</ul>';
+            
+            // Добавляем информацию о количестве
+            html += `
+                <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid #1a1a2e;font-size:12px;color:#666;">
+                    Всего игроков: ${data.top.length}
+                </div>
+            `;
+            
+            container.innerHTML = html;
         });
-    }
-});
 
         // ---- СЕКРЕТНАЯ КНОПКА ДЛЯ СОЗДАТЕЛЯ ----
         function giveCreatorGift(seatIndex) {
@@ -1210,14 +1303,12 @@ socket.on("top_players_response", (data) => {
             const row = document.createElement('div');
             
             if (data.is_system) {
-                // Системное сообщение
                 row.className = 'chat-row system';
                 if (data.is_creator) {
                     row.className = 'chat-row creator-enter';
                 }
                 row.innerHTML = `<div class="chat-body-text">${data.text}</div>`;
             } else {
-                // Обычное сообщение
                 row.className = 'chat-row';
                 row.innerHTML = `
                     <div class="chat-mini-avatar">${data.avatar}</div>
@@ -1228,7 +1319,6 @@ socket.on("top_players_response", (data) => {
             chatBox.appendChild(row);
             chatBox.scrollTop = chatBox.scrollHeight;
             
-            // Если зашел создатель - бонусная анимация
             if (data.is_creator) {
                 playKissSound();
                 setTimeout(() => {
@@ -1287,7 +1377,6 @@ socket.on("top_players_response", (data) => {
                         document.getElementById('my-hearts-display').innerText = pData.hearts || 0;
                     }
                     
-                    // Показываем кнопку +1000 только для создателя
                     const cgBtn = document.getElementById(`cg-${i}`);
                     if (isCreator && pData.telegram_id !== myTelegramId) {
                         cgBtn.classList.add('show');

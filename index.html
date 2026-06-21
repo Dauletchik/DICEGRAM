@@ -341,9 +341,40 @@
             transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             pointer-events: none;
         }
+
+        .connection-error {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .connection-error.show { display: flex; }
+        .connection-error h2 { color: #ff4757; margin-bottom: 10px; }
+        .connection-error p { color: #aaa; text-align: center; margin-bottom: 15px; }
+        .retry-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Ошибка подключения -->
+    <div class="connection-error" id="connection-error">
+        <h2>⚠️ Нет подключения</h2>
+        <p>Не удалось подключиться к игровому серверу. Проверьте интернет-соединение.</p>
+        <button class="retry-btn" onclick="location.reload()">Повторить попытку</button>
+    </div>
 
     <div class="game-header">
         <div class="hearts-balance-top" onclick="openShopModal()">
@@ -471,8 +502,24 @@
     </div>
 
     <script>
-        const BACKEND_URL = "http://localhost:8080"; 
-        const socket = io(BACKEND_URL);
+        // ==== ГЛАВНОЕ: ПРАВИЛЬНЫЙ URL БЭКЕНДА ====
+        // Замените на ваш реальный URL сервера
+        const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
+        
+        // Если вы тестируете локально, раскомментируйте строку ниже и закомментируйте верхнюю:
+        // const BACKEND_URL = "http://localhost:8080";
+        
+        console.log("Подключение к серверу:", BACKEND_URL);
+        
+        // Создаем сокет с настройками для лучшей совместимости
+        const socket = io(BACKEND_URL, {
+            transports: ['websocket', 'polling'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            timeout: 10000
+        });
+        
         const tg = window.Telegram.WebApp;
         
         let myNickname = "@Player";
@@ -481,31 +528,78 @@
         let isMyTurn = false;
         let localRotation = 0;
         let targetGiftSeatIndex = null;
+        let connectionAttempts = 0;
 
+        // Инициализация Telegram WebApp
         if (tg) {
-            tg.expand();
-            const user = tg.initDataUnsafe?.user;
-            if (user) {
-                myNickname = `@${user.username || user.first_name}`;
-                myAvatar = ["😎","🔥","✨","🍀","🎲","⚡","🍿"][Math.floor(Math.random() * 7)];
+            try {
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    myNickname = `@${user.username || user.first_name}`;
+                    const avatars = ["😎","🔥","✨","🍀","🎲","⚡","🍿","🎮","🚀","💫","🌟","🎯"];
+                    myAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+                }
+                console.log("Telegram WebApp инициализирован");
+            } catch(e) {
+                console.error("Ошибка инициализации Telegram:", e);
             }
         }
 
-        function openShopModal() { document.getElementById('shop-modal-view').style.display = 'flex'; }
-        function closeShopModal() { document.getElementById('shop-modal-view').style.display = 'none'; }
+        // Обработка ошибок подключения
+        socket.on("connect_error", (error) => {
+            console.error("Ошибка подключения:", error);
+            document.getElementById('game-status-label').innerText = "⚠️ Ошибка подключения";
+            document.getElementById('connection-error').classList.add('show');
+        });
+
+        socket.on("disconnect", (reason) => {
+            console.warn("Отключено:", reason);
+            if (reason === "io server disconnect" || reason === "transport error") {
+                document.getElementById('connection-error').classList.add('show');
+            }
+        });
+
+        socket.on("reconnect", (attempt) => {
+            console.log("Переподключено после", attempt, "попыток");
+            document.getElementById('connection-error').classList.remove('show');
+            document.getElementById('game-status-label').innerText = "Подключено!";
+        });
+
+        socket.on("reconnect_attempt", () => {
+            connectionAttempts++;
+            console.log("Попытка переподключения #", connectionAttempts);
+        });
+
+        // --- Остальные функции ---
+        function openShopModal() { 
+            document.getElementById('shop-modal-view').style.display = 'flex'; 
+        }
+        function closeShopModal() { 
+            document.getElementById('shop-modal-view').style.display = 'none'; 
+        }
 
         function triggerStarsBuy(amount, starsCost) {
-            socket.emit("buy_hearts_invoice", { amount: amount, stars: starsCost, initData: tg ? tg.initData : "" });
+            socket.emit("buy_hearts_invoice", { 
+                amount: amount, 
+                stars: starsCost, 
+                initData: tg ? tg.initData : "" 
+            });
             closeShopModal();
         }
 
         socket.on("invoice_link_ready", (data) => {
             if (tg && data.url) {
-                tg.openInvoice(data.url, function(status) {
-                    if(status === 'paid') {
-                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    }
-                });
+                try {
+                    tg.openInvoice(data.url, function(status) {
+                        if(status === 'paid') {
+                            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                        }
+                    });
+                } catch(e) {
+                    console.error("Ошибка открытия инвойса:", e);
+                    window.open(data.url, '_blank');
+                }
             }
         });
 
@@ -535,7 +629,10 @@
         }
 
         function clientTriggerSendGift(giftEmoji) {
-            if (targetGiftSeatIndex === null) return;
+            if (targetGiftSeatIndex === null) {
+                alert("Сначала выберите игрока, нажав на его место!");
+                return;
+            }
             socket.emit("send_gift", { to_seat: targetGiftSeatIndex, gift: giftEmoji });
             closeGiftsPanel();
         }
@@ -575,13 +672,25 @@
             }, 1250);
         }
 
+        // Подключение к столу при успешном соединении
         socket.on("connect", () => {
+            console.log("Подключено к серверу, ID:", socket.id);
+            document.getElementById('connection-error').classList.remove('show');
             document.getElementById('game-status-label').innerText = "Вход за стол...";
-            socket.emit("join_table", { username: myNickname, avatar: myAvatar, initData: tg ? tg.initData : "" });
+            
+            socket.emit("join_table", { 
+                username: myNickname, 
+                avatar: myAvatar, 
+                initData: tg ? tg.initData : "" 
+            });
         });
 
         socket.on("join_response", (data) => {
-            if (data.status !== "spectator") myAssignedSeat = data.seat;
+            console.log("Ответ на join:", data);
+            if (data.status !== "spectator") {
+                myAssignedSeat = data.seat;
+                console.log("Занято место:", myAssignedSeat);
+            }
         });
 
         socket.on("table_update", (data) => {
@@ -663,7 +772,10 @@
         });
 
         function clientRequestSpin() {
-            if (!isMyTurn) return;
+            if (!isMyTurn) {
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                return;
+            }
             isMyTurn = false;
             document.getElementById('turn-hint').style.display = 'none';
             socket.emit("request_spin");
@@ -769,7 +881,10 @@
                 setTimeout(() => h.remove(), 1000);
             }
         }
+
+        // Логирование для отладки
+        console.log("Приложение загружено. Telegram WebApp:", !!tg);
+        console.log("Бэкенд URL:", BACKEND_URL);
     </script>
 </body>
-</html>
-
+    </html>

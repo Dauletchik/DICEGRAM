@@ -6,7 +6,6 @@
     <title>DICEGRAM</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- Общие и системные стили Telegram --- */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -27,7 +26,6 @@
             position: relative;
         }
 
-        /* --- ЭКРАН ЖЕСТКОЙ БЛОКИРОВКИ И ОЖИДАНИЯ WS --- */
         #ws-lock-overlay {
             position: absolute;
             top: 0;
@@ -35,7 +33,7 @@
             width: 100%;
             height: 100%;
             background-color: #ffffff;
-            z-index: 9999; /* Поверх всех окон, вкладок и навигации */
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -72,7 +70,6 @@
             line-height: 1.4;
         }
 
-        /* --- Шапка приложения (Header) --- */
         .tg-header {
             background-color: #ffffff;
             padding: 12px 16px 8px 16px;
@@ -119,7 +116,6 @@
             cursor: pointer;
         }
 
-        /* --- Вкладки (Tabs) --- */
         .tg-tabs {
             display: flex;
             background-color: #ffffff;
@@ -151,7 +147,6 @@
             text-align: center;
         }
 
-        /* --- Контейнер для экранов --- */
         .screen-container {
             flex: 1;
             overflow-y: auto;
@@ -169,7 +164,6 @@
             display: block;
         }
 
-        /* --- Список чатов --- */
         .chat-list {
             display: flex;
             flex-direction: column;
@@ -290,13 +284,11 @@
             margin-top: 2px;
         }
 
-        /* --- ПОЛНОЦЕННОЕ ОКНО ПЕРЕПИСКИ --- */
         .chat-view-container {
             display: flex;
             flex-direction: column;
             height: 100%;
             background-color: #e7ebf0;
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
         }
 
         .chat-view-header {
@@ -395,7 +387,6 @@
             cursor: pointer;
         }
 
-        /* --- ИНТЕРФЕЙС СТРАНИЦЫ ПРОФИЛЯ --- */
         .profile-screen {
             background-color: #f4f4f6;
             height: 100%;
@@ -486,7 +477,6 @@
             opacity: 0.7;
         }
 
-        /* --- Нижняя панель навигации --- */
         .bottom-nav {
             background-color: #ffffff;
             border-top: 1px solid #e5e5e7;
@@ -550,7 +540,7 @@
 
     <div class="tg-header" id="main-header">
         <div class="header-title-container">
-            <div class="header-title" id="app-title-text">Telegram</div>
+            <div class="header-title" id="app-title-text">DICEGRAM</div>
             <div class="connection-status" id="conn-status-text" style="display: none;">Обновление...</div>
         </div>
         <div class="header-actions">
@@ -670,8 +660,8 @@
         let myUsername = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.username : "guest_user";
 
         let activeChats = {
-            "daupro_support": {
-                id: "daupro_support",
+            "0_777": {
+                id: "0_777",
                 name: "DAUPRO SUPORT",
                 avatarClass: "avatar-support",
                 letter: "DS",
@@ -760,7 +750,13 @@
             }
 
             document.getElementById(`screen-${screenName}`).classList.add('active');
-            event.currentTarget.classList.add('active');
+            
+            // Find and activate nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.textContent.toLowerCase().includes(screenName)) {
+                    item.classList.add('active');
+                }
+            });
 
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
@@ -797,21 +793,22 @@
         function openChatView(chatId) {
             currentChatId = chatId;
             const chat = activeChats[chatId];
-            chat.unread = 0;
+            if (chat) {
+                chat.unread = 0;
+                document.getElementById('view-header-name').innerText = chat.name;
+                document.getElementById('view-header-status').innerText = chat.is_bot ? 'бот' : 'онлайн';
+                document.getElementById('view-header-verified').style.display = chat.verified ? 'flex' : 'none';
+                
+                const avatarEl = document.getElementById('view-header-avatar');
+                avatarEl.className = `chat-avatar ${chat.avatarClass}`;
+                avatarEl.innerText = chat.letter;
+            }
 
             document.getElementById('screen-chats').classList.remove('active');
             document.getElementById('screen-chat-view').classList.add('active');
             document.getElementById('tabs-bar').style.display = 'none';
             document.getElementById('main-header').style.display = 'none';
             document.getElementById('main-bottom-navigation').style.display = 'none';
-
-            document.getElementById('view-header-name').innerText = chat.name;
-            document.getElementById('view-header-status').innerText = chat.is_bot ? 'бот' : 'онлайн';
-            document.getElementById('view-header-verified').style.display = chat.verified ? 'flex' : 'none';
-            
-            const avatarEl = document.getElementById('view-header-avatar');
-            avatarEl.className = `chat-avatar ${chat.avatarClass}`;
-            avatarEl.innerText = chat.letter;
 
             document.getElementById('chat-messages-box').innerHTML = '';
             
@@ -843,13 +840,19 @@
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             appendBubble(text, timeStr, 'outgoing');
-            activeChats[currentChatId].msg = text;
-            activeChats[currentChatId].time = timeStr;
+            if (activeChats[currentChatId]) {
+                activeChats[currentChatId].msg = text;
+                activeChats[currentChatId].time = timeStr;
+            }
+
+            // Extract receiver_id from chat_id
+            const parts = currentChatId.split('_');
+            const receiverId = parts[0] === String(myId) ? parseInt(parts[1]) : parseInt(parts[0]);
 
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
                     action: "send_msg",
-                    receiver_id: currentChatId, 
+                    receiver_id: receiverId,
                     message: text
                 }));
             }
@@ -862,16 +865,13 @@
             if (e.key === 'Enter') sendUserMessage();
         });
 
-// Найдите эту строку в index.html:
-const wsHost = "wss://jrnm.app";
-
-// И замените на:
-const wsHost = "wss://a38182-6d28.j.jrnm.app";  // Ваш текущий хост
-// Или для локального тестирования:
-const wsHost = "ws://localhost:8765";
+        // WebSocket connection
+        const wsHost = "ws://a38182-6d28.j.jrnm.app:8765"; 
+        let socket;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 10;
 
         function connectWebSocket() {
-            // При начале подключения принудительно выводим оверлей блокировки
             const overlay = document.getElementById('ws-lock-overlay');
             document.getElementById('lock-title').innerText = "Соединение с сервером...";
             document.getElementById('lock-desc').innerText = "Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.";
@@ -879,118 +879,165 @@ const wsHost = "ws://localhost:8765";
 
             document.getElementById('conn-status-text').style.display = 'block';
 
-            socket = new WebSocket(wsHost);
+            try {
+                socket = new WebSocket(wsHost);
 
-            socket.onopen = function() {
-                document.getElementById('conn-status-text').style.display = 'none';
-                
-                // Убираем оверлей блокировки — интерфейс становится полностью доступным
-                overlay.style.display = 'none';
+                socket.onopen = function() {
+                    document.getElementById('conn-status-text').style.display = 'none';
+                    overlay.style.display = 'none';
+                    reconnectAttempts = 0;
 
-                socket.send(JSON.stringify({
-                    action: "auth",
-                    user_id: myId,
-                    username: myUsername
-                }));
-            };
+                    const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+                    socket.send(JSON.stringify({
+                        action: "auth",
+                        user_id: myId,
+                        username: myUsername,
+                        first_name: user ? user.first_name : '',
+                        last_name: user ? user.last_name : ''
+                    }));
+                };
 
-            socket.onmessage = function(event) {
-                try {
-                    const data = JSON.parse(event.data);
-                    
-                    if (data.type === "new_msg") {
-                        let chatPartner = (data.sender_id === myId) ? data.receiver_id : data.sender_id;
+                socket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
                         
-                        if (!activeChats[chatPartner]) {
-                            activeChats[chatPartner] = {
-                                id: chatPartner,
-                                name: data.sender_username ? `@${data.sender_username}` : `ID: ${chatPartner}`,
-                                avatarClass: "avatar-user",
-                                letter: "U",
-                                msg: data.message,
-                                time: data.time,
-                                unread: 0,
-                                verified: false,
-                                is_bot: false
-                            };
-                        }
+                        if (data.type === "new_msg") {
+                            const chatId = data.chat_id;
+                            const senderId = data.sender_id;
+                            const isFromMe = senderId === myId;
+                            
+                            if (!activeChats[chatId]) {
+                                const senderName = data.sender_username ? `@${data.sender_username}` : `ID: ${senderId}`;
+                                activeChats[chatId] = {
+                                    id: chatId,
+                                    name: senderName,
+                                    avatarClass: "avatar-user",
+                                    letter: senderName.charAt(0).toUpperCase(),
+                                    msg: data.message,
+                                    time: data.time,
+                                    unread: 0,
+                                    verified: false,
+                                    is_bot: senderId === 0
+                                };
+                            }
 
-                        activeChats[chatPartner].msg = data.message;
-                        activeChats[chatPartner].time = data.time;
+                            if (!isFromMe) {
+                                activeChats[chatId].msg = data.message;
+                                activeChats[chatId].time = data.time;
+                            }
 
-                        if (currentChatId === chatPartner) {
-                            appendBubble(data.message, data.time, data.sender_id === myId ? 'outgoing' : 'incoming');
-                        } else {
-                            activeChats[chatPartner].unread += 1;
-                        }
-                        updateChatsListView();
-
-                        if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    }
-
-                    if (data.type === "user_found") {
-                        const targetId = data.user_id;
-                        if (!activeChats[targetId]) {
-                            activeChats[targetId] = {
-                                id: targetId,
-                                name: `@${data.username}`,
-                                avatarClass: "avatar-user",
-                                letter: data.username.charAt(0).toUpperCase(),
-                                msg: "Чат успешно создан",
-                                time: "Только что",
-                                unread: 0,
-                                verified: false,
-                                is_bot: false
-                            };
+                            if (currentChatId === chatId) {
+                                appendBubble(data.message, data.time, isFromMe ? 'outgoing' : 'incoming');
+                            } else if (!isFromMe) {
+                                activeChats[chatId].unread += 1;
+                            }
                             updateChatsListView();
-                        }
-                        openChatView(targetId);
-                    }
 
-                    if (data.type === "history") {
-                        const box = document.getElementById('chat-messages-box');
-                        box.innerHTML = '';
-                        
-                        if (data.messages && data.messages.length > 0) {
-                            data.messages.forEach(m => {
-                                const mType = m.sender_id === myId ? 'outgoing' : 'incoming';
-                                appendBubble(m.text, m.time, mType);
-                            });
-                        } else {
-                            if (currentChatId === 'daupro_support') {
-                                appendBubble("Добро пожаловать в DICEGRAM!", "13:07", "incoming");
+                            if (tg && tg.HapticFeedback && !isFromMe) {
+                                tg.HapticFeedback.notificationOccurred('success');
                             }
                         }
+
+                        if (data.type === "user_found") {
+                            const userId = data.user_id;
+                            const chatId = createChatId(myId, userId);
+                            if (!activeChats[chatId]) {
+                                const name = data.username ? `@${data.username}` : `ID: ${userId}`;
+                                activeChats[chatId] = {
+                                    id: chatId,
+                                    name: name,
+                                    avatarClass: "avatar-user",
+                                    letter: name.charAt(0).toUpperCase(),
+                                    msg: "Чат успешно создан",
+                                    time: "Только что",
+                                    unread: 0,
+                                    verified: false,
+                                    is_bot: userId === 0
+                                };
+                                updateChatsListView();
+                            }
+                            openChatView(chatId);
+                        }
+
+                        if (data.type === "user_not_found") {
+                            if (tg && tg.showPopup) {
+                                tg.showPopup({
+                                    title: "Пользователь не найден",
+                                    message: `Пользователь @${data.username} не найден`,
+                                    buttons: [{type: "close"}]
+                                });
+                            }
+                        }
+
+                        if (data.type === "history") {
+                            const box = document.getElementById('chat-messages-box');
+                            box.innerHTML = '';
+                            
+                            if (data.messages && data.messages.length > 0) {
+                                data.messages.forEach(m => {
+                                    const mType = m.sender_id === myId ? 'outgoing' : 'incoming';
+                                    appendBubble(m.message, m.time, mType);
+                                });
+                            }
+                        }
+
+                        if (data.type === "auth_success") {
+                            logger.info("Auth successful");
+                        }
+
+                    } catch (err) {
+                        console.log("Error processing message:", err);
                     }
+                };
 
-                } catch (err) {
-                    console.log("Ошибка обработки данных сокета:", err);
-                }
-            };
+                socket.onclose = function() {
+                    document.getElementById('conn-status-text').style.display = 'block';
+                    
+                    document.getElementById('lock-title').innerText = "Сервер DICEGRAM временно недоступен";
+                    document.getElementById('lock-desc').innerText = "Пожалуйста, запустите bot.py на вашем сервере или в Pydroid 3.";
+                    overlay.style.display = 'flex';
 
-            socket.onclose = function() {
-                document.getElementById('conn-status-text').style.display = 'block';
-                
-                // Жестко перекрываем весь интерфейс при дисконнекте
-                document.getElementById('lock-title').innerText = "Сервер DICEGRAM временно недоступен";
-                document.getElementById('lock-desc').innerText = "Пожалуйста, запустите bot.py на вашем сервере или в Pydroid 3.";
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        const delay = Math.min(1000 * reconnectAttempts, 10000);
+                        setTimeout(connectWebSocket, delay);
+                    }
+                };
+
+                socket.onerror = function() {
+                    document.getElementById('conn-status-text').style.display = 'block';
+                    overlay.style.display = 'flex';
+                };
+
+            } catch (e) {
+                console.error("WebSocket connection error:", e);
                 overlay.style.display = 'flex';
+                setTimeout(connectWebSocket, 5000);
+            }
+        }
 
-                setTimeout(connectWebSocket, 4000); 
-            };
-
-            socket.onerror = function() {
-                document.getElementById('conn-status-text').style.display = 'block';
-                overlay.style.display = 'flex';
-            };
+        function createChatId(user1, user2) {
+            return `${Math.min(user1, user2)}_${Math.max(user1, user2)}`;
         }
 
         window.onload = function() {
             setupUserProfile();
+            // Инициализируем чат с ботом
+            const botChatId = createChatId(myId, 0);
+            activeChats[botChatId] = {
+                id: botChatId,
+                name: "DAUPRO SUPORT",
+                avatarClass: "avatar-support",
+                letter: "DS",
+                msg: "Загрузка...",
+                time: "--:--",
+                unread: 0,
+                verified: true,
+                is_bot: true
+            };
             updateChatsListView();
             connectWebSocket();
         };
     </script>
 </body>
 </html>
-

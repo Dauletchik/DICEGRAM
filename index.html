@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -67,7 +67,7 @@ here<!DOCTYPE html>
             100% { transform: rotate(360deg); }
         }
 
-        /* Главное приложение */
+        /* Главный контейнер приложения */
         #app-container {
             display: none;
             flex-direction: column;
@@ -84,7 +84,7 @@ here<!DOCTYPE html>
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            z-index: 900;
+            flex-shrink: 0;
         }
 
         .header-content-left {
@@ -94,7 +94,7 @@ here<!DOCTYPE html>
         }
 
         .header-main-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -102,10 +102,10 @@ here<!DOCTYPE html>
         }
 
         .connection-status {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--tg-text-secondary);
             font-weight: normal;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         .back-btn {
@@ -115,15 +115,16 @@ here<!DOCTYPE html>
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            display: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Контентные окна */
+        /* Основные экраны */
         .screen {
             flex: 1;
             display: none;
             overflow-y: auto;
-            padding-bottom: 75px;
         }
 
         .screen.active {
@@ -131,11 +132,11 @@ here<!DOCTYPE html>
             flex-direction: column;
         }
 
-        /* Рендеринг элементов списка чатов */
+        /* Элемент списка чатов */
         .chat-item {
             display: flex;
             align-items: center;
-            padding: 10px 14px;
+            padding: 12px 14px;
             border-bottom: 1px solid var(--tg-border-color);
             cursor: pointer;
             background-color: var(--tg-surface-color);
@@ -170,7 +171,7 @@ here<!DOCTYPE html>
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
 
         .chat-name {
@@ -181,25 +182,22 @@ here<!DOCTYPE html>
             gap: 4px;
         }
 
-        /* Синяя галочка Telegram */
         .tg-verify-icon {
             width: 15px;
             height: 15px;
             fill: var(--tg-verified);
-            display: inline-block;
-            vertical-align: middle;
         }
 
         .chat-preview {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--tg-text-secondary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 80vw;
+            max-width: 75vw;
         }
 
-        /* Монолитное окно диалога */
+        /* ПОЛНОЭКРАННОЕ ОКНО ОТКРЫТОГО ЧАТА */
         #chat-room {
             position: fixed;
             top: 0;
@@ -207,7 +205,7 @@ here<!DOCTYPE html>
             width: 100%;
             height: 100%;
             background-color: var(--tg-bg-color);
-            z-index: 950;
+            z-index: 2000; /* Перекрывает всё, включая нижнее меню */
             display: none;
             flex-direction: column;
         }
@@ -218,45 +216,48 @@ here<!DOCTYPE html>
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            background-image: radial-gradient(rgba(23, 33, 43, 0.4) 15%, transparent 16%);
+            gap: 8px;
+            background-image: radial-gradient(rgba(23, 33, 43, 0.3) 15%, transparent 16%);
             background-size: 16px 16px;
         }
 
-        /* Сообщения */
+        /* Облачка сообщений (Бабблы) */
         .message {
-            max-width: 78%;
-            padding: 8px 12px;
-            border-radius: 12px;
+            max-width: 75%;
+            padding: 9px 13px;
+            border-radius: 14px;
             font-size: 14.5px;
             line-height: 1.4;
             word-wrap: break-word;
             position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .message.sent {
             background-color: var(--tg-msg-out);
             align-self: flex-end;
             border-bottom-right-radius: 2px;
+            color: #ffffff;
         }
 
         .message.received {
             background-color: var(--tg-msg-in);
             align-self: flex-start;
             border-bottom-left-radius: 2px;
+            color: #f5f5f5;
         }
 
-        /* Системное (Первое приветственное) сообщение */
+        /* Стилизация приветственного сообщения поддержки */
         .message.system-welcome {
-            background-color: #1c2834;
-            border: 1px solid #243547;
-            max-width: 90%;
+            background-color: var(--tg-msg-in);
+            border: 1px solid rgba(82, 136, 193, 0.15);
+            max-width: 85%;
             align-self: center;
-            border-radius: 12px;
+            border-radius: 14px;
             color: #e2e8f0;
             white-space: pre-line;
             font-size: 14px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            text-shadow: none;
         }
 
         .mention-link {
@@ -265,30 +266,36 @@ here<!DOCTYPE html>
             cursor: pointer;
             font-weight: 500;
         }
+        
         .mention-link:hover {
             text-decoration: underline;
         }
 
-        /* Контейнер ввода текста */
+        /* Поле ввода сообщений в самом низу экрана чата */
         .chat-input-area {
-            padding: 8px 12px;
+            padding: 10px 14px;
             background-color: var(--tg-surface-color);
             border-top: 1px solid var(--tg-border-color);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            gap: 10px;
+            flex-shrink: 0;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
         }
 
         .chat-input {
             flex: 1;
             background-color: var(--tg-bg-color);
             border: 1px solid var(--tg-border-color);
-            border-radius: 18px;
-            padding: 8px 14px;
+            border-radius: 20px;
+            padding: 10px 16px;
             color: var(--tg-text-color);
             font-size: 15px;
             outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: rgba(82, 136, 193, 0.4);
         }
 
         .send-btn {
@@ -298,7 +305,24 @@ here<!DOCTYPE html>
             font-weight: 600;
             font-size: 15px;
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:active {
+            opacity: 0.7;
+        }
+
+        /* Контейнеры пустых окон */
+        .placeholder-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: var(--tg-text-secondary);
+            font-size: 15px;
         }
 
         /* Профиль */
@@ -306,7 +330,7 @@ here<!DOCTYPE html>
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 24px 16px;
+            padding: 30px 16px;
             background-color: var(--tg-surface-color);
             border-bottom: 1px solid var(--tg-border-color);
         }
@@ -331,16 +355,7 @@ here<!DOCTYPE html>
             color: var(--tg-text-secondary);
         }
 
-        .placeholder-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-            color: var(--tg-text-secondary);
-            font-size: 15px;
-        }
-
-        /* Нижний Таббар (Telegram стиль) */
+        /* Нижний Навигатор главного меню */
         nav {
             position: fixed;
             bottom: 0;
@@ -354,6 +369,7 @@ here<!DOCTYPE html>
             align-items: center;
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 1000;
+            flex-shrink: 0;
         }
 
         .nav-item {
@@ -416,14 +432,23 @@ here<!DOCTYPE html>
 
         <div id="chat-room">
             <header>
-                <button class="back-btn" style="display: block;" onclick="closeChat()">Назад</button>
+                <button class="back-btn" onclick="closeChat()">
+                    <span>❮</span> Назад
+                </button>
                 <span id="chat-room-title" class="header-main-title">Чат</span>
-                <div style="width: 45px;"></div>
+                <div style="width: 50px;"></div>
             </header>
+            
             <div id="chat-messages"></div>
+            
             <div class="chat-input-area">
                 <input type="text" id="message-field" class="chat-input" placeholder="Сообщение..." autocomplete="off">
-                <button class="send-btn" onclick="sendMessage()">Отправить</button>
+                <button class="send-btn" onclick="sendMessage()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -432,7 +457,7 @@ here<!DOCTYPE html>
         </div>
 
         <div id="screen-settings" class="screen">
-            <div class="placeholder-screen">Настройки DICEGRAM v1.1.0</div>
+            <div class="placeholder-screen">Настройки DICEGRAM v1.2.0</div>
         </div>
 
         <div id="screen-profile" class="screen">
@@ -443,7 +468,7 @@ here<!DOCTYPE html>
             </div>
         </div>
 
-        <nav>
+        <nav id="bottom-navigation">
             <div class="nav-item active" onclick="switchTab('chats', this)">
                 <div class="nav-icon">💬</div>
                 <div>Чаты</div>
@@ -465,14 +490,13 @@ here<!DOCTYPE html>
     </div>
 
     <script>
-        // Инициализация Telegram WebApp контекста
+        // Интеграция среды Telegram WebApp
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
 
         const SERVER_URL = "https://a38182-6d28.j.jrnm.app";
 
-        // Настройка сокет-соединения
         const socket = io(SERVER_URL, {
             transports: ["websocket"],
             secure: true
@@ -482,30 +506,30 @@ here<!DOCTYPE html>
         let myTelegramId = null;
         let dynamicChats = {};
 
-        // Извлечение реальных данных юзера из Telegram API
+        // Безопасный парсинг данных пользователя из TG API с фоллбеком для обычного браузера
         const tgUser = tg.initDataUnsafe?.user || {
             id: 123456789,
             first_name: "Локальный",
-            last_name: "Тест",
-            username: "daupro",
+            last_name: "Пользователь",
+            username: "тест_юзер",
             photo_url: ""
         };
 
         myTelegramId = String(tgUser.id);
 
-        // Инициализация верстки профиля
+        // Наполнение вкладки профиля
         document.getElementById('user-name').innerText = `${tgUser.first_name} ${tgUser.last_name || ''}`.trim();
         document.getElementById('user-username').innerText = tgUser.username ? `@${tgUser.username}` : '';
         if (tgUser.photo_url) {
             document.getElementById('user-avatar').src = tgUser.photo_url;
         }
 
-        // Жизненный цикл подключения Socket.IO
+        // Логика состояния сокет-соединения в шапке
         socket.on('connect', () => {
-            console.log("Соединение с сервером успешно.");
-            // Убираем статус "Обновление..." из шапки
+            console.log("Успешное подключение к ноде Socket.IO.");
             document.getElementById('global-status').style.display = 'none';
 
+            // Авторизация сессии
             socket.emit('auth', tgUser, (response) => {
                 if (response && response.status === 'ok') {
                     document.getElementById('loading-screen').style.display = 'none';
@@ -515,13 +539,13 @@ here<!DOCTYPE html>
         });
 
         socket.on('disconnect', () => {
-            console.log("Соединение разорвано бэкендом.");
-            // Возвращаем плашку загрузки и статус "Соединение..." в шапку
-            document.getElementById('global-status').style.display = 'block';
-            document.getElementById('global-status').innerText = "Соединение...";
+            console.log("Соединение разорвано шлюзом.");
+            const statusEl = document.getElementById('global-status');
+            statusEl.style.display = 'block';
+            statusEl.innerText = "Соединение...";
         });
 
-        // Прослушивание сообщений в реальном времени
+        // Слушатель входящего трафика сообщений
         socket.on('new_message', (msg) => {
             const chatPartner = msg.sender_id === myTelegramId ? msg.receiver_id : msg.sender_id;
 
@@ -540,7 +564,7 @@ here<!DOCTYPE html>
             }
         });
 
-        // Навигация между вкладками
+        // Переключение между 4-мя вкладками меню
         function switchTab(tabName, element) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -555,22 +579,25 @@ here<!DOCTYPE html>
             if (tabName === 'profile') headerTitle.innerText = "Профиль";
         }
 
-        // Логика открытия диалогов
+        // Логика открытия чата с полной блокировкой нижнего меню
         function openChat(chatId, chatName, isVerified = false) {
             currentChatId = chatId;
             document.getElementById('chat-room-title').innerText = chatName;
+            
+            // Скрываем нижнее меню навигации, чтобы освободить место под input переписки
+            document.getElementById('bottom-navigation').style.display = 'none';
             document.getElementById('chat-room').style.display = 'flex';
             
             const messagesContainer = document.getElementById('chat-messages');
             messagesContainer.innerHTML = '';
 
-            // Если чат открывается впервые в этой сессии браузера, рендерим системный Welcome-текст
+            // Генерация стартового облачка-приветствия (только для саппорта при первом заходе)
             if (chatId === "0" && !localStorage.getItem(`welcome_shown_${myTelegramId}`)) {
                 renderSystemWelcomeMessage();
                 localStorage.setItem(`welcome_shown_${myTelegramId}`, "true");
             }
 
-            // Получаем историю из SQLite
+            // Загрузка сохраненной истории из бэкенда SQLite
             socket.emit('get_chat_history', { with_id: chatId }, (history) => {
                 if (history && Array.isArray(history)) {
                     history.forEach(msg => renderSingleMessage(msg));
@@ -579,12 +606,15 @@ here<!DOCTYPE html>
             });
         }
 
+        // Возврат к списку чатов и активация меню
         function closeChat() {
             document.getElementById('chat-room').style.display = 'none';
+            // Возвращаем нижнее меню обратно на экран
+            document.getElementById('bottom-navigation').style.display = 'flex';
             currentChatId = null;
         }
 
-        // Генерация первого приветственного системного сообщения
+        // Отрисовка приветственного блока на основе данных WebApp
         function renderSystemWelcomeMessage() {
             const container = document.getElementById('chat-messages');
             const welcomeEl = document.createElement('div');
@@ -592,7 +622,7 @@ here<!DOCTYPE html>
             
             welcomeEl.innerText = `🤖 Вы успешно зарегистрировали аккаунт в DICEGRAM!
 👤 Ваш никнейм: ${tgUser.first_name} ${tgUser.last_name || ''}
-🏷️ Ваш юзернейм: ${tgUser.username ? '@' + tgUser.username : 'отсутствует'}
+🏷️ Ваш юзернейм: @${tgUser.username || 'тест_юзер'}
 🆔 Ваш ID: ${myTelegramId}`;
             
             container.appendChild(welcomeEl);
@@ -604,16 +634,16 @@ here<!DOCTYPE html>
             msgEl.classList.add('message');
 
             if (msg.sender_id === myTelegramId) {
-                msgEl.classList.add('sent');
+                msgEl.classList.add('sent'); // Синий/зеленый баббл справа
             } else {
-                msgEl.classList.add('received');
+                msgEl.classList.add('received'); // Серый баббл слева
             }
             
             msgEl.innerHTML = formatMessageText(msg.text);
             container.appendChild(msgEl);
         }
 
-        // Парсинг @username и перевод их в синие ссылки
+        // Подсветка регулярным выражением @username в синие кликабельные элементы
         function formatMessageText(text) {
             const mentionRegex = /(@[a-zA-Z0-9_]{3,32})/g;
             return text.replace(mentionRegex, function(match) {
@@ -621,7 +651,7 @@ here<!DOCTYPE html>
             });
         }
 
-        // Обработка клика по юзернейму
+        // Обработчик нажатия на подсвеченный юзернейм
         function handleMentionClick(username) {
             console.log("Поиск совпадений для:", username);
             socket.emit('find_user', { username: username }, (response) => {
@@ -629,7 +659,7 @@ here<!DOCTYPE html>
                     const user = response.user;
 
                     if (user.telegram_id === myTelegramId) {
-                        alert("Вы нажали на свой собственный юзернейм!");
+                        alert("Это ваш собственный юзернейм!");
                         return;
                     }
 
@@ -662,6 +692,7 @@ here<!DOCTYPE html>
             chatsList.insertAdjacentHTML('beforeend', rowHTML);
         }
 
+        // Отправка текстового сообщения на бэкенд
         function sendMessage() {
             const input = document.getElementById('message-field');
             const text = input.value.trim();
@@ -677,6 +708,7 @@ here<!DOCTYPE html>
             });
 
             input.value = '';
+            input.focus();
         }
 
         function scrollToBottom() {
@@ -684,6 +716,7 @@ here<!DOCTYPE html>
             container.scrollTop = container.scrollHeight;
         }
 
+        // Слушатель отправки по кнопке Enter
         document.getElementById('message-field').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 sendMessage();
@@ -692,3 +725,4 @@ here<!DOCTYPE html>
     </script>
 </body>
 </html>
+

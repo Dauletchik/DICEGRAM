@@ -2,22 +2,23 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DICEGRAM</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <style>
-        /* Базовые сбросы стилей */
+        /* --- Общие и системные стили Telegram --- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f5;
+            background-color: #ffffff;
             color: #000000;
             overflow: hidden;
             height: 100vh;
@@ -25,266 +26,503 @@
             flex-direction: column;
         }
 
-        /* Шапка в стиле Telegram */
-        .header {
+        /* --- Шапка приложения (Header) --- */
+        .tg-header {
             background-color: #ffffff;
-            padding: 10px 16px;
+            padding: 12px 16px 8px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid #e5e5e7;
+            position: relative;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .header-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2481cc; /* Фирменный цвет Telegram */
+            font-size: 21px;
+            font-weight: 700;
+            color: #2481cc;
+            letter-spacing: -0.2px;
         }
 
-        /* Вкладки сверху (Все чаты / Звезды) */
-        .tabs {
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #4f5459;
+            cursor: pointer;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #53575c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Вкладки (Tabs) --- */
+        .tg-tabs {
             display: flex;
             background-color: #ffffff;
-            padding: 6px 16px;
-            gap: 12px;
-            border-bottom: 1px solid #e5e5e7;
+            padding: 6px 16px 10px 16px;
+            gap: 10px;
+            border-bottom: 1px solid #f0f0f2;
         }
 
-        .tab {
-            background-color: #e8f3fc;
+        .tg-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #f0f5fa;
             color: #2481cc;
             padding: 6px 14px;
-            border-radius: 16px;
+            border-radius: 20px;
             font-size: 14px;
+            font-weight: 600;
+        }
+
+        .tab-badge {
+            background-color: #2481cc;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 1px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .tg-tab.secondary {
+            background-color: transparent;
+            color: #707579;
             font-weight: 500;
         }
 
-        /* Основной контент (Интерфейс игры/чата) */
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .tab-star {
+            color: #e4a622;
+            font-size: 13px;
         }
 
-        /* Окно статуса WebSocket */
-        .status-card {
-            background: #ffffff;
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            font-size: 14px;
+        /* --- Список чатов (Chat List) --- */
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            background-color: #ffffff;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            gap: 12px;
+            border-bottom: 0.5px solid #f4f4f6;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+
+        .chat-item:active {
+            background-color: #f2f2f5;
+        }
+
+        .chat-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* Стили кастомных аватарок */
+        .avatar-support { background: linear-gradient(135deg, #2abee2, #1d74e7); }
+        .avatar-1 { background: linear-gradient(135deg, #ff9500, #ff5e00); }
+        .avatar-2 { background: linear-gradient(135deg, #34c759, #11994b); }
+        .avatar-3 { background: linear-gradient(135deg, #af52de, #7a22b8); }
+
+        .chat-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+        }
+
+        .chat-row-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 8px;
+        .chat-name-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .chat-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Синяя галочка верификации */
+        .verified-badge {
+            width: 15px;
+            height: 15px;
+            background-color: #2481cc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 9px;
+            flex-shrink: 0;
+        }
+
+        .chat-time {
             font-size: 12px;
-            font-weight: bold;
+            color: #707579;
+            white-space: nowrap;
         }
 
-        .status-connected { background-color: #e2f7e2; color: #1f781f; }
-        .status-disconnected { background-color: #ffe5e5; color: #cc0000; }
-
-        /* Игровое поле / Панель действий */
-        .game-panel {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            text-align: center;
+        .chat-row-bottom {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
         }
 
-        .btn-action {
+        .chat-message {
+            font-size: 14px;
+            color: #707579;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .chat-meta-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            min-width: 20px;
+        }
+
+        .unread-badge {
             background-color: #2481cc;
             color: #ffffff;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
+            font-size: 11px;
             font-weight: bold;
+            padding: 2px 6px;
             border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            transition: background 0.2s;
+            min-width: 18px;
+            text-align: center;
+            margin-top: 2px;
         }
 
-        .btn-action:active {
-            background-color: #1c66a3;
-        }
-
-        /* Лог сетевых событий */
-        .log-box {
-            background: #222;
-            color: #00ff00;
-            font-family: monospace;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            height: 150px;
-            overflow-y: auto;
-            text-align: left;
-        }
-
-        /* Нижнее меню навигации */
+        /* --- Нижняя панель навигации (Bottom Navigation) --- */
         .bottom-nav {
             background-color: #ffffff;
             border-top: 1px solid #e5e5e7;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
+            padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)) 0;
+            position: relative;
+            z-index: 10;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 11px;
+            justify-content: center;
+            flex: 1;
             color: #707579;
             text-decoration: none;
+            background: none;
+            border: none;
+            font-size: 11px;
+            font-weight: 500;
+            position: relative;
+            cursor: pointer;
         }
 
         .nav-item.active {
             color: #2481cc;
         }
 
-        .nav-icon {
-            font-size: 20px;
+        .nav-icon-wrapper {
+            position: relative;
+            font-size: 22px;
             margin-bottom: 2px;
+            line-height: 1;
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -4px;
+            right: -10px;
+            background-color: #2481cc;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 1px 5px;
+            border-radius: 8px;
+            min-width: 16px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="header-title">DICEGRAM</div>
-        <div style="font-size: 18px; color: #707579;">🔍</div>
-    </div>
-
-    <div class="tabs">
-        <div class="tab">Все чаты <span style="font-weight: bold;">🎲</span></div>
-    </div>
-
-    <div class="content">
-        
-        <div class="status-card">
-            <span>Статус соединения:</span>
-            <span id="status" class="status-badge status-disconnected">Отключен</span>
+    <div class="tg-header">
+        <div class="header-left">
+            <div class="header-title">Telegram</div>
         </div>
-
-        <div class="game-panel">
-            <h3>Управление кубиками</h3>
-            <p style="color: #707579; margin-top: 5px;" id="user-welcome">Загрузка данных пользователя...</p>
-            <button class="btn-action" id="send-btn">Бросить кости 🎲</button>
+        <div class="header-actions">
+            <button class="icon-btn">🔍</button>
+            <button class="icon-btn">⋮</button>
         </div>
-
-        <p style="font-size: 13px; color: #707579; font-weight: bold;">События в реальном времени:</p>
-        <div class="log-box" id="log">Ожидание подключения...</div>
-
     </div>
+
+    <div class="tg-tabs">
+        <div class="tg-tab">
+            <span>Все чаты</span>
+            <span class="tab-badge" id="total-unread-badge">230</span>
+        </div>
+        <div class="tg-tab secondary">
+            <span>Звезды</span>
+            <span class="tab-star">⭐</span>
+            <span style="color: #a2a5a8; font-size: 11px; font-weight: bold;">7</span>
+        </div>
+    </div>
+
+    <div class="chat-list" id="chats-container">
+        </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active">
-            <span class="nav-icon">💬</span>
+        <button class="nav-item active" onclick="switchTab('chats')">
+            <div class="nav-icon-wrapper">
+                💬
+                <div class="nav-badge">230</div>
+            </div>
             <span>Чаты</span>
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">⚙️</span>
+        </button>
+        
+        <button class="nav-item" onclick="switchTab('contacts')">
+            <div class="nav-icon-wrapper">👤</div>
+            <span>Контакты</span>
+        </button>
+        
+        <button class="nav-item" onclick="switchTab('settings')">
+            <div class="nav-icon-wrapper">⚙️</div>
             <span>Настройки</span>
-        </div>
+        </button>
+        
+        <button class="nav-item" onclick="switchTab('profile')">
+            <div class="nav-icon-wrapper">🖼️</div>
+            <span>Профиль</span>
+        </button>
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
+        // Инициализация интеграции с Telegram
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяем приложение на весь экран
-
-        // Отображение имени пользователя из Telegram
-        const userWelcome = document.getElementById('user-welcome');
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            userWelcome.innerText = `Игрок: @${tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name}`;
-        } else {
-            userWelcome.innerText = "Запущено вне Telegram (Тестовый режим)";
+        if (tg) {
+            tg.expand();
+            if (tg.headerColor) tg.setHeaderColor('#ffffff');
         }
 
-        // Элементы UI для логов и статуса
-        const statusBadge = document.getElementById('status');
-        const logBox = document.getElementById('log');
-        const sendBtn = document.getElementById('send-btn');
+        // Базовая структура статических (фейковых) чатов для точной копии
+        const defaultChats = [
+            { id: "chat_1", name: "DICEGRAM News", avatarClass: "avatar-1", letter: "DN", msg: "Добавлено новое обновление кубиков! 🎲", time: "12:45", unread: 5 },
+            { id: "chat_2", name: "Разработка Ботов", avatarClass: "avatar-2", letter: "РБ", msg: "Пацаны, сокеты упали или это у меня локально?", time: "11:02", unread: 12 },
+            { id: "chat_3", name: "Black Russia Мониторинг", avatarClass: "avatar-3", letter: "BR", msg: "Слет имущества через 10 минут, заходим", time: "Вчера", unread: 0 }
+        ];
 
-        function appendLog(message) {
-            const time = new Date().toLocaleTimeString();
-            logBox.innerHTML += `<div>[${time}] ${message}</div>`;
-            logBox.scrollTop = logBox.scrollHeight;
+        // Функция инициализации списка чатов и проверки localStorage
+        function initChatList() {
+            const container = document.getElementById('chats-container');
+            container.innerHTML = ''; // Очистка перед рендером
+
+            // Логика первого входа: проверка и создание "DAUPRO SUPORT"
+            const isFirstKey = "dicegram_first_run_done";
+            let supportChat = null;
+
+            if (!localStorage.getItem(isFirstKey)) {
+                // Если зашел впервые — создаем и фиксируем в localStorage структуру
+                supportChat = {
+                    id: "daupro_support",
+                    name: "DAUPRO SUPORT",
+                    avatarClass: "avatar-support",
+                    letter: "DS",
+                    msg: "Добро пожаловать в DICEGRAM!",
+                    time: "13:07",
+                    unread: 1,
+                    verified: true
+                };
+                localStorage.setItem(isFirstKey, "true");
+                localStorage.setItem("daupro_stored_chat", JSON.stringify(supportChat));
+            } else {
+                // Если повторный вход — пытаемся взять измененный сокетами чат саппорта
+                const stored = localStorage.getItem("daupro_stored_chat");
+                if (stored) {
+                    supportChat = JSON.parse(stored);
+                }
+            }
+
+            // Рендерим верифицированный чат саппорта самым первым (если он существует)
+            if (supportChat) {
+                container.appendChild(createChatDOM(supportChat));
+            }
+
+            // Рендерим остальные дефолтные чаты
+            defaultChats.forEach(chat => {
+                // Проверяем, нет ли сохраненных обновлений по сокетам для этих чатов
+                const dynamicUpdate = localStorage.getItem(`chat_update_${chat.id}`);
+                if (dynamicUpdate) {
+                    const parsed = JSON.parse(dynamicUpdate);
+                    chat.msg = parsed.msg;
+                    chat.time = parsed.time;
+                }
+                container.appendChild(createChatDOM(chat));
+            });
         }
 
-        // Подключение к твоему WebSocket серверу
-        // Используем протокол wss:// для защищенного соединения https
-        const wsUrl = "wss://a38182-6d28.j.jrnm.app";
+        // Функция создания DOM структуры для элемента чата
+        function createChatDOM(data) {
+            const item = document.createElement('div');
+            item.className = 'chat-item';
+            item.id = `ui_${data.id}`;
+            
+            // Проверка на галочку верификации
+            const verifiedHTML = data.verified ? `<div class="verified-badge">✓</div>` : '';
+            // Проверка на счетчик непрочитанных
+            const unreadHTML = data.unread > 0 ? `<div class="unread-badge">${data.unread}</div>` : '';
+
+            item.innerHTML = `
+                <div class="chat-avatar ${data.avatarClass}">${data.letter}</div>
+                <div class="chat-info">
+                    <div class="chat-row-top">
+                        <div class="chat-name-container">
+                            <span class="chat-name">${data.name}</span>
+                            ${verifiedHTML}
+                        </div>
+                        <span class="chat-time" id="time_${data.id}">${data.time}</span>
+                    </div>
+                    <div class="chat-row-bottom">
+                        <span class="chat-message" id="msg_${data.id}">${data.msg}</span>
+                        <div class="chat-meta-right">
+                            ${unreadHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+            return item;
+        }
+
+        // Простая навигация по нижним табам (визуальный клик)
+        function switchTab(tabName) {
+            const buttons = document.querySelectorAll('.bottom-nav .nav-item');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Ищем нажатую кнопку по названию обработчика и подсвечиваем
+            const eventTarget = event.currentTarget;
+            if (eventTarget) eventTarget.classList.add('active');
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        // --- 4. СВЯЗЬ И ОБНОВЛЕНИЯ (WebSocket) ---
+        const wsHost = "wss://jrnm.app"; // Используем wss:// протокол для безопасного соединения внутри Telegram
         let socket;
 
-        function connectWS() {
-            appendLog("Попытка подключения к сокету...");
-            socket = new WebSocket(wsUrl);
+        function connectWebSocket() {
+            socket = new WebSocket(wsHost);
 
-            socket.onopen = function(e) {
-                statusBadge.innerText = "Подключен";
-                statusBadge.className = "status-badge status-connected";
-                appendLog("Успешно подключено к серверу!");
-                
-                // Пример отправки стартового пакета при входе
-                socket.send(JSON.stringify({
-                    action: "init",
-                    user: tg.initDataUnsafe?.user?.username || "Guest"
-                }));
+            socket.onopen = function() {
+                console.log("WebSocket подключен к хосту " + wsHost);
             };
 
             socket.onmessage = function(event) {
-                appendLog(`Получено: ${event.data}`);
-                
-                // Здесь ты будешь обрабатывать логику игры, когда сервер присылает ход другого игрока
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    // Пример структуры ожидаемого JSON от твоего сервера:
+                    // { "target": "daupro_support", "message": "Новое сообщение с хоста!", "time": "13:15" }
+                    if (data && data.target) {
+                        const msgElement = document.getElementById(`msg_${data.target}`);
+                        const timeElement = document.getElementById(`time_${data.target}`);
+                        
+                        if (msgElement && data.message) {
+                            msgElement.innerText = data.message;
+                            
+                            // Если обновился чат саппорта, сохраняем его новое состояние
+                            if (data.target === "daupro_support") {
+                                const stored = localStorage.getItem("daupro_stored_chat");
+                                if (stored) {
+                                    let obj = JSON.parse(stored);
+                                    obj.msg = data.message;
+                                    if (data.time) obj.time = data.time;
+                                    localStorage.setItem("daupro_stored_chat", JSON.stringify(obj));
+                                }
+                            } else {
+                                // Для остальных чатов сохраняем изменения отдельно
+                                localStorage.setItem(`chat_update_${data.target}`, JSON.stringify({
+                                    msg: data.message,
+                                    time: data.time || "Только что"
+                                }));
+                            }
+                        }
+                        
+                        if (timeElement && data.time) {
+                            timeElement.innerText = data.time;
+                        }
+
+                        // Вызываем вибрацию телефона при получении апдейта в реальном времени
+                        if (tg && tg.HapticFeedback) {
+                            tg.HapticFeedback.notificationOccurred('success');
+                        }
+                    }
+                } catch (err) {
+                    console.log("Получены сырые данные или неверный формат JSON:", event.data);
+                }
             };
 
-            socket.onclose = function(event) {
-                statusBadge.innerText = "Отключен";
-                statusBadge.className = "status-badge status-disconnected";
-                appendLog(`Соединение закрыто. Код: ${event.code}`);
-                // Авто-переподключение через 5 секунд в случае обрыва
-                setTimeout(connectWS, 5000);
+            socket.onclose = function() {
+                console.log("Соединение разорвано. Повторное подключение через 5 секунд...");
+                setTimeout(connectWebSocket, 5000);
             };
 
             socket.onerror = function(error) {
-                appendLog(`Ошибка сокета: ${error.message || "Неизвестная ошибка"}`);
+                console.error("Ошибка сокета: ", error);
             };
         }
 
-        // Обработка клика по кнопке
-        sendBtn.addEventListener('click', () => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                const payload = JSON.stringify({
-                    action: "roll_dice",
-                    timestamp: Date.now(),
-                    player: tg.initDataUnsafe?.user?.username || "Guest"
-                });
-                socket.send(payload);
-                appendLog(`Отправлено: ${payload}`);
-                
-                // Легкая вибрация смартфона при нажатии (работает внутри Telegram)
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
-            } else {
-                appendLog("Ошибка: Нет соединения с сервером!");
-            }
-        });
-
-        // Запуск сокетов при загрузке страницы
-        connectWS();
+        // Запуск логики при загрузке страницы
+        window.onload = function() {
+            initChatList();
+            connectWebSocket();
+        };
     </script>
 </body>
 </html>

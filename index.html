@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DICEGRAM Mini App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js">
+    </script>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -27,7 +29,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        body, html {
+        body,
+        html {
             width: 100%;
             height: 100%;
             background-color: var(--bg-color);
@@ -63,8 +66,12 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Главный контейнер приложения */
@@ -336,7 +343,7 @@
     </div>
 
     <div id="app-container">
-        
+
         <header id="main-header">
             <span id="header-title">Чаты</span>
         </header>
@@ -348,7 +355,7 @@
                     <div class="chat-details">
                         <div class="chat-title-row">
                             <div class="chat-name">
-                                DAUPRO SUPORT 
+                                DAUPRO SUPORT
                                 <span class="verified-badge">●</span>
                             </div>
                         </div>
@@ -381,7 +388,7 @@
 
         <div id="screen-profile" class="screen">
             <div class="profile-container">
-                <img id="user-avatar" class="profile-avatar" src="https://placeholder.co/100/334155/ffffff?text=U" alt="Avatar">
+                <img id="user-avatar" class="profile-avatar" src="https://via.placeholder.com/100/334155/ffffff?text=U" alt="Avatar">
                 <div id="user-name" class="profile-name">Имя Фамилия</div>
                 <div id="user-username" class="profile-username">@username</div>
             </div>
@@ -414,15 +421,20 @@
         tg.expand();
         tg.ready();
 
+        // 🔽🔽🔽 ВЫБЕРИТЕ ОДИН ИЗ ДВУХ ВАРИАНТОВ 🔽🔽🔽
+        // const SERVER_URL = "https://dauletchik.github.io/DICEGRAM"; // GitHub Pages вариант
+        const SERVER_URL = "https://a38182-6d28.j.jrnm.app"; // Ваш основной сервер
+        // 🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼🔼
+
         // Подключение к WebSocket шлюзу хостинга
-        const socket = io("https://jrnm.app", { 
+        const socket = io(SERVER_URL, {
             transports: ["websocket"],
             secure: true
         });
 
         let currentChatId = null;
         let myTelegramId = null;
-        let dynamicChats = {}; // Хранение найденных пользователей
+        let dynamicChats = {};
 
         // Получение структуры данных из Telegram WebApp API
         const tgUser = tg.initDataUnsafe?.user || {
@@ -436,20 +448,16 @@
         myTelegramId = String(tgUser.id);
 
         // Инициализация интерфейса профиля
-        document.getElementById('user-name').innerText = `${tgUser.first_name} ${tgUser.last_name || ''}`.stripOrNone();
+        document.getElementById('user-name').innerText = `${tgUser.first_name} ${tgUser.last_name || ''}`.trim() || "Пользователь DICEGRAM";
         document.getElementById('user-username').innerText = tgUser.username ? `@${tgUser.username}` : '';
-        if(tgUser.photo_url) {
+        if (tgUser.photo_url) {
             document.getElementById('user-avatar').src = tgUser.photo_url;
-        }
-
-        function stripOrNone(str) {
-            return tgUser.first_name ? `${tgUser.first_name} ${tgUser.last_name || ''}` : "Пользователь DICEGRAM";
         }
 
         // Взаимодействие со Socket.IO бэкендом
         socket.on('connect', () => {
             console.log("Успешный коннект к Socket.IO!");
-            
+
             // Запуск процедуры авторизации на сервере
             socket.emit('auth', tgUser, (response) => {
                 if (response && response.status === 'ok') {
@@ -468,21 +476,16 @@
         // Слушатель входящих сообщений
         socket.on('new_message', (msg) => {
             const chatPartner = msg.sender_id === myTelegramId ? msg.receiver_id : msg.sender_id;
-            
-            // Если этот юзер еще не в списке чатов и это не поддержка (0)
+
             if (chatPartner !== "0" && !dynamicChats[chatPartner]) {
-                // Если пришло сообщение от неизвестного юзера — запрашиваем его профиль по юзернейму
-                // В реальном продукте лучше передавать имя внутри payload, сделаем временную карточку
                 createChatRow(chatPartner, "Новый контакт", `@id${chatPartner}`);
             }
 
-            // Обновляем превью последнего сообщения на главной
             const previewEl = document.getElementById(`preview-${chatPartner}`);
             if (previewEl) {
                 previewEl.innerText = msg.text;
             }
 
-            // Если открыто окно этого чата — отрисовываем на лету
             if (currentChatId === chatPartner) {
                 renderSingleMessage(msg);
                 scrollToBottom();
@@ -493,15 +496,15 @@
         function switchTab(tabName, element) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
+
             document.getElementById(`screen-${tabName}`).classList.add('active');
             element.classList.add('active');
 
             const headerTitle = document.getElementById('header-title');
-            if(tabName === 'chats') headerTitle.innerText = "Чаты";
-            if(tabName === 'contacts') headerTitle.innerText = "Контакты";
-            if(tabName === 'settings') headerTitle.innerText = "Настройки";
-            if(tabName === 'profile') headerTitle.innerText = "Профиль";
+            if (tabName === 'chats') headerTitle.innerText = "Чаты";
+            if (tabName === 'contacts') headerTitle.innerText = "Контакты";
+            if (tabName === 'settings') headerTitle.innerText = "Настройки";
+            if (tabName === 'profile') headerTitle.innerText = "Профиль";
         }
 
         // Логика чатов
@@ -511,7 +514,6 @@
             document.getElementById('chat-room').style.display = 'flex';
             document.getElementById('chat-messages').innerHTML = '';
 
-            // Запрос истории чата из БД
             socket.emit('get_chat_history', { with_id: chatId }, (history) => {
                 if (history && Array.isArray(history)) {
                     history.forEach(msg => renderSingleMessage(msg));
@@ -529,7 +531,7 @@
             const container = document.getElementById('chat-messages');
             const msgEl = document.createElement('div');
             msgEl.classList.add('message');
-            
+
             if (msg.sender_id === myTelegramId) {
                 msgEl.classList.add('sent');
                 msgEl.innerHTML = formatMessageText(msg.text);
@@ -537,11 +539,10 @@
                 msgEl.classList.add('received');
                 msgEl.innerHTML = formatMessageText(msg.text);
             }
-            
+
             container.appendChild(msgEl);
         }
 
-        // Преобразование регулярным выражением @username в синие кликабельные элементы
         function formatMessageText(text) {
             const mentionRegex = /(@[a-zA-Z0-9_]{3,32})/g;
             return text.replace(mentionRegex, function(match) {
@@ -549,24 +550,21 @@
             });
         }
 
-        // Клик на синий юзернейм -> Поиск юзера через Socket.IO -> Добавление чата
         function handleMentionClick(username) {
             console.log("Поиск пользователя по юзернейму:", username);
             socket.emit('find_user', { username: username }, (response) => {
                 if (response && response.status === 'found') {
                     const user = response.user;
-                    
+
                     if (user.telegram_id === myTelegramId) {
                         alert("Это вы сами!");
                         return;
                     }
 
-                    // Если чата с ним еще нет — создаем
                     if (!dynamicChats[user.telegram_id]) {
                         createChatRow(user.telegram_id, user.first_name, user.username);
                     }
-                    
-                    // Переключаемся на окно чата с новым другом
+
                     openChat(user.telegram_id, user.first_name, false);
                 } else {
                     alert(`Пользователь ${username} не зарегистрирован в сети DICEGRAM.`);
@@ -576,7 +574,7 @@
 
         function createChatRow(tgId, firstName, username) {
             dynamicChats[tgId] = { first_name: firstName, username: username };
-            
+
             const chatsList = document.getElementById('chats-list');
             const rowHTML = `
                 <div class="chat-item" onclick="openChat('${tgId}', '${firstName}', false)">
@@ -614,7 +612,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // Поддержка отправки сообщения по нажатию на клавишу Enter
         document.getElementById('message-field').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 sendMessage();
@@ -623,4 +620,3 @@
     </script>
 </body>
 </html>
-

@@ -1,1835 +1,291 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Онлайн Бутылочка Мультиплеер</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DICEGRAM</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
-        
-        body {
-            background: #1a1410;
-            color: #e8ddd0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* ===== ШАПКА ===== */
-        .game-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 16px;
-            background: rgba(26, 20, 16, 0.95);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
-            flex-shrink: 0;
-            z-index: 10;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .hearts-balance-top {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 71, 87, 0.15);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            gap: 6px;
-            transition: all 0.3s;
-        }
-        .hearts-balance-top:active { transform: scale(0.95); }
-        .hearts-balance-top span { color: #ff4757; font-size: 18px; }
-
-        .top-btn, .skins-btn {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.3s;
-        }
-        .top-btn:active, .skins-btn:active { 
-            transform: scale(0.95); 
-            background: rgba(255, 215, 0, 0.2);
-        }
-
-        .status-msg {
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffd32a;
-            text-align: center;
-            flex: 1;
-            margin: 0 8px;
-            text-shadow: 0 0 20px rgba(255, 211, 42, 0.1);
-        }
-        
-        /* ===== ИГРОВОЙ СТОЛ ===== */
-        .board-container {
-            position: relative;
-            width: 100%;
-            height: 45vh;
-            background: radial-gradient(ellipse at 50% 50%, #8B7355 0%, #5C4033 40%, #3d2b1f 100%);
-            box-shadow: inset 0 0 80px rgba(0,0,0,0.7), 0 4px 30px rgba(0,0,0,0.5);
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-        
-        /* Текстура дерева на столе */
-        .board-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: 
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 40px,
-                    rgba(255,255,255,0.02) 40px,
-                    rgba(255,255,255,0.02) 41px
-                ),
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 80px,
-                    rgba(255,255,255,0.01) 80px,
-                    rgba(255,255,255,0.01) 81px
-                );
-            pointer-events: none;
-            border-radius: 0 0 30px 30px;
-        }
-        
-        .board-container::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 70%; height: 70%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.05);
-            pointer-events: none;
-        }
-
-        /* ===== БУТЫЛОЧКА ===== */
-        .bottle-node {
-            position: absolute;
-            width: 38px;
-            height: 114px;
-            top: calc(50% - 57px);
-            left: calc(50% - 19px);
-            z-index: 100;
-            cursor: pointer;
-            transition: transform 3.8s cubic-bezier(0.15, 1, 0.2, 1), opacity 0.4s;
-            transform: rotate(0deg);
-            filter: drop-shadow(0 8px 30px rgba(0,0,0,0.6));
-        }
-        .bottle-node.hidden { opacity: 0; pointer-events: none; }
-        .bottle-node:active { transform: scale(0.95); }
-        .bottle-img { 
-            width: 100%; 
-            height: 100%; 
-            transition: all 0.3s;
-        }
-        
-        /* Стили для разных скинов */
-        .bottle-skin-classic .bottle-img path:first-child { fill: #1b4d3e; }
-        .bottle-skin-classic .bottle-img path:last-child { fill: #2c6b56; }
-        
-        .bottle-skin-gold .bottle-img path:first-child { fill: #b8860b; }
-        .bottle-skin-gold .bottle-img path:last-child { fill: #ffd700; }
-        .bottle-skin-gold .bottle-img rect { fill: #ff6b00; }
-        .bottle-skin-gold .bottle-img circle { fill: #fff8dc; }
-        
-        .bottle-skin-neon .bottle-img path:first-child { fill: #6a0dad; }
-        .bottle-skin-neon .bottle-img path:last-child { fill: #bc13fe; }
-        .bottle-skin-neon .bottle-img rect { fill: #ff00ff; }
-        .bottle-skin-neon .bottle-img circle { fill: #e0b0ff; }
-        .bottle-skin-neon .bottle-node {
-            animation: neonGlow 1.5s ease-in-out infinite alternate;
-        }
-        @keyframes neonGlow {
-            0% { filter: drop-shadow(0 0 10px rgba(188, 19, 254, 0.3)) drop-shadow(0 8px 30px rgba(0,0,0,0.6)); }
-            100% { filter: drop-shadow(0 0 30px rgba(188, 19, 254, 0.6)) drop-shadow(0 8px 30px rgba(0,0,0,0.6)); }
-        }
-
-        .hint-arrow-box {
-            position: absolute;
-            top: calc(50% - 90px);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 110;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            animation: pulseHint 1.5s ease-in-out infinite;
-        }
-        @keyframes pulseHint {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
-        }
-        .hint-text {
-            background: rgba(0, 0, 0, 0.8);
-            color: #ffd700;
-            padding: 6px 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-        }
-
-        /* ===== ИГРОКИ ===== */
-        .grid-player {
-            position: absolute;
-            width: 60px;
-            height: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-            opacity: 0.35;
-            transition: transform 0.6s ease, opacity 0.3s;
-            cursor: pointer;
-        }
-        .grid-player.occupied { opacity: 1; }
-        
-        .avatar-wrapper {
-            position: relative;
-            width: 50px;
-            height: 50px;
-        }
-        
-        .square-avatar {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #2c1810, #1a0f0a);
-            border-radius: 14px; 
-            border: 2px solid rgba(255, 215, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            transition: all 0.3s;
-        }
-
-        .grid-player.active-spinner .square-avatar {
-            border-color: #24b0ff; 
-            box-shadow: 0 0 30px rgba(36, 176, 255, 0.4);
-            animation: glowBlue 1s ease-in-out infinite alternate;
-        }
-        @keyframes glowBlue {
-            0% { box-shadow: 0 0 15px rgba(36, 176, 255, 0.2); }
-            100% { box-shadow: 0 0 40px rgba(36, 176, 255, 0.6); }
-        }
-        
-        .grid-player.active-target .square-avatar { 
-            border-color: #ff4757; 
-            box-shadow: 0 0 30px rgba(255, 71, 87, 0.4);
-            animation: glowRed 1s ease-in-out infinite alternate;
-        }
-        @keyframes glowRed {
-            0% { box-shadow: 0 0 15px rgba(255, 71, 87, 0.2); }
-            100% { box-shadow: 0 0 40px rgba(255, 71, 87, 0.6); }
-        }
-        
-        .kisses-badge {
-            position: absolute;
-            bottom: -4px;
-            right: -4px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            color: #ff4757;
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-size: 9px;
-            font-weight: bold;
-        }
-
-        .meta-name {
-            font-size: 10px;
-            color: #e8ddd0; 
-            font-weight: bold;
-            margin-top: 4px;
-            text-align: center;
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .player-gifts-overlay {
-            position: absolute;
-            top: -14px;
-            right: -16px;
-            display: flex;
-            gap: 2px;
-            background: rgba(0,0,0,0.7);
-            padding: 2px 4px;
-            border-radius: 8px;
-            max-width: 48px;
-            overflow: hidden;
-            font-size: 10px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,215,0,0.1);
-        }
-
-        #user-p0  { top: 5%;   left: calc(50% - 30px); }
-        #user-p1  { top: 12%;  left: 72%; }
-        #user-p2  { top: 32%;  left: 82%; }
-        #user-p3  { top: 55%;  left: 82%; }
-        #user-p4  { top: 75%;  left: 72%; }
-        #user-p5  { top: 82%;  left: calc(50% - 30px); }
-        #user-p6  { top: 75%;  left: 12%; }
-        #user-p7  { top: 55%;  left: 2%; }
-        #user-p8  { top: 32%;  left: 2%; }
-        #user-p9  { top: 12%;  left: 12%; }
-        #user-p10 { top: 5%;   left: 23%; }
-        #user-p11 { top: 5%;   left: 67%; }
-
-        .vote-bubble {
-            position: absolute;
-            top: -26px;
-            background: rgba(0, 0, 0, 0.85);
-            color: #ffffff;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: bold;
-            display: none;
-            z-index: 150;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .choice-panel-box {
-            position: absolute;
-            bottom: 20px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            z-index: 200;
-            width: 100%;
-        }
-        .choice-txt {
-            font-size: 15px;
-            font-weight: bold;
-            color: #ffffff;
-            background: rgba(0,0,0,0.85);
-            padding: 6px 18px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .choice-row-btns { display: flex; gap: 25px; }
-        .act-btn {
-            width: 55px; height: 55px; border-radius: 50%; border: none; font-size: 24px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .act-btn:active { transform: scale(0.9); }
-        .btn-heart { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3); }
-        .btn-cross { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; box-shadow: 0 4px 20px rgba(231, 76, 60, 0.3); }
-
-        /* ===== ЧАТ (НОВЫЙ ДИЗАЙН) ===== */
-        .chat-section {
-            flex: 1; 
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255, 215, 0, 0.08);
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            position: relative;
-        }
-        
-        .chat-messages { 
-            flex: 1; 
-            padding: 12px 16px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px;
-        }
-        .chat-messages::-webkit-scrollbar { width: 3px; }
-        .chat-messages::-webkit-scrollbar-track { background: transparent; }
-        .chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 3px; }
-        
-        .chat-row { 
-            display: flex; 
-            align-items: flex-start; 
-            gap: 10px; 
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .chat-mini-avatar {
-            width: 30px; height: 30px; 
-            border-radius: 50%; 
-            background: linear-gradient(135deg, #2a1a12, #1a0f0a);
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 14px; flex-shrink: 0;
-            border: 1px solid rgba(255,215,0,0.1);
-        }
-        .chat-body-text { 
-            background: rgba(255, 255, 255, 0.05);
-            padding: 8px 14px; 
-            border-radius: 14px; 
-            font-size: 13px; 
-            max-width: 85%; 
-            word-break: break-word;
-            border: 1px solid rgba(255,255,255,0.05);
-            line-height: 1.4;
-            backdrop-filter: blur(5px);
-        }
-        .chat-sender-name { 
-            font-weight: bold; 
-            color: #ff9f43; 
-            margin-right: 6px;
-        }
-        
-        /* Системные сообщения */
-        .chat-row.system {
-            justify-content: center;
-        }
-        .chat-row.system .chat-body-text {
-            background: rgba(255, 215, 0, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.08);
-            text-align: center;
-            font-size: 12px;
-            color: rgba(255, 215, 0, 0.6);
-            max-width: 90%;
-        }
-        .chat-row.system .chat-body-text b { color: #ffd700; }
-        
-        .chat-row.creator-enter {
-            justify-content: center;
-            animation: creatorEnter 2s ease;
-        }
-        @keyframes creatorEnter {
-            0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
-            50% { transform: scale(1.2) rotate(3deg); opacity: 1; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        .chat-row.creator-enter .chat-body-text {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 0, 0.1));
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-            font-size: 14px;
-            font-weight: bold;
-            padding: 10px 20px;
-        }
-        .chat-row.creator-enter .chat-body-text b { color: #ffd700; }
-        
-        /* Поле ввода */
-        .chat-input-bar { 
-            display: flex; 
-            padding: 8px 12px; 
-            background: rgba(0, 0, 0, 0.3);
-            gap: 8px; 
-            flex-shrink: 0;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(5px);
-        }
-        .chat-input-field {
-            flex: 1; 
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px; 
-            padding: 10px 16px; 
-            color: #e8ddd0; 
-            font-size: 14px; 
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .chat-input-field:focus { border-color: rgba(255, 215, 0, 0.3); }
-        .chat-input-field::placeholder { color: rgba(255,255,255,0.2); }
-        .chat-submit-btn {
-            width: 40px; height: 40px; 
-            background: linear-gradient(135deg, #ffd700, #f0a500); 
-            border: none;
-            border-radius: 50%; 
-            color: #1a1410; 
-            font-size: 16px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: bold;
-        }
-        .chat-submit-btn:active { transform: scale(0.9); }
-
-        /* ===== ПОДАРКИ ===== */
-        .gifts-sliding-panel {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 260px;
-            background: rgba(20, 15, 12, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255, 215, 0, 0.1);
-            transform: translateY(100%); 
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 400; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 12px;
-            border-radius: 20px 20px 0 0;
-        }
-        .gifts-sliding-panel.open { transform: translateY(0); }
-        .gifts-header-title { 
-            font-size: 15px; 
-            font-weight: bold; 
-            color: #ffd700; 
-            margin-bottom: 10px; 
-            text-align: center; 
-        }
-        
-        .gifts-grid-scroll {
-            flex: 1; 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 8px;
-            overflow-y: auto; 
-            padding-bottom: 10px;
-        }
-        .gift-card-node {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px; 
-            padding: 8px 4px;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            cursor: pointer; 
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        .gift-card-node:active { 
-            transform: scale(0.95); 
-            border-color: rgba(255, 215, 0, 0.3);
-        }
-        .gift-card-emoji { font-size: 28px; }
-        .gift-card-price { 
-            font-size: 11px; 
-            color: #ff4757; 
-            font-weight: bold; 
-            margin-top: 4px; 
-        }
-        
-        .close-gifts-circle {
-            position: absolute; 
-            bottom: 12px; 
-            right: 12px;
-            width: 38px; 
-            height: 38px; 
-            background: linear-gradient(135deg, #2ecc71, #27ae60); 
-            color: white;
-            border-radius: 50%; 
-            font-size: 16px; 
-            font-weight: bold;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.2);
-            transition: transform 0.2s;
-        }
-        .close-gifts-circle:active { transform: scale(0.9); }
-
-        /* ===== МОДАЛКИ ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 500;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            backdrop-filter: blur(12px);
-        }
-        .modal-overlay.show { display: flex; }
-
-        /* Магазин сердечек */
-        .shop-modal {
-            background: linear-gradient(145deg, #1a1410, #2a1a12);
-            width: 100%; max-width: 340px;
-            border-radius: 24px; padding: 20px;
-            position: relative; color: #e8ddd0;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-        .close-shop-btn {
-            position: absolute; top: -12px; right: -12px;
-            width: 32px; height: 32px; 
-            background: linear-gradient(135deg, #ff4757, #c0392b); 
-            color: #fff;
-            border-radius: 50%; font-weight: bold; border: none;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-        }
-        .shop-title { 
-            font-size: 20px; 
-            font-weight: bold; 
-            margin-bottom: 16px; 
-            color: #ffd700;
-            text-align: center;
-        }
-        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .shop-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 14px; 
-            padding: 10px 4px;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: space-between;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .item-badge {
-            position: absolute; top: -8px; 
-            background: linear-gradient(135deg, #ffd700, #f0a500); 
-            color: #1a1410;
-            font-size: 7px; font-weight: bold; padding: 2px 8px; border-radius: 8px;
-        }
-        .item-title { font-size: 10px; color: #888; font-weight: 600; }
-        .item-value { font-size: 14px; font-weight: bold; color: #ffd700; }
-        .item-icon { font-size: 26px; margin: 4px 0; }
-        .buy-btn { 
-            width: 100%; 
-            border: none; 
-            border-radius: 10px; 
-            padding: 6px 0; 
-            font-weight: bold; 
-            font-size: 11px; 
-            color: #1a1410; 
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .buy-btn:active { transform: scale(0.95); }
-        .btn-blue { background: linear-gradient(135deg, #24b0ff, #0984e3); }
-        .btn-green { background: linear-gradient(135deg, #ffd700, #f0a500); }
-
-        /* ===== ТОП МОДАЛКА ===== */
-        .top-modal {
-            background: linear-gradient(145deg, #1a1410, #2a1a12);
-            width: 100%; max-width: 380px;
-            border-radius: 28px; 
-            padding: 24px 20px 20px;
-            position: relative; 
-            color: #e8ddd0;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        .top-modal::-webkit-scrollbar { width: 3px; }
-        .top-modal::-webkit-scrollbar-track { background: transparent; }
-        .top-modal::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 3px; }
-        
-        .top-modal .close-top-btn {
-            position: sticky; 
-            top: 0; 
-            float: right;
-            width: 34px; 
-            height: 34px; 
-            background: linear-gradient(135deg, #ff4757, #c0392b); 
-            color: #fff;
-            border-radius: 50%; 
-            font-weight: bold; 
-            border: none;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer;
-            font-size: 18px;
-            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-            transition: transform 0.2s;
-            z-index: 10;
-        }
-        .top-modal .close-top-btn:active { transform: scale(0.9); }
-        
-        .top-title { 
-            font-size: 22px; 
-            font-weight: 900; 
-            text-align: center; 
-            margin: 0 0 20px 0;
-            color: #ffd700;
-            letter-spacing: 1px;
-        }
-        
-        .top-list { 
-            list-style: none; 
-            padding: 0; 
+        /* Базовые сбросы стилей */
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+            user-select: none;
         }
-        
-        .top-item {
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
-            padding: 10px 14px; 
-            margin-bottom: 4px;
-            border-radius: 14px;
-            transition: background 0.2s;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid transparent;
-        }
-        .top-item:hover { 
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.05);
-        }
-        
-        .top-item .rank {
-            font-weight: bold; 
-            font-size: 20px; 
-            min-width: 38px;
-            text-align: center;
-        }
-        .top-item .rank.gold { color: #ffd700; }
-        .top-item .rank.silver { color: #c0c0c0; }
-        .top-item .rank.bronze { color: #cd7f32; }
-        .top-item .rank.normal { color: #666; font-size: 16px; }
-        
-        .top-item .top-avatar { 
-            font-size: 28px; 
-            min-width: 40px; 
-            text-align: center;
-        }
-        
-        .top-item .top-name { 
-            flex: 1; 
-            font-weight: 600; 
-            font-size: 15px;
-            padding: 0 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #e8ddd0;
-        }
-        .top-item .top-name .creator-badge {
-            color: #ffd700;
-            font-size: 14px;
-            margin-left: 4px;
-        }
-        
-        .top-item .top-kisses {
-            background: rgba(255, 71, 87, 0.1);
-            padding: 4px 14px; 
-            border-radius: 20px;
-            color: #ff4757; 
-            font-weight: 700;
-            font-size: 14px;
-            border: 1px solid rgba(255, 71, 87, 0.1);
-            white-space: nowrap;
-        }
-        
-        .top-item.my-rank {
-            background: rgba(255, 215, 0, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-        
-        .top-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
-        .top-empty .big-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
-        .top-empty .sub-text { font-size: 13px; color: #444; margin-top: 6px; }
 
-        /* ===== МАГАЗИН СКИНОВ ===== */
-        .skins-modal {
-            background: linear-gradient(145deg, #1a1410, #2a1a12);
-            width: 100%; max-width: 380px;
-            border-radius: 28px; 
-            padding: 24px 20px 20px;
-            position: relative; 
-            color: #e8ddd0;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            animation: slideUp 0.4s ease;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f5;
+            color: #000000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .skins-modal::-webkit-scrollbar { width: 3px; }
-        .skins-modal::-webkit-scrollbar-track { background: transparent; }
-        .skins-modal::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 3px; }
-        
-        .skins-modal .close-skins-btn {
-            position: sticky; 
-            top: 0; 
-            float: right;
-            width: 34px; 
-            height: 34px; 
-            background: linear-gradient(135deg, #ff4757, #c0392b); 
-            color: #fff;
-            border-radius: 50%; 
-            font-weight: bold; 
-            border: none;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer;
-            font-size: 18px;
-            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-            transition: transform 0.2s;
-            z-index: 10;
-        }
-        .skins-modal .close-skins-btn:active { transform: scale(0.9); }
-        
-        .skins-title { 
-            font-size: 22px; 
-            font-weight: 900; 
-            text-align: center; 
-            margin: 0 0 20px 0;
-            color: #ffd700;
-            letter-spacing: 1px;
-        }
-        
-        .skin-item {
+
+        /* Шапка в стиле Telegram */
+        .header {
+            background-color: #ffffff;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.3s;
+            border-bottom: 1px solid #e5e5e7;
         }
-        .skin-item.active {
-            border-color: rgba(255, 215, 0, 0.3);
-            background: rgba(255, 215, 0, 0.05);
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2481cc; /* Фирменный цвет Telegram */
         }
-        .skin-item .skin-info {
+
+        /* Вкладки сверху (Все чаты / Звезды) */
+        .tabs {
             display: flex;
-            align-items: center;
+            background-color: #ffffff;
+            padding: 6px 16px;
+            gap: 12px;
+            border-bottom: 1px solid #e5e5e7;
+        }
+
+        .tab {
+            background-color: #e8f3fc;
+            color: #2481cc;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Основной контент (Интерфейс игры/чата) */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
             gap: 12px;
         }
-        .skin-item .skin-preview {
-            width: 30px;
-            height: 90px;
-            border-radius: 8px;
+
+        /* Окно статуса WebSocket */
+        .status-card {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 14px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            justify-content: space-between;
         }
-        .skin-item .skin-name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .skin-item .skin-price {
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 8px;
             font-size: 12px;
-            color: #ff4757;
-        }
-        .skin-item .skin-btn {
-            padding: 6px 16px;
-            border-radius: 12px;
-            border: none;
             font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .skin-item .skin-btn:active { transform: scale(0.95); }
-        .skin-item .skin-btn.buy {
-            background: linear-gradient(135deg, #ffd700, #f0a500);
-            color: #1a1410;
-        }
-        .skin-item .skin-btn.active {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-        }
-        .skin-item .skin-btn.owned {
-            background: rgba(255,255,255,0.05);
-            color: #666;
-            cursor: default;
-        }
-        .skin-item .skin-btn.locked {
-            background: rgba(255,255,255,0.03);
-            color: #444;
-            cursor: not-allowed;
         }
 
-        /* Анимации */
-        .fx-heart { 
-            position: absolute; 
-            font-size: 26px; 
-            animation: flyHeart 1.2s ease-out forwards; 
-            pointer-events: none; 
-            z-index: 300; 
-        }
-        @keyframes flyHeart {
-            0% { transform: translate(0,0) scale(0.5); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
-        }
+        .status-connected { background-color: #e2f7e2; color: #1f781f; }
+        .status-disconnected { background-color: #ffe5e5; color: #cc0000; }
 
-        .gift-flying-node {
-            position: fixed; 
-            font-size: 34px; 
-            z-index: 1000;
-            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-            pointer-events: none;
-            filter: drop-shadow(0 4px 20px rgba(255, 215, 0, 0.3));
-        }
-
-        .connection-error {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            flex-direction: column;
+        /* Игровое поле / Панель действий */
+        .game-panel {
+            background: #ffffff;
             padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-        .connection-error.show { display: flex; }
-        .connection-error h2 { color: #ff4757; margin-bottom: 10px; font-size: 22px; }
-        .connection-error p { color: #888; text-align: center; margin-bottom: 20px; }
-        .retry-btn {
-            background: linear-gradient(135deg, #ffd700, #f0a500);
-            color: #1a1410;
-            border: none;
-            padding: 14px 40px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .retry-btn:active { transform: scale(0.95); }
-
-        .creator-gift-btn {
-            display: none;
-            background: linear-gradient(135deg, #ffd700, #f0a500);
-            border: none;
-            color: #1a1410;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 10px;
-            cursor: pointer;
-            margin-top: 2px;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-        }
-        .creator-gift-btn:active { transform: scale(0.9); }
-        .creator-gift-btn.show { display: block; }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.9);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 14px;
-            font-size: 14px;
-            z-index: 9998;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,215,0,0.1);
-            animation: toastIn 0.3s ease;
-            max-width: 90%;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             text-align: center;
         }
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .btn-action {
+            background-color: #2481cc;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background 0.2s;
         }
-        .toast.success { border-color: rgba(46, 204, 113, 0.3); color: #2ecc71; }
-        .toast.error { border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
-        .toast.info { border-color: rgba(255, 215, 0, 0.3); color: #ffd700; }
+
+        .btn-action:active {
+            background-color: #1c66a3;
+        }
+
+        /* Лог сетевых событий */
+        .log-box {
+            background: #222;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            height: 150px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        /* Нижнее меню навигации */
+        .bottom-nav {
+            background-color: #ffffff;
+            border-top: 1px solid #e5e5e7;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: #707579;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: #2481cc;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Ошибка подключения -->
-    <div class="connection-error" id="connection-error">
-        <h2>⚠️ Нет подключения</h2>
-        <p>Не удалось подключиться к игровому серверу. Проверьте интернет-соединение.</p>
-        <button class="retry-btn" onclick="location.reload()">Повторить попытку</button>
+    <div class="header">
+        <div class="header-title">DICEGRAM</div>
+        <div style="font-size: 18px; color: #707579;">🔍</div>
     </div>
 
-    <!-- ШАПКА -->
-    <div class="game-header">
-        <div class="header-left">
-            <div class="hearts-balance-top" onclick="openShopModal()">
-                <span>❤️</span> <div id="my-hearts-display">0</div>
-            </div>
-            <button class="top-btn" onclick="openTopModal()">🏆 Топ</button>
-            <button class="skins-btn" onclick="openSkinsModal()">🍾 Скины</button>
-        </div>
-        <div class="status-msg" id="game-status-label">Подключение...</div>
+    <div class="tabs">
+        <div class="tab">Все чаты <span style="font-weight: bold;">🎲</span></div>
     </div>
 
-    <div class="board-container" id="board">
-        <div class="hint-arrow-box" id="turn-hint">
-            <div class="hint-text">🍾 Крути бутылочку!</div>
+    <div class="content">
+        
+        <div class="status-card">
+            <span>Статус соединения:</span>
+            <span id="status" class="status-badge status-disconnected">Отключен</span>
         </div>
 
-        <div class="bottle-node bottle-skin-classic" id="bottle" onclick="clientRequestSpin()">
-            <svg class="bottle-img" viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg">
-                <path d="M42,15 L58,15 L58,65 L42,65 Z" stroke="#0d261f" stroke-width="3"/>
-                <path d="M42,65 C22,95 22,115 22,145 L22,265 C22,278 32,288 50,288 C68,288 78,278 78,265 L78,145 C78,115 78,95 58,65 Z" stroke="#0d261f" stroke-width="4"/>
-                <rect x="27" y="135" width="46" height="50" rx="4" fill="#e74c3c"/>
-                <circle cx="50" cy="160" r="10" fill="#ffffff"/>
-            </svg>
+        <div class="game-panel">
+            <h3>Управление кубиками</h3>
+            <p style="color: #707579; margin-top: 5px;" id="user-welcome">Загрузка данных пользователя...</p>
+            <button class="btn-action" id="send-btn">Бросить кости 🎲</button>
         </div>
 
-        <!-- Игроки -->
-        <div class="grid-player" id="user-p0" onclick="handleSeatClick(0)"><div class="vote-bubble" id="b-0"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-0"></div><div class="kisses-badge" id="k-0">💋 0</div><button class="creator-gift-btn" id="cg-0" onclick="event.stopPropagation(); giveCreatorGift(0)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p1" onclick="handleSeatClick(1)"><div class="vote-bubble" id="b-1"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-1"></div><div class="kisses-badge" id="k-1">💋 0</div><button class="creator-gift-btn" id="cg-1" onclick="event.stopPropagation(); giveCreatorGift(1)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p2" onclick="handleSeatClick(2)"><div class="vote-bubble" id="b-2"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-2"></div><div class="kisses-badge" id="k-2">💋 0</div><button class="creator-gift-btn" id="cg-2" onclick="event.stopPropagation(); giveCreatorGift(2)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p3" onclick="handleSeatClick(3)"><div class="vote-bubble" id="b-3"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-3"></div><div class="kisses-badge" id="k-3">💋 0</div><button class="creator-gift-btn" id="cg-3" onclick="event.stopPropagation(); giveCreatorGift(3)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p4" onclick="handleSeatClick(4)"><div class="vote-bubble" id="b-4"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-4"></div><div class="kisses-badge" id="k-4">💋 0</div><button class="creator-gift-btn" id="cg-4" onclick="event.stopPropagation(); giveCreatorGift(4)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p5" onclick="handleSeatClick(5)"><div class="vote-bubble" id="b-5"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-5"></div><div class="kisses-badge" id="k-5">💋 0</div><button class="creator-gift-btn" id="cg-5" onclick="event.stopPropagation(); giveCreatorGift(5)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p6" onclick="handleSeatClick(6)"><div class="vote-bubble" id="b-6"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-6"></div><div class="kisses-badge" id="k-6">💋 0</div><button class="creator-gift-btn" id="cg-6" onclick="event.stopPropagation(); giveCreatorGift(6)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p7" onclick="handleSeatClick(7)"><div class="vote-bubble" id="b-7"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-7"></div><div class="kisses-badge" id="k-7">💋 0</div><button class="creator-gift-btn" id="cg-7" onclick="event.stopPropagation(); giveCreatorGift(7)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p8" onclick="handleSeatClick(8)"><div class="vote-bubble" id="b-8"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-8"></div><div class="kisses-badge" id="k-8">💋 0</div><button class="creator-gift-btn" id="cg-8" onclick="event.stopPropagation(); giveCreatorGift(8)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p9" onclick="handleSeatClick(9)"><div class="vote-bubble" id="b-9"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-9"></div><div class="kisses-badge" id="k-9">💋 0</div><button class="creator-gift-btn" id="cg-9" onclick="event.stopPropagation(); giveCreatorGift(9)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p10" onclick="handleSeatClick(10)"><div class="vote-bubble" id="b-10"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-10"></div><div class="kisses-badge" id="k-10">💋 0</div><button class="creator-gift-btn" id="cg-10" onclick="event.stopPropagation(); giveCreatorGift(10)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p11" onclick="handleSeatClick(11)"><div class="vote-bubble" id="b-11"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-11"></div><div class="kisses-badge" id="k-11">💋 0</div><button class="creator-gift-btn" id="cg-11" onclick="event.stopPropagation(); giveCreatorGift(11)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <p style="font-size: 13px; color: #707579; font-weight: bold;">События в реальном времени:</p>
+        <div class="log-box" id="log">Ожидание подключения...</div>
 
-        <div class="choice-panel-box" id="kiss-ui-panel">
-            <div class="choice-txt" id="kiss-ui-title">💋 Поцеловать?</div>
-            <div class="choice-row-btns">
-                <button class="act-btn btn-heart" onclick="sendAction(true)">❤️</button>
-                <button class="act-btn btn-cross" onclick="sendAction(false)">❌</button>
-            </div>
-        </div>
     </div>
 
-    <!-- ===== ЧАТ (НОВЫЙ ДИЗАЙН) ===== -->
-    <div class="chat-section">
-        <div class="chat-messages" id="chat-box"></div>
-        <div class="chat-input-bar">
-            <input type="text" class="chat-input-field" id="chat-input" placeholder="💬 Написать сообщение..." onkeypress="handleChatKey(event)">
-            <button class="chat-submit-btn" onclick="sendChatMessage()">➔</button>
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <span class="nav-icon">💬</span>
+            <span>Чаты</span>
         </div>
-
-        <div class="gifts-sliding-panel" id="gifts-panel">
-            <div class="gifts-header-title" id="gifts-panel-title">🎁 Отправить подарок</div>
-            <div class="gifts-grid-scroll">
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🎬')"><span class="gift-card-emoji">🎬</span><span class="gift-card-price">❤️ 9</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🎵')"><span class="gift-card-emoji">🎵</span><span class="gift-card-price">❤️ 5</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🧨')"><span class="gift-card-emoji">🧨</span><span class="gift-card-price">❤️ 3</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('👑')"><span class="gift-card-emoji">👑</span><span class="gift-card-price">❤️ 3</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('💎')"><span class="gift-card-emoji">💎</span><span class="gift-card-price">❤️ 1</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🍓')"><span class="gift-card-emoji">🍓</span><span class="gift-card-price">❤️ 1</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🍅')"><span class="gift-card-emoji">🍅</span><span class="gift-card-price">❤️ 1</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🐸')"><span class="gift-card-emoji">🐸</span><span class="gift-card-price">❤️ 2</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🌹')"><span class="gift-card-emoji">🌹</span><span class="gift-card-price">❤️ 1</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🍬')"><span class="gift-card-emoji">🍬</span><span class="gift-card-price">❤️ 1</span></div>
-                <div class="gift-card-node" onclick="clientTriggerSendGift('🦆')"><span class="gift-card-emoji">🦆</span><span class="gift-card-price">❤️ 1</span></div>
-            </div>
-            <div class="close-gifts-circle" onclick="closeGiftsPanel()">✕</div>
-        </div>
-    </div>
-
-    <!-- МАГАЗИН СЕРДЕЧЕК -->
-    <div class="modal-overlay" id="shop-modal-view">
-        <div class="shop-modal">
-            <button class="close-shop-btn" onclick="closeShopModal()">✕</button>
-            <div class="shop-title">❤️ Купить сердечки</div>
-            <div class="shop-grid">
-                <div class="shop-item">
-                    <div class="item-title">VIP статус</div>
-                    <div class="item-icon">👑</div>
-                    <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-title">Бонус +20</div>
-                    <div class="item-icon">👥</div>
-                    <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-badge">🔥 Выгодно</div>
-                    <div class="item-value">❤️12.5к</div>
-                    <div class="item-icon">📦</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(12500, 5000)">⭐ 5000</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-value">❤️6000</div>
-                    <div class="item-icon">🏺</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(6000, 2500)">⭐ 2500</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-badge">⭐ Хит</div>
-                    <div class="item-value">❤️2200</div>
-                    <div class="item-icon">🎒</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(2200, 1000)">⭐ 1000</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-value">❤️500</div>
-                    <div class="item-icon">🎁</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(500, 250)">⭐ 250</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-value">❤️10</div>
-                    <div class="item-icon">💝</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(10, 1)">⭐ 1</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-value">❤️20</div>
-                    <div class="item-icon">💖</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(20, 2)">⭐ 2</button>
-                </div>
-                <div class="shop-item">
-                    <div class="item-value">❤️50</div>
-                    <div class="item-icon">❤️</div>
-                    <button class="buy-btn btn-green" onclick="triggerStarsBuy(50, 5)">⭐ 5</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== ТОП МОДАЛКА ===== -->
-    <div class="modal-overlay" id="top-modal-view">
-        <div class="top-modal">
-            <button class="close-top-btn" onclick="closeTopModal()">✕</button>
-            <div class="top-title">🏆 ТОП-10 ИГРОКОВ</div>
-            <div id="top-list-container">
-                <div class="top-empty">
-                    <span class="big-emoji">⏳</span>
-                    Загрузка...
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== МАГАЗИН СКИНОВ ===== -->
-    <div class="modal-overlay" id="skins-modal-view">
-        <div class="skins-modal">
-            <button class="close-skins-btn" onclick="closeSkinsModal()">✕</button>
-            <div class="skins-title">🍾 Магазин скинов</div>
-            <div id="skins-container">
-                <div class="top-empty">
-                    <span class="big-emoji">⏳</span>
-                    Загрузка...
-                </div>
-            </div>
-            <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);font-size:11px;color:#555;">
-                💡 Скины доступны только Создателю
-            </div>
+        <div class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Настройки</span>
         </div>
     </div>
 
     <script>
-        // ==== ГЛАВНОЕ: ПРАВИЛЬНЫЙ URL БЭКЕНДА ====
-        const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
-        
-        // 👑 ПРАВИЛЬНЫЙ ID СОЗДАТЕЛЯ
-        const CREATOR_ID = "8771009385";  // @dauletbr
-        
-        console.log("🚀 Подключение к серверу:", BACKEND_URL);
-        
-        const socket = io(BACKEND_URL, {
-            transports: ['websocket', 'polling'],
-            reconnection: true,
-            reconnectionAttempts: 10,
-            reconnectionDelay: 1000,
-            timeout: 15000
-        });
-        
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        
-        // ---- ЗВУКИ ----
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
+        tg.expand(); // Расширяем приложение на весь экран
 
-        function initAudio() {
-            if (!audioCtx) {
-                try {
-                    audioCtx = new AudioContext();
-                } catch(e) {}
-            }
+        // Отображение имени пользователя из Telegram
+        const userWelcome = document.getElementById('user-welcome');
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userWelcome.innerText = `Игрок: @${tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name}`;
+        } else {
+            userWelcome.innerText = "Запущено вне Telegram (Тестовый режим)";
         }
 
-        function playBeep(freq, duration, type = 'sine', volume = 0.3) {
-            try {
-                initAudio();
-                if (!audioCtx) return;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
+        // Элементы UI для логов и статуса
+        const statusBadge = document.getElementById('status');
+        const logBox = document.getElementById('log');
+        const sendBtn = document.getElementById('send-btn');
+
+        function appendLog(message) {
+            const time = new Date().toLocaleTimeString();
+            logBox.innerHTML += `<div>[${time}] ${message}</div>`;
+            logBox.scrollTop = logBox.scrollHeight;
         }
 
-        function playSpinSound() {
-            playBeep(300, 0.1, 'sine', 0.2);
-            setTimeout(() => playBeep(400, 0.1, 'sine', 0.25), 100);
-            setTimeout(() => playBeep(500, 0.1, 'sine', 0.3), 200);
-            setTimeout(() => playBeep(600, 0.1, 'sine', 0.35), 300);
-            setTimeout(() => playBeep(700, 0.15, 'sine', 0.4), 400);
-            setTimeout(() => playBeep(800, 0.2, 'sine', 0.45), 550);
-            setTimeout(() => playBeep(900, 0.3, 'sine', 0.5), 750);
-        }
+        // Подключение к твоему WebSocket серверу
+        // Используем протокол wss:// для защищенного соединения https
+        const wsUrl = "wss://a38182-6d28.j.jrnm.app";
+        let socket;
 
-        function playKissSound() {
-            playBeep(523, 0.15, 'sine', 0.25);
-            setTimeout(() => playBeep(659, 0.15, 'sine', 0.25), 120);
-            setTimeout(() => playBeep(784, 0.3, 'sine', 0.3), 240);
-            setTimeout(() => playBeep(1047, 0.4, 'sine', 0.2), 400);
-            setTimeout(() => playBeep(784, 0.2, 'sine', 0.15), 600);
-        }
+        function connectWS() {
+            appendLog("Попытка подключения к сокету...");
+            socket = new WebSocket(wsUrl);
 
-        function playGiftSound() {
-            playBeep(600, 0.1, 'sine', 0.2);
-            setTimeout(() => playBeep(800, 0.1, 'sine', 0.25), 80);
-            setTimeout(() => playBeep(1000, 0.1, 'sine', 0.3), 160);
-            setTimeout(() => playBeep(1200, 0.15, 'sine', 0.35), 240);
-            setTimeout(() => playBeep(1500, 0.2, 'sine', 0.4), 340);
-            setTimeout(() => {
-                playBeep(1000, 0.1, 'sine', 0.2);
-                setTimeout(() => playBeep(1200, 0.15, 'sine', 0.25), 80);
-            }, 500);
-        }
-
-        function playRejectSound() {
-            playBeep(400, 0.2, 'sawtooth', 0.15);
-            setTimeout(() => playBeep(300, 0.3, 'sawtooth', 0.12), 200);
-        }
-
-        document.addEventListener('click', () => initAudio(), { once: true });
-        document.addEventListener('touchstart', () => initAudio(), { once: true });
-
-        // ---- ОСНОВНЫЕ ПЕРЕМЕННЫЕ ----
-        let myNickname = "@Player";
-        let myAvatar = "😎";
-        let myAssignedSeat = null;
-        let myTelegramId = null;
-        let isMyTurn = false;
-        let localRotation = 0;
-        let targetGiftSeatIndex = null;
-        let isCreator = false;
-        let currentSkin = 'classic';
-
-        if (tg) {
-            try {
-                tg.expand();
-                const user = tg.initDataUnsafe?.user;
-                if (user) {
-                    myNickname = user.username ? `@${user.username}` : user.first_name;
-                    myTelegramId = String(user.id);
-                    isCreator = myTelegramId === CREATOR_ID;
-                    const avatars = ["😎","🔥","✨","🍀","🎲","⚡","🍿","🎮","🚀","💫","🌟","🎯"];
-                    myAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-                }
-                console.log("✅ Telegram WebApp инициализирован");
-            } catch(e) {
-                console.error("❌ Ошибка инициализации Telegram:", e);
-            }
-        }
-
-        // ---- ТОСТ УВЕДОМЛЕНИЯ ----
-        function showToast(message, type = 'info') {
-            const existing = document.querySelector('.toast');
-            if (existing) existing.remove();
-            
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // ---- ОБРАБОТЧИКИ СОКЕТА ----
-        socket.on("connect_error", (error) => {
-            console.error("❌ Ошибка подключения:", error);
-            document.getElementById('game-status-label').innerText = "⚠️ Ошибка подключения";
-            document.getElementById('connection-error').classList.add('show');
-        });
-
-        socket.on("disconnect", (reason) => {
-            if (reason === "io server disconnect" || reason === "transport error") {
-                document.getElementById('connection-error').classList.add('show');
-            }
-        });
-
-        socket.on("reconnect", () => {
-            document.getElementById('connection-error').classList.remove('show');
-            document.getElementById('game-status-label').innerText = "✅ Подключено!";
-        });
-
-        // ---- ТОП ИГРОКОВ ----
-        function openTopModal() {
-            const modal = document.getElementById('top-modal-view');
-            const container = document.getElementById('top-list-container');
-            container.innerHTML = `<div class="top-empty"><span class="big-emoji">⏳</span>Загрузка...</div>`;
-            modal.classList.add('show');
-            socket.emit("get_top", {});
-        }
-
-        function closeTopModal() {
-            document.getElementById('top-modal-view').classList.remove('show');
-        }
-
-        socket.on("top_response", (data) => {
-            const container = document.getElementById('top-list-container');
-            
-            if (!data.top || data.top.length === 0) {
-                container.innerHTML = `
-                    <div class="top-empty">
-                        <span class="big-emoji">😢</span>
-                        Пока нет игроков с поцелуями
-                        <div class="sub-text">Первый поцелуй будет твоим!</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            const medals = ['🥇', '🥈', '🥉'];
-            const rankClasses = ['gold', 'silver', 'bronze'];
-            let html = '<ul class="top-list">';
-            
-            data.top.forEach((player, index) => {
-                const rank = index < 3 ? medals[index] : `#${index + 1}`;
-                const rankClass = index < 3 ? rankClasses[index] : 'normal';
-                const isCreatorPlayer = player.telegram_id === CREATOR_ID;
-                const isMe = player.telegram_id === myTelegramId;
-                const avatar = isCreatorPlayer ? "👑" : "😎";
-                const displayName = player.username || 'Аноним';
-                const creatorBadge = isCreatorPlayer ? '<span class="creator-badge">👑</span>' : '';
-                const myClass = isMe ? 'my-rank' : '';
+            socket.onopen = function(e) {
+                statusBadge.innerText = "Подключен";
+                statusBadge.className = "status-badge status-connected";
+                appendLog("Успешно подключено к серверу!");
                 
-                html += `
-                    <li class="top-item ${myClass}">
-                        <span class="rank ${rankClass}">${rank}</span>
-                        <span class="top-avatar">${avatar}</span>
-                        <span class="top-name">${displayName} ${creatorBadge}</span>
-                        <span class="top-kisses">💋 ${player.kisses}</span>
-                    </li>
-                `;
-            });
-            
-            html += '</ul>';
-            container.innerHTML = html;
-        });
+                // Пример отправки стартового пакета при входе
+                socket.send(JSON.stringify({
+                    action: "init",
+                    user: tg.initDataUnsafe?.user?.username || "Guest"
+                }));
+            };
 
-        // ---- СКИНЫ БУТЫЛКИ ----
-        function applySkin(skinId) {
-            const bottle = document.getElementById('bottle');
-            bottle.className = `bottle-node bottle-skin-${skinId}`;
-            currentSkin = skinId;
-        }
-
-        socket.on("bottle_skin_update", (data) => {
-            console.log("🎨 Обновление скина:", data.skin);
-            applySkin(data.skin);
-        });
-
-        function openSkinsModal() {
-            const modal = document.getElementById('skins-modal-view');
-            const container = document.getElementById('skins-container');
-            container.innerHTML = `<div class="top-empty"><span class="big-emoji">⏳</span>Загрузка...</div>`;
-            modal.classList.add('show');
-            socket.emit("get_skins", {});
-        }
-
-        function closeSkinsModal() {
-            document.getElementById('skins-modal-view').classList.remove('show');
-        }
-
-        socket.on("skins_response", (data) => {
-            const container = document.getElementById('skins-container');
-            
-            if (!data.skins || data.skins.length === 0) {
-                container.innerHTML = `<div class="top-empty"><span class="big-emoji">😢</span>Скины не найдены</div>`;
-                return;
-            }
-            
-            let html = '<div style="margin-bottom:12px;">';
-            if (data.is_creator) {
-                html += `<div style="color:#ffd700;font-size:13px;text-align:center;">👑 У вас ${data.hearts_balance} ❤️</div>`;
-            }
-            html += '</div>';
-            
-            data.skins.forEach(skin => {
-                const isActive = skin.is_active;
-                const isOwned = skin.is_owned;
-                const priceText = skin.price === 0 ? 'Бесплатно' : `${skin.price} ❤️`;
-                const btnClass = isActive ? 'active' : (isOwned ? 'owned' : 'buy');
-                const btnText = isActive ? '✅ Активен' : (isOwned ? '📦 Владелец' : 'Купить');
-                const isLocked = !data.is_creator && skin.price > 0;
+            socket.onmessage = function(event) {
+                appendLog(`Получено: ${event.data}`);
                 
-                html += `
-                    <div class="skin-item ${isActive ? 'active' : ''}">
-                        <div class="skin-info">
-                            <div class="skin-preview" style="background:${skin.color}22;border-color:${skin.color}44;">
-                                ${skin.emoji}
-                            </div>
-                            <div>
-                                <div class="skin-name">${skin.name}</div>
-                                <div class="skin-price">${priceText}</div>
-                            </div>
-                        </div>
-                        <button class="skin-btn ${btnClass}" 
-                            onclick="${isLocked ? `showToast('❌ Смена скинов доступна только Создателю игры!', 'error')` : `buySkin('${skin.id}')`}"
-                            ${isLocked ? 'disabled' : ''}>
-                            ${btnText}
-                        </button>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        });
+                // Здесь ты будешь обрабатывать логику игры, когда сервер присылает ход другого игрока
+            };
 
-        function buySkin(skinId) {
-            socket.emit("buy_skin", { skin_id: skinId });
+            socket.onclose = function(event) {
+                statusBadge.innerText = "Отключен";
+                statusBadge.className = "status-badge status-disconnected";
+                appendLog(`Соединение закрыто. Код: ${event.code}`);
+                // Авто-переподключение через 5 секунд в случае обрыва
+                setTimeout(connectWS, 5000);
+            };
+
+            socket.onerror = function(error) {
+                appendLog(`Ошибка сокета: ${error.message || "Неизвестная ошибка"}`);
+            };
         }
 
-        socket.on("skin_buy_result", (data) => {
-            if (data.success) {
-                showToast(data.message, 'success');
-                if (data.skin_id) {
-                    applySkin(data.skin_id);
-                }
-                // Обновляем магазин
-                setTimeout(() => {
-                    socket.emit("get_skins", {});
-                }, 500);
-            } else {
-                showToast(data.message, 'error');
-            }
-        });
-
-        // ---- ОСТАЛЬНЫЕ ФУНКЦИИ ----
-        function openShopModal() { 
-            document.getElementById('shop-modal-view').classList.add('show'); 
-        }
-        function closeShopModal() { 
-            document.getElementById('shop-modal-view').classList.remove('show'); 
-        }
-
-        function triggerStarsBuy(amount, starsCost) {
-            socket.emit("buy_hearts_invoice", { 
-                amount: amount, 
-                stars: starsCost, 
-                initData: tg ? tg.initData : "" 
-            });
-            closeShopModal();
-        }
-
-        socket.on("invoice_link_ready", (data) => {
-            if (tg && data.url) {
-                try {
-                    tg.openInvoice(data.url, function(status) {
-                        if(status === 'paid') {
-                            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                        }
-                    });
-                } catch(e) {
-                    window.open(data.url, '_blank');
-                }
-            }
-        });
-
-        socket.on("stars_purchase_success", (data) => {
-            addSystemMessage(`🎉 Игрок купил пакет ❤️ ${data.amount} через Telegram Stars!`, '🎉');
-        });
-
-        function addSystemMessage(text) {
-            const chatBox = document.getElementById('chat-box');
-            const row = document.createElement('div');
-            row.className = 'chat-row system';
-            row.innerHTML = `<div class="chat-body-text">${text}</div>`;
-            chatBox.appendChild(row);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function handleSeatClick(seatIndex) {
-            if (myAssignedSeat === seatIndex) return;
-            const targetNode = document.getElementById(`user-p${seatIndex}`);
-            if (!targetNode.classList.contains('occupied')) return;
-            
-            const nameText = targetNode.querySelector('.meta-name').innerText;
-            targetGiftSeatIndex = seatIndex;
-            document.getElementById('gifts-panel-title').innerText = `🎁 Отправить подарок ${nameText}`;
-            document.getElementById('gifts-panel').classList.add('open');
-        }
-
-        function closeGiftsPanel() {
-            document.getElementById('gifts-panel').classList.remove('open');
-            targetGiftSeatIndex = null;
-        }
-
-        function clientTriggerSendGift(giftEmoji) {
-            if (targetGiftSeatIndex === null) {
-                alert("Сначала выберите игрока, нажав на его место!");
-                return;
-            }
-            playGiftSound();
-            socket.emit("send_gift", { to_seat: targetGiftSeatIndex, gift: giftEmoji });
-            closeGiftsPanel();
-        }
-
-        socket.on("gift_error", (data) => {
-            showToast(data.text, 'error');
-            playRejectSound();
-        });
-
-        socket.on("gift_broadcast", (data) => {
-            playGiftSound();
-            animateGiftFlight(data.from_seat, data.to_seat, data.gift);
-            addSystemMessage(`🎁 ${data.from_name} подарил ${data.to_name} ${data.gift}`);
-        });
-
-        function animateGiftFlight(fromSeat, toSeat, giftEmoji) {
-            const fromNode = document.getElementById(`user-p${fromSeat}`);
-            const toNode = document.getElementById(`user-p${toSeat}`);
-            if (!fromNode || !toNode) return;
-
-            const fromRect = fromNode.getBoundingClientRect();
-            const toRect = toNode.getBoundingClientRect();
-
-            const flyer = document.createElement('div');
-            flyer.className = 'gift-flying-node';
-            flyer.innerText = giftEmoji;
-            flyer.style.left = `${fromRect.left + fromRect.width / 2 - 18}px`;
-            flyer.style.top = `${fromRect.top + fromRect.height / 2 - 18}px`;
-            document.body.appendChild(flyer);
-
-            setTimeout(() => {
-                flyer.style.left = `${toRect.left + toRect.width / 2 - 18}px`;
-                flyer.style.top = `${toRect.top + toRect.height / 2 - 18}px`;
-                flyer.style.transform = 'scale(1.5)';
-            }, 50);
-
-            setTimeout(() => {
-                flyer.remove();
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            }, 1250);
-        }
-
-        function giveCreatorGift(seatIndex) {
-            if (!isCreator) return;
-            const targetNode = document.getElementById(`user-p${seatIndex}`);
-            if (!targetNode.classList.contains('occupied')) {
-                showToast('Это место свободно!', 'error');
-                return;
-            }
-            if (confirm(`🎁 Подарить +1000 ❤️ игроку за местом ${seatIndex + 1}?`)) {
-                socket.emit("creator_give_hearts", { to_seat: seatIndex });
-                playGiftSound();
-            }
-        }
-
-        socket.on("connect", () => {
-            document.getElementById('connection-error').classList.remove('show');
-            document.getElementById('game-status-label').innerText = "🚪 Вход за стол...";
-            
-            socket.emit("join_table", { 
-                username: myNickname, 
-                avatar: myAvatar, 
-                initData: tg ? tg.initData : "" 
-            });
-        });
-
-        socket.on("join_response", (data) => {
-            if (data.status !== "spectator") {
-                myAssignedSeat = data.seat;
-            }
-        });
-
-        socket.on("chat_msg_receive", (data) => {
-            const chatBox = document.getElementById('chat-box');
-            const row = document.createElement('div');
-            
-            if (data.is_system) {
-                row.className = 'chat-row system';
-                if (data.is_creator) {
-                    row.className = 'chat-row creator-enter';
-                }
-                row.innerHTML = `<div class="chat-body-text">${data.text}</div>`;
-            } else {
-                row.className = 'chat-row';
-                row.innerHTML = `
-                    <div class="chat-mini-avatar">${data.avatar}</div>
-                    <div class="chat-body-text"><span class="chat-sender-name">${data.name}:</span>${data.text}</div>
-                `;
-            }
-            
-            chatBox.appendChild(row);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            
-            if (data.is_creator) {
-                playKissSound();
-                setTimeout(() => {
-                    const hearts = ['🎉', '✨', '🌟', '💫', '🎊'];
-                    for (let i = 0; i < 20; i++) {
-                        setTimeout(() => {
-                            const em = document.createElement('div');
-                            em.style.position = 'fixed';
-                            em.style.fontSize = `${20 + Math.random() * 30}px`;
-                            em.style.left = `${Math.random() * 100}%`;
-                            em.style.top = `${Math.random() * 100}%`;
-                            em.style.pointerEvents = 'none';
-                            em.style.zIndex = '9999';
-                            em.style.animation = 'flyHeart 1.5s ease-out forwards';
-                            em.innerText = hearts[Math.floor(Math.random() * hearts.length)];
-                            document.body.appendChild(em);
-                            setTimeout(() => em.remove(), 1500);
-                        }, i * 80);
-                    }
-                }, 500);
-            }
-        });
-
-        socket.on("table_update", (data) => {
-            const seats = data.seats;
-            const currentTurn = data.current_turn;
-            const state = data.game_state;
-            
-            // Обновляем скин если пришел
-            if (data.bottle_skin) {
-                applySkin(data.bottle_skin);
-            }
-
-            for (let i = 0; i < 12; i++) {
-                const node = document.getElementById(`user-p${i}`);
-                const pData = seats[i];
-                if (pData) {
-                    node.classList.add('occupied');
-                    node.querySelector('.square-avatar').innerText = pData.avatar;
-                    node.querySelector('.meta-name').innerText = pData.name;
-                    
-                    const kBadge = document.getElementById(`k-${i}`);
-                    kBadge.innerText = `💋 ${pData.kisses || 0}`;
-                    kBadge.style.display = "flex";
-
-                    const overlay = document.getElementById(`g-${i}`);
-                    overlay.innerHTML = "";
-                    if (pData.gifts && pData.gifts.length > 0) {
-                        const uniqueGifts = [...new Set(pData.gifts)].slice(0, 3);
-                        uniqueGifts.forEach(g => {
-                            const span = document.createElement('span');
-                            span.innerText = g;
-                            overlay.appendChild(span);
-                        });
-                        overlay.style.display = "flex";
-                    } else {
-                        overlay.style.display = "none";
-                    }
-
-                    if (myAssignedSeat === i) {
-                        document.getElementById('my-hearts-display').innerText = pData.hearts || 0;
-                    }
-                    
-                    const cgBtn = document.getElementById(`cg-${i}`);
-                    if (isCreator && pData.telegram_id !== myTelegramId) {
-                        cgBtn.classList.add('show');
-                    } else {
-                        cgBtn.classList.remove('show');
-                    }
-                } else {
-                    node.classList.remove('occupied', 'active-spinner', 'active-target');
-                    node.querySelector('.square-avatar').innerText = "🪑";
-                    node.querySelector('.meta-name').innerText = "Свободно";
-                    document.getElementById(`k-${i}`).style.display = "none";
-                    document.getElementById(`g-${i}`).style.display = "none";
-                    document.getElementById(`cg-${i}`).classList.remove('show');
-                    node.style.transform = "none"; 
-                }
-            }
-
-            for (let i = 0; i < 12; i++) {
-                document.getElementById(`user-p${i}`).classList.remove('active-spinner', 'active-target');
-                const bubble = document.getElementById(`b-${i}`);
-                if(state !== "INTERACTION") bubble.style.display = 'none';
-            }
-
-            document.getElementById('turn-hint').style.display = 'none';
-
-            if (state === "WAITING") {
-                document.getElementById('game-status-label').innerText = "⏳ Ожидание игроков (минимум 2)...";
-                isMyTurn = false;
-                return;
-            }
-
-            const currentSpinner = seats[currentTurn];
-            if (currentSpinner) {
-                document.getElementById(`user-p${currentTurn}`).classList.add('active-spinner');
-                if (myAssignedSeat === currentTurn) {
-                    document.getElementById('game-status-label').innerText = "🎯 Твой ход!";
-                    if(state === "IDLE") document.getElementById('turn-hint').style.display = 'flex';
-                    isMyTurn = true;
-                } else {
-                    document.getElementById('game-status-label').innerText = `🔄 Ходит ${currentSpinner.name}`;
-                    isMyTurn = false;
-                }
-            }
-
-            if (state === "IDLE") {
-                document.getElementById('bottle').classList.remove('hidden');
-                document.getElementById('kiss-ui-panel').style.display = 'none';
-                for (let i = 0; i < 12; i++) document.getElementById(`user-p${i}`).style.transform = "none";
-            }
-        });
-
-        function clientRequestSpin() {
-            if (!isMyTurn) {
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                return;
-            }
-            isMyTurn = false;
-            document.getElementById('turn-hint').style.display = 'none';
-            playSpinSound();
-            socket.emit("request_spin");
-        }
-
-        socket.on("bottle_spin_command", (data) => {
-            document.getElementById('turn-hint').style.display = 'none';
-            document.getElementById('game-status-label').innerText = "🔄 Бутылочка крутится...";
-            const bottle = document.getElementById('bottle');
-            
-            localRotation += 2160 + data.target_angle - (localRotation % 360);
-            bottle.style.transform = `rotate(${localRotation}deg)`;
-
-            setTimeout(() => {
-                socket.emit("trigger_interaction_phase", {});
-                document.getElementById(`user-p${data.target_seat}`).classList.add('active-target');
-                bottle.classList.add('hidden');
-
-                const spinnerNode = document.getElementById(`user-p${data.spinner_seat}`);
-                const targetNode = document.getElementById(`user-p${data.target_seat}`);
-                const rectBoard = document.getElementById('board').getBoundingClientRect();
+        // Обработка клика по кнопке
+        sendBtn.addEventListener('click', () => {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const payload = JSON.stringify({
+                    action: "roll_dice",
+                    timestamp: Date.now(),
+                    player: tg.initDataUnsafe?.user?.username || "Guest"
+                });
+                socket.send(payload);
+                appendLog(`Отправлено: ${payload}`);
                 
-                const sRect = spinnerNode.getBoundingClientRect();
-                const tRect = targetNode.getBoundingClientRect();
-                const cX = rectBoard.width / 2;
-                const cY = rectBoard.height / 2;
-
-                const sDx = cX - (sRect.left - rectBoard.left + sRect.width / 2) - 35;
-                const sDy = cY - (sRect.top - rectBoard.top + sRect.height / 2);
-                const tDx = cX - (tRect.left - rectBoard.left + tRect.width / 2) + 35;
-                const tDy = cY - (tRect.top - rectBoard.top + tRect.height / 2);
-
-                spinnerNode.style.transform = `translate(${sDx}px, ${sDy}px)`;
-                targetNode.style.transform = `translate(${tDx}px, ${tDy}px)`;
-
-                if (myAssignedSeat === data.spinner_seat || myAssignedSeat === data.target_seat) {
-                    document.getElementById('kiss-ui-title').innerText = "💋 Ваш выбор:";
-                    document.getElementById('kiss-ui-panel').style.display = 'flex';
+                // Легкая вибрация смартфона при нажатии (работает внутри Telegram)
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
                 }
-            }, 3900);
-        });
-
-        function sendAction(choice) {
-            document.getElementById('kiss-ui-panel').style.display = 'none';
-            socket.emit("submit_choice", { choice: choice });
-        }
-
-        socket.on("round_result", (data) => {
-            revealLocalBubble(data.spinner_seat, data.spinner_choice);
-            revealLocalBubble(data.target_seat, data.target_choice);
-
-            if (data.success) {
-                document.getElementById('game-status-label').innerText = "💋 Взаимный поцелуй! 😘";
-                playKissSound();
-                generateScreenHearts();
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                document.getElementById('game-status-label').innerText = "💔 Поцелуй не состоялся...";
-                playRejectSound();
+                appendLog("Ошибка: Нет соединения с сервером!");
             }
         });
 
-        function revealLocalBubble(seat, isYes) {
-            const b = document.getElementById(`b-${seat}`);
-            if (!b) return;
-            b.innerText = isYes ? "❤️ Да" : "❌ Нет";
-            b.style.background = isYes ? "#2ecc71" : "#e74c3c";
-            b.style.color = "#ffffff";
-            b.style.display = "block";
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const txt = input.value.trim();
-            if (!txt) return;
-            socket.emit("send_chat_msg", { text: txt });
-            input.value = "";
-        }
-
-        function handleChatKey(e) { if (e.key === 'Enter') sendChatMessage(); }
-
-        function generateScreenHearts() {
-            const board = document.getElementById('board');
-            for (let i = 0; i < 12; i++) {
-                const h = document.createElement('div');
-                h.className = 'fx-heart'; 
-                h.innerText = ['❤️','💖','💗','💓','💕','💘'][Math.floor(Math.random() * 6)];
-                h.style.left = 'calc(50% - 15px)'; 
-                h.style.top = 'calc(50% - 15px)';
-                const angle = Math.random() * Math.PI * 2;
-                const dist = 40 + Math.random() * 80;
-                h.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
-                h.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
-                board.appendChild(h);
-                setTimeout(() => h.remove(), 1200);
-            }
-        }
-
-        console.log("🚀 Приложение загружено");
-        console.log("👑 Создатель:", isCreator);
-        console.log("🆔 Мой ID:", myTelegramId);
+        // Запуск сокетов при загрузке страницы
+        connectWS();
     </script>
 </body>
-    </html>
+</html>
+

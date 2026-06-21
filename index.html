@@ -125,6 +125,11 @@
         }
 
         /* --- Список чатов --- */
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+        }
+
         .chat-item {
             display: flex;
             align-items: center;
@@ -152,9 +157,8 @@
             flex-shrink: 0;
         }
 
-        .avatar-support { 
-            background: linear-gradient(135deg, #2abee2, #1d74e7); 
-        }
+        .avatar-support { background: linear-gradient(135deg, #2abee2, #1d74e7); }
+        .avatar-user { background: linear-gradient(135deg, #af52de, #7a22b8); }
 
         .chat-info {
             flex: 1;
@@ -241,13 +245,13 @@
             margin-top: 2px;
         }
 
-        /* --- ПОЛНОЦЕННОЕ ОКНО ПЕРЕПИСКИ (Chat View) --- */
+        /* --- ПОЛНОЦЕННОЕ ОКНО ПЕРЕПИСКИ --- */
         .chat-view-container {
             display: flex;
             flex-direction: column;
             height: 100%;
-            background-color: #e7ebf0; /* Классический фон чата Telegram */
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* Дефолтный паттерн */
+            background-color: #e7ebf0;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
         }
 
         .chat-view-header {
@@ -276,7 +280,6 @@
             gap: 8px;
         }
 
-        /* Стили бабблов сообщений */
         .msg-bubble {
             max-width: 75%;
             padding: 8px 12px;
@@ -295,7 +298,7 @@
         }
 
         .msg-bubble.outgoing {
-            background-color: #effdde; /* Фирменный зеленый цвет исходящих */
+            background-color: #effdde;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
             color: #000000;
@@ -309,7 +312,17 @@
             margin-left: 8px;
         }
 
-        /* Поле ввода сообщений */
+        /* Интерактивная ссылка на юзернейм */
+        .mention-link {
+            color: #2481cc;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .mention-link:active {
+            text-decoration: underline;
+        }
+
         .chat-view-input-bar {
             background-color: #ffffff;
             padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px;
@@ -409,7 +422,6 @@
             color: #707579;
         }
 
-        /* --- Стили для страниц-заглушек --- */
         .placeholder-screen {
             display: flex;
             flex-direction: column;
@@ -430,7 +442,7 @@
             opacity: 0.7;
         }
 
-        /* --- Нижняя панель навигации (Bottom Navigation) --- */
+        /* --- Нижняя панель навигации --- */
         .bottom-nav {
             background-color: #ffffff;
             border-top: 1px solid #e5e5e7;
@@ -480,6 +492,7 @@
             border-radius: 8px;
             min-width: 16px;
             text-align: center;
+            display: none;
         }
     </style>
 </head>
@@ -499,52 +512,34 @@
     <div class="tg-tabs" id="tabs-bar">
         <div class="tg-tab">
             <span>Все чаты</span>
-            <span class="tab-badge" id="total-unread-badge">1</span>
+            <span class="tab-badge" id="total-unread-badge" style="display: none;">0</span>
         </div>
     </div>
 
     <div class="screen-container">
         
         <div id="screen-chats" class="app-screen active">
-            <div class="chat-item" id="ui_daupro_support" onclick="openChatView()">
-                <div class="chat-avatar avatar-support">DS</div>
-                <div class="chat-info">
-                    <div class="chat-row-top">
-                        <div class="chat-name-container">
-                            <span class="chat-name">DAUPRO SUPORT</span>
-                            <div class="verified-badge">✓</div>
-                        </div>
-                        <span class="chat-time" id="time_daupro_support">13:07</span>
-                    </div>
-                    <div class="chat-row-bottom">
-                        <span class="chat-message" id="msg_daupro_support">Добро пожаловать в DICEGRAM!</span>
-                        <div class="chat-meta-right">
-                            <div class="unread-badge" id="badge_daupro_support">1</div>
-                        </div>
-                    </div>
+            <div class="chat-list" id="chats-render-box">
                 </div>
-            </div>
         </div>
 
         <div id="screen-chat-view" class="app-screen">
             <div class="chat-view-container">
                 <div class="chat-view-header">
                     <button class="back-btn" onclick="closeChatView()">←</button>
-                    <div class="chat-avatar avatar-support" style="width: 40px; height: 40px; font-size: 14px;">DS</div>
+                    <div class="chat-avatar avatar-support" id="view-header-avatar" style="width: 40px; height: 40px; font-size: 14px;">DS</div>
                     <div class="chat-info">
                         <div class="chat-name-container">
-                            <span class="chat-name" style="font-size: 16px;">DAUPRO SUPORT</span>
-                            <div class="verified-badge">✓</div>
+                            <span class="chat-name" id="view-header-name">DAUPRO SUPORT</span>
+                            <div class="verified-badge" id="view-header-verified">✓</div>
                         </div>
-                        <span style="font-size: 12px; color: #707579;">бот</span>
+                        <span style="font-size: 12px; color: #707579;" id="view-header-status">бот</span>
                     </div>
                 </div>
+                
                 <div class="chat-view-messages" id="chat-messages-box">
-                    <div class="msg-bubble incoming">
-                        Добро пожаловать в DICEGRAM!
-                        <span class="msg-time">13:07</span>
                     </div>
-                </div>
+
                 <div class="chat-view-input-bar">
                     <input type="text" class="message-input" id="msg-input-field" placeholder="Сообщение" autocomplete="off">
                     <button class="send-msg-btn" onclick="sendUserMessage()">➔</button>
@@ -593,7 +588,7 @@
         <button class="nav-item active" onclick="switchScreen('chats')">
             <div class="nav-icon-wrapper">
                 💬
-                <div class="nav-badge" id="bottom-chats-badge">1</div>
+                <div class="nav-badge" id="bottom-chats-badge">0</div>
             </div>
             <span>Чаты</span>
         </button>
@@ -615,60 +610,101 @@
     </div>
 
     <script>
-        // Инициализация Telegram Mini App и парсинг профиля пользователя
         const tg = window.Telegram.WebApp;
         if (tg) {
             tg.expand();
             if (tg.headerColor) tg.setHeaderColor('#ffffff');
         }
 
-        // Парсинг данных пользователя из API Telegram WebApp
+        // Данные текущего юзера (фоллбэк на дефолт, если открыто не в ТГ)
+        let myId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : 777;
+        let myUsername = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.username : "guest_user";
+
+        // Глобальное хранилище структуры чатов в памяти Mini App
+        let activeChats = {
+            "daupro_support": {
+                id: "daupro_support",
+                name: "DAUPRO SUPORT",
+                avatarClass: "avatar-support",
+                letter: "DS",
+                msg: "Добро пожаловать в DICEGRAM!",
+                time: "13:07",
+                unread: 0,
+                verified: true,
+                is_bot: true
+            }
+        };
+
+        // Текущий открытый чат в окне переписки
+        let currentChatId = null;
+
+        // Инициализация профиля из API
         function setupUserProfile() {
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
-                
-                // Формируем имя
                 const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || "Пользователь";
                 document.getElementById('prof-full-name').innerText = fullName;
-                
-                // Юзернейм
-                const username = user.username ? `@${user.username}` : '@не указан';
-                document.getElementById('prof-username').innerText = username;
-                
-                // ID и язык
-                document.getElementById('prof-id').innerText = user.id || "Неизвестно";
+                document.getElementById('prof-username').innerText = user.username ? `@${user.username}` : '@не указан';
+                document.getElementById('prof-id').innerText = user.id;
                 document.getElementById('prof-lang').innerText = user.language_code || "ru";
-
-                // Первая буква для аватара
                 document.getElementById('prof-avatar-icon').innerText = fullName.charAt(0).toUpperCase();
             }
         }
 
-        // Загрузка состояния чата из localStorage
-        function loadSupportChatState() {
-            const stored = localStorage.getItem("daupro_stored_chat");
-            if (stored) {
-                const data = JSON.parse(stored);
-                document.getElementById('msg_daupro_support').innerText = data.msg;
-                document.getElementById('time_daupro_support').innerText = data.time;
+        // Отрисовка списка чатов на главном экране
+        function updateChatsListView() {
+            const container = document.getElementById('chats-render-box');
+            container.innerHTML = '';
+            
+            let totalUnread = 0;
+
+            Object.values(activeChats).forEach(chat => {
+                const item = document.createElement('div');
+                item.className = 'chat-item';
+                item.onclick = () => openChatView(chat.id);
                 
-                // Добавляем сообщение в историю переписки, если оно новое
-                if(data.msg !== "Добро пожаловать в DICEGRAM!") {
-                    appendMessageToBox(data.msg, data.time, 'incoming');
-                }
+                const verifiedHTML = chat.verified ? `<div class="verified-badge">✓</div>` : '';
+                const unreadHTML = chat.unread > 0 ? `<div class="unread-badge">${chat.unread}</div>` : '';
+                totalUnread += chat.unread;
+
+                item.innerHTML = `
+                    <div class="chat-avatar ${chat.avatarClass}">${chat.letter}</div>
+                    <div class="chat-info">
+                        <div class="chat-row-top">
+                            <div class="chat-name-container">
+                                <span class="chat-name">${chat.name}</span>
+                                ${verifiedHTML}
+                            </div>
+                            <span class="chat-time">${chat.time}</span>
+                        </div>
+                        <div class="chat-row-bottom">
+                            <span class="chat-message">${chat.msg}</span>
+                            <div class="chat-meta-right">${unreadHTML}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            // Обновляем бейджи непрочитанных в системе
+            const totalUnreadBadge = document.getElementById('total-unread-badge');
+            const bottomChatsBadge = document.getElementById('bottom-chats-badge');
+            if (totalUnread > 0) {
+                totalUnreadBadge.innerText = totalUnread;
+                totalUnreadBadge.style.display = 'block';
+                bottomChatsBadge.innerText = totalUnread;
+                bottomChatsBadge.style.display = 'block';
+            } else {
+                totalUnreadBadge.style.display = 'none';
+                bottomChatsBadge.style.display = 'none';
             }
         }
 
-        // Логика переключения экранов нижней панели
+        // Переключение табов нижней панели
         function switchScreen(screenName) {
-            // Если открыто окно переписки, принудительно выходим из него
             closeChatView();
-
-            const screens = document.querySelectorAll('.app-screen');
-            screens.forEach(screen => screen.classList.remove('active'));
-
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
             const tabsBar = document.getElementById('tabs-bar');
             const mainHeader = document.getElementById('main-header');
@@ -678,173 +714,239 @@
                 mainHeader.style.display = 'flex';
             } else {
                 tabsBar.style.display = 'none';
-                if(screenName === 'profile') {
-                    mainHeader.style.display = 'none'; // Убираем глобальную шапку в профиле
-                } else {
-                    mainHeader.style.display = 'flex';
-                }
+                mainHeader.style.display = screenName === 'profile' ? 'none' : 'flex';
             }
 
             document.getElementById(`screen-${screenName}`).classList.add('active');
             event.currentTarget.classList.add('active');
 
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- ЛОГИКА ОКНА ПЕРЕПИСКИ ---
-        function openChatView() {
+        // Функция парсинга текста: превращает @username в кликабельные ссылки
+        function formatMessageText(text) {
+            const mentionRegex = /@([a-zA-Z0-9_]{4,32})/g;
+            return text.replace(mentionRegex, (match, username) => {
+                return `<span class="mention-link" onclick="handleUsernameClick('${username}', event)">${match}</span>`;
+            });
+        }
+
+        // Клик по подсвеченному юзернейму — создание нового чата
+        function handleUsernameClick(username, event) {
+            event.stopPropagation(); // Защита от ложного срабатывания баббла
+            if (username === myUsername) return; 
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    action: "find_user",
+                    username: username
+                }));
+            }
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        // Добавление баббла сообщения на экран переписки
+        function appendBubble(text, time, type) {
+            const box = document.getElementById('chat-messages-box');
+            const bubble = document.createElement('div');
+            bubble.className = `msg-bubble ${type}`;
+            bubble.innerHTML = `${formatMessageText(text)} <span class="msg-time">${time}</span>`;
+            box.appendChild(bubble);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // Открытие конкретного окна переписки
+        function openChatView(chatId) {
+            currentChatId = chatId;
+            const chat = activeChats[chatId];
+            chat.unread = 0;
+
             document.getElementById('screen-chats').classList.remove('active');
             document.getElementById('screen-chat-view').classList.add('active');
             document.getElementById('tabs-bar').style.display = 'none';
             document.getElementById('main-header').style.display = 'none';
             document.getElementById('main-bottom-navigation').style.display = 'none';
 
-            // Убираем счетчики непрочитанных при входе
-            document.getElementById('badge_daupro_support').style.display = 'none';
-            document.getElementById('total-unread-badge').style.display = 'none';
-            document.getElementById('bottom-chats-badge').style.display = 'none';
+            // Настройка шапки конкретного чата
+            document.getElementById('view-header-name').innerText = chat.name;
+            document.getElementById('view-header-status').innerText = chat.is_bot ? 'бот' : 'онлайн';
+            document.getElementById('view-header-verified').style.display = chat.verified ? 'flex' : 'none';
+            
+            const avatarEl = document.getElementById('view-header-avatar');
+            avatarEl.className = `chat-avatar ${chat.avatarClass}`;
+            avatarEl.innerText = chat.letter;
 
-            // Скроллим вниз
-            const box = document.getElementById('chat-messages-box');
-            box.scrollTop = box.scrollHeight;
+            // Очищаем старые сообщения и запрашиваем историю из базы данных SQLite бэкенда
+            document.getElementById('chat-messages-box').innerHTML = '';
+            
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    action: "get_history",
+                    chat_id: chatId
+                }));
+            }
+
+            updateChatsListView();
         }
 
         function closeChatView() {
+            currentChatId = null;
             document.getElementById('screen-chat-view').classList.remove('active');
             document.getElementById('screen-chats').classList.add('active');
             document.getElementById('tabs-bar').style.display = 'flex';
             document.getElementById('main-header').style.display = 'flex';
             document.getElementById('main-bottom-navigation').style.display = 'flex';
+            updateChatsListView();
         }
 
-        function appendMessageToBox(text, time, type) {
-            const box = document.getElementById('chat-messages-box');
-            const bubble = document.createElement('div');
-            bubble.className = `msg-bubble ${type}`;
-            bubble.innerHTML = `${text} <span class="msg-time">${time}</span>`;
-            box.appendChild(bubble);
-            box.scrollTop = box.scrollHeight;
-        }
-
+        // Отправка исходящего сообщения через WebSocket на бэкенд
         function sendUserMessage() {
             const input = document.getElementById('msg-input-field');
             const text = input.value.trim();
-            if(!text) return;
+            if (!text || !currentChatId) return;
 
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-            // Отображаем локально
-            appendMessageToBox(text, timeStr, 'outgoing');
+            // Сразу отображаем у себя на экране (Оптимистичный интерфейс)
+            appendBubble(text, timeStr, 'outgoing');
             
             // Обновляем превью в списке чатов
-            document.getElementById('msg_daupro_support').innerText = text;
-            document.getElementById('time_daupro_support').innerText = timeStr;
+            activeChats[currentChatId].msg = text;
+            activeChats[currentChatId].time = timeStr;
 
-            // Отправляем через WebSocket
+            // Отправляем пакет на сервер
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
-                    action: "client_message",
-                    target: "daupro_support",
-                    message: text,
-                    time: timeStr,
-                    user: tg.initDataUnsafe?.user?.username || "Guest"
+                    action: "send_msg",
+                    receiver_id: currentChatId, 
+                    message: text
                 }));
             }
 
             input.value = '';
-
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
-        // Отправка по нажатию Enter
-        document.getElementById('msg-input-field').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendUserMessage();
-            }
+        document.getElementById('msg-input-field').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendUserMessage();
         });
 
-
-        // --- 4. СВЯЗЬ И ИНДИКАТОР ОБНОВЛЕНИЯ (WebSocket) ---
+        // --- СВЯЗЬ (WebSocket Логика) ---
         const wsHost = "wss://jrnm.app"; 
         let socket;
 
         function connectWebSocket() {
-            // При старте подключения показываем статус "Обновление..."
             document.getElementById('conn-status-text').style.display = 'block';
 
             socket = new WebSocket(wsHost);
 
             socket.onopen = function() {
-                console.log("WebSocket подключен к хосту " + wsHost);
-                // Прячем индикатор обновления при успешном коннекте
                 document.getElementById('conn-status-text').style.display = 'none';
+                
+                // Авторизуем сессию на сервере, передавая ID и Юзернейм из Telegram API
+                socket.send(JSON.stringify({
+                    action: "auth",
+                    user_id: myId,
+                    username: myUsername
+                }));
             };
 
             socket.onmessage = function(event) {
                 try {
                     const data = JSON.parse(event.data);
                     
-                    if (data && data.target === "daupro_support") {
-                        const msgElement = document.getElementById('msg_daupro_support');
-                        const timeElement = document.getElementById('time_daupro_support');
-                        const timeStr = data.time || "13:07";
+                    // 1. Обработка входящего сообщения
+                    if (data.type === "new_msg") {
+                        let chatPartner = (data.sender_id === myId) ? data.receiver_id : data.sender_id;
                         
-                        if (msgElement && data.message) {
-                            msgElement.innerText = data.message;
-                            
-                            // Если окно чата открыто в данный момент, рендерим баббл сообщения онлайн
-                            if(document.getElementById('screen-chat-view').classList.contains('active')) {
-                                appendMessageToBox(data.message, timeStr, 'incoming');
-                            } else {
-                                // Если закрыто — показываем бабблы пропущенных
-                                document.getElementById('badge_daupro_support').style.display = 'block';
-                                document.getElementById('total-unread-badge').style.display = 'block';
-                                document.getElementById('bottom-chats-badge').style.display = 'block';
+                        // Если чата с ним ещё нет в списке — создаём на лету
+                        if (!activeChats[chatPartner]) {
+                            activeChats[chatPartner] = {
+                                id: chatPartner,
+                                name: data.sender_username ? `@${data.sender_username}` : `ID: ${chatPartner}`,
+                                avatarClass: "avatar-user",
+                                letter: "U",
+                                msg: data.message,
+                                time: data.time,
+                                unread: 0,
+                                verified: false,
+                                is_bot: false
+                            };
+                        }
+
+                        activeChats[chatPartner].msg = data.message;
+                        activeChats[chatPartner].time = data.time;
+
+                        if (currentChatId === chatPartner) {
+                            appendBubble(data.message, data.time, data.sender_id === myId ? 'outgoing' : 'incoming');
+                        } else {
+                            activeChats[chatPartner].unread += 1;
+                        }
+                        updateChatsListView();
+
+                        if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    // 2. Ответ от поиска юзера по клику на меншн
+                    if (data.type === "user_found") {
+                        const targetId = data.user_id;
+                        if (!activeChats[targetId]) {
+                            activeChats[targetId] = {
+                                id: targetId,
+                                name: `@${data.username}`,
+                                avatarClass: "avatar-user",
+                                letter: data.username.charAt(0).toUpperCase(),
+                                msg: "Чат успешно создан",
+                                time: "Только что",
+                                unread: 0,
+                                verified: false,
+                                is_bot: false
+                            };
+                            updateChatsListView();
+                        }
+                        // Автоматически открываем созданный чат
+                        openChatView(targetId);
+                    }
+
+                    // 3. Загрузка истории переписки из SQLite
+                    if (data.type === "history") {
+                        const box = document.getElementById('chat-messages-box');
+                        box.innerHTML = ''; // Очищаем заглушку
+                        
+                        if (data.messages && data.messages.length > 0) {
+                            data.messages.forEach(m => {
+                                const mType = m.sender_id === myId ? 'outgoing' : 'incoming';
+                                appendBubble(m.text, m.time, mType);
+                            });
+                        } else {
+                            // Если переписка пустая и это саппорт
+                            if (currentChatId === 'daupro_support') {
+                                appendBubble("Добро пожаловать в DICEGRAM!", "13:07", "incoming");
                             }
                         }
-                        if (timeElement) {
-                            timeElement.innerText = timeStr;
-                        }
-
-                        // Сохраняем состояние
-                        localStorage.setItem("daupro_stored_chat", JSON.stringify({
-                            msg: data.message || "Добро пожаловать в DICEGRAM!",
-                            time: timeStr
-                        }));
-
-                        if (tg && tg.HapticFeedback) {
-                            tg.HapticFeedback.notificationOccurred('success');
-                        }
                     }
+
                 } catch (err) {
-                    console.log("Получены сырые данные сокета:", event.data);
+                    console.log("Ошибка обработки данных сокета:", err);
                 }
             };
 
             socket.onclose = function() {
-                console.log("Соединение разорвано. Включаем индикатор...");
-                // Показываем статус "Обновление..." при дисконнекте
                 document.getElementById('conn-status-text').style.display = 'block';
-                setTimeout(connectWebSocket, 5000);
+                setTimeout(connectWebSocket, 5000); // Реконнект при обрыве
             };
 
-            socket.onerror = function(error) {
-                console.error("Ошибка сокета: ", error);
+            socket.onerror = function() {
                 document.getElementById('conn-status-text').style.display = 'block';
             };
         }
 
-        // Старт при полной загрузке страницы
         window.onload = function() {
             setupUserProfile();
-            loadSupportChatState();
+            updateChatsListView();
             connectWebSocket();
         };
     </script>
 </body>
 </html>
+

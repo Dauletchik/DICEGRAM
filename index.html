@@ -9,7 +9,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #141416;
+            background-color: #0a0a0f;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             display: flex;
@@ -23,8 +23,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 16px;
-            background: #1c1c1e;
-            border-bottom: 1px solid #2c2c2e;
+            background: #12121a;
+            border-bottom: 1px solid #2a2a3a;
             flex-shrink: 0;
             z-index: 10;
             gap: 8px;
@@ -47,11 +47,13 @@
             font-size: 15px;
             cursor: pointer;
             gap: 6px;
+            transition: all 0.3s;
         }
+        .hearts-balance-top:active { transform: scale(0.95); }
         .hearts-balance-top span { color: #ff4757; font-size: 18px; }
 
         .top-btn {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.15);
             border: 1px solid #ffd700;
             color: #ffd700;
             padding: 6px 12px;
@@ -62,8 +64,9 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            transition: all 0.3s;
         }
-        .top-btn:active { transform: scale(0.95); }
+        .top-btn:active { transform: scale(0.95); background: rgba(255, 215, 0, 0.3); }
 
         .status-msg {
             font-size: 14px;
@@ -72,16 +75,28 @@
             text-align: center;
             flex: 1;
             margin: 0 10px;
+            text-shadow: 0 0 20px rgba(255, 211, 42, 0.2);
         }
         
         .board-container {
             position: relative;
             width: 100%;
             height: 45vh;
-            background-color: #d1b894; 
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+            background: radial-gradient(ellipse at center, #d4c5a0 0%, #b8a88a 100%);
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.6);
             flex-shrink: 0;
             overflow: hidden;
+        }
+        
+        .board-container::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 80%; height: 80%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 2px dashed rgba(0,0,0,0.15);
+            pointer-events: none;
         }
         
         .bottle-node {
@@ -94,9 +109,11 @@
             cursor: pointer;
             transition: transform 3.8s cubic-bezier(0.15, 1, 0.2, 1), opacity 0.4s;
             transform: rotate(0deg);
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
         }
         .bottle-node.hidden { opacity: 0; pointer-events: none; }
-        .bottle-img { width: 100%; height: 100%; filter: drop-shadow(0px 6px 5px rgba(0,0,0,0.4)); }
+        .bottle-node:active { transform: scale(0.95); }
+        .bottle-img { width: 100%; height: 100%; }
 
         .hint-arrow-box {
             position: absolute;
@@ -107,14 +124,20 @@
             display: none;
             flex-direction: column;
             align-items: center;
+            animation: pulseHint 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseHint {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
         }
         .hint-text {
-            background: rgba(255, 255, 255, 0.9);
-            color: #000;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 11px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a2e;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: bold;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .grid-player {
@@ -125,7 +148,7 @@
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            opacity: 0.4;
+            opacity: 0.3;
             transition: transform 0.6s ease, opacity 0.3s;
             cursor: pointer;
         }
@@ -140,62 +163,76 @@
         .square-avatar {
             width: 100%;
             height: 100%;
-            background: #2c3e50;
-            border-radius: 12px; 
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            border-radius: 14px; 
             border: 3px solid #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 22px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: all 0.3s;
         }
 
         .grid-player.active-spinner .square-avatar {
             border-color: #24b0ff; 
-            box-shadow: 0 0 12px #24b0ff;
+            box-shadow: 0 0 25px rgba(36, 176, 255, 0.5);
+            animation: glowBlue 1s ease-in-out infinite alternate;
         }
+        @keyframes glowBlue {
+            0% { box-shadow: 0 0 15px rgba(36, 176, 255, 0.3); }
+            100% { box-shadow: 0 0 35px rgba(36, 176, 255, 0.7); }
+        }
+        
         .grid-player.active-target .square-avatar { 
             border-color: #ff4757; 
-            box-shadow: 0 0 12px #ff4757; 
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.5);
+            animation: glowRed 1s ease-in-out infinite alternate;
+        }
+        @keyframes glowRed {
+            0% { box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); }
+            100% { box-shadow: 0 0 35px rgba(255, 71, 87, 0.7); }
         }
         
         .kisses-badge {
             position: absolute;
             bottom: -4px;
             right: -4px;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             border: 1px solid #ff4757;
             color: #ffffff;
-            padding: 1px 4px;
-            border-radius: 6px;
+            padding: 2px 6px;
+            border-radius: 8px;
             font-size: 9px;
             font-weight: bold;
         }
 
         .meta-name {
             font-size: 10px;
-            color: #141416; 
+            color: #1a1a2e; 
             font-weight: bold;
-            margin-top: 3px;
+            margin-top: 4px;
             text-align: center;
             width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
         }
 
         .player-gifts-overlay {
             position: absolute;
-            top: -12px;
-            right: -14px;
+            top: -14px;
+            right: -16px;
             display: flex;
             gap: 2px;
-            background: rgba(0,0,0,0.6);
-            padding: 2px;
-            border-radius: 6px;
-            max-width: 45px;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 4px;
+            border-radius: 8px;
+            max-width: 48px;
             overflow: hidden;
             font-size: 10px;
+            backdrop-filter: blur(4px);
         }
 
         #user-p0  { top: 5%;   left: calc(50% - 30px); }
@@ -213,20 +250,21 @@
 
         .vote-bubble {
             position: absolute;
-            top: -22px;
+            top: -26px;
             background: #ffffff;
             color: #000000;
-            padding: 2px 6px;
-            border-radius: 6px;
+            padding: 3px 10px;
+            border-radius: 10px;
             font-size: 10px;
             font-weight: bold;
             display: none;
             z-index: 150;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .choice-panel-box {
             position: absolute;
-            bottom: 15px;
+            bottom: 20px;
             display: none;
             flex-direction: column;
             align-items: center;
@@ -234,204 +272,433 @@
             width: 100%;
         }
         .choice-txt {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: bold;
             color: #ffffff;
             background: rgba(0,0,0,0.85);
-            padding: 4px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+            padding: 6px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
         }
-        .choice-row-btns { display: flex; gap: 20px; }
+        .choice-row-btns { display: flex; gap: 25px; }
         .act-btn {
-            width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 22px;
+            width: 55px; height: 55px; border-radius: 50%; border: none; font-size: 24px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-heart { background: #2ecc71; color: white; }
-        .btn-cross { background: #e74c3c; color: white; }
+        .act-btn:active { transform: scale(0.9); }
+        .btn-heart { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4); }
+        .btn-cross { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4); }
 
         .chat-section {
             flex: 1; 
-            background: #1c1c1e; 
-            border-top: 1px solid #2c2c2e;
+            background: #0a0a0f; 
+            border-top: 1px solid #1a1a2e;
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
             position: relative;
         }
-        .chat-messages { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .chat-row { display: flex; align-items: flex-start; gap: 8px; }
-        .chat-mini-avatar {
-            width: 26px; height: 26px; border-radius: 50%; background: #485e74;
-            display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;
+        .chat-messages { 
+            flex: 1; 
+            padding: 12px 14px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px;
         }
-        .chat-body-text { background: #2c2c2e; padding: 6px 12px; border-radius: 12px; font-size: 13px; max-width: 85%; word-break: break-word; }
-        .chat-sender-name { font-weight: bold; color: #ff9f43; margin-right: 5px; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
         
-        .chat-input-bar { display: flex; padding: 8px 12px; background: #141416; gap: 8px; flex-shrink: 0; }
+        .chat-row { 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 10px; 
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chat-mini-avatar {
+            width: 30px; height: 30px; border-radius: 50%; 
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2e);
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 14px; flex-shrink: 0;
+            border: 2px solid #2a2a3a;
+        }
+        .chat-body-text { 
+            background: #14141f; 
+            padding: 8px 14px; 
+            border-radius: 14px; 
+            font-size: 13px; 
+            max-width: 85%; 
+            word-break: break-word;
+            border: 1px solid #1a1a2e;
+            line-height: 1.4;
+        }
+        .chat-sender-name { 
+            font-weight: bold; 
+            color: #ff9f43; 
+            margin-right: 6px;
+        }
+        
+        /* Системные сообщения в чате */
+        .chat-row.system {
+            justify-content: center;
+        }
+        .chat-row.system .chat-body-text {
+            background: linear-gradient(135deg, #1a1a2e, #2a1a3e);
+            border: 1px solid #3a2a4e;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            max-width: 90%;
+        }
+        .chat-row.system .chat-body-text b { color: #ffd700; }
+        
+        /* Особое приветствие для создателя */
+        .chat-row.creator-enter {
+            justify-content: center;
+            animation: creatorEnter 2s ease;
+        }
+        @keyframes creatorEnter {
+            0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(3deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .chat-row.creator-enter .chat-body-text {
+            background: linear-gradient(135deg, #ffd700, #ff6b00);
+            color: #1a1a2e;
+            font-size: 16px;
+            font-weight: bold;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            padding: 12px 24px;
+        }
+        .chat-row.creator-enter .chat-body-text b { color: #1a1a2e; }
+        
+        .chat-input-bar { 
+            display: flex; 
+            padding: 8px 12px; 
+            background: #0a0a0f; 
+            gap: 8px; 
+            flex-shrink: 0;
+            border-top: 1px solid #1a1a2e;
+        }
         .chat-input-field {
-            flex: 1; background: #2c2c2e; border: 1px solid #3a3a3c;
-            border-radius: 20px; padding: 8px 14px; color: white; font-size: 14px; outline: none;
+            flex: 1; 
+            background: #14141f; 
+            border: 1px solid #2a2a3a;
+            border-radius: 20px; 
+            padding: 10px 16px; 
+            color: white; 
+            font-size: 14px; 
+            outline: none;
+            transition: border-color 0.3s;
         }
+        .chat-input-field:focus { border-color: #ff4757; }
+        .chat-input-field::placeholder { color: #555; }
         .chat-submit-btn {
-            width: 36px; height: 36px; background: #ff4757; border: none;
-            border-radius: 50%; color: white; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            width: 40px; height: 40px; 
+            background: linear-gradient(135deg, #ff4757, #c0392b); 
+            border: none;
+            border-radius: 50%; 
+            color: white; 
+            font-size: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+        .chat-submit-btn:active { transform: scale(0.9); }
 
         /* МЕНЮ ПОДАРКОВ */
         .gifts-sliding-panel {
             position: absolute;
             bottom: 0; left: 0; width: 100%; height: 260px;
-            background: #1c1c1e; border-top: 2px solid #2c2c2e;
-            transform: translateY(100%); transition: transform 0.4s ease;
-            z-index: 400; display: flex; flex-direction: column; padding: 12px;
+            background: #12121a; 
+            border-top: 2px solid #2a2a3a;
+            transform: translateY(100%); 
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 400; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 12px;
+            border-radius: 20px 20px 0 0;
         }
         .gifts-sliding-panel.open { transform: translateY(0); }
-        .gifts-header-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 8px; text-align: center; }
+        .gifts-header-title { 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: #fff; 
+            margin-bottom: 10px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         
         .gifts-grid-scroll {
-            flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-            overflow-y: auto; padding-bottom: 10px;
+            flex: 1; 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 8px;
+            overflow-y: auto; 
+            padding-bottom: 10px;
         }
         .gift-card-node {
-            background: #2c2c2e; border-radius: 10px; padding: 6px 2px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: background 0.2s;
+            background: #1a1a2e; 
+            border-radius: 12px; 
+            padding: 8px 4px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
-        .gift-card-node:active { background: #3a3a3c; }
-        .gift-card-emoji { font-size: 24px; }
-        .gift-card-price { font-size: 11px; color: #ff4757; font-weight: bold; margin-top: 4px; }
+        .gift-card-node:active { 
+            transform: scale(0.95); 
+            border-color: #ff4757;
+        }
+        .gift-card-emoji { font-size: 28px; }
+        .gift-card-price { 
+            font-size: 11px; 
+            color: #ff4757; 
+            font-weight: bold; 
+            margin-top: 4px; 
+        }
         
         .close-gifts-circle {
-            position: absolute; bottom: 12px; right: 12px;
-            width: 36px; height: 36px; background: #2ecc71; color: white;
-            border-radius: 50%; font-size: 16px; font-weight: bold;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            position: absolute; 
+            bottom: 12px; 
+            right: 12px;
+            width: 38px; 
+            height: 38px; 
+            background: linear-gradient(135deg, #2ecc71, #27ae60); 
+            color: white;
+            border-radius: 50%; 
+            font-size: 16px; 
+            font-weight: bold;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+            transition: transform 0.2s;
         }
+        .close-gifts-circle:active { transform: scale(0.9); }
 
         /* МОДАЛКИ */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 500;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 16px;
+            backdrop-filter: blur(8px);
         }
         .modal-overlay.show { display: flex; }
 
         .shop-modal {
-            background: linear-gradient(145deg, #ff758c, #ff7eb3);
+            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
             width: 100%; max-width: 340px;
-            border-radius: 20px; padding: 16px;
+            border-radius: 24px; padding: 20px;
             position: relative; color: #fff; text-align: center;
+            border: 1px solid #3a2a4e;
         }
         .close-shop-btn {
-            position: absolute; top: -10px; right: -10px;
-            width: 30px; height: 30px; background: #fff; color: #000;
-            border-radius: 50%; font-weight: bold;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-        .shop-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; }
-        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .shop-item {
-            background: #fff; color: #333; border-radius: 12px; padding: 8px 4px;
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            position: relative;
-        }
-        .item-badge {
-            position: absolute; top: -6px; background: #ff007f; color: #fff;
-            font-size: 7px; font-weight: bold; padding: 1px 4px; border-radius: 6px;
-        }
-        .item-title { font-size: 11px; color: #777; font-weight: 600; }
-        .item-value { font-size: 14px; font-weight: bold; color: #000; }
-        .item-icon { font-size: 24px; margin: 4px 0; }
-        .buy-btn { width: 100%; border: none; border-radius: 8px; padding: 5px 0; font-weight: bold; font-size: 11px; color: #fff; cursor: pointer; }
-        .btn-blue { background: #24b0ff; }
-        .btn-green { background: #2ecc71; }
-
-        /* ТОП МОДАЛКА */
-        .top-modal {
-            background: #1c1c1e;
-            width: 100%; max-width: 340px;
-            border-radius: 20px; padding: 16px;
-            position: relative; color: #fff;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .top-modal .close-top-btn {
-            position: sticky; top: 0; float: right;
-            width: 30px; height: 30px; background: #ff4757; color: #fff;
+            position: absolute; top: -12px; right: -12px;
+            width: 32px; height: 32px; 
+            background: linear-gradient(135deg, #ff4757, #c0392b); 
+            color: #fff;
             border-radius: 50%; font-weight: bold; border: none;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             font-size: 16px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
         }
-        .top-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 12px; color: #ffd700; }
+        .shop-title { 
+            font-size: 20px; 
+            font-weight: bold; 
+            margin-bottom: 16px; 
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .shop-item {
+            background: #14141f; 
+            border-radius: 14px; 
+            padding: 10px 4px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: space-between;
+            position: relative;
+            border: 1px solid #1a1a2e;
+        }
+        .item-badge {
+            position: absolute; top: -8px; 
+            background: linear-gradient(135deg, #ff4757, #ff6b81); 
+            color: #fff;
+            font-size: 7px; font-weight: bold; padding: 2px 8px; border-radius: 8px;
+        }
+        .item-title { font-size: 10px; color: #888; font-weight: 600; }
+        .item-value { font-size: 14px; font-weight: bold; color: #fff; }
+        .item-icon { font-size: 26px; margin: 4px 0; }
+        .buy-btn { 
+            width: 100%; 
+            border: none; 
+            border-radius: 10px; 
+            padding: 6px 0; 
+            font-weight: bold; 
+            font-size: 11px; 
+            color: #fff; 
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .buy-btn:active { transform: scale(0.95); }
+        .btn-blue { background: linear-gradient(135deg, #24b0ff, #0984e3); }
+        .btn-green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+
+        /* ТОП МОДАЛКА */
+        .top-modal {
+            background: #12121a;
+            width: 100%; max-width: 340px;
+            border-radius: 24px; padding: 20px;
+            position: relative; color: #fff;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #2a2a3a;
+        }
+        .top-modal::-webkit-scrollbar { width: 4px; }
+        .top-modal::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
+        
+        .top-modal .close-top-btn {
+            position: sticky; top: 0; float: right;
+            width: 32px; height: 32px; 
+            background: linear-gradient(135deg, #ff4757, #c0392b); 
+            color: #fff;
+            border-radius: 50%; font-weight: bold; border: none;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        }
+        .top-title { 
+            font-size: 22px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-bottom: 16px; 
+            background: linear-gradient(135deg, #ffd700, #ff6b00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         .top-list { list-style: none; padding: 0; }
         .top-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 12px; border-bottom: 1px solid #2c2c2e;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 12px 14px; 
+            border-bottom: 1px solid #1a1a2e;
             gap: 10px;
+            border-radius: 12px;
+            transition: background 0.2s;
         }
+        .top-item:hover { background: #1a1a2e; }
         .top-item .rank {
-            font-weight: bold; font-size: 16px; min-width: 30px;
+            font-weight: bold; font-size: 18px; min-width: 34px;
             color: #ffd700;
         }
-        .top-item .top-avatar { font-size: 24px; min-width: 36px; }
-        .top-item .top-name { flex: 1; font-weight: 500; }
+        .top-item .top-avatar { font-size: 26px; min-width: 36px; }
+        .top-item .top-name { flex: 1; font-weight: 500; font-size: 14px; }
         .top-item .top-kisses {
-            background: rgba(255, 71, 87, 0.2);
-            padding: 2px 10px; border-radius: 12px;
-            color: #ff4757; font-weight: bold;
+            background: rgba(255, 71, 87, 0.15);
+            padding: 4px 12px; 
+            border-radius: 14px;
+            color: #ff4757; 
+            font-weight: bold;
+            font-size: 13px;
         }
-        .top-item:nth-child(1) .rank { color: #ffd700; font-size: 20px; }
-        .top-item:nth-child(2) .rank { color: #c0c0c0; font-size: 18px; }
-        .top-item:nth-child(3) .rank { color: #cd7f32; font-size: 16px; }
+        .top-item:nth-child(1) .rank { color: #ffd700; font-size: 22px; text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        .top-item:nth-child(2) .rank { color: #c0c0c0; font-size: 20px; }
+        .top-item:nth-child(3) .rank { color: #cd7f32; font-size: 18px; }
 
-        .fx-heart { position: absolute; font-size: 24px; animation: fly 1s ease-out forwards; pointer-events: none; z-index: 300; }
-        @keyframes fly {
+        .fx-heart { 
+            position: absolute; 
+            font-size: 26px; 
+            animation: flyHeart 1.2s ease-out forwards; 
+            pointer-events: none; 
+            z-index: 300; 
+        }
+        @keyframes flyHeart {
             0% { transform: translate(0,0) scale(0.5); opacity: 0; }
             20% { opacity: 1; }
-            100% { transform: translate(var(--dx), var(--dy)) scale(1.3); opacity: 0; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
         }
 
         .gift-flying-node {
-            position: fixed; font-size: 30px; z-index: 1000;
+            position: fixed; 
+            font-size: 34px; 
+            z-index: 1000;
             transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             pointer-events: none;
+            filter: drop-shadow(0 4px 20px rgba(255, 215, 0, 0.3));
         }
 
         .connection-error {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             flex-direction: column;
             padding: 20px;
+            backdrop-filter: blur(10px);
         }
         .connection-error.show { display: flex; }
-        .connection-error h2 { color: #ff4757; margin-bottom: 10px; }
-        .connection-error p { color: #aaa; text-align: center; margin-bottom: 15px; }
+        .connection-error h2 { color: #ff4757; margin-bottom: 10px; font-size: 22px; }
+        .connection-error p { color: #888; text-align: center; margin-bottom: 20px; }
         .retry-btn {
-            background: #ff4757;
+            background: linear-gradient(135deg, #ff4757, #c0392b);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 14px 40px;
             border-radius: 25px;
             font-size: 16px;
             cursor: pointer;
+            transition: transform 0.2s;
         }
+        .retry-btn:active { transform: scale(0.95); }
 
-        /* Аудио кнопка (скрытая) */
-        #audio-toggle {
+        /* Секретная кнопка для создателя */
+        .creator-gift-btn {
             display: none;
+            background: linear-gradient(135deg, #ffd700, #ff6b00);
+            border: none;
+            color: #1a1a2e;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 2px;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
         }
+        .creator-gift-btn:active { transform: scale(0.9); }
+        .creator-gift-btn.show { display: block; }
     </style>
 </head>
 <body>
@@ -456,7 +723,7 @@
 
     <div class="board-container" id="board">
         <div class="hint-arrow-box" id="turn-hint">
-            <div class="hint-text">Крути бутылочку!</div>
+            <div class="hint-text">🍾 Крути бутылочку!</div>
         </div>
 
         <div class="bottle-node" id="bottle" onclick="clientRequestSpin()">
@@ -469,21 +736,21 @@
         </div>
 
         <!-- Игроки -->
-        <div class="grid-player" id="user-p0" onclick="handleSeatClick(0)"><div class="vote-bubble" id="b-0"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-0"></div><div class="kisses-badge" id="k-0">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p1" onclick="handleSeatClick(1)"><div class="vote-bubble" id="b-1"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-1"></div><div class="kisses-badge" id="k-1">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p2" onclick="handleSeatClick(2)"><div class="vote-bubble" id="b-2"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-2"></div><div class="kisses-badge" id="k-2">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p3" onclick="handleSeatClick(3)"><div class="vote-bubble" id="b-3"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-3"></div><div class="kisses-badge" id="k-3">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p4" onclick="handleSeatClick(4)"><div class="vote-bubble" id="b-4"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-4"></div><div class="kisses-badge" id="k-4">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p5" onclick="handleSeatClick(5)"><div class="vote-bubble" id="b-5"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-5"></div><div class="kisses-badge" id="k-5">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p6" onclick="handleSeatClick(6)"><div class="vote-bubble" id="b-6"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-6"></div><div class="kisses-badge" id="k-6">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p7" onclick="handleSeatClick(7)"><div class="vote-bubble" id="b-7"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-7"></div><div class="kisses-badge" id="k-7">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p8" onclick="handleSeatClick(8)"><div class="vote-bubble" id="b-8"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-8"></div><div class="kisses-badge" id="k-8">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p9" onclick="handleSeatClick(9)"><div class="vote-bubble" id="b-9"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-9"></div><div class="kisses-badge" id="k-9">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p10" onclick="handleSeatClick(10)"><div class="vote-bubble" id="b-10"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-10"></div><div class="kisses-badge" id="k-10">💋 0</div></div><div class="meta-name">Свободно</div></div>
-        <div class="grid-player" id="user-p11" onclick="handleSeatClick(11)"><div class="vote-bubble" id="b-11"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-11"></div><div class="kisses-badge" id="k-11">💋 0</div></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p0" onclick="handleSeatClick(0)"><div class="vote-bubble" id="b-0"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-0"></div><div class="kisses-badge" id="k-0">💋 0</div><button class="creator-gift-btn" id="cg-0" onclick="event.stopPropagation(); giveCreatorGift(0)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p1" onclick="handleSeatClick(1)"><div class="vote-bubble" id="b-1"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-1"></div><div class="kisses-badge" id="k-1">💋 0</div><button class="creator-gift-btn" id="cg-1" onclick="event.stopPropagation(); giveCreatorGift(1)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p2" onclick="handleSeatClick(2)"><div class="vote-bubble" id="b-2"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-2"></div><div class="kisses-badge" id="k-2">💋 0</div><button class="creator-gift-btn" id="cg-2" onclick="event.stopPropagation(); giveCreatorGift(2)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p3" onclick="handleSeatClick(3)"><div class="vote-bubble" id="b-3"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-3"></div><div class="kisses-badge" id="k-3">💋 0</div><button class="creator-gift-btn" id="cg-3" onclick="event.stopPropagation(); giveCreatorGift(3)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p4" onclick="handleSeatClick(4)"><div class="vote-bubble" id="b-4"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-4"></div><div class="kisses-badge" id="k-4">💋 0</div><button class="creator-gift-btn" id="cg-4" onclick="event.stopPropagation(); giveCreatorGift(4)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p5" onclick="handleSeatClick(5)"><div class="vote-bubble" id="b-5"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-5"></div><div class="kisses-badge" id="k-5">💋 0</div><button class="creator-gift-btn" id="cg-5" onclick="event.stopPropagation(); giveCreatorGift(5)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p6" onclick="handleSeatClick(6)"><div class="vote-bubble" id="b-6"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-6"></div><div class="kisses-badge" id="k-6">💋 0</div><button class="creator-gift-btn" id="cg-6" onclick="event.stopPropagation(); giveCreatorGift(6)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p7" onclick="handleSeatClick(7)"><div class="vote-bubble" id="b-7"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-7"></div><div class="kisses-badge" id="k-7">💋 0</div><button class="creator-gift-btn" id="cg-7" onclick="event.stopPropagation(); giveCreatorGift(7)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p8" onclick="handleSeatClick(8)"><div class="vote-bubble" id="b-8"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-8"></div><div class="kisses-badge" id="k-8">💋 0</div><button class="creator-gift-btn" id="cg-8" onclick="event.stopPropagation(); giveCreatorGift(8)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p9" onclick="handleSeatClick(9)"><div class="vote-bubble" id="b-9"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-9"></div><div class="kisses-badge" id="k-9">💋 0</div><button class="creator-gift-btn" id="cg-9" onclick="event.stopPropagation(); giveCreatorGift(9)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p10" onclick="handleSeatClick(10)"><div class="vote-bubble" id="b-10"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-10"></div><div class="kisses-badge" id="k-10">💋 0</div><button class="creator-gift-btn" id="cg-10" onclick="event.stopPropagation(); giveCreatorGift(10)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
+        <div class="grid-player" id="user-p11" onclick="handleSeatClick(11)"><div class="vote-bubble" id="b-11"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-11"></div><div class="kisses-badge" id="k-11">💋 0</div><button class="creator-gift-btn" id="cg-11" onclick="event.stopPropagation(); giveCreatorGift(11)">+1000❤️</button></div><div class="meta-name">Свободно</div></div>
 
         <div class="choice-panel-box" id="kiss-ui-panel">
-            <div class="choice-txt" id="kiss-ui-title">Поцеловать?</div>
+            <div class="choice-txt" id="kiss-ui-title">💋 Поцеловать?</div>
             <div class="choice-row-btns">
                 <button class="act-btn btn-heart" onclick="sendAction(true)">❤️</button>
                 <button class="act-btn btn-cross" onclick="sendAction(false)">❌</button>
@@ -494,12 +761,12 @@
     <div class="chat-section">
         <div class="chat-messages" id="chat-box"></div>
         <div class="chat-input-bar">
-            <input type="text" class="chat-input-field" id="chat-input" placeholder="Написать сообщение..." onkeypress="handleChatKey(event)">
+            <input type="text" class="chat-input-field" id="chat-input" placeholder="💬 Написать сообщение..." onkeypress="handleChatKey(event)">
             <button class="chat-submit-btn" onclick="sendChatMessage()">➔</button>
         </div>
 
         <div class="gifts-sliding-panel" id="gifts-panel">
-            <div class="gifts-header-title" id="gifts-panel-title">Отправить подарок</div>
+            <div class="gifts-header-title" id="gifts-panel-title">🎁 Отправить подарок</div>
             <div class="gifts-grid-scroll">
                 <div class="gift-card-node" onclick="clientTriggerSendGift('🎬')"><span class="gift-card-emoji">🎬</span><span class="gift-card-price">❤️ 9</span></div>
                 <div class="gift-card-node" onclick="clientTriggerSendGift('🎵')"><span class="gift-card-emoji">🎵</span><span class="gift-card-price">❤️ 5</span></div>
@@ -520,8 +787,8 @@
     <!-- МАГАЗИН -->
     <div class="modal-overlay" id="shop-modal-view">
         <div class="shop-modal">
-            <div class="close-shop-btn" onclick="closeShopModal()">✕</div>
-            <div class="shop-title">Купить сердечки</div>
+            <button class="close-shop-btn" onclick="closeShopModal()">✕</button>
+            <div class="shop-title">❤️ Купить сердечки</div>
             <div class="shop-grid">
                 <div class="shop-item">
                     <div class="item-title">VIP статус</div>
@@ -534,7 +801,7 @@
                     <button class="buy-btn btn-blue" onclick="closeShopModal()">Узнать</button>
                 </div>
                 <div class="shop-item">
-                    <div class="item-badge">Выгодно</div>
+                    <div class="item-badge">🔥 Выгодно</div>
                     <div class="item-value">❤️12.5к</div>
                     <div class="item-icon">📦</div>
                     <button class="buy-btn btn-green" onclick="triggerStarsBuy(12500, 5000)">⭐ 5000</button>
@@ -545,7 +812,7 @@
                     <button class="buy-btn btn-green" onclick="triggerStarsBuy(6000, 2500)">⭐ 2500</button>
                 </div>
                 <div class="shop-item">
-                    <div class="item-badge">Хит</div>
+                    <div class="item-badge">⭐ Хит</div>
                     <div class="item-value">❤️2200</div>
                     <div class="item-icon">🎒</div>
                     <button class="buy-btn btn-green" onclick="triggerStarsBuy(2200, 1000)">⭐ 1000</button>
@@ -580,7 +847,7 @@
             <button class="close-top-btn" onclick="closeTopModal()">✕</button>
             <div class="top-title">🏆 ТОП ПОЦЕЛУЕВ</div>
             <div id="top-list-container">
-                <div style="text-align:center;padding:20px;color:#888;">Загрузка...</div>
+                <div style="text-align:center;padding:20px;color:#555;">⏳ Загрузка...</div>
             </div>
         </div>
     </div>
@@ -590,19 +857,19 @@
         const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
         // const BACKEND_URL = "http://localhost:8080"; // Для локального теста
         
-        console.log("Подключение к серверу:", BACKEND_URL);
+        console.log("🚀 Подключение к серверу:", BACKEND_URL);
         
         const socket = io(BACKEND_URL, {
             transports: ['websocket', 'polling'],
             reconnection: true,
-            reconnectionAttempts: 5,
+            reconnectionAttempts: 10,
             reconnectionDelay: 1000,
-            timeout: 10000
+            timeout: 15000
         });
         
         const tg = window.Telegram.WebApp;
         
-        // ---- ЗВУКИ (генерация через Web Audio API) ----
+        // ---- ЗВУКИ (Web Audio API) ----
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
@@ -634,7 +901,6 @@
         }
 
         function playSpinSound() {
-            // Вращение бутылки - звук нарастающий
             playBeep(300, 0.1, 'sine', 0.2);
             setTimeout(() => playBeep(400, 0.1, 'sine', 0.25), 100);
             setTimeout(() => playBeep(500, 0.1, 'sine', 0.3), 200);
@@ -645,18 +911,14 @@
         }
 
         function playKissSound() {
-            // Поцелуй - приятный звук
-            playBeep(523, 0.15, 'sine', 0.25); // До
-            setTimeout(() => playBeep(659, 0.15, 'sine', 0.25), 120); // Ми
-            setTimeout(() => playBeep(784, 0.3, 'sine', 0.3), 240); // Соль
-            setTimeout(() => playBeep(1047, 0.4, 'sine', 0.2), 400); // До высокое
-            setTimeout(() => {
-                playBeep(784, 0.2, 'sine', 0.15);
-            }, 600);
+            playBeep(523, 0.15, 'sine', 0.25);
+            setTimeout(() => playBeep(659, 0.15, 'sine', 0.25), 120);
+            setTimeout(() => playBeep(784, 0.3, 'sine', 0.3), 240);
+            setTimeout(() => playBeep(1047, 0.4, 'sine', 0.2), 400);
+            setTimeout(() => playBeep(784, 0.2, 'sine', 0.15), 600);
         }
 
         function playGiftSound() {
-            // Звук подарка - магический
             playBeep(600, 0.1, 'sine', 0.2);
             setTimeout(() => playBeep(800, 0.1, 'sine', 0.25), 80);
             setTimeout(() => playBeep(1000, 0.1, 'sine', 0.3), 160);
@@ -669,7 +931,6 @@
         }
 
         function playRejectSound() {
-            // Отказ - грустный звук
             playBeep(400, 0.2, 'sawtooth', 0.15);
             setTimeout(() => playBeep(300, 0.3, 'sawtooth', 0.12), 200);
         }
@@ -682,55 +943,59 @@
         let myNickname = "@Player";
         let myAvatar = "😎";
         let myAssignedSeat = null;
+        let myTelegramId = null;
         let isMyTurn = false;
         let localRotation = 0;
         let targetGiftSeatIndex = null;
         let connectionAttempts = 0;
+        let isCreator = false;
 
         if (tg) {
             try {
                 tg.expand();
                 const user = tg.initDataUnsafe?.user;
                 if (user) {
-                    myNickname = `@${user.username || user.first_name}`;
+                    myNickname = user.username ? `@${user.username}` : user.first_name;
+                    myTelegramId = String(user.id);
+                    isCreator = myTelegramId === "8935440725";
                     const avatars = ["😎","🔥","✨","🍀","🎲","⚡","🍿","🎮","🚀","💫","🌟","🎯"];
                     myAvatar = avatars[Math.floor(Math.random() * avatars.length)];
                 }
-                console.log("Telegram WebApp инициализирован");
+                console.log("✅ Telegram WebApp инициализирован");
             } catch(e) {
-                console.error("Ошибка инициализации Telegram:", e);
+                console.error("❌ Ошибка инициализации Telegram:", e);
             }
         }
 
         // Обработка ошибок подключения
         socket.on("connect_error", (error) => {
-            console.error("Ошибка подключения:", error);
+            console.error("❌ Ошибка подключения:", error);
             document.getElementById('game-status-label').innerText = "⚠️ Ошибка подключения";
             document.getElementById('connection-error').classList.add('show');
         });
 
         socket.on("disconnect", (reason) => {
-            console.warn("Отключено:", reason);
+            console.warn("⚠️ Отключено:", reason);
             if (reason === "io server disconnect" || reason === "transport error") {
                 document.getElementById('connection-error').classList.add('show');
             }
         });
 
         socket.on("reconnect", (attempt) => {
-            console.log("Переподключено после", attempt, "попыток");
+            console.log("🔄 Переподключено после", attempt, "попыток");
             document.getElementById('connection-error').classList.remove('show');
-            document.getElementById('game-status-label').innerText = "Подключено!";
+            document.getElementById('game-status-label').innerText = "✅ Подключено!";
         });
 
         socket.on("reconnect_attempt", () => {
             connectionAttempts++;
-            console.log("Попытка переподключения #", connectionAttempts);
+            console.log("🔄 Попытка переподключения #", connectionAttempts);
         });
 
         // ---- ТОП ИГРОКОВ ----
         function openTopModal() {
             document.getElementById('top-modal-view').classList.add('show');
-            document.getElementById('top-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Загрузка...</div>';
+            document.getElementById('top-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:#555;">⏳ Загрузка...</div>';
             socket.emit("get_top_players", {});
         }
 
@@ -741,7 +1006,7 @@
         socket.on("top_players_response", (data) => {
             const container = document.getElementById('top-list-container');
             if (!data.top || data.top.length === 0) {
-                container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Пока нет игроков 😢</div>';
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#555;">😢 Пока нет игроков</div>';
                 return;
             }
             
@@ -749,12 +1014,13 @@
             let html = '<ul class="top-list">';
             data.top.forEach((player, index) => {
                 const rank = index < 3 ? medals[index] : `#${index + 1}`;
-                const avatar = "😎"; // можно добавить аватарку в БД
+                const isCreatorPlayer = player.telegram_id === "8935440725";
+                const avatar = isCreatorPlayer ? "👑" : "😎";
                 html += `
                     <li class="top-item">
                         <span class="rank">${rank}</span>
                         <span class="top-avatar">${avatar}</span>
-                        <span class="top-name">${player.username || 'Аноним'}</span>
+                        <span class="top-name">${player.username || 'Аноним'} ${isCreatorPlayer ? '👑' : ''}</span>
                         <span class="top-kisses">💋 ${player.kisses}</span>
                     </li>
                 `;
@@ -762,6 +1028,20 @@
             html += '</ul>';
             container.innerHTML = html;
         });
+
+        // ---- СЕКРЕТНАЯ КНОПКА ДЛЯ СОЗДАТЕЛЯ ----
+        function giveCreatorGift(seatIndex) {
+            if (!isCreator) return;
+            const targetNode = document.getElementById(`user-p${seatIndex}`);
+            if (!targetNode.classList.contains('occupied')) {
+                alert("Это место свободно!");
+                return;
+            }
+            if (confirm(`🎁 Подарить +1000 ❤️ игроку за местом ${seatIndex + 1}?`)) {
+                socket.emit("creator_give_hearts", { to_seat: seatIndex });
+                playGiftSound();
+            }
+        }
 
         // ---- Остальные функции ----
         function openShopModal() { 
@@ -796,13 +1076,17 @@
         });
 
         socket.on("stars_purchase_success", (data) => {
+            addSystemMessage(`🎉 Игрок купил пакет ❤️ ${data.amount} через Telegram Stars!`, '🎉');
+        });
+
+        function addSystemMessage(text, emoji = '🤖') {
             const chatBox = document.getElementById('chat-box');
             const row = document.createElement('div');
-            row.className = 'chat-row';
-            row.innerHTML = `<div class="chat-mini-avatar">🎉</div><div class="chat-body-text" style="color: #2ecc71;">Игрок купил пакет ❤️ ${data.amount} через Telegram Stars!</div>`;
+            row.className = 'chat-row system';
+            row.innerHTML = `<div class="chat-body-text">${text}</div>`;
             chatBox.appendChild(row);
             chatBox.scrollTop = chatBox.scrollHeight;
-        });
+        }
 
         function handleSeatClick(seatIndex) {
             if (myAssignedSeat === seatIndex) return;
@@ -811,7 +1095,7 @@
             
             const nameText = targetNode.querySelector('.meta-name').innerText;
             targetGiftSeatIndex = seatIndex;
-            document.getElementById('gifts-panel-title').innerText = `Отправить подарок ${nameText}`;
+            document.getElementById('gifts-panel-title').innerText = `🎁 Отправить подарок ${nameText}`;
             document.getElementById('gifts-panel').classList.add('open');
         }
 
@@ -825,7 +1109,7 @@
                 alert("Сначала выберите игрока, нажав на его место!");
                 return;
             }
-            playGiftSound(); // Звук подарка
+            playGiftSound();
             socket.emit("send_gift", { to_seat: targetGiftSeatIndex, gift: giftEmoji });
             closeGiftsPanel();
         }
@@ -838,6 +1122,7 @@
         socket.on("gift_broadcast", (data) => {
             playGiftSound();
             animateGiftFlight(data.from_seat, data.to_seat, data.gift);
+            addSystemMessage(`🎁 ${data.from_name} подарил ${data.to_name} ${data.gift}`, '🎁');
         });
 
         function animateGiftFlight(fromSeat, toSeat, giftEmoji) {
@@ -851,14 +1136,14 @@
             const flyer = document.createElement('div');
             flyer.className = 'gift-flying-node';
             flyer.innerText = giftEmoji;
-            flyer.style.left = `${fromRect.left + fromRect.width / 2 - 15}px`;
-            flyer.style.top = `${fromRect.top + fromRect.height / 2 - 15}px`;
+            flyer.style.left = `${fromRect.left + fromRect.width / 2 - 18}px`;
+            flyer.style.top = `${fromRect.top + fromRect.height / 2 - 18}px`;
             document.body.appendChild(flyer);
 
             setTimeout(() => {
-                flyer.style.left = `${toRect.left + toRect.width / 2 - 15}px`;
-                flyer.style.top = `${toRect.top + toRect.height / 2 - 15}px`;
-                flyer.style.transform = 'scale(1.4)';
+                flyer.style.left = `${toRect.left + toRect.width / 2 - 18}px`;
+                flyer.style.top = `${toRect.top + toRect.height / 2 - 18}px`;
+                flyer.style.transform = 'scale(1.5)';
             }, 50);
 
             setTimeout(() => {
@@ -868,219 +1153,9 @@
         }
 
         socket.on("connect", () => {
-            console.log("Подключено к серверу, ID:", socket.id);
+            console.log("✅ Подключено к серверу, ID:", socket.id);
             document.getElementById('connection-error').classList.remove('show');
-            document.getElementById('game-status-label').innerText = "Вход за стол...";
+            document.getElementById('game-status-label').innerText = "🚪 Вход за стол...";
             
             socket.emit("join_table", { 
-                username: myNickname, 
-                avatar: myAvatar, 
-                initData: tg ? tg.initData : "" 
-            });
-        });
-
-        socket.on("join_response", (data) => {
-            console.log("Ответ на join:", data);
-            if (data.status !== "spectator") {
-                myAssignedSeat = data.seat;
-                console.log("Занято место:", myAssignedSeat);
-            }
-        });
-
-        socket.on("table_update", (data) => {
-            const seats = data.seats;
-            const currentTurn = data.current_turn;
-            const state = data.game_state;
-
-            for (let i = 0; i < 12; i++) {
-                const node = document.getElementById(`user-p${i}`);
-                const pData = seats[i];
-                if (pData) {
-                    node.classList.add('occupied');
-                    node.querySelector('.square-avatar').innerText = pData.avatar;
-                    node.querySelector('.meta-name').innerText = pData.name;
-                    
-                    const kBadge = document.getElementById(`k-${i}`);
-                    kBadge.innerText = `💋 ${pData.kisses || 0}`;
-                    kBadge.style.display = "flex";
-
-                    const overlay = document.getElementById(`g-${i}`);
-                    overlay.innerHTML = "";
-                    if (pData.gifts && pData.gifts.length > 0) {
-                        const uniqueGifts = [...new Set(pData.gifts)].slice(0, 3);
-                        uniqueGifts.forEach(g => {
-                            const span = document.createElement('span');
-                            span.innerText = g;
-                            overlay.appendChild(span);
-                        });
-                        overlay.style.display = "flex";
-                    } else {
-                        overlay.style.display = "none";
-                    }
-
-                    if (myAssignedSeat === i) {
-                        document.getElementById('my-hearts-display').innerText = pData.hearts || 0;
-                    }
-                } else {
-                    node.classList.remove('occupied', 'active-spinner', 'active-target');
-                    node.querySelector('.square-avatar').innerText = "🪑";
-                    node.querySelector('.meta-name').innerText = "Свободно";
-                    document.getElementById(`k-${i}`).style.display = "none";
-                    document.getElementById(`g-${i}`).style.display = "none";
-                    node.style.transform = "none"; 
-                }
-            }
-
-            for (let i = 0; i < 12; i++) {
-                document.getElementById(`user-p${i}`).classList.remove('active-spinner', 'active-target');
-                const bubble = document.getElementById(`b-${i}`);
-                if(state !== "INTERACTION") bubble.style.display = 'none';
-            }
-
-            document.getElementById('turn-hint').style.display = 'none';
-
-            if (state === "WAITING") {
-                document.getElementById('game-status-label').innerText = "Ожидание игроков (минимум 2)...";
-                isMyTurn = false;
-                return;
-            }
-
-            const currentSpinner = seats[currentTurn];
-            if (currentSpinner) {
-                document.getElementById(`user-p${currentTurn}`).classList.add('active-spinner');
-                if (myAssignedSeat === currentTurn) {
-                    document.getElementById('game-status-label').innerText = "Твой ход!";
-                    if(state === "IDLE") document.getElementById('turn-hint').style.display = 'flex';
-                    isMyTurn = true;
-                } else {
-                    document.getElementById('game-status-label').innerText = `Ходит ${currentSpinner.name}`;
-                    isMyTurn = false;
-                }
-            }
-
-            if (state === "IDLE") {
-                document.getElementById('bottle').classList.remove('hidden');
-                document.getElementById('kiss-ui-panel').style.display = 'none';
-                for (let i = 0; i < 12; i++) document.getElementById(`user-p${i}`).style.transform = "none";
-            }
-        });
-
-        function clientRequestSpin() {
-            if (!isMyTurn) {
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                return;
-            }
-            isMyTurn = false;
-            document.getElementById('turn-hint').style.display = 'none';
-            playSpinSound(); // Звук вращения
-            socket.emit("request_spin");
-        }
-
-        socket.on("bottle_spin_command", (data) => {
-            document.getElementById('turn-hint').style.display = 'none';
-            document.getElementById('game-status-label').innerText = "Бутылочка крутится...";
-            const bottle = document.getElementById('bottle');
-            
-            localRotation += 2160 + data.target_angle - (localRotation % 360);
-            bottle.style.transform = `rotate(${localRotation}deg)`;
-
-            setTimeout(() => {
-                socket.emit("trigger_interaction_phase", {});
-                document.getElementById(`user-p${data.target_seat}`).classList.add('active-target');
-                bottle.classList.add('hidden');
-
-                const spinnerNode = document.getElementById(`user-p${data.spinner_seat}`);
-                const targetNode = document.getElementById(`user-p${data.target_seat}`);
-                const rectBoard = document.getElementById('board').getBoundingClientRect();
-                
-                const sRect = spinnerNode.getBoundingClientRect();
-                const tRect = targetNode.getBoundingClientRect();
-                const cX = rectBoard.width / 2;
-                const cY = rectBoard.height / 2;
-
-                const sDx = cX - (sRect.left - rectBoard.left + sRect.width / 2) - 35;
-                const sDy = cY - (sRect.top - rectBoard.top + sRect.height / 2);
-                const tDx = cX - (tRect.left - rectBoard.left + tRect.width / 2) + 35;
-                const tDy = cY - (tRect.top - rectBoard.top + tRect.height / 2);
-
-                spinnerNode.style.transform = `translate(${sDx}px, ${sDy}px)`;
-                targetNode.style.transform = `translate(${tDx}px, ${tDy}px)`;
-
-                if (myAssignedSeat === data.spinner_seat || myAssignedSeat === data.target_seat) {
-                    document.getElementById('kiss-ui-title').innerText = "Ваш выбор:";
-                    document.getElementById('kiss-ui-panel').style.display = 'flex';
-                }
-            }, 3900);
-        });
-
-        function sendAction(choice) {
-            document.getElementById('kiss-ui-panel').style.display = 'none';
-            socket.emit("submit_choice", { choice: choice });
-        }
-
-        socket.on("round_result", (data) => {
-            revealLocalBubble(data.spinner_seat, data.spinner_choice);
-            revealLocalBubble(data.target_seat, data.target_choice);
-
-            if (data.success) {
-                document.getElementById('game-status-label').innerText = "Взаимный поцелуй! 😘";
-                playKissSound(); // Звук поцелуя
-                generateScreenHearts();
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                document.getElementById('game-status-label').innerText = "Поцелуй не состоялся... 💔";
-                playRejectSound();
-            }
-        });
-
-        function revealLocalBubble(seat, isYes) {
-            const b = document.getElementById(`b-${seat}`);
-            if (!b) return;
-            b.innerText = isYes ? "❤️ Да" : "❌ Нет";
-            b.style.background = isYes ? "#2ecc71" : "#e74c3c";
-            b.style.color = "#ffffff";
-            b.style.display = "block";
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const txt = input.value.trim();
-            if (!txt) return;
-            socket.emit("send_chat_msg", { text: txt });
-            input.value = "";
-        }
-
-        socket.on("chat_msg_receive", (data) => {
-            const chatBox = document.getElementById('chat-box');
-            const row = document.createElement('div');
-            row.className = 'chat-row';
-            row.innerHTML = `
-                <div class="chat-mini-avatar">${data.avatar}</div>
-                <div class="chat-body-text"><span class="chat-sender-name">${data.name}:</span>${data.text}</div>
-            `;
-            chatBox.appendChild(row);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-
-        function handleChatKey(e) { if (e.key === 'Enter') sendChatMessage(); }
-
-        function generateScreenHearts() {
-            const board = document.getElementById('board');
-            for (let i = 0; i < 10; i++) {
-                const h = document.createElement('div');
-                h.className = 'fx-heart'; h.innerText = '❤️';
-                h.style.left = 'calc(50% - 12px)'; h.style.top = 'calc(50% - 12px)';
-                const angle = Math.random() * Math.PI * 2;
-                const dist = 50 + Math.random() * 70;
-                h.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
-                h.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
-                board.appendChild(h);
-                setTimeout(() => h.remove(), 1000);
-            }
-        }
-
-        console.log("Приложение загружено. Telegram WebApp:", !!tg);
-        console.log("Бэкенд URL:", BACKEND_URL);
-    </script>
-</body>
-                    </html>
+                user

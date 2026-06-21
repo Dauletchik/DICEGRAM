@@ -24,6 +24,52 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+        }
+
+        /* --- ЭКРАН ЖЕСТКОЙ БЛОКИРОВКИ И ОЖИДАНИЯ WS --- */
+        #ws-lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 9999; /* Поверх всех окон, вкладок и навигации */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2481cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .lock-status-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 6px;
+        }
+
+        .lock-status-desc {
+            font-size: 14px;
+            color: #707579;
+            line-height: 1.4;
         }
 
         /* --- Шапка приложения (Header) --- */
@@ -48,7 +94,6 @@
             letter-spacing: -0.2px;
         }
 
-        /* Статус WebSocket подключения */
         .connection-status {
             font-size: 13px;
             color: #707579;
@@ -312,7 +357,6 @@
             margin-left: 8px;
         }
 
-        /* Интерактивная ссылка на юзернейм */
         .mention-link {
             color: #2481cc;
             text-decoration: none;
@@ -498,6 +542,12 @@
 </head>
 <body>
 
+    <div id="ws-lock-overlay">
+        <div class="spinner"></div>
+        <div class="lock-status-title" id="lock-title">Соединение с сервером...</div>
+        <div class="lock-status-desc" id="lock-desc">Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.</div>
+    </div>
+
     <div class="tg-header" id="main-header">
         <div class="header-title-container">
             <div class="header-title" id="app-title-text">Telegram</div>
@@ -616,11 +666,9 @@
             if (tg.headerColor) tg.setHeaderColor('#ffffff');
         }
 
-        // Данные текущего юзера (фоллбэк на дефолт, если открыто не в ТГ)
         let myId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : 777;
         let myUsername = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.username : "guest_user";
 
-        // Глобальное хранилище структуры чатов в памяти Mini App
         let activeChats = {
             "daupro_support": {
                 id: "daupro_support",
@@ -635,10 +683,8 @@
             }
         };
 
-        // Текущий открытый чат в окне переписки
         let currentChatId = null;
 
-        // Инициализация профиля из API
         function setupUserProfile() {
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
@@ -651,11 +697,9 @@
             }
         }
 
-        // Отрисовка списка чатов на главном экране
         function updateChatsListView() {
             const container = document.getElementById('chats-render-box');
             container.innerHTML = '';
-            
             let totalUnread = 0;
 
             Object.values(activeChats).forEach(chat => {
@@ -686,7 +730,6 @@
                 container.appendChild(item);
             });
 
-            // Обновляем бейджи непрочитанных в системе
             const totalUnreadBadge = document.getElementById('total-unread-badge');
             const bottomChatsBadge = document.getElementById('bottom-chats-badge');
             if (totalUnread > 0) {
@@ -700,7 +743,6 @@
             }
         }
 
-        // Переключение табов нижней панели
         function switchScreen(screenName) {
             closeChatView();
             document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -723,7 +765,6 @@
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Функция парсинга текста: превращает @username в кликабельные ссылки
         function formatMessageText(text) {
             const mentionRegex = /@([a-zA-Z0-9_]{4,32})/g;
             return text.replace(mentionRegex, (match, username) => {
@@ -731,9 +772,8 @@
             });
         }
 
-        // Клик по подсвеченному юзернейму — создание нового чата
         function handleUsernameClick(username, event) {
-            event.stopPropagation(); // Защита от ложного срабатывания баббла
+            event.stopPropagation();
             if (username === myUsername) return; 
 
             if (socket && socket.readyState === WebSocket.OPEN) {
@@ -745,7 +785,6 @@
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         }
 
-        // Добавление баббла сообщения на экран переписки
         function appendBubble(text, time, type) {
             const box = document.getElementById('chat-messages-box');
             const bubble = document.createElement('div');
@@ -755,7 +794,6 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // Открытие конкретного окна переписки
         function openChatView(chatId) {
             currentChatId = chatId;
             const chat = activeChats[chatId];
@@ -767,7 +805,6 @@
             document.getElementById('main-header').style.display = 'none';
             document.getElementById('main-bottom-navigation').style.display = 'none';
 
-            // Настройка шапки конкретного чата
             document.getElementById('view-header-name').innerText = chat.name;
             document.getElementById('view-header-status').innerText = chat.is_bot ? 'бот' : 'онлайн';
             document.getElementById('view-header-verified').style.display = chat.verified ? 'flex' : 'none';
@@ -776,7 +813,6 @@
             avatarEl.className = `chat-avatar ${chat.avatarClass}`;
             avatarEl.innerText = chat.letter;
 
-            // Очищаем старые сообщения и запрашиваем историю из базы данных SQLite бэкенда
             document.getElementById('chat-messages-box').innerHTML = '';
             
             if (socket && socket.readyState === WebSocket.OPEN) {
@@ -799,7 +835,6 @@
             updateChatsListView();
         }
 
-        // Отправка исходящего сообщения через WebSocket на бэкенд
         function sendUserMessage() {
             const input = document.getElementById('msg-input-field');
             const text = input.value.trim();
@@ -807,14 +842,10 @@
 
             const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-            // Сразу отображаем у себя на экране (Оптимистичный интерфейс)
             appendBubble(text, timeStr, 'outgoing');
-            
-            // Обновляем превью в списке чатов
             activeChats[currentChatId].msg = text;
             activeChats[currentChatId].time = timeStr;
 
-            // Отправляем пакет на сервер
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
                     action: "send_msg",
@@ -831,11 +862,17 @@
             if (e.key === 'Enter') sendUserMessage();
         });
 
-        // --- СВЯЗЬ (WebSocket Логика) ---
+        // --- ОБНОВЛЕННАЯ ЛОГИКА СВЯЗИ С ЖЕСТКОЙ БЛОКИРОВКОЙ ЭКРАНА ---
         const wsHost = "wss://jrnm.app"; 
         let socket;
 
         function connectWebSocket() {
+            // При начале подключения принудительно выводим оверлей блокировки
+            const overlay = document.getElementById('ws-lock-overlay');
+            document.getElementById('lock-title').innerText = "Соединение с сервером...";
+            document.getElementById('lock-desc').innerText = "Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.";
+            overlay.style.display = 'flex';
+
             document.getElementById('conn-status-text').style.display = 'block';
 
             socket = new WebSocket(wsHost);
@@ -843,7 +880,9 @@
             socket.onopen = function() {
                 document.getElementById('conn-status-text').style.display = 'none';
                 
-                // Авторизуем сессию на сервере, передавая ID и Юзернейм из Telegram API
+                // Убираем оверлей блокировки — интерфейс становится полностью доступным
+                overlay.style.display = 'none';
+
                 socket.send(JSON.stringify({
                     action: "auth",
                     user_id: myId,
@@ -855,11 +894,9 @@
                 try {
                     const data = JSON.parse(event.data);
                     
-                    // 1. Обработка входящего сообщения
                     if (data.type === "new_msg") {
                         let chatPartner = (data.sender_id === myId) ? data.receiver_id : data.sender_id;
                         
-                        // Если чата с ним ещё нет в списке — создаём на лету
                         if (!activeChats[chatPartner]) {
                             activeChats[chatPartner] = {
                                 id: chatPartner,
@@ -887,7 +924,6 @@
                         if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                     }
 
-                    // 2. Ответ от поиска юзера по клику на меншн
                     if (data.type === "user_found") {
                         const targetId = data.user_id;
                         if (!activeChats[targetId]) {
@@ -904,14 +940,12 @@
                             };
                             updateChatsListView();
                         }
-                        // Автоматически открываем созданный чат
                         openChatView(targetId);
                     }
 
-                    // 3. Загрузка истории переписки из SQLite
                     if (data.type === "history") {
                         const box = document.getElementById('chat-messages-box');
-                        box.innerHTML = ''; // Очищаем заглушку
+                        box.innerHTML = '';
                         
                         if (data.messages && data.messages.length > 0) {
                             data.messages.forEach(m => {
@@ -919,7 +953,6 @@
                                 appendBubble(m.text, m.time, mType);
                             });
                         } else {
-                            // Если переписка пустая и это саппорт
                             if (currentChatId === 'daupro_support') {
                                 appendBubble("Добро пожаловать в DICEGRAM!", "13:07", "incoming");
                             }
@@ -933,11 +966,18 @@
 
             socket.onclose = function() {
                 document.getElementById('conn-status-text').style.display = 'block';
-                setTimeout(connectWebSocket, 5000); // Реконнект при обрыве
+                
+                // Жестко перекрываем весь интерфейс при дисконнекте
+                document.getElementById('lock-title').innerText = "Сервер DICEGRAM временно недоступен";
+                document.getElementById('lock-desc').innerText = "Пожалуйста, запустите bot.py на вашем сервере или в Pydroid 3.";
+                overlay.style.display = 'flex';
+
+                setTimeout(connectWebSocket, 4000); 
             };
 
             socket.onerror = function() {
                 document.getElementById('conn-status-text').style.display = 'block';
+                overlay.style.display = 'flex';
             };
         }
 

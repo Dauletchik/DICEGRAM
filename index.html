@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,15 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
         body {
-            background-color: #0a0a0f;
-            color: #ffffff;
+            background: #1a1410;
+            color: #e8ddd0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -18,16 +23,18 @@
             overflow: hidden;
         }
 
+        /* ===== ШАПКА ===== */
         .game-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px 16px;
-            background: #12121a;
-            border-bottom: 1px solid #2a2a3a;
+            background: rgba(26, 20, 16, 0.95);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
             flex-shrink: 0;
             z-index: 10;
             gap: 8px;
+            backdrop-filter: blur(10px);
         }
         
         .header-left {
@@ -39,10 +46,10 @@
         .hearts-balance-top {
             display: flex;
             align-items: center;
-            background: rgba(255, 71, 87, 0.2);
-            border: 1px solid #ff4757;
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid rgba(255, 71, 87, 0.3);
             padding: 6px 14px;
-            border-radius: 18px;
+            border-radius: 20px;
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
@@ -52,53 +59,82 @@
         .hearts-balance-top:active { transform: scale(0.95); }
         .hearts-balance-top span { color: #ff4757; font-size: 18px; }
 
-        .top-btn {
-            background: rgba(255, 215, 0, 0.15);
-            border: 1px solid #ffd700;
+        .top-btn, .skins-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
             color: #ffd700;
-            padding: 6px 14px;
-            border-radius: 18px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 0.3s;
         }
-        .top-btn:active { transform: scale(0.95); background: rgba(255, 215, 0, 0.3); }
+        .top-btn:active, .skins-btn:active { 
+            transform: scale(0.95); 
+            background: rgba(255, 215, 0, 0.2);
+        }
 
         .status-msg {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #ffd32a;
             text-align: center;
             flex: 1;
-            margin: 0 10px;
-            text-shadow: 0 0 20px rgba(255, 211, 42, 0.2);
+            margin: 0 8px;
+            text-shadow: 0 0 20px rgba(255, 211, 42, 0.1);
         }
         
+        /* ===== ИГРОВОЙ СТОЛ ===== */
         .board-container {
             position: relative;
             width: 100%;
             height: 45vh;
-            background: radial-gradient(ellipse at center, #d4c5a0 0%, #b8a88a 100%);
-            box-shadow: inset 0 0 60px rgba(0,0,0,0.6);
+            background: radial-gradient(ellipse at 50% 50%, #8B7355 0%, #5C4033 40%, #3d2b1f 100%);
+            box-shadow: inset 0 0 80px rgba(0,0,0,0.7), 0 4px 30px rgba(0,0,0,0.5);
             flex-shrink: 0;
             overflow: hidden;
         }
         
+        /* Текстура дерева на столе */
         .board-container::before {
             content: '';
             position: absolute;
-            top: 50%; left: 50%;
-            width: 80%; height: 80%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            border: 2px dashed rgba(0,0,0,0.15);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255,255,255,0.02) 40px,
+                    rgba(255,255,255,0.02) 41px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 80px,
+                    rgba(255,255,255,0.01) 80px,
+                    rgba(255,255,255,0.01) 81px
+                );
             pointer-events: none;
+            border-radius: 0 0 30px 30px;
         }
         
+        .board-container::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 70%; height: 70%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.05);
+            pointer-events: none;
+        }
+
+        /* ===== БУТЫЛОЧКА ===== */
         .bottle-node {
             position: absolute;
             width: 38px;
@@ -109,11 +145,36 @@
             cursor: pointer;
             transition: transform 3.8s cubic-bezier(0.15, 1, 0.2, 1), opacity 0.4s;
             transform: rotate(0deg);
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 8px 30px rgba(0,0,0,0.6));
         }
         .bottle-node.hidden { opacity: 0; pointer-events: none; }
         .bottle-node:active { transform: scale(0.95); }
-        .bottle-img { width: 100%; height: 100%; }
+        .bottle-img { 
+            width: 100%; 
+            height: 100%; 
+            transition: all 0.3s;
+        }
+        
+        /* Стили для разных скинов */
+        .bottle-skin-classic .bottle-img path:first-child { fill: #1b4d3e; }
+        .bottle-skin-classic .bottle-img path:last-child { fill: #2c6b56; }
+        
+        .bottle-skin-gold .bottle-img path:first-child { fill: #b8860b; }
+        .bottle-skin-gold .bottle-img path:last-child { fill: #ffd700; }
+        .bottle-skin-gold .bottle-img rect { fill: #ff6b00; }
+        .bottle-skin-gold .bottle-img circle { fill: #fff8dc; }
+        
+        .bottle-skin-neon .bottle-img path:first-child { fill: #6a0dad; }
+        .bottle-skin-neon .bottle-img path:last-child { fill: #bc13fe; }
+        .bottle-skin-neon .bottle-img rect { fill: #ff00ff; }
+        .bottle-skin-neon .bottle-img circle { fill: #e0b0ff; }
+        .bottle-skin-neon .bottle-node {
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes neonGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(188, 19, 254, 0.3)) drop-shadow(0 8px 30px rgba(0,0,0,0.6)); }
+            100% { filter: drop-shadow(0 0 30px rgba(188, 19, 254, 0.6)) drop-shadow(0 8px 30px rgba(0,0,0,0.6)); }
+        }
 
         .hint-arrow-box {
             position: absolute;
@@ -131,15 +192,17 @@
             50% { transform: translateX(-50%) scale(1.05); }
         }
         .hint-text {
-            background: rgba(255, 255, 255, 0.95);
-            color: #1a1a2e;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffd700;
             padding: 6px 16px;
             border-radius: 12px;
             font-size: 13px;
             font-weight: bold;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
         }
 
+        /* ===== ИГРОКИ ===== */
         .grid-player {
             position: absolute;
             width: 60px;
@@ -148,7 +211,7 @@
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            opacity: 0.3;
+            opacity: 0.35;
             transition: transform 0.6s ease, opacity 0.3s;
             cursor: pointer;
         }
@@ -163,35 +226,35 @@
         .square-avatar {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            background: linear-gradient(135deg, #2c1810, #1a0f0a);
             border-radius: 14px; 
-            border: 3px solid #ffffff;
+            border: 2px solid rgba(255, 215, 0, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 22px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             transition: all 0.3s;
         }
 
         .grid-player.active-spinner .square-avatar {
             border-color: #24b0ff; 
-            box-shadow: 0 0 25px rgba(36, 176, 255, 0.5);
+            box-shadow: 0 0 30px rgba(36, 176, 255, 0.4);
             animation: glowBlue 1s ease-in-out infinite alternate;
         }
         @keyframes glowBlue {
-            0% { box-shadow: 0 0 15px rgba(36, 176, 255, 0.3); }
-            100% { box-shadow: 0 0 35px rgba(36, 176, 255, 0.7); }
+            0% { box-shadow: 0 0 15px rgba(36, 176, 255, 0.2); }
+            100% { box-shadow: 0 0 40px rgba(36, 176, 255, 0.6); }
         }
         
         .grid-player.active-target .square-avatar { 
             border-color: #ff4757; 
-            box-shadow: 0 0 25px rgba(255, 71, 87, 0.5);
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.4);
             animation: glowRed 1s ease-in-out infinite alternate;
         }
         @keyframes glowRed {
-            0% { box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); }
-            100% { box-shadow: 0 0 35px rgba(255, 71, 87, 0.7); }
+            0% { box-shadow: 0 0 15px rgba(255, 71, 87, 0.2); }
+            100% { box-shadow: 0 0 40px rgba(255, 71, 87, 0.6); }
         }
         
         .kisses-badge {
@@ -199,8 +262,8 @@
             bottom: -4px;
             right: -4px;
             background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #ff4757;
-            color: #ffffff;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            color: #ff4757;
             padding: 2px 6px;
             border-radius: 8px;
             font-size: 9px;
@@ -209,7 +272,7 @@
 
         .meta-name {
             font-size: 10px;
-            color: #1a1a2e; 
+            color: #e8ddd0; 
             font-weight: bold;
             margin-top: 4px;
             text-align: center;
@@ -217,7 +280,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .player-gifts-overlay {
@@ -233,6 +296,7 @@
             overflow: hidden;
             font-size: 10px;
             backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,215,0,0.1);
         }
 
         #user-p0  { top: 5%;   left: calc(50% - 30px); }
@@ -251,15 +315,16 @@
         .vote-bubble {
             position: absolute;
             top: -26px;
-            background: #ffffff;
-            color: #000000;
+            background: rgba(0, 0, 0, 0.85);
+            color: #ffffff;
             padding: 3px 10px;
             border-radius: 10px;
             font-size: 10px;
             font-weight: bold;
             display: none;
             z-index: 150;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .choice-panel-box {
@@ -280,6 +345,7 @@
             border-radius: 12px;
             margin-bottom: 10px;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .choice-row-btns { display: flex; gap: 25px; }
         .act-btn {
@@ -288,29 +354,32 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .act-btn:active { transform: scale(0.9); }
-        .btn-heart { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4); }
-        .btn-cross { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4); }
+        .btn-heart { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3); }
+        .btn-cross { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; box-shadow: 0 4px 20px rgba(231, 76, 60, 0.3); }
 
+        /* ===== ЧАТ (НОВЫЙ ДИЗАЙН) ===== */
         .chat-section {
             flex: 1; 
-            background: #0a0a0f; 
-            border-top: 1px solid #1a1a2e;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 215, 0, 0.08);
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
             position: relative;
         }
+        
         .chat-messages { 
             flex: 1; 
-            padding: 12px 14px; 
+            padding: 12px 16px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
             gap: 6px;
         }
-        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar { width: 3px; }
         .chat-messages::-webkit-scrollbar-track { background: transparent; }
-        .chat-messages::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 3px; }
         
         .chat-row { 
             display: flex; 
@@ -319,26 +388,28 @@
             animation: slideIn 0.3s ease;
         }
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .chat-mini-avatar {
-            width: 30px; height: 30px; border-radius: 50%; 
-            background: linear-gradient(135deg, #2a2a3a, #1a1a2e);
+            width: 30px; height: 30px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, #2a1a12, #1a0f0a);
             display: flex; align-items: center; justify-content: center; 
             font-size: 14px; flex-shrink: 0;
-            border: 2px solid #2a2a3a;
+            border: 1px solid rgba(255,215,0,0.1);
         }
         .chat-body-text { 
-            background: #14141f; 
+            background: rgba(255, 255, 255, 0.05);
             padding: 8px 14px; 
             border-radius: 14px; 
             font-size: 13px; 
             max-width: 85%; 
             word-break: break-word;
-            border: 1px solid #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.05);
             line-height: 1.4;
+            backdrop-filter: blur(5px);
         }
         .chat-sender-name { 
             font-weight: bold; 
@@ -346,21 +417,20 @@
             margin-right: 6px;
         }
         
-        /* Системные сообщения в чате */
+        /* Системные сообщения */
         .chat-row.system {
             justify-content: center;
         }
         .chat-row.system .chat-body-text {
-            background: linear-gradient(135deg, #1a1a2e, #2a1a3e);
-            border: 1px solid #3a2a4e;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.08);
             text-align: center;
             font-size: 12px;
-            color: #aaa;
+            color: rgba(255, 215, 0, 0.6);
             max-width: 90%;
         }
         .chat-row.system .chat-body-text b { color: #ffd700; }
         
-        /* Особое приветствие для создателя */
         .chat-row.creator-enter {
             justify-content: center;
             animation: creatorEnter 2s ease;
@@ -371,43 +441,44 @@
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
         .chat-row.creator-enter .chat-body-text {
-            background: linear-gradient(135deg, #ffd700, #ff6b00);
-            color: #1a1a2e;
-            font-size: 16px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 0, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            font-size: 14px;
             font-weight: bold;
-            border: 2px solid #ffd700;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-            padding: 12px 24px;
+            padding: 10px 20px;
         }
-        .chat-row.creator-enter .chat-body-text b { color: #1a1a2e; }
+        .chat-row.creator-enter .chat-body-text b { color: #ffd700; }
         
+        /* Поле ввода */
         .chat-input-bar { 
             display: flex; 
             padding: 8px 12px; 
-            background: #0a0a0f; 
+            background: rgba(0, 0, 0, 0.3);
             gap: 8px; 
             flex-shrink: 0;
-            border-top: 1px solid #1a1a2e;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(5px);
         }
         .chat-input-field {
             flex: 1; 
-            background: #14141f; 
-            border: 1px solid #2a2a3a;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 20px; 
             padding: 10px 16px; 
-            color: white; 
+            color: #e8ddd0; 
             font-size: 14px; 
             outline: none;
             transition: border-color 0.3s;
         }
-        .chat-input-field:focus { border-color: #ff4757; }
-        .chat-input-field::placeholder { color: #555; }
+        .chat-input-field:focus { border-color: rgba(255, 215, 0, 0.3); }
+        .chat-input-field::placeholder { color: rgba(255,255,255,0.2); }
         .chat-submit-btn {
             width: 40px; height: 40px; 
-            background: linear-gradient(135deg, #ff4757, #c0392b); 
+            background: linear-gradient(135deg, #ffd700, #f0a500); 
             border: none;
             border-radius: 50%; 
-            color: white; 
+            color: #1a1410; 
             font-size: 16px; 
             display: flex; 
             align-items: center; 
@@ -415,15 +486,17 @@
             flex-shrink: 0;
             cursor: pointer;
             transition: transform 0.2s;
+            font-weight: bold;
         }
         .chat-submit-btn:active { transform: scale(0.9); }
 
-        /* МЕНЮ ПОДАРКОВ */
+        /* ===== ПОДАРКИ ===== */
         .gifts-sliding-panel {
             position: absolute;
             bottom: 0; left: 0; width: 100%; height: 260px;
-            background: #12121a; 
-            border-top: 2px solid #2a2a3a;
+            background: rgba(20, 15, 12, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
             transform: translateY(100%); 
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 400; 
@@ -436,12 +509,9 @@
         .gifts-header-title { 
             font-size: 15px; 
             font-weight: bold; 
-            color: #fff; 
+            color: #ffd700; 
             margin-bottom: 10px; 
             text-align: center; 
-            background: linear-gradient(135deg, #ff4757, #ff6b81);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
         .gifts-grid-scroll {
@@ -453,7 +523,7 @@
             padding-bottom: 10px;
         }
         .gift-card-node {
-            background: #1a1a2e; 
+            background: rgba(255,255,255,0.05);
             border-radius: 12px; 
             padding: 8px 4px;
             display: flex; 
@@ -466,7 +536,7 @@
         }
         .gift-card-node:active { 
             transform: scale(0.95); 
-            border-color: #ff4757;
+            border-color: rgba(255, 215, 0, 0.3);
         }
         .gift-card-emoji { font-size: 28px; }
         .gift-card-price { 
@@ -491,31 +561,32 @@
             align-items: center; 
             justify-content: center; 
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.3);
+            box-shadow: 0 4px 20px rgba(46, 204, 113, 0.2);
             transition: transform 0.2s;
         }
         .close-gifts-circle:active { transform: scale(0.9); }
 
-        /* МОДАЛКИ */
+        /* ===== МОДАЛКИ ===== */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 500;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
         }
         .modal-overlay.show { display: flex; }
 
+        /* Магазин сердечек */
         .shop-modal {
-            background: linear-gradient(145deg, #1a1a2e, #2a1a3e);
+            background: linear-gradient(145deg, #1a1410, #2a1a12);
             width: 100%; max-width: 340px;
             border-radius: 24px; padding: 20px;
-            position: relative; color: #fff; text-align: center;
-            border: 1px solid #3a2a4e;
+            position: relative; color: #e8ddd0;
+            border: 1px solid rgba(255, 215, 0, 0.1);
         }
         .close-shop-btn {
             position: absolute; top: -12px; right: -12px;
@@ -531,13 +602,12 @@
             font-size: 20px; 
             font-weight: bold; 
             margin-bottom: 16px; 
-            background: linear-gradient(135deg, #ff4757, #ff6b81);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #ffd700;
+            text-align: center;
         }
         .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .shop-item {
-            background: #14141f; 
+            background: rgba(255,255,255,0.03);
             border-radius: 14px; 
             padding: 10px 4px;
             display: flex; 
@@ -545,16 +615,16 @@
             align-items: center; 
             justify-content: space-between;
             position: relative;
-            border: 1px solid #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         .item-badge {
             position: absolute; top: -8px; 
-            background: linear-gradient(135deg, #ff4757, #ff6b81); 
-            color: #fff;
+            background: linear-gradient(135deg, #ffd700, #f0a500); 
+            color: #1a1410;
             font-size: 7px; font-weight: bold; padding: 2px 8px; border-radius: 8px;
         }
         .item-title { font-size: 10px; color: #888; font-weight: 600; }
-        .item-value { font-size: 14px; font-weight: bold; color: #fff; }
+        .item-value { font-size: 14px; font-weight: bold; color: #ffd700; }
         .item-icon { font-size: 26px; margin: 4px 0; }
         .buy-btn { 
             width: 100%; 
@@ -563,25 +633,25 @@
             padding: 6px 0; 
             font-weight: bold; 
             font-size: 11px; 
-            color: #fff; 
+            color: #1a1410; 
             cursor: pointer;
             transition: transform 0.2s;
         }
         .buy-btn:active { transform: scale(0.95); }
         .btn-blue { background: linear-gradient(135deg, #24b0ff, #0984e3); }
-        .btn-green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .btn-green { background: linear-gradient(135deg, #ffd700, #f0a500); }
 
-        /* ===== ТОП МОДАЛКА (НОВАЯ) ===== */
+        /* ===== ТОП МОДАЛКА ===== */
         .top-modal {
-            background: linear-gradient(145deg, #12121a, #1a1a2e);
+            background: linear-gradient(145deg, #1a1410, #2a1a12);
             width: 100%; max-width: 380px;
             border-radius: 28px; 
             padding: 24px 20px 20px;
             position: relative; 
-            color: #fff;
+            color: #e8ddd0;
             max-height: 85vh;
             overflow-y: auto;
-            border: 1px solid #2a2a3a;
+            border: 1px solid rgba(255, 215, 0, 0.1);
             box-shadow: 0 20px 60px rgba(0,0,0,0.8);
             animation: slideUp 0.4s ease;
         }
@@ -590,9 +660,9 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
-        .top-modal::-webkit-scrollbar { width: 4px; }
+        .top-modal::-webkit-scrollbar { width: 3px; }
         .top-modal::-webkit-scrollbar-track { background: transparent; }
-        .top-modal::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
+        .top-modal::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 3px; }
         
         .top-modal .close-top-btn {
             position: sticky; 
@@ -617,14 +687,11 @@
         .top-modal .close-top-btn:active { transform: scale(0.9); }
         
         .top-title { 
-            font-size: 24px; 
+            font-size: 22px; 
             font-weight: 900; 
             text-align: center; 
             margin: 0 0 20px 0;
-            background: linear-gradient(135deg, #ffd700, #ff6b00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: none;
+            color: #ffd700;
             letter-spacing: 1px;
         }
         
@@ -646,7 +713,7 @@
             border: 1px solid transparent;
         }
         .top-item:hover { 
-            background: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.05);
             border-color: rgba(255,255,255,0.05);
         }
         
@@ -656,7 +723,7 @@
             min-width: 38px;
             text-align: center;
         }
-        .top-item .rank.gold { color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        .top-item .rank.gold { color: #ffd700; }
         .top-item .rank.silver { color: #c0c0c0; }
         .top-item .rank.bronze { color: #cd7f32; }
         .top-item .rank.normal { color: #666; font-size: 16px; }
@@ -675,6 +742,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #e8ddd0;
         }
         .top-item .top-name .creator-badge {
             color: #ffd700;
@@ -683,19 +751,19 @@
         }
         
         .top-item .top-kisses {
-            background: rgba(255, 71, 87, 0.15);
+            background: rgba(255, 71, 87, 0.1);
             padding: 4px 14px; 
             border-radius: 20px;
             color: #ff4757; 
             font-weight: 700;
             font-size: 14px;
-            border: 1px solid rgba(255, 71, 87, 0.2);
+            border: 1px solid rgba(255, 71, 87, 0.1);
             white-space: nowrap;
         }
         
         .top-item.my-rank {
-            background: rgba(255, 215, 0, 0.08);
-            border: 1px solid rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.1);
         }
         
         .top-empty {
@@ -705,6 +773,123 @@
         }
         .top-empty .big-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
         .top-empty .sub-text { font-size: 13px; color: #444; margin-top: 6px; }
+
+        /* ===== МАГАЗИН СКИНОВ ===== */
+        .skins-modal {
+            background: linear-gradient(145deg, #1a1410, #2a1a12);
+            width: 100%; max-width: 380px;
+            border-radius: 28px; 
+            padding: 24px 20px 20px;
+            position: relative; 
+            color: #e8ddd0;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            animation: slideUp 0.4s ease;
+        }
+        .skins-modal::-webkit-scrollbar { width: 3px; }
+        .skins-modal::-webkit-scrollbar-track { background: transparent; }
+        .skins-modal::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.2); border-radius: 3px; }
+        
+        .skins-modal .close-skins-btn {
+            position: sticky; 
+            top: 0; 
+            float: right;
+            width: 34px; 
+            height: 34px; 
+            background: linear-gradient(135deg, #ff4757, #c0392b); 
+            color: #fff;
+            border-radius: 50%; 
+            font-weight: bold; 
+            border: none;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        .skins-modal .close-skins-btn:active { transform: scale(0.9); }
+        
+        .skins-title { 
+            font-size: 22px; 
+            font-weight: 900; 
+            text-align: center; 
+            margin: 0 0 20px 0;
+            color: #ffd700;
+            letter-spacing: 1px;
+        }
+        
+        .skin-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .skin-item.active {
+            border-color: rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.05);
+        }
+        .skin-item .skin-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .skin-item .skin-preview {
+            width: 30px;
+            height: 90px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .skin-item .skin-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .skin-item .skin-price {
+            font-size: 12px;
+            color: #ff4757;
+        }
+        .skin-item .skin-btn {
+            padding: 6px 16px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .skin-item .skin-btn:active { transform: scale(0.95); }
+        .skin-item .skin-btn.buy {
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #1a1410;
+        }
+        .skin-item .skin-btn.active {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        .skin-item .skin-btn.owned {
+            background: rgba(255,255,255,0.05);
+            color: #666;
+            cursor: default;
+        }
+        .skin-item .skin-btn.locked {
+            background: rgba(255,255,255,0.03);
+            color: #444;
+            cursor: not-allowed;
+        }
 
         /* Анимации */
         .fx-heart { 
@@ -745,23 +930,23 @@
         .connection-error h2 { color: #ff4757; margin-bottom: 10px; font-size: 22px; }
         .connection-error p { color: #888; text-align: center; margin-bottom: 20px; }
         .retry-btn {
-            background: linear-gradient(135deg, #ff4757, #c0392b);
-            color: white;
+            background: linear-gradient(135deg, #ffd700, #f0a500);
+            color: #1a1410;
             border: none;
             padding: 14px 40px;
             border-radius: 25px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             transition: transform 0.2s;
         }
         .retry-btn:active { transform: scale(0.95); }
 
-        /* Секретная кнопка для создателя */
         .creator-gift-btn {
             display: none;
-            background: linear-gradient(135deg, #ffd700, #ff6b00);
+            background: linear-gradient(135deg, #ffd700, #f0a500);
             border: none;
-            color: #1a1a2e;
+            color: #1a1410;
             padding: 3px 10px;
             border-radius: 10px;
             font-weight: bold;
@@ -773,6 +958,31 @@
         }
         .creator-gift-btn:active { transform: scale(0.9); }
         .creator-gift-btn.show { display: block; }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 14px;
+            z-index: 9998;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.1);
+            animation: toastIn 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .toast.success { border-color: rgba(46, 204, 113, 0.3); color: #2ecc71; }
+        .toast.error { border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
+        .toast.info { border-color: rgba(255, 215, 0, 0.3); color: #ffd700; }
     </style>
 </head>
 <body>
@@ -791,6 +1001,7 @@
                 <span>❤️</span> <div id="my-hearts-display">0</div>
             </div>
             <button class="top-btn" onclick="openTopModal()">🏆 Топ</button>
+            <button class="skins-btn" onclick="openSkinsModal()">🍾 Скины</button>
         </div>
         <div class="status-msg" id="game-status-label">Подключение...</div>
     </div>
@@ -800,10 +1011,10 @@
             <div class="hint-text">🍾 Крути бутылочку!</div>
         </div>
 
-        <div class="bottle-node" id="bottle" onclick="clientRequestSpin()">
+        <div class="bottle-node bottle-skin-classic" id="bottle" onclick="clientRequestSpin()">
             <svg class="bottle-img" viewBox="0 0 100 300" xmlns="http://www.w3.org/2000/svg">
-                <path d="M42,15 L58,15 L58,65 L42,65 Z" fill="#1b4d3e" stroke="#0d261f" stroke-width="3"/>
-                <path d="M42,65 C22,95 22,115 22,145 L22,265 C22,278 32,288 50,288 C68,288 78,278 78,265 L78,145 C78,115 78,95 58,65 Z" fill="#2c6b56" stroke="#0d261f" stroke-width="4"/>
+                <path d="M42,15 L58,15 L58,65 L42,65 Z" stroke="#0d261f" stroke-width="3"/>
+                <path d="M42,65 C22,95 22,115 22,145 L22,265 C22,278 32,288 50,288 C68,288 78,278 78,265 L78,145 C78,115 78,95 58,65 Z" stroke="#0d261f" stroke-width="4"/>
                 <rect x="27" y="135" width="46" height="50" rx="4" fill="#e74c3c"/>
                 <circle cx="50" cy="160" r="10" fill="#ffffff"/>
             </svg>
@@ -832,6 +1043,7 @@
         </div>
     </div>
 
+    <!-- ===== ЧАТ (НОВЫЙ ДИЗАЙН) ===== -->
     <div class="chat-section">
         <div class="chat-messages" id="chat-box"></div>
         <div class="chat-input-bar">
@@ -858,7 +1070,7 @@
         </div>
     </div>
 
-    <!-- МАГАЗИН -->
+    <!-- МАГАЗИН СЕРДЕЧЕК -->
     <div class="modal-overlay" id="shop-modal-view">
         <div class="shop-modal">
             <button class="close-shop-btn" onclick="closeShopModal()">✕</button>
@@ -915,7 +1127,7 @@
         </div>
     </div>
 
-    <!-- ===== ТОП МОДАЛКА (НОВАЯ) ===== -->
+    <!-- ===== ТОП МОДАЛКА ===== -->
     <div class="modal-overlay" id="top-modal-view">
         <div class="top-modal">
             <button class="close-top-btn" onclick="closeTopModal()">✕</button>
@@ -929,16 +1141,31 @@
         </div>
     </div>
 
+    <!-- ===== МАГАЗИН СКИНОВ ===== -->
+    <div class="modal-overlay" id="skins-modal-view">
+        <div class="skins-modal">
+            <button class="close-skins-btn" onclick="closeSkinsModal()">✕</button>
+            <div class="skins-title">🍾 Магазин скинов</div>
+            <div id="skins-container">
+                <div class="top-empty">
+                    <span class="big-emoji">⏳</span>
+                    Загрузка...
+                </div>
+            </div>
+            <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);font-size:11px;color:#555;">
+                💡 Скины доступны только Создателю
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==== ГЛАВНОЕ: ПРАВИЛЬНЫЙ URL БЭКЕНДА ====
         const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
-        // const BACKEND_URL = "http://localhost:8080"; // Для локального теста
         
         // 👑 ПРАВИЛЬНЫЙ ID СОЗДАТЕЛЯ
         const CREATOR_ID = "8771009385";  // @dauletbr
         
         console.log("🚀 Подключение к серверу:", BACKEND_URL);
-        console.log("👑 ID создателя:", CREATOR_ID);
         
         const socket = io(BACKEND_URL, {
             transports: ['websocket', 'polling'],
@@ -950,7 +1177,7 @@
         
         const tg = window.Telegram.WebApp;
         
-        // ---- ЗВУКИ (Web Audio API) ----
+        // ---- ЗВУКИ ----
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
@@ -958,9 +1185,7 @@
             if (!audioCtx) {
                 try {
                     audioCtx = new AudioContext();
-                } catch(e) {
-                    console.warn("Web Audio не поддерживается");
-                }
+                } catch(e) {}
             }
         }
 
@@ -978,7 +1203,7 @@
                 gain.connect(audioCtx.destination);
                 osc.start();
                 osc.stop(audioCtx.currentTime + duration);
-            } catch(e) { /* тихо */ }
+            } catch(e) {}
         }
 
         function playSpinSound() {
@@ -1016,11 +1241,10 @@
             setTimeout(() => playBeep(300, 0.3, 'sawtooth', 0.12), 200);
         }
 
-        // Инициализация звука при первом клике
         document.addEventListener('click', () => initAudio(), { once: true });
         document.addEventListener('touchstart', () => initAudio(), { once: true });
 
-        // ---- Остальной код ----
+        // ---- ОСНОВНЫЕ ПЕРЕМЕННЫЕ ----
         let myNickname = "@Player";
         let myAvatar = "😎";
         let myAssignedSeat = null;
@@ -1028,8 +1252,8 @@
         let isMyTurn = false;
         let localRotation = 0;
         let targetGiftSeatIndex = null;
-        let connectionAttempts = 0;
         let isCreator = false;
+        let currentSkin = 'classic';
 
         if (tg) {
             try {
@@ -1043,13 +1267,29 @@
                     myAvatar = avatars[Math.floor(Math.random() * avatars.length)];
                 }
                 console.log("✅ Telegram WebApp инициализирован");
-                console.log("👑 Создатель:", isCreator ? "ДА" : "НЕТ");
             } catch(e) {
                 console.error("❌ Ошибка инициализации Telegram:", e);
             }
         }
 
-        // Обработка ошибок подключения
+        // ---- ТОСТ УВЕДОМЛЕНИЯ ----
+        function showToast(message, type = 'info') {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ---- ОБРАБОТЧИКИ СОКЕТА ----
         socket.on("connect_error", (error) => {
             console.error("❌ Ошибка подключения:", error);
             document.getElementById('game-status-label').innerText = "⚠️ Ошибка подключения";
@@ -1057,41 +1297,22 @@
         });
 
         socket.on("disconnect", (reason) => {
-            console.warn("⚠️ Отключено:", reason);
             if (reason === "io server disconnect" || reason === "transport error") {
                 document.getElementById('connection-error').classList.add('show');
             }
         });
 
-        socket.on("reconnect", (attempt) => {
-            console.log("🔄 Переподключено после", attempt, "попыток");
+        socket.on("reconnect", () => {
             document.getElementById('connection-error').classList.remove('show');
             document.getElementById('game-status-label').innerText = "✅ Подключено!";
         });
 
-        socket.on("reconnect_attempt", () => {
-            connectionAttempts++;
-            console.log("🔄 Попытка переподключения #", connectionAttempts);
-        });
-
-        // ===== ТОП ИГРОКОВ (НОВАЯ ЛОГИКА) =====
+        // ---- ТОП ИГРОКОВ ----
         function openTopModal() {
-            console.log("🏆 Открытие топа...");
             const modal = document.getElementById('top-modal-view');
             const container = document.getElementById('top-list-container');
-            
-            // Показываем загрузку
-            container.innerHTML = `
-                <div class="top-empty">
-                    <span class="big-emoji">⏳</span>
-                    Загрузка топа...
-                </div>
-            `;
-            
+            container.innerHTML = `<div class="top-empty"><span class="big-emoji">⏳</span>Загрузка...</div>`;
             modal.classList.add('show');
-            
-            // Отправляем запрос на сервер
-            console.log("📤 Отправка запроса get_top");
             socket.emit("get_top", {});
         }
 
@@ -1099,9 +1320,7 @@
             document.getElementById('top-modal-view').classList.remove('show');
         }
 
-        // Обработчик ответа от сервера
         socket.on("top_response", (data) => {
-            console.log("📥 Получен топ:", data);
             const container = document.getElementById('top-list-container');
             
             if (!data.top || data.top.length === 0) {
@@ -1140,35 +1359,98 @@
             });
             
             html += '</ul>';
+            container.innerHTML = html;
+        });
+
+        // ---- СКИНЫ БУТЫЛКИ ----
+        function applySkin(skinId) {
+            const bottle = document.getElementById('bottle');
+            bottle.className = `bottle-node bottle-skin-${skinId}`;
+            currentSkin = skinId;
+        }
+
+        socket.on("bottle_skin_update", (data) => {
+            console.log("🎨 Обновление скина:", data.skin);
+            applySkin(data.skin);
+        });
+
+        function openSkinsModal() {
+            const modal = document.getElementById('skins-modal-view');
+            const container = document.getElementById('skins-container');
+            container.innerHTML = `<div class="top-empty"><span class="big-emoji">⏳</span>Загрузка...</div>`;
+            modal.classList.add('show');
+            socket.emit("get_skins", {});
+        }
+
+        function closeSkinsModal() {
+            document.getElementById('skins-modal-view').classList.remove('show');
+        }
+
+        socket.on("skins_response", (data) => {
+            const container = document.getElementById('skins-container');
             
-            // Добавляем информацию о количестве
-            html += `
-                <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid #1a1a2e;font-size:12px;color:#666;">
-                    Всего игроков: ${data.top.length}
-                </div>
-            `;
+            if (!data.skins || data.skins.length === 0) {
+                container.innerHTML = `<div class="top-empty"><span class="big-emoji">😢</span>Скины не найдены</div>`;
+                return;
+            }
+            
+            let html = '<div style="margin-bottom:12px;">';
+            if (data.is_creator) {
+                html += `<div style="color:#ffd700;font-size:13px;text-align:center;">👑 У вас ${data.hearts_balance} ❤️</div>`;
+            }
+            html += '</div>';
+            
+            data.skins.forEach(skin => {
+                const isActive = skin.is_active;
+                const isOwned = skin.is_owned;
+                const priceText = skin.price === 0 ? 'Бесплатно' : `${skin.price} ❤️`;
+                const btnClass = isActive ? 'active' : (isOwned ? 'owned' : 'buy');
+                const btnText = isActive ? '✅ Активен' : (isOwned ? '📦 Владелец' : 'Купить');
+                const isLocked = !data.is_creator && skin.price > 0;
+                
+                html += `
+                    <div class="skin-item ${isActive ? 'active' : ''}">
+                        <div class="skin-info">
+                            <div class="skin-preview" style="background:${skin.color}22;border-color:${skin.color}44;">
+                                ${skin.emoji}
+                            </div>
+                            <div>
+                                <div class="skin-name">${skin.name}</div>
+                                <div class="skin-price">${priceText}</div>
+                            </div>
+                        </div>
+                        <button class="skin-btn ${btnClass}" 
+                            onclick="${isLocked ? `showToast('❌ Смена скинов доступна только Создателю игры!', 'error')` : `buySkin('${skin.id}')`}"
+                            ${isLocked ? 'disabled' : ''}>
+                            ${btnText}
+                        </button>
+                    </div>
+                `;
+            });
             
             container.innerHTML = html;
         });
 
-        // ---- СЕКРЕТНАЯ КНОПКА ДЛЯ СОЗДАТЕЛЯ ----
-        function giveCreatorGift(seatIndex) {
-            if (!isCreator) {
-                console.log("❌ Не создатель");
-                return;
-            }
-            const targetNode = document.getElementById(`user-p${seatIndex}`);
-            if (!targetNode.classList.contains('occupied')) {
-                alert("Это место свободно!");
-                return;
-            }
-            if (confirm(`🎁 Подарить +1000 ❤️ игроку за местом ${seatIndex + 1}?`)) {
-                socket.emit("creator_give_hearts", { to_seat: seatIndex });
-                playGiftSound();
-            }
+        function buySkin(skinId) {
+            socket.emit("buy_skin", { skin_id: skinId });
         }
 
-        // ---- Остальные функции ----
+        socket.on("skin_buy_result", (data) => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                if (data.skin_id) {
+                    applySkin(data.skin_id);
+                }
+                // Обновляем магазин
+                setTimeout(() => {
+                    socket.emit("get_skins", {});
+                }, 500);
+            } else {
+                showToast(data.message, 'error');
+            }
+        });
+
+        // ---- ОСТАЛЬНЫЕ ФУНКЦИИ ----
         function openShopModal() { 
             document.getElementById('shop-modal-view').classList.add('show'); 
         }
@@ -1194,7 +1476,6 @@
                         }
                     });
                 } catch(e) {
-                    console.error("Ошибка открытия инвойса:", e);
                     window.open(data.url, '_blank');
                 }
             }
@@ -1204,7 +1485,7 @@
             addSystemMessage(`🎉 Игрок купил пакет ❤️ ${data.amount} через Telegram Stars!`, '🎉');
         });
 
-        function addSystemMessage(text, emoji = '🤖') {
+        function addSystemMessage(text) {
             const chatBox = document.getElementById('chat-box');
             const row = document.createElement('div');
             row.className = 'chat-row system';
@@ -1240,14 +1521,14 @@
         }
 
         socket.on("gift_error", (data) => {
-            alert(data.text);
+            showToast(data.text, 'error');
             playRejectSound();
         });
 
         socket.on("gift_broadcast", (data) => {
             playGiftSound();
             animateGiftFlight(data.from_seat, data.to_seat, data.gift);
-            addSystemMessage(`🎁 ${data.from_name} подарил ${data.to_name} ${data.gift}`, '🎁');
+            addSystemMessage(`🎁 ${data.from_name} подарил ${data.to_name} ${data.gift}`);
         });
 
         function animateGiftFlight(fromSeat, toSeat, giftEmoji) {
@@ -1277,8 +1558,20 @@
             }, 1250);
         }
 
+        function giveCreatorGift(seatIndex) {
+            if (!isCreator) return;
+            const targetNode = document.getElementById(`user-p${seatIndex}`);
+            if (!targetNode.classList.contains('occupied')) {
+                showToast('Это место свободно!', 'error');
+                return;
+            }
+            if (confirm(`🎁 Подарить +1000 ❤️ игроку за местом ${seatIndex + 1}?`)) {
+                socket.emit("creator_give_hearts", { to_seat: seatIndex });
+                playGiftSound();
+            }
+        }
+
         socket.on("connect", () => {
-            console.log("✅ Подключено к серверу, ID:", socket.id);
             document.getElementById('connection-error').classList.remove('show');
             document.getElementById('game-status-label').innerText = "🚪 Вход за стол...";
             
@@ -1290,14 +1583,11 @@
         });
 
         socket.on("join_response", (data) => {
-            console.log("✅ Ответ на join:", data);
             if (data.status !== "spectator") {
                 myAssignedSeat = data.seat;
-                console.log("🪑 Занято место:", myAssignedSeat);
             }
         });
 
-        // Получение сообщений чата с сервера
         socket.on("chat_msg_receive", (data) => {
             const chatBox = document.getElementById('chat-box');
             const row = document.createElement('div');
@@ -1346,6 +1636,11 @@
             const seats = data.seats;
             const currentTurn = data.current_turn;
             const state = data.game_state;
+            
+            // Обновляем скин если пришел
+            if (data.bottle_skin) {
+                applySkin(data.bottle_skin);
+            }
 
             for (let i = 0; i < 12; i++) {
                 const node = document.getElementById(`user-p${i}`);
@@ -1533,8 +1828,6 @@
         }
 
         console.log("🚀 Приложение загружено");
-        console.log("📱 Telegram WebApp:", !!tg);
-        console.log("🔗 Бэкенд URL:", BACKEND_URL);
         console.log("👑 Создатель:", isCreator);
         console.log("🆔 Мой ID:", myTelegramId);
     </script>

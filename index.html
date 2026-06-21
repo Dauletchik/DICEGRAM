@@ -27,6 +27,13 @@
             border-bottom: 1px solid #2c2c2e;
             flex-shrink: 0;
             z-index: 10;
+            gap: 8px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .hearts-balance-top {
@@ -42,6 +49,21 @@
             gap: 6px;
         }
         .hearts-balance-top span { color: #ff4757; font-size: 18px; }
+
+        .top-btn {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .top-btn:active { transform: scale(0.95); }
 
         .status-msg {
             font-size: 14px;
@@ -256,7 +278,7 @@
             border-radius: 50%; color: white; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
 
-        /* МЕНЮ ПОДАРКОВ (ВЫЕЗЖАЕТ СНИЗУ) */
+        /* МЕНЮ ПОДАРКОВ */
         .gifts-sliding-panel {
             position: absolute;
             bottom: 0; left: 0; width: 100%; height: 260px;
@@ -288,6 +310,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
+        /* МОДАЛКИ */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -298,6 +321,8 @@
             justify-content: center;
             padding: 16px;
         }
+        .modal-overlay.show { display: flex; }
+
         .shop-modal {
             background: linear-gradient(145deg, #ff758c, #ff7eb3);
             width: 100%; max-width: 340px;
@@ -328,6 +353,44 @@
         .btn-blue { background: #24b0ff; }
         .btn-green { background: #2ecc71; }
 
+        /* ТОП МОДАЛКА */
+        .top-modal {
+            background: #1c1c1e;
+            width: 100%; max-width: 340px;
+            border-radius: 20px; padding: 16px;
+            position: relative; color: #fff;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .top-modal .close-top-btn {
+            position: sticky; top: 0; float: right;
+            width: 30px; height: 30px; background: #ff4757; color: #fff;
+            border-radius: 50%; font-weight: bold; border: none;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            font-size: 16px;
+        }
+        .top-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 12px; color: #ffd700; }
+        .top-list { list-style: none; padding: 0; }
+        .top-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; border-bottom: 1px solid #2c2c2e;
+            gap: 10px;
+        }
+        .top-item .rank {
+            font-weight: bold; font-size: 16px; min-width: 30px;
+            color: #ffd700;
+        }
+        .top-item .top-avatar { font-size: 24px; min-width: 36px; }
+        .top-item .top-name { flex: 1; font-weight: 500; }
+        .top-item .top-kisses {
+            background: rgba(255, 71, 87, 0.2);
+            padding: 2px 10px; border-radius: 12px;
+            color: #ff4757; font-weight: bold;
+        }
+        .top-item:nth-child(1) .rank { color: #ffd700; font-size: 20px; }
+        .top-item:nth-child(2) .rank { color: #c0c0c0; font-size: 18px; }
+        .top-item:nth-child(3) .rank { color: #cd7f32; font-size: 16px; }
+
         .fx-heart { position: absolute; font-size: 24px; animation: fly 1s ease-out forwards; pointer-events: none; z-index: 300; }
         @keyframes fly {
             0% { transform: translate(0,0) scale(0.5); opacity: 0; }
@@ -335,7 +398,6 @@
             100% { transform: translate(var(--dx), var(--dy)) scale(1.3); opacity: 0; }
         }
 
-        /* АНИМАЦИЯ ПОЛЕТА ПОДАРКА */
         .gift-flying-node {
             position: fixed; font-size: 30px; z-index: 1000;
             transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
@@ -365,6 +427,11 @@
             font-size: 16px;
             cursor: pointer;
         }
+
+        /* Аудио кнопка (скрытая) */
+        #audio-toggle {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -376,9 +443,13 @@
         <button class="retry-btn" onclick="location.reload()">Повторить попытку</button>
     </div>
 
+    <!-- ШАПКА -->
     <div class="game-header">
-        <div class="hearts-balance-top" onclick="openShopModal()">
-            <span>❤️</span> <div id="my-hearts-display">0</div>
+        <div class="header-left">
+            <div class="hearts-balance-top" onclick="openShopModal()">
+                <span>❤️</span> <div id="my-hearts-display">0</div>
+            </div>
+            <button class="top-btn" onclick="openTopModal()">🏆 Топ</button>
         </div>
         <div class="status-msg" id="game-status-label">Подключение...</div>
     </div>
@@ -397,6 +468,7 @@
             </svg>
         </div>
 
+        <!-- Игроки -->
         <div class="grid-player" id="user-p0" onclick="handleSeatClick(0)"><div class="vote-bubble" id="b-0"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-0"></div><div class="kisses-badge" id="k-0">💋 0</div></div><div class="meta-name">Свободно</div></div>
         <div class="grid-player" id="user-p1" onclick="handleSeatClick(1)"><div class="vote-bubble" id="b-1"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-1"></div><div class="kisses-badge" id="k-1">💋 0</div></div><div class="meta-name">Свободно</div></div>
         <div class="grid-player" id="user-p2" onclick="handleSeatClick(2)"><div class="vote-bubble" id="b-2"></div><div class="avatar-wrapper"><div class="square-avatar">🪑</div><div class="player-gifts-overlay" id="g-2"></div><div class="kisses-badge" id="k-2">💋 0</div></div><div class="meta-name">Свободно</div></div>
@@ -445,6 +517,7 @@
         </div>
     </div>
 
+    <!-- МАГАЗИН -->
     <div class="modal-overlay" id="shop-modal-view">
         <div class="shop-modal">
             <div class="close-shop-btn" onclick="closeShopModal()">✕</div>
@@ -501,17 +574,24 @@
         </div>
     </div>
 
+    <!-- ТОП МОДАЛКА -->
+    <div class="modal-overlay" id="top-modal-view">
+        <div class="top-modal">
+            <button class="close-top-btn" onclick="closeTopModal()">✕</button>
+            <div class="top-title">🏆 ТОП ПОЦЕЛУЕВ</div>
+            <div id="top-list-container">
+                <div style="text-align:center;padding:20px;color:#888;">Загрузка...</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==== ГЛАВНОЕ: ПРАВИЛЬНЫЙ URL БЭКЕНДА ====
-        // Замените на ваш реальный URL сервера
         const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
-        
-        // Если вы тестируете локально, раскомментируйте строку ниже и закомментируйте верхнюю:
-        // const BACKEND_URL = "http://localhost:8080";
+        // const BACKEND_URL = "http://localhost:8080"; // Для локального теста
         
         console.log("Подключение к серверу:", BACKEND_URL);
         
-        // Создаем сокет с настройками для лучшей совместимости
         const socket = io(BACKEND_URL, {
             transports: ['websocket', 'polling'],
             reconnection: true,
@@ -522,6 +602,83 @@
         
         const tg = window.Telegram.WebApp;
         
+        // ---- ЗВУКИ (генерация через Web Audio API) ----
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new AudioContext();
+                } catch(e) {
+                    console.warn("Web Audio не поддерживается");
+                }
+            }
+        }
+
+        function playBeep(freq, duration, type = 'sine', volume = 0.3) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) { /* тихо */ }
+        }
+
+        function playSpinSound() {
+            // Вращение бутылки - звук нарастающий
+            playBeep(300, 0.1, 'sine', 0.2);
+            setTimeout(() => playBeep(400, 0.1, 'sine', 0.25), 100);
+            setTimeout(() => playBeep(500, 0.1, 'sine', 0.3), 200);
+            setTimeout(() => playBeep(600, 0.1, 'sine', 0.35), 300);
+            setTimeout(() => playBeep(700, 0.15, 'sine', 0.4), 400);
+            setTimeout(() => playBeep(800, 0.2, 'sine', 0.45), 550);
+            setTimeout(() => playBeep(900, 0.3, 'sine', 0.5), 750);
+        }
+
+        function playKissSound() {
+            // Поцелуй - приятный звук
+            playBeep(523, 0.15, 'sine', 0.25); // До
+            setTimeout(() => playBeep(659, 0.15, 'sine', 0.25), 120); // Ми
+            setTimeout(() => playBeep(784, 0.3, 'sine', 0.3), 240); // Соль
+            setTimeout(() => playBeep(1047, 0.4, 'sine', 0.2), 400); // До высокое
+            setTimeout(() => {
+                playBeep(784, 0.2, 'sine', 0.15);
+            }, 600);
+        }
+
+        function playGiftSound() {
+            // Звук подарка - магический
+            playBeep(600, 0.1, 'sine', 0.2);
+            setTimeout(() => playBeep(800, 0.1, 'sine', 0.25), 80);
+            setTimeout(() => playBeep(1000, 0.1, 'sine', 0.3), 160);
+            setTimeout(() => playBeep(1200, 0.15, 'sine', 0.35), 240);
+            setTimeout(() => playBeep(1500, 0.2, 'sine', 0.4), 340);
+            setTimeout(() => {
+                playBeep(1000, 0.1, 'sine', 0.2);
+                setTimeout(() => playBeep(1200, 0.15, 'sine', 0.25), 80);
+            }, 500);
+        }
+
+        function playRejectSound() {
+            // Отказ - грустный звук
+            playBeep(400, 0.2, 'sawtooth', 0.15);
+            setTimeout(() => playBeep(300, 0.3, 'sawtooth', 0.12), 200);
+        }
+
+        // Инициализация звука при первом клике
+        document.addEventListener('click', () => initAudio(), { once: true });
+        document.addEventListener('touchstart', () => initAudio(), { once: true });
+
+        // ---- Остальной код ----
         let myNickname = "@Player";
         let myAvatar = "😎";
         let myAssignedSeat = null;
@@ -530,7 +687,6 @@
         let targetGiftSeatIndex = null;
         let connectionAttempts = 0;
 
-        // Инициализация Telegram WebApp
         if (tg) {
             try {
                 tg.expand();
@@ -571,12 +727,48 @@
             console.log("Попытка переподключения #", connectionAttempts);
         });
 
-        // --- Остальные функции ---
+        // ---- ТОП ИГРОКОВ ----
+        function openTopModal() {
+            document.getElementById('top-modal-view').classList.add('show');
+            document.getElementById('top-list-container').innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Загрузка...</div>';
+            socket.emit("get_top_players", {});
+        }
+
+        function closeTopModal() {
+            document.getElementById('top-modal-view').classList.remove('show');
+        }
+
+        socket.on("top_players_response", (data) => {
+            const container = document.getElementById('top-list-container');
+            if (!data.top || data.top.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Пока нет игроков 😢</div>';
+                return;
+            }
+            
+            const medals = ['🥇', '🥈', '🥉'];
+            let html = '<ul class="top-list">';
+            data.top.forEach((player, index) => {
+                const rank = index < 3 ? medals[index] : `#${index + 1}`;
+                const avatar = "😎"; // можно добавить аватарку в БД
+                html += `
+                    <li class="top-item">
+                        <span class="rank">${rank}</span>
+                        <span class="top-avatar">${avatar}</span>
+                        <span class="top-name">${player.username || 'Аноним'}</span>
+                        <span class="top-kisses">💋 ${player.kisses}</span>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        });
+
+        // ---- Остальные функции ----
         function openShopModal() { 
-            document.getElementById('shop-modal-view').style.display = 'flex'; 
+            document.getElementById('shop-modal-view').classList.add('show'); 
         }
         function closeShopModal() { 
-            document.getElementById('shop-modal-view').style.display = 'none'; 
+            document.getElementById('shop-modal-view').classList.remove('show'); 
         }
 
         function triggerStarsBuy(amount, starsCost) {
@@ -633,15 +825,18 @@
                 alert("Сначала выберите игрока, нажав на его место!");
                 return;
             }
+            playGiftSound(); // Звук подарка
             socket.emit("send_gift", { to_seat: targetGiftSeatIndex, gift: giftEmoji });
             closeGiftsPanel();
         }
 
         socket.on("gift_error", (data) => {
             alert(data.text);
+            playRejectSound();
         });
 
         socket.on("gift_broadcast", (data) => {
+            playGiftSound();
             animateGiftFlight(data.from_seat, data.to_seat, data.gift);
         });
 
@@ -672,7 +867,6 @@
             }, 1250);
         }
 
-        // Подключение к столу при успешном соединении
         socket.on("connect", () => {
             console.log("Подключено к серверу, ID:", socket.id);
             document.getElementById('connection-error').classList.remove('show');
@@ -778,6 +972,7 @@
             }
             isMyTurn = false;
             document.getElementById('turn-hint').style.display = 'none';
+            playSpinSound(); // Звук вращения
             socket.emit("request_spin");
         }
 
@@ -829,10 +1024,12 @@
 
             if (data.success) {
                 document.getElementById('game-status-label').innerText = "Взаимный поцелуй! 😘";
+                playKissSound(); // Звук поцелуя
                 generateScreenHearts();
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 document.getElementById('game-status-label').innerText = "Поцелуй не состоялся... 💔";
+                playRejectSound();
             }
         });
 
@@ -882,9 +1079,8 @@
             }
         }
 
-        // Логирование для отладки
         console.log("Приложение загружено. Telegram WebApp:", !!tg);
         console.log("Бэкенд URL:", BACKEND_URL);
     </script>
 </body>
-    </html>
+                    </html>

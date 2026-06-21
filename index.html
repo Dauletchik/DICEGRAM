@@ -862,9 +862,13 @@
             if (e.key === 'Enter') sendUserMessage();
         });
 
-        // --- ОБНОВЛЕННАЯ ЛОГИКА СВЯЗИ С ЖЕСТКОЙ БЛОКИРОВКОЙ ЭКРАНА ---
-        const wsHost = "wss://jrnm.app"; 
-        let socket;
+// Найдите эту строку в index.html:
+const wsHost = "wss://jrnm.app";
+
+// И замените на:
+const wsHost = "wss://a38182-6d28.j.jrnm.app";  // Ваш текущий хост
+// Или для локального тестирования:
+const wsHost = "ws://localhost:8765";
 
         function connectWebSocket() {
             // При начале подключения принудительно выводим оверлей блокировки

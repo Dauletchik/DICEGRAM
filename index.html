@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -857,7 +857,11 @@
         const BACKEND_URL = "https://a38182-6d28.j.jrnm.app"; 
         // const BACKEND_URL = "http://localhost:8080"; // Для локального теста
         
+        // 👑 ПРАВИЛЬНЫЙ ID СОЗДАТЕЛЯ
+        const CREATOR_ID = "8771009385";  // @dauletbr
+        
         console.log("🚀 Подключение к серверу:", BACKEND_URL);
+        console.log("👑 ID создателя:", CREATOR_ID);
         
         const socket = io(BACKEND_URL, {
             transports: ['websocket', 'polling'],
@@ -957,11 +961,12 @@
                 if (user) {
                     myNickname = user.username ? `@${user.username}` : user.first_name;
                     myTelegramId = String(user.id);
-                    isCreator = myTelegramId === "8935440725";
+                    isCreator = myTelegramId === CREATOR_ID;
                     const avatars = ["😎","🔥","✨","🍀","🎲","⚡","🍿","🎮","🚀","💫","🌟","🎯"];
                     myAvatar = avatars[Math.floor(Math.random() * avatars.length)];
                 }
                 console.log("✅ Telegram WebApp инициализирован");
+                console.log("👑 Создатель:", isCreator ? "ДА" : "НЕТ");
             } catch(e) {
                 console.error("❌ Ошибка инициализации Telegram:", e);
             }
@@ -1014,7 +1019,7 @@
             let html = '<ul class="top-list">';
             data.top.forEach((player, index) => {
                 const rank = index < 3 ? medals[index] : `#${index + 1}`;
-                const isCreatorPlayer = player.telegram_id === "8935440725";
+                const isCreatorPlayer = player.telegram_id === CREATOR_ID;
                 const avatar = isCreatorPlayer ? "👑" : "😎";
                 html += `
                     <li class="top-item">
@@ -1031,7 +1036,10 @@
 
         // ---- СЕКРЕТНАЯ КНОПКА ДЛЯ СОЗДАТЕЛЯ ----
         function giveCreatorGift(seatIndex) {
-            if (!isCreator) return;
+            if (!isCreator) {
+                console.log("❌ Не создатель");
+                return;
+            }
             const targetNode = document.getElementById(`user-p${seatIndex}`);
             if (!targetNode.classList.contains('occupied')) {
                 alert("Это место свободно!");
@@ -1158,4 +1166,264 @@
             document.getElementById('game-status-label').innerText = "🚪 Вход за стол...";
             
             socket.emit("join_table", { 
-                user
+                username: myNickname, 
+                avatar: myAvatar, 
+                initData: tg ? tg.initData : "" 
+            });
+        });
+
+        socket.on("join_response", (data) => {
+            console.log("✅ Ответ на join:", data);
+            if (data.status !== "spectator") {
+                myAssignedSeat = data.seat;
+                console.log("🪑 Занято место:", myAssignedSeat);
+            }
+        });
+
+        // Получение сообщений чата с сервера
+        socket.on("chat_msg_receive", (data) => {
+            const chatBox = document.getElementById('chat-box');
+            const row = document.createElement('div');
+            
+            if (data.is_system) {
+                // Системное сообщение
+                row.className = 'chat-row system';
+                if (data.is_creator) {
+                    row.className = 'chat-row creator-enter';
+                }
+                row.innerHTML = `<div class="chat-body-text">${data.text}</div>`;
+            } else {
+                // Обычное сообщение
+                row.className = 'chat-row';
+                row.innerHTML = `
+                    <div class="chat-mini-avatar">${data.avatar}</div>
+                    <div class="chat-body-text"><span class="chat-sender-name">${data.name}:</span>${data.text}</div>
+                `;
+            }
+            
+            chatBox.appendChild(row);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // Если зашел создатель - бонусная анимация
+            if (data.is_creator) {
+                playKissSound();
+                setTimeout(() => {
+                    const hearts = ['🎉', '✨', '🌟', '💫', '🎊'];
+                    for (let i = 0; i < 20; i++) {
+                        setTimeout(() => {
+                            const em = document.createElement('div');
+                            em.style.position = 'fixed';
+                            em.style.fontSize = `${20 + Math.random() * 30}px`;
+                            em.style.left = `${Math.random() * 100}%`;
+                            em.style.top = `${Math.random() * 100}%`;
+                            em.style.pointerEvents = 'none';
+                            em.style.zIndex = '9999';
+                            em.style.animation = 'flyHeart 1.5s ease-out forwards';
+                            em.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                            document.body.appendChild(em);
+                            setTimeout(() => em.remove(), 1500);
+                        }, i * 80);
+                    }
+                }, 500);
+            }
+        });
+
+        socket.on("table_update", (data) => {
+            const seats = data.seats;
+            const currentTurn = data.current_turn;
+            const state = data.game_state;
+
+            for (let i = 0; i < 12; i++) {
+                const node = document.getElementById(`user-p${i}`);
+                const pData = seats[i];
+                if (pData) {
+                    node.classList.add('occupied');
+                    node.querySelector('.square-avatar').innerText = pData.avatar;
+                    node.querySelector('.meta-name').innerText = pData.name;
+                    
+                    const kBadge = document.getElementById(`k-${i}`);
+                    kBadge.innerText = `💋 ${pData.kisses || 0}`;
+                    kBadge.style.display = "flex";
+
+                    const overlay = document.getElementById(`g-${i}`);
+                    overlay.innerHTML = "";
+                    if (pData.gifts && pData.gifts.length > 0) {
+                        const uniqueGifts = [...new Set(pData.gifts)].slice(0, 3);
+                        uniqueGifts.forEach(g => {
+                            const span = document.createElement('span');
+                            span.innerText = g;
+                            overlay.appendChild(span);
+                        });
+                        overlay.style.display = "flex";
+                    } else {
+                        overlay.style.display = "none";
+                    }
+
+                    if (myAssignedSeat === i) {
+                        document.getElementById('my-hearts-display').innerText = pData.hearts || 0;
+                    }
+                    
+                    // Показываем кнопку +1000 только для создателя
+                    const cgBtn = document.getElementById(`cg-${i}`);
+                    if (isCreator && pData.telegram_id !== myTelegramId) {
+                        cgBtn.classList.add('show');
+                    } else {
+                        cgBtn.classList.remove('show');
+                    }
+                } else {
+                    node.classList.remove('occupied', 'active-spinner', 'active-target');
+                    node.querySelector('.square-avatar').innerText = "🪑";
+                    node.querySelector('.meta-name').innerText = "Свободно";
+                    document.getElementById(`k-${i}`).style.display = "none";
+                    document.getElementById(`g-${i}`).style.display = "none";
+                    document.getElementById(`cg-${i}`).classList.remove('show');
+                    node.style.transform = "none"; 
+                }
+            }
+
+            for (let i = 0; i < 12; i++) {
+                document.getElementById(`user-p${i}`).classList.remove('active-spinner', 'active-target');
+                const bubble = document.getElementById(`b-${i}`);
+                if(state !== "INTERACTION") bubble.style.display = 'none';
+            }
+
+            document.getElementById('turn-hint').style.display = 'none';
+
+            if (state === "WAITING") {
+                document.getElementById('game-status-label').innerText = "⏳ Ожидание игроков (минимум 2)...";
+                isMyTurn = false;
+                return;
+            }
+
+            const currentSpinner = seats[currentTurn];
+            if (currentSpinner) {
+                document.getElementById(`user-p${currentTurn}`).classList.add('active-spinner');
+                if (myAssignedSeat === currentTurn) {
+                    document.getElementById('game-status-label').innerText = "🎯 Твой ход!";
+                    if(state === "IDLE") document.getElementById('turn-hint').style.display = 'flex';
+                    isMyTurn = true;
+                } else {
+                    document.getElementById('game-status-label').innerText = `🔄 Ходит ${currentSpinner.name}`;
+                    isMyTurn = false;
+                }
+            }
+
+            if (state === "IDLE") {
+                document.getElementById('bottle').classList.remove('hidden');
+                document.getElementById('kiss-ui-panel').style.display = 'none';
+                for (let i = 0; i < 12; i++) document.getElementById(`user-p${i}`).style.transform = "none";
+            }
+        });
+
+        function clientRequestSpin() {
+            if (!isMyTurn) {
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                return;
+            }
+            isMyTurn = false;
+            document.getElementById('turn-hint').style.display = 'none';
+            playSpinSound();
+            socket.emit("request_spin");
+        }
+
+        socket.on("bottle_spin_command", (data) => {
+            document.getElementById('turn-hint').style.display = 'none';
+            document.getElementById('game-status-label').innerText = "🔄 Бутылочка крутится...";
+            const bottle = document.getElementById('bottle');
+            
+            localRotation += 2160 + data.target_angle - (localRotation % 360);
+            bottle.style.transform = `rotate(${localRotation}deg)`;
+
+            setTimeout(() => {
+                socket.emit("trigger_interaction_phase", {});
+                document.getElementById(`user-p${data.target_seat}`).classList.add('active-target');
+                bottle.classList.add('hidden');
+
+                const spinnerNode = document.getElementById(`user-p${data.spinner_seat}`);
+                const targetNode = document.getElementById(`user-p${data.target_seat}`);
+                const rectBoard = document.getElementById('board').getBoundingClientRect();
+                
+                const sRect = spinnerNode.getBoundingClientRect();
+                const tRect = targetNode.getBoundingClientRect();
+                const cX = rectBoard.width / 2;
+                const cY = rectBoard.height / 2;
+
+                const sDx = cX - (sRect.left - rectBoard.left + sRect.width / 2) - 35;
+                const sDy = cY - (sRect.top - rectBoard.top + sRect.height / 2);
+                const tDx = cX - (tRect.left - rectBoard.left + tRect.width / 2) + 35;
+                const tDy = cY - (tRect.top - rectBoard.top + tRect.height / 2);
+
+                spinnerNode.style.transform = `translate(${sDx}px, ${sDy}px)`;
+                targetNode.style.transform = `translate(${tDx}px, ${tDy}px)`;
+
+                if (myAssignedSeat === data.spinner_seat || myAssignedSeat === data.target_seat) {
+                    document.getElementById('kiss-ui-title').innerText = "💋 Ваш выбор:";
+                    document.getElementById('kiss-ui-panel').style.display = 'flex';
+                }
+            }, 3900);
+        });
+
+        function sendAction(choice) {
+            document.getElementById('kiss-ui-panel').style.display = 'none';
+            socket.emit("submit_choice", { choice: choice });
+        }
+
+        socket.on("round_result", (data) => {
+            revealLocalBubble(data.spinner_seat, data.spinner_choice);
+            revealLocalBubble(data.target_seat, data.target_choice);
+
+            if (data.success) {
+                document.getElementById('game-status-label').innerText = "💋 Взаимный поцелуй! 😘";
+                playKissSound();
+                generateScreenHearts();
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                document.getElementById('game-status-label').innerText = "💔 Поцелуй не состоялся...";
+                playRejectSound();
+            }
+        });
+
+        function revealLocalBubble(seat, isYes) {
+            const b = document.getElementById(`b-${seat}`);
+            if (!b) return;
+            b.innerText = isYes ? "❤️ Да" : "❌ Нет";
+            b.style.background = isYes ? "#2ecc71" : "#e74c3c";
+            b.style.color = "#ffffff";
+            b.style.display = "block";
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const txt = input.value.trim();
+            if (!txt) return;
+            socket.emit("send_chat_msg", { text: txt });
+            input.value = "";
+        }
+
+        function handleChatKey(e) { if (e.key === 'Enter') sendChatMessage(); }
+
+        function generateScreenHearts() {
+            const board = document.getElementById('board');
+            for (let i = 0; i < 12; i++) {
+                const h = document.createElement('div');
+                h.className = 'fx-heart'; 
+                h.innerText = ['❤️','💖','💗','💓','💕','💘'][Math.floor(Math.random() * 6)];
+                h.style.left = 'calc(50% - 15px)'; 
+                h.style.top = 'calc(50% - 15px)';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 40 + Math.random() * 80;
+                h.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+                h.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+                board.appendChild(h);
+                setTimeout(() => h.remove(), 1200);
+            }
+        }
+
+        console.log("🚀 Приложение загружено");
+        console.log("📱 Telegram WebApp:", !!tg);
+        console.log("🔗 Бэкенд URL:", BACKEND_URL);
+        console.log("👑 Создатель:", isCreator);
+        console.log("🆔 Мой ID:", myTelegramId);
+    </script>
+</body>
+    </html>

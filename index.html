@@ -26,14 +26,15 @@
             position: relative;
         }
 
+        /* --- ЭКРАН БЛОКИРОВКИ --- */
         #ws-lock-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: #ffffff;
-            z-index: 9999;
+            z-index: 99999;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -70,6 +71,7 @@
             line-height: 1.4;
         }
 
+        /* --- ШАПКА --- */
         .tg-header {
             background-color: #ffffff;
             padding: 12px 16px 8px 16px;
@@ -116,6 +118,7 @@
             cursor: pointer;
         }
 
+        /* --- ВКЛАДКИ --- */
         .tg-tabs {
             display: flex;
             background-color: #ffffff;
@@ -147,6 +150,7 @@
             text-align: center;
         }
 
+        /* --- КОНТЕЙНЕР ЭКРАНОВ --- */
         .screen-container {
             flex: 1;
             overflow-y: auto;
@@ -164,6 +168,7 @@
             display: block;
         }
 
+        /* --- СПИСОК ЧАТОВ --- */
         .chat-list {
             display: flex;
             flex-direction: column;
@@ -196,8 +201,15 @@
             flex-shrink: 0;
         }
 
-        .avatar-support { background: linear-gradient(135deg, #2abee2, #1d74e7); }
-        .avatar-user { background: linear-gradient(135deg, #af52de, #7a22b8); }
+        .avatar-support { 
+            background: linear-gradient(135deg, #2abee2, #1d74e7); 
+        }
+        .avatar-user { 
+            background: linear-gradient(135deg, #af52de, #7a22b8); 
+        }
+        .avatar-default {
+            background: linear-gradient(135deg, #34c759, #28a745);
+        }
 
         .chat-info {
             flex: 1;
@@ -284,6 +296,7 @@
             margin-top: 2px;
         }
 
+        /* --- ОКНО ЧАТА --- */
         .chat-view-container {
             display: flex;
             flex-direction: column;
@@ -387,6 +400,7 @@
             cursor: pointer;
         }
 
+        /* --- ПРОФИЛЬ --- */
         .profile-screen {
             background-color: #f4f4f6;
             height: 100%;
@@ -477,6 +491,7 @@
             opacity: 0.7;
         }
 
+        /* --- НИЖНЯЯ ПАНЕЛЬ --- */
         .bottom-nav {
             background-color: #ffffff;
             border-top: 1px solid #e5e5e7;
@@ -532,15 +547,17 @@
 </head>
 <body>
 
+    <!-- ЭКРАН БЛОКИРОВКИ -->
     <div id="ws-lock-overlay">
         <div class="spinner"></div>
         <div class="lock-status-title" id="lock-title">Соединение с сервером...</div>
         <div class="lock-status-desc" id="lock-desc">Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.</div>
     </div>
 
+    <!-- ШАПКА -->
     <div class="tg-header" id="main-header">
         <div class="header-title-container">
-            <div class="header-title" id="app-title-text">DICEGRAM</div>
+            <div class="header-title">DICEGRAM</div>
             <div class="connection-status" id="conn-status-text" style="display: none;">Обновление...</div>
         </div>
         <div class="header-actions">
@@ -549,6 +566,7 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКИ -->
     <div class="tg-tabs" id="tabs-bar">
         <div class="tg-tab">
             <span>Все чаты</span>
@@ -556,13 +574,15 @@
         </div>
     </div>
 
+    <!-- КОНТЕЙНЕР ЭКРАНОВ -->
     <div class="screen-container">
         
+        <!-- ЭКРАН ЧАТОВ -->
         <div id="screen-chats" class="app-screen active">
-            <div class="chat-list" id="chats-render-box">
-                </div>
+            <div class="chat-list" id="chats-render-box"></div>
         </div>
 
+        <!-- ЭКРАН ЧАТА -->
         <div id="screen-chat-view" class="app-screen">
             <div class="chat-view-container">
                 <div class="chat-view-header">
@@ -577,8 +597,7 @@
                     </div>
                 </div>
                 
-                <div class="chat-view-messages" id="chat-messages-box">
-                    </div>
+                <div class="chat-view-messages" id="chat-messages-box"></div>
 
                 <div class="chat-view-input-bar">
                     <input type="text" class="message-input" id="msg-input-field" placeholder="Сообщение" autocomplete="off">
@@ -587,6 +606,7 @@
             </div>
         </div>
 
+        <!-- ЭКРАН КОНТАКТЫ -->
         <div id="screen-contacts" class="app-screen">
             <div class="placeholder-screen">
                 <div class="placeholder-icon">👤</div>
@@ -594,6 +614,7 @@
             </div>
         </div>
 
+        <!-- ЭКРАН НАСТРОЙКИ -->
         <div id="screen-settings" class="app-screen">
             <div class="placeholder-screen">
                 <div class="placeholder-icon">⚙️</div>
@@ -601,6 +622,7 @@
             </div>
         </div>
 
+        <!-- ЭКРАН ПРОФИЛЬ -->
         <div id="screen-profile" class="app-screen">
             <div class="profile-screen">
                 <div class="profile-card">
@@ -624,8 +646,9 @@
 
     </div>
 
+    <!-- НИЖНЯЯ ПАНЕЛЬ -->
     <div class="bottom-nav" id="main-bottom-navigation">
-        <button class="nav-item active" onclick="switchScreen('chats')">
+        <button class="nav-item active" data-screen="chats" onclick="switchScreen('chats', this)">
             <div class="nav-icon-wrapper">
                 💬
                 <div class="nav-badge" id="bottom-chats-badge">0</div>
@@ -633,59 +656,86 @@
             <span>Чаты</span>
         </button>
         
-        <button class="nav-item" onclick="switchScreen('contacts')">
+        <button class="nav-item" data-screen="contacts" onclick="switchScreen('contacts', this)">
             <div class="nav-icon-wrapper">👤</div>
             <span>Контакты</span>
         </button>
         
-        <button class="nav-item" onclick="switchScreen('settings')">
+        <button class="nav-item" data-screen="settings" onclick="switchScreen('settings', this)">
             <div class="nav-icon-wrapper">⚙️</div>
             <span>Настройки</span>
         </button>
         
-        <button class="nav-item" onclick="switchScreen('profile')">
+        <button class="nav-item" data-screen="profile" onclick="switchScreen('profile', this)">
             <div class="nav-icon-wrapper">🖼️</div>
             <span>Профиль</span>
         </button>
     </div>
 
     <script>
+        // ==================== ИНИЦИАЛИЗАЦИЯ TELEGRAM ====================
         const tg = window.Telegram.WebApp;
         if (tg) {
             tg.expand();
             if (tg.headerColor) tg.setHeaderColor('#ffffff');
         }
 
-        let myId = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : 777;
-        let myUsername = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.username : "guest_user";
+        // Данные пользователя
+        let myId = 0;
+        let myUsername = 'guest';
+        let myFirstName = 'Пользователь';
+        let myLastName = '';
 
-        let activeChats = {
-            "0_777": {
-                id: "0_777",
-                name: "DAUPRO SUPORT",
-                avatarClass: "avatar-support",
-                letter: "DS",
-                msg: "Добро пожаловать в DICEGRAM!",
-                time: "13:07",
-                unread: 0,
-                verified: true,
-                is_bot: true
-            }
-        };
-
+        // ==================== ДАННЫЕ ЧАТОВ ====================
+        let activeChats = {};
         let currentChatId = null;
+        let socket = null;
+        let isConnected = false;
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+
+        function createChatId(user1, user2) {
+            return `${Math.min(user1, user2)}_${Math.max(user1, user2)}`;
+        }
+
+        function formatTime(timestamp) {
+            try {
+                const date = new Date(timestamp);
+                return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            } catch {
+                return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+        }
+
+        function getAvatarClass(userId) {
+            if (userId === 0) return 'avatar-support';
+            return 'avatar-user';
+        }
+
+        function getAvatarLetter(name) {
+            return name ? name.charAt(0).toUpperCase() : 'U';
+        }
+
+        // ==================== РАБОТА С ПРОФИЛЕМ ====================
 
         function setupUserProfile() {
             if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
-                const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || "Пользователь";
+                myId = user.id || 0;
+                myUsername = user.username || 'guest';
+                myFirstName = user.first_name || 'Пользователь';
+                myLastName = user.last_name || '';
+                
+                const fullName = `${myFirstName} ${myLastName}`.trim() || 'Пользователь';
                 document.getElementById('prof-full-name').innerText = fullName;
-                document.getElementById('prof-username').innerText = user.username ? `@${user.username}` : '@не указан';
-                document.getElementById('prof-id').innerText = user.id;
-                document.getElementById('prof-lang').innerText = user.language_code || "ru";
+                document.getElementById('prof-username').innerText = myUsername ? `@${myUsername}` : '@не указан';
+                document.getElementById('prof-id').innerText = myId;
+                document.getElementById('prof-lang').innerText = user.language_code || 'ru';
                 document.getElementById('prof-avatar-icon').innerText = fullName.charAt(0).toUpperCase();
             }
         }
+
+        // ==================== ОТОБРАЖЕНИЕ ЧАТОВ ====================
 
         function updateChatsListView() {
             const container = document.getElementById('chats-render-box');
@@ -699,20 +749,23 @@
                 
                 const verifiedHTML = chat.verified ? `<div class="verified-badge">✓</div>` : '';
                 const unreadHTML = chat.unread > 0 ? `<div class="unread-badge">${chat.unread}</div>` : '';
-                totalUnread += chat.unread;
+                totalUnread += chat.unread || 0;
+
+                const avatarClass = chat.userId === 0 ? 'avatar-support' : 'avatar-user';
+                const letter = chat.name ? chat.name.charAt(0).toUpperCase() : 'U';
 
                 item.innerHTML = `
-                    <div class="chat-avatar ${chat.avatarClass}">${chat.letter}</div>
+                    <div class="chat-avatar ${avatarClass}">${letter}</div>
                     <div class="chat-info">
                         <div class="chat-row-top">
                             <div class="chat-name-container">
                                 <span class="chat-name">${chat.name}</span>
                                 ${verifiedHTML}
                             </div>
-                            <span class="chat-time">${chat.time}</span>
+                            <span class="chat-time">${chat.time || '--:--'}</span>
                         </div>
                         <div class="chat-row-bottom">
-                            <span class="chat-message">${chat.msg}</span>
+                            <span class="chat-message">${chat.lastMessage || 'Нет сообщений'}</span>
                             <div class="chat-meta-right">${unreadHTML}</div>
                         </div>
                     </div>
@@ -733,8 +786,14 @@
             }
         }
 
-        function switchScreen(screenName) {
-            closeChatView();
+        // ==================== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ====================
+
+        function switchScreen(screenName, element) {
+            // Закрываем чат если открыт
+            if (document.getElementById('screen-chat-view').classList.contains('active')) {
+                closeChatView();
+            }
+            
             document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
@@ -750,16 +809,14 @@
             }
 
             document.getElementById(`screen-${screenName}`).classList.add('active');
-            
-            // Find and activate nav item
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.textContent.toLowerCase().includes(screenName)) {
-                    item.classList.add('active');
-                }
-            });
+            if (element) {
+                element.classList.add('active');
+            }
 
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
+
+        // ==================== РАБОТА С СООБЩЕНИЯМИ ====================
 
         function formatMessageText(text) {
             const mentionRegex = /@([a-zA-Z0-9_]{4,32})/g;
@@ -770,11 +827,11 @@
 
         function handleUsernameClick(username, event) {
             event.stopPropagation();
-            if (username === myUsername) return; 
+            if (username === myUsername) return;
 
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
-                    action: "find_user",
+                    action: 'find_user',
                     username: username
                 }));
             }
@@ -790,19 +847,52 @@
             box.scrollTop = box.scrollHeight;
         }
 
+        function sendUserMessage() {
+            const input = document.getElementById('msg-input-field');
+            const text = input.value.trim();
+            if (!text || !currentChatId) return;
+
+            // Определяем получателя
+            const parts = currentChatId.split('_');
+            const receiverId = parts[0] === String(myId) ? parseInt(parts[1]) : parseInt(parts[0]);
+
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            appendBubble(text, timeStr, 'outgoing');
+
+            if (activeChats[currentChatId]) {
+                activeChats[currentChatId].lastMessage = text;
+                activeChats[currentChatId].time = timeStr;
+            }
+
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    action: 'send_msg',
+                    receiver_id: receiverId,
+                    message: text
+                }));
+            }
+
+            input.value = '';
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        // ==================== ОТКРЫТИЕ/ЗАКРЫТИЕ ЧАТА ====================
+
         function openChatView(chatId) {
             currentChatId = chatId;
             const chat = activeChats[chatId];
-            if (chat) {
-                chat.unread = 0;
-                document.getElementById('view-header-name').innerText = chat.name;
-                document.getElementById('view-header-status').innerText = chat.is_bot ? 'бот' : 'онлайн';
-                document.getElementById('view-header-verified').style.display = chat.verified ? 'flex' : 'none';
-                
-                const avatarEl = document.getElementById('view-header-avatar');
-                avatarEl.className = `chat-avatar ${chat.avatarClass}`;
-                avatarEl.innerText = chat.letter;
-            }
+            if (!chat) return;
+
+            chat.unread = 0;
+            
+            document.getElementById('view-header-name').innerText = chat.name;
+            document.getElementById('view-header-status').innerText = chat.userId === 0 ? 'бот' : 'онлайн';
+            document.getElementById('view-header-verified').style.display = chat.verified ? 'flex' : 'none';
+            
+            const avatarEl = document.getElementById('view-header-avatar');
+            const avatarClass = chat.userId === 0 ? 'avatar-support' : 'avatar-user';
+            avatarEl.className = `chat-avatar ${avatarClass}`;
+            avatarEl.innerText = chat.name ? chat.name.charAt(0).toUpperCase() : 'U';
 
             document.getElementById('screen-chats').classList.remove('active');
             document.getElementById('screen-chat-view').classList.add('active');
@@ -814,7 +904,7 @@
             
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({
-                    action: "get_history",
+                    action: 'get_history',
                     chat_id: chatId
                 }));
             }
@@ -832,212 +922,224 @@
             updateChatsListView();
         }
 
-        function sendUserMessage() {
-            const input = document.getElementById('msg-input-field');
-            const text = input.value.trim();
-            if (!text || !currentChatId) return;
+        // ==================== WEB SOCKET ====================
 
-            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-            appendBubble(text, timeStr, 'outgoing');
-            if (activeChats[currentChatId]) {
-                activeChats[currentChatId].msg = text;
-                activeChats[currentChatId].time = timeStr;
-            }
-
-            // Extract receiver_id from chat_id
-            const parts = currentChatId.split('_');
-            const receiverId = parts[0] === String(myId) ? parseInt(parts[1]) : parseInt(parts[0]);
-
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    action: "send_msg",
-                    receiver_id: receiverId,
-                    message: text
-                }));
-            }
-
-            input.value = '';
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-        }
-
-        document.getElementById('msg-input-field').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendUserMessage();
-        });
-
-        // WebSocket connection
-        const wsHost = "ws://a38182-6d28.j.jrnm.app:8765"; 
-        let socket;
+        const WS_URL = 'wss://a38182-6d28.j.jrnm.app';
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 10;
 
-        function connectWebSocket() {
-            const overlay = document.getElementById('ws-lock-overlay');
-            document.getElementById('lock-title').innerText = "Соединение с сервером...";
-            document.getElementById('lock-desc').innerText = "Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.";
-            overlay.style.display = 'flex';
+        function showLockScreen(title, desc) {
+            document.getElementById('lock-title').innerText = title;
+            document.getElementById('lock-desc').innerText = desc;
+            document.getElementById('ws-lock-overlay').style.display = 'flex';
+        }
 
-            document.getElementById('conn-status-text').style.display = 'block';
+        function hideLockScreen() {
+            document.getElementById('ws-lock-overlay').style.display = 'none';
+        }
+
+        function connectWebSocket() {
+            showLockScreen(
+                'Соединение с сервером...',
+                'Пожалуйста, подождите. Идет авторизация в сети DICEGRAM.'
+            );
 
             try {
-                socket = new WebSocket(wsHost);
+                socket = new WebSocket(WS_URL);
 
                 socket.onopen = function() {
-                    document.getElementById('conn-status-text').style.display = 'none';
-                    overlay.style.display = 'none';
+                    isConnected = true;
                     reconnectAttempts = 0;
-
+                    hideLockScreen();
+                    
                     const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
                     socket.send(JSON.stringify({
-                        action: "auth",
+                        action: 'auth',
                         user_id: myId,
                         username: myUsername,
-                        first_name: user ? user.first_name : '',
-                        last_name: user ? user.last_name : ''
+                        first_name: myFirstName,
+                        last_name: myLastName,
+                        photo_url: user ? user.photo_url : ''
                     }));
                 };
 
                 socket.onmessage = function(event) {
                     try {
                         const data = JSON.parse(event.data);
-                        
-                        if (data.type === "new_msg") {
-                            const chatId = data.chat_id;
-                            const senderId = data.sender_id;
-                            const isFromMe = senderId === myId;
-                            
-                            if (!activeChats[chatId]) {
-                                const senderName = data.sender_username ? `@${data.sender_username}` : `ID: ${senderId}`;
-                                activeChats[chatId] = {
-                                    id: chatId,
-                                    name: senderName,
-                                    avatarClass: "avatar-user",
-                                    letter: senderName.charAt(0).toUpperCase(),
-                                    msg: data.message,
-                                    time: data.time,
-                                    unread: 0,
-                                    verified: false,
-                                    is_bot: senderId === 0
-                                };
-                            }
-
-                            if (!isFromMe) {
-                                activeChats[chatId].msg = data.message;
-                                activeChats[chatId].time = data.time;
-                            }
-
-                            if (currentChatId === chatId) {
-                                appendBubble(data.message, data.time, isFromMe ? 'outgoing' : 'incoming');
-                            } else if (!isFromMe) {
-                                activeChats[chatId].unread += 1;
-                            }
-                            updateChatsListView();
-
-                            if (tg && tg.HapticFeedback && !isFromMe) {
-                                tg.HapticFeedback.notificationOccurred('success');
-                            }
-                        }
-
-                        if (data.type === "user_found") {
-                            const userId = data.user_id;
-                            const chatId = createChatId(myId, userId);
-                            if (!activeChats[chatId]) {
-                                const name = data.username ? `@${data.username}` : `ID: ${userId}`;
-                                activeChats[chatId] = {
-                                    id: chatId,
-                                    name: name,
-                                    avatarClass: "avatar-user",
-                                    letter: name.charAt(0).toUpperCase(),
-                                    msg: "Чат успешно создан",
-                                    time: "Только что",
-                                    unread: 0,
-                                    verified: false,
-                                    is_bot: userId === 0
-                                };
-                                updateChatsListView();
-                            }
-                            openChatView(chatId);
-                        }
-
-                        if (data.type === "user_not_found") {
-                            if (tg && tg.showPopup) {
-                                tg.showPopup({
-                                    title: "Пользователь не найден",
-                                    message: `Пользователь @${data.username} не найден`,
-                                    buttons: [{type: "close"}]
-                                });
-                            }
-                        }
-
-                        if (data.type === "history") {
-                            const box = document.getElementById('chat-messages-box');
-                            box.innerHTML = '';
-                            
-                            if (data.messages && data.messages.length > 0) {
-                                data.messages.forEach(m => {
-                                    const mType = m.sender_id === myId ? 'outgoing' : 'incoming';
-                                    appendBubble(m.message, m.time, mType);
-                                });
-                            }
-                        }
-
-                        if (data.type === "auth_success") {
-                            logger.info("Auth successful");
-                        }
-
+                        handleSocketMessage(data);
                     } catch (err) {
-                        console.log("Error processing message:", err);
+                        console.error('Error parsing message:', err);
                     }
                 };
 
                 socket.onclose = function() {
-                    document.getElementById('conn-status-text').style.display = 'block';
-                    
-                    document.getElementById('lock-title').innerText = "Сервер DICEGRAM временно недоступен";
-                    document.getElementById('lock-desc').innerText = "Пожалуйста, запустите bot.py на вашем сервере или в Pydroid 3.";
-                    overlay.style.display = 'flex';
+                    isConnected = false;
+                    showLockScreen(
+                        'Сервер DICEGRAM временно недоступен',
+                        'Пожалуйста, запустите бота на сервере или в Pydroid 3.'
+                    );
 
                     if (reconnectAttempts < maxReconnectAttempts) {
                         reconnectAttempts++;
-                        const delay = Math.min(1000 * reconnectAttempts, 10000);
+                        const delay = Math.min(2000 * reconnectAttempts, 30000);
                         setTimeout(connectWebSocket, delay);
                     }
                 };
 
                 socket.onerror = function() {
-                    document.getElementById('conn-status-text').style.display = 'block';
-                    overlay.style.display = 'flex';
+                    isConnected = false;
+                    showLockScreen(
+                        'Ошибка подключения к серверу',
+                        'Проверьте интернет-соединение и статус сервера.'
+                    );
                 };
 
             } catch (e) {
-                console.error("WebSocket connection error:", e);
-                overlay.style.display = 'flex';
+                console.error('WebSocket connection error:', e);
                 setTimeout(connectWebSocket, 5000);
             }
         }
 
-        function createChatId(user1, user2) {
-            return `${Math.min(user1, user2)}_${Math.max(user1, user2)}`;
+        function handleSocketMessage(data) {
+            const type = data.type;
+
+            if (type === 'auth_success') {
+                console.log('Auth successful');
+                // Добавляем чат с ботом если его нет
+                const botChatId = createChatId(myId, 0);
+                if (!activeChats[botChatId]) {
+                    activeChats[botChatId] = {
+                        id: botChatId,
+                        userId: 0,
+                        name: 'DAUPRO SUPORT',
+                        verified: true,
+                        unread: 0,
+                        lastMessage: 'Загрузка...',
+                        time: '--:--'
+                    };
+                }
+                updateChatsListView();
+            }
+
+            if (type === 'new_msg') {
+                const chatId = data.chat_id;
+                const senderId = data.sender_id;
+                const isFromMe = senderId === myId;
+
+                if (!activeChats[chatId]) {
+                    const senderName = data.sender_username || `ID: ${senderId}`;
+                    const firstName = data.sender_first_name || senderName;
+                    activeChats[chatId] = {
+                        id: chatId,
+                        userId: senderId,
+                        name: firstName,
+                        verified: senderId === 0,
+                        unread: 0,
+                        lastMessage: data.text,
+                        time: formatTime(data.timestamp)
+                    };
+                }
+
+                if (!isFromMe) {
+                    activeChats[chatId].lastMessage = data.text;
+                    activeChats[chatId].time = formatTime(data.timestamp);
+                }
+
+                if (currentChatId === chatId) {
+                    const type = isFromMe ? 'outgoing' : 'incoming';
+                    appendBubble(data.text, formatTime(data.timestamp), type);
+                    
+                    // Помечаем как прочитанные
+                    if (socket && socket.readyState === WebSocket.OPEN && !isFromMe) {
+                        socket.send(JSON.stringify({
+                            action: 'mark_read',
+                            chat_id: chatId
+                        }));
+                    }
+                } else if (!isFromMe) {
+                    activeChats[chatId].unread = (activeChats[chatId].unread || 0) + 1;
+                }
+
+                updateChatsListView();
+
+                if (tg && tg.HapticFeedback && !isFromMe) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            }
+
+            if (type === 'user_found') {
+                const userId = data.user_id;
+                const chatId = createChatId(myId, userId);
+                
+                if (!activeChats[chatId]) {
+                    const name = data.first_name || data.username || `ID: ${userId}`;
+                    activeChats[chatId] = {
+                        id: chatId,
+                        userId: userId,
+                        name: name,
+                        verified: userId === 0,
+                        unread: 0,
+                        lastMessage: 'Чат создан',
+                        time: 'Только что'
+                    };
+                    updateChatsListView();
+                }
+                openChatView(chatId);
+            }
+
+            if (type === 'user_not_found') {
+                if (tg && tg.showPopup) {
+                    tg.showPopup({
+                        title: 'Пользователь не найден',
+                        message: `Пользователь @${data.username} не найден`,
+                        buttons: [{type: 'close'}]
+                    });
+                }
+            }
+
+            if (type === 'history') {
+                const box = document.getElementById('chat-messages-box');
+                box.innerHTML = '';
+                
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(m => {
+                        const mType = m.sender_id === myId ? 'outgoing' : 'incoming';
+                        appendBubble(m.text, formatTime(m.timestamp), mType);
+                    });
+                }
+            }
+
+            if (type === 'msg_sent') {
+                // Сообщение успешно отправлено
+            }
         }
 
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
+        document.getElementById('msg-input-field').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendUserMessage();
+        });
+
+        // Запуск при загрузке
         window.onload = function() {
             setupUserProfile();
+            
             // Инициализируем чат с ботом
             const botChatId = createChatId(myId, 0);
             activeChats[botChatId] = {
                 id: botChatId,
-                name: "DAUPRO SUPORT",
-                avatarClass: "avatar-support",
-                letter: "DS",
-                msg: "Загрузка...",
-                time: "--:--",
-                unread: 0,
+                userId: 0,
+                name: 'DAUPRO SUPORT',
                 verified: true,
-                is_bot: true
+                unread: 0,
+                lastMessage: 'Подключение...',
+                time: '--:--'
             };
             updateChatsListView();
+            
+            // Подключаемся к WebSocket
             connectWebSocket();
         };
     </script>
 </body>
-</html>
+    </html>

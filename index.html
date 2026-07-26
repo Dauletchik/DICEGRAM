@@ -197,6 +197,7 @@
       <button class="btn btn-primary" onclick="goTo('regName')">Зарегистрировать аккаунт</button>
       <button class="btn btn-secondary" onclick="goTo('loginScreen')">Войти</button>
     </div>
+    <div id="connStatus" style="margin-top:18px;font-size:12px;color:var(--muted);">Проверка связи с сервером...</div>
   </div>
 
   <!-- ШАГ 1: ИМЯ -->
@@ -344,7 +345,7 @@
 // ============================================================
 // НАСТРОЙ ЭТОТ АДРЕС НА СВОЙ VPS С bot.py (http и ws на одном сервере)
 // ============================================================
-const API_BASE = "https://a48794-5d18.e.jrnm.app/"; // <-- поменяй на адрес своего VPS
+const API_BASE = "https://a48794-5d18.e.jrnm.app";
 const WS_BASE = API_BASE.replace("https://", "wss://").replace("http://", "ws://");
 
 let regData = { name: "", username: "", password: "" };
@@ -645,8 +646,29 @@ function connectWebSocket() {
   } catch (e) { console.error('WS error', e); }
 }
 
+// ---------- ПРОВЕРКА СВЯЗИ С СЕРВЕРОМ ----------
+async function checkServerConnection() {
+  const el = document.getElementById('connStatus');
+  if (!el) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/ping`, { method: 'GET' });
+    const data = await res.json();
+    if (data.ok) {
+      el.textContent = 'Сервер онлайн ✓';
+      el.style.color = '#4dd68d';
+    } else {
+      el.textContent = 'Сервер отвечает, но с ошибкой';
+      el.style.color = '#ff5c5c';
+    }
+  } catch (e) {
+    el.textContent = 'Нет связи с сервером: ' + (e.message || 'проверь, что bot.py запущен на порту 8080 и адрес API_BASE верный');
+    el.style.color = '#ff5c5c';
+  }
+}
+
 // ---------- АВТО-ВХОД ПРИ ПЕРЕЗАГРУЗКЕ ----------
 window.addEventListener('load', async () => {
+  checkServerConnection();
   const savedToken = localStorage.getItem('dicegram_token');
   if (!savedToken) return;
   try {

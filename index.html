@@ -37,6 +37,18 @@
   }
   .screen.active { opacity: 1; pointer-events: auto; transform: translateX(0); }
 
+  /* ---------- ЭКРАН ЗАГРУЗКИ ---------- */
+  #loadingScreen {
+    justify-content: center; align-items: center;
+    background: var(--bg); z-index: 999;
+  }
+  .spinner {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 3px solid #223140; border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   /* ---------- ЭКРАН ПРИВЕТСТВИЯ ---------- */
   #welcome {
     justify-content: center; align-items: center; text-align: center;
@@ -114,7 +126,9 @@
   .top-bar {
     padding: 16px 18px; font-size: 20px; font-weight: 700;
     border-bottom: 1px solid #1c2733; background: var(--bg2);
+    display: flex; align-items: center; justify-content: space-between;
   }
+  .top-bar-action { font-size: 22px; cursor: pointer; color: var(--accent2); background:none; border:none; }
 
   .chat-list-item {
     display: flex; align-items: center; gap: 12px; padding: 12px 16px;
@@ -125,36 +139,45 @@
     display: flex; align-items: center; justify-content: center;
     font-weight: 700; font-size: 18px; color: white;
     background: linear-gradient(135deg, #4d9fec, #8e6fec);
+    overflow: hidden;
   }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .avatar.support { background: linear-gradient(135deg, #4dd68d, #2fa8e0); }
   .chat-item-body { flex: 1; min-width: 0; }
-  .chat-item-name { font-weight: 600; font-size: 15px; }
+  .chat-item-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 4px; }
   .chat-item-last { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .chat-item-time { color: var(--muted); font-size: 12px; }
+  .verified-badge { color: var(--accent2); font-size: 14px; }
+  .banned-badge { color: var(--danger); font-size: 11px; font-weight: 700; }
 
   /* ---------- ЧАТ ---------- */
   #chatView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 10; }
   #chatView.active { display: flex; }
   .chat-header {
     display: flex; align-items: center; gap: 12px; padding: 14px 16px;
-    background: var(--bg2); border-bottom: 1px solid #1c2733;
+    background: var(--bg2); border-bottom: 1px solid #1c2733; cursor: pointer;
   }
-  .chat-header-name { font-weight: 700; font-size: 16px; }
+  .chat-header-name { font-weight: 700; font-size: 16px; display:flex; align-items:center; gap:4px; }
   .chat-header-status { font-size: 12px; color: var(--muted); }
   .messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
   .bubble { max-width: 78%; padding: 10px 14px; border-radius: var(--radius); font-size: 15px; line-height: 1.4; white-space: pre-wrap; }
   .bubble.in { background: var(--bubble-in); align-self: flex-start; border-bottom-left-radius: 4px; }
   .bubble.out { background: var(--bubble-out); align-self: flex-end; border-bottom-right-radius: 4px; }
   .bubble-time { font-size: 11px; color: var(--muted); margin-top: 4px; text-align: right; }
-  .input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid #1c2733; }
+  .bubble img.attachment { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 6px; }
+  .input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid #1c2733; align-items: center; }
   .input-bar input {
     flex: 1; background: var(--bg); border: 1px solid #223140; border-radius: 22px;
     padding: 12px 16px; color: var(--text); font-size: 15px; outline: none;
   }
-  .send-btn {
+  .send-btn, .attach-btn {
     width: 44px; height: 44px; border-radius: 50%; background: var(--accent);
-    border: none; color: #06131f; font-size: 18px; cursor: pointer;
+    border: none; color: #06131f; font-size: 18px; cursor: pointer; flex-shrink: 0;
   }
+  .attach-btn { background: var(--bg2); border: 1.5px solid #223140; color: var(--accent2); }
+  #imagePreviewBar { display: none; padding: 8px 12px; background: var(--bg2); align-items: center; gap: 10px; border-top: 1px solid #1c2733; }
+  #imagePreviewBar img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+  #imagePreviewBar .cancel-preview { color: var(--danger); background: none; border: none; font-size: 20px; cursor: pointer; margin-left: auto; }
 
   /* ---------- НИЖНЯЯ НАВИГАЦИЯ ---------- */
   .bottom-nav {
@@ -169,13 +192,25 @@
   .nav-icon { font-size: 22px; }
 
   /* ---------- ПРОФИЛЬ / КОНТАКТЫ / НАСТРОЙКИ ---------- */
-  .profile-header { display: flex; flex-direction: column; align-items: center; padding: 32px 16px; }
-  .profile-avatar { width: 96px; height: 96px; font-size: 34px; margin-bottom: 14px; }
-  .profile-name { font-size: 20px; font-weight: 700; }
+  .profile-header { display: flex; flex-direction: column; align-items: center; padding: 32px 16px; position: relative; }
+  .profile-avatar { width: 96px; height: 96px; font-size: 34px; margin-bottom: 14px; position: relative; }
+  .avatar-edit-btn {
+    position: absolute; bottom: 10px; right: calc(50% - 48px);
+    width: 30px; height: 30px; border-radius: 50%; background: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+    border: 2px solid var(--bg); cursor: pointer; color: #06131f;
+  }
+  .profile-name { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
   .profile-phone { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .verified-line { color: var(--accent2); font-size: 12px; margin-top: 6px; display:flex; align-items:center; gap:4px; }
+  .banned-line { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 700; border: 1px solid var(--danger); border-radius: 10px; padding: 8px 14px; }
+  .owner-line { color: #ffd24d; font-size: 12px; margin-top: 4px; }
   .list-row {
     padding: 16px; border-bottom: 1px solid #16202b; display: flex;
-    justify-content: space-between; align-items: center; font-size: 15px;
+    justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer;
+  }
+  .list-row input {
+    background: none; border: none; color: var(--accent2); font-size: 15px; text-align: right; outline: none; max-width: 60%;
   }
   .search-box { padding: 12px 16px; }
   .search-box input {
@@ -183,13 +218,49 @@
     padding: 10px 16px; color: var(--text); outline: none; font-size: 14px;
   }
   .empty-state { text-align: center; color: var(--muted); padding: 40px 20px; font-size: 14px; }
+  .fab {
+    position: absolute; right: 18px; bottom: max(18px, env(safe-area-inset-bottom));
+    width: 56px; height: 56px; border-radius: 50%; background: var(--accent);
+    color: #06131f; font-size: 28px; border: none; box-shadow: 0 6px 20px rgba(77,159,236,.5);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ---------- МОДАЛКИ ---------- */
+  .modal-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 50;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-sheet {
+    background: var(--bg2); width: 100%; max-width: 480px; border-radius: 20px 20px 0 0;
+    padding: 22px 20px max(22px, env(safe-area-inset-bottom));
+    max-height: 82vh; overflow-y: auto;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+  .modal-close { float: right; background:none; border:none; color: var(--muted); font-size: 22px; cursor: pointer; }
+
+  /* ---------- ЧУЖОЙ ПРОФИЛЬ ---------- */
+  #userProfileView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; }
+  #userProfileView.active { display: flex; }
+  .up-header { display:flex; align-items:center; gap:12px; padding:14px 16px; background: var(--bg2); border-bottom: 1px solid #1c2733; }
+
+  #toast {
+    position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: #223140; color: var(--text); padding: 10px 18px; border-radius: 14px;
+    font-size: 14px; z-index: 200; opacity: 0; transition: opacity .3s ease; pointer-events: none;
+    max-width: 85%; text-align: center;
+  }
+  #toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 <div id="app">
 
+  <!-- ЭКРАН ЗАГРУЗКИ -->
+  <div class="screen active" id="loadingScreen"><div class="spinner"></div></div>
+
   <!-- ЭКРАН 1: ПРИВЕТСТВИЕ -->
-  <div class="screen active" id="welcome">
+  <div class="screen" id="welcome">
     <div class="logo-circle">D</div>
     <div class="brand">DICEGRAM</div>
     <div class="tagline">Добро пожаловать!</div>
@@ -242,7 +313,7 @@
   <!-- ЭКРАН УСПЕХА -->
   <div class="screen" id="success">
     <div class="check-circle">✓</div>
-    <div class="auth-title">Вы успешно зарегистрировали аккаунт</div>
+    <div class="auth-title" id="successTitle">Вы успешно зарегистрировали аккаунт</div>
     <div class="phone-card">
       <div class="phone-label">Ваш личный номер в DICEGRAM</div>
       <div class="phone-num" id="phoneDisplay">+777 00-00-00</div>
@@ -275,20 +346,21 @@
 
     <!-- ВКЛАДКА: ЧАТЫ -->
     <div class="tab-content active" id="tabChats">
-      <div class="top-bar">Чаты</div>
+      <div class="top-bar"><span>Чаты</span></div>
       <div id="chatListContainer"></div>
     </div>
 
     <!-- ВКЛАДКА: КОНТАКТЫ -->
-    <div class="tab-content" id="tabContacts">
-      <div class="top-bar">Контакты</div>
+    <div class="tab-content" id="tabContacts" style="position:relative;">
+      <div class="top-bar"><span>Контакты</span></div>
       <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
-      <div id="contactsResult"><div class="empty-state">Начните вводить юзернейм для поиска</div></div>
+      <div id="contactsResult"><div class="empty-state">Начните вводить юзернейм для поиска, или откройте список контактов</div></div>
+      <button class="fab" onclick="openAddContactModal()">＋</button>
     </div>
 
     <!-- ВКЛАДКА: НАСТРОЙКИ -->
     <div class="tab-content" id="tabSettings">
-      <div class="top-bar">Настройки</div>
+      <div class="top-bar"><span>Настройки</span></div>
       <div class="list-row"><span>Уведомления</span><span>Вкл</span></div>
       <div class="list-row"><span>Конфиденциальность</span><span>›</span></div>
       <div class="list-row"><span>Тема</span><span>Тёмная</span></div>
@@ -297,13 +369,20 @@
 
     <!-- ВКЛАДКА: ПРОФИЛЬ -->
     <div class="tab-content" id="tabProfile">
-      <div class="top-bar">Профиль</div>
+      <div class="top-bar"><span>Профиль</span></div>
       <div class="profile-header">
-        <div class="avatar profile-avatar" id="profileAvatarLetter">?</div>
+        <div class="avatar profile-avatar" id="profileAvatarWrap">
+          <span id="profileAvatarLetter">?</span>
+        </div>
+        <div class="avatar-edit-btn" onclick="document.getElementById('avatarFileInput').click()">✎</div>
+        <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="uploadAvatar(event)">
         <div class="profile-name" id="profileNameDisplay">—</div>
         <div class="profile-phone" id="profilePhoneDisplay">—</div>
+        <div class="verified-line" id="profileVerifiedLine" style="display:none;">✓ <span>Верифицирован DICEGRAM</span></div>
+        <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
       </div>
-      <div class="list-row"><span>Юзернейм</span><span id="profileUsernameDisplay">—</span></div>
+      <div class="list-row" onclick="openEditNameModal()"><span>Имя</span><span id="profileNameRow">—</span></div>
+      <div class="list-row" onclick="openEditUsernameModal()"><span>Юзернейм</span><span id="profileUsernameDisplay">—</span></div>
     </div>
 
     <div class="bottom-nav">
@@ -324,22 +403,85 @@
 
   <!-- ЭКРАН ЧАТА -->
   <div id="chatView">
-    <div class="chat-header">
-      <button class="back-btn" style="margin:0;" onclick="closeChat()">←</button>
+    <div class="chat-header" onclick="openUserProfile(currentChatWith)">
+      <button class="back-btn" style="margin:0;" onclick="event.stopPropagation(); closeChat();">←</button>
       <div class="avatar" id="chatHeaderAvatar" style="width:38px;height:38px;font-size:15px;">?</div>
       <div>
         <div class="chat-header-name" id="chatHeaderName">—</div>
-        <div class="chat-header-status" id="chatHeaderStatus">в сети</div>
+        <div class="chat-header-status" id="chatHeaderStatus">не в сети</div>
       </div>
     </div>
     <div class="messages" id="messagesContainer"></div>
+    <div id="imagePreviewBar">
+      <img id="imagePreviewImg" src="">
+      <span style="font-size:13px;color:var(--muted);">Фото готово к отправке</span>
+      <button class="cancel-preview" onclick="cancelImagePreview()">✕</button>
+    </div>
     <div class="input-bar">
+      <button class="attach-btn" onclick="document.getElementById('chatFileInput').click()">📎</button>
+      <input type="file" id="chatFileInput" accept="image/*" style="display:none" onchange="onChatImageSelected(event)">
       <input id="messageInput" placeholder="Сообщение" onkeydown="if(event.key==='Enter') sendMessage()">
       <button class="send-btn" onclick="sendMessage()">➤</button>
     </div>
   </div>
 
+  <!-- ЭКРАН ЧУЖОГО ПРОФИЛЯ -->
+  <div id="userProfileView">
+    <div class="up-header">
+      <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
+      <span style="font-weight:700;font-size:16px;">Профиль</span>
+    </div>
+    <div class="profile-header">
+      <div class="avatar profile-avatar" id="upAvatarWrap"><span id="upAvatarLetter">?</span></div>
+      <div class="profile-name" id="upName">—</div>
+      <div class="profile-phone" id="upUsername">—</div>
+      <div class="profile-phone" id="upPhone">—</div>
+      <div class="verified-line" id="upVerifiedLine" style="display:none;">✓ <span id="upVerifiedText">This account has been verified by dicegram</span></div>
+      <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
+      <div class="btn-row" style="margin-top:24px;">
+        <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()">Написать сообщение</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА: ДОБАВИТЬ КОНТАКТ -->
+  <div class="modal-overlay" id="addContactModal">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeModal('addContactModal')">✕</button>
+      <div class="modal-title">Новый контакт</div>
+      <input class="field" id="contactName" placeholder="Имя (обязательно)" maxlength="40">
+      <input class="field" id="contactSurname" placeholder="Фамилия (необязательно)" maxlength="40">
+      <input class="field" id="contactPhone" placeholder="+777 xx-xx-xx" maxlength="16">
+      <div class="hint err" id="addContactHint"></div>
+      <button class="btn btn-primary" onclick="submitAddContact()">Создать контакт</button>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА: ИЗМЕНИТЬ ИМЯ -->
+  <div class="modal-overlay" id="editNameModal">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeModal('editNameModal')">✕</button>
+      <div class="modal-title">Изменить имя</div>
+      <input class="field" id="editNameInput" placeholder="Имя" maxlength="40">
+      <input class="field" id="editSurnameInput" placeholder="Фамилия (необязательно)" maxlength="40">
+      <div class="hint err" id="editNameHint"></div>
+      <button class="btn btn-primary" onclick="submitEditName()">Сохранить</button>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА: ИЗМЕНИТЬ ЮЗЕРНЕЙМ -->
+  <div class="modal-overlay" id="editUsernameModal">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeModal('editUsernameModal')">✕</button>
+      <div class="modal-title">Изменить юзернейм</div>
+      <input class="field" id="editUsernameInput" placeholder="username" maxlength="20" autocapitalize="off">
+      <div class="hint muted" id="editUsernameHint"></div>
+      <button class="btn btn-primary" id="editUsernameSaveBtn" onclick="submitEditUsername()">Сохранить</button>
+    </div>
+  </div>
+
 </div>
+<div id="toast"></div>
 
 <script>
 // ============================================================
@@ -349,14 +491,36 @@ const API_BASE = "https://a48794-5d18.e.jrnm.app";
 const WS_BASE = API_BASE.replace("https://", "wss://").replace("http://", "ws://");
 
 let regData = { name: "", username: "", password: "" };
-let session = { token: null, username: null, name: null, phone: null };
+let session = { token: null, username: null, name: null, phone: null, is_owner: false, is_verified: false };
 let currentChatWith = null;
 let ws = null;
-let chats = {}; // username -> {name, lastText, lastTime}
+let wsReconnectTimer = null;
+let chats = {}; // username -> {name, lastText, lastTime, avatar_url, is_verified, is_owner}
+let presenceMap = {}; // username -> {online, last_seen}
+let pendingImageFile = null;
+let serverReachable = false;
 
 function goTo(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function escapeHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function avatarHtml(nameLetter, avatarUrl, extraClass) {
+  if (avatarUrl) {
+    return `<div class="avatar ${extraClass||''}"><img src="${API_BASE}${avatarUrl}"></div>`;
+  }
+  return `<div class="avatar ${extraClass||''}">${nameLetter}</div>`;
 }
 
 // ---------- ШАГ 1: ИМЯ ----------
@@ -438,16 +602,23 @@ async function submitRegistration() {
       document.getElementById('passwordHint').textContent = data.error || 'Ошибка регистрации';
       return;
     }
-    session = { token: data.token, username: data.username, name: data.name, phone: data.phone };
+    session = {
+      token: data.token, username: data.username, name: data.name, phone: data.phone,
+      is_owner: !!data.is_owner, is_verified: !!data.is_verified
+    };
     document.getElementById('phoneDisplay').textContent = data.phone;
+    document.getElementById('successTitle').textContent = data.is_owner
+      ? 'Вы успешно стали создателем DICEGRAM'
+      : 'Вы успешно зарегистрировали аккаунт';
     goTo('success');
   } catch (e) {
-    document.getElementById('passwordHint').textContent = 'Нет связи с сервером';
+    document.getElementById('passwordHint').textContent = 'Нет связи с сервером. Регистрация невозможна offline — попробуйте позже.';
   }
 }
 
 function finishRegistration() {
   localStorage.setItem('dicegram_token', session.token);
+  localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
   enterApp();
 }
 
@@ -463,8 +634,12 @@ async function doLogin() {
     });
     const data = await res.json();
     if (!data.ok) { hint.textContent = data.error || 'Ошибка входа'; return; }
-    session = { token: data.token, username: data.username, name: data.name, phone: data.phone };
+    session = {
+      token: data.token, username: data.username, name: data.name, phone: data.phone,
+      is_owner: !!data.is_owner, is_verified: !!data.is_verified
+    };
     localStorage.setItem('dicegram_token', data.token);
+    localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
     enterApp();
   } catch (e) {
     hint.textContent = 'Нет связи с сервером';
@@ -473,6 +648,7 @@ async function doLogin() {
 
 function logout() {
   localStorage.removeItem('dicegram_token');
+  localStorage.removeItem('dicegram_session_cache');
   if (ws) ws.close();
   location.reload();
 }
@@ -481,14 +657,23 @@ function logout() {
 function enterApp() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('mainApp').classList.add('active');
-
-  document.getElementById('profileNameDisplay').textContent = session.name;
-  document.getElementById('profilePhoneDisplay').textContent = session.phone;
-  document.getElementById('profileUsernameDisplay').textContent = '@' + session.username;
-  document.getElementById('profileAvatarLetter').textContent = session.name.charAt(0).toUpperCase();
-
+  renderProfileTab();
   connectWebSocket();
   loadSupportChat();
+  loadContactsList();
+}
+
+function renderProfileTab() {
+  document.getElementById('profileNameDisplay').innerHTML =
+    escapeHtml(session.name) + (session.is_verified ? ' <span class="verified-badge">✓</span>' : '');
+  document.getElementById('profilePhoneDisplay').textContent = session.phone;
+  document.getElementById('profileNameRow').textContent = session.name;
+  document.getElementById('profileUsernameDisplay').textContent = '@' + session.username;
+  document.getElementById('profileAvatarWrap').innerHTML = session.avatar_url
+    ? `<img src="${API_BASE}${session.avatar_url}">`
+    : `<span>${session.name.charAt(0).toUpperCase()}</span>`;
+  document.getElementById('profileVerifiedLine').style.display = session.is_verified ? 'flex' : 'none';
+  document.getElementById('profileOwnerLine').style.display = session.is_owner ? 'block' : 'none';
 }
 
 function switchTab(tabId) {
@@ -499,6 +684,30 @@ function switchTab(tabId) {
 }
 
 // ---------- ЧАТЫ (список) ----------
+function formatLastSeen(lastSeenStr) {
+  if (!lastSeenStr) return 'не в сети';
+  // формат "YYYY-MM-DD HH:MM:SS UTC"
+  try {
+    const iso = lastSeenStr.replace(' ', 'T').replace(' UTC', 'Z').replace('UTC','').trim();
+    const d = new Date(lastSeenStr.replace(' UTC', 'Z').replace(' ', 'T'));
+    if (isNaN(d.getTime())) return 'был(а) недавно';
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    if (sameDay) return `был(а) в сети сегодня в ${hh}:${mm}`;
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mo = String(d.getMonth()+1).padStart(2,'0');
+    return `был(а) в сети ${dd}.${mo} в ${hh}:${mm}`;
+  } catch(e) { return 'был(а) недавно'; }
+}
+function presenceLabel(username) {
+  const p = presenceMap[username];
+  if (p && p.online) return 'в сети';
+  if (p && p.last_seen) return formatLastSeen(p.last_seen);
+  return 'был(а) недавно';
+}
+
 function renderChatList() {
   const container = document.getElementById('chatListContainer');
   const entries = Object.entries(chats);
@@ -507,13 +716,13 @@ function renderChatList() {
     return;
   }
   container.innerHTML = entries.map(([username, c]) => `
-    <div class="chat-list-item" onclick="openChat('${username}', '${c.name}')">
-      <div class="avatar ${username === 'dicegram_support' ? 'support' : ''}">${c.name.charAt(0).toUpperCase()}</div>
+    <div class="chat-list-item" onclick="openChat('${username}', '${escapeHtml(c.name)}')">
+      ${avatarHtml(c.name.charAt(0).toUpperCase(), c.avatar_url, username === 'dicegram_support' ? 'support' : '')}
       <div class="chat-item-body">
-        <div class="chat-item-name">${c.name}</div>
-        <div class="chat-item-last">${c.lastText || ''}</div>
+        <div class="chat-item-name">${escapeHtml(c.name)} ${c.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${c.is_banned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''}</div>
+        <div class="chat-item-last">${escapeHtml(c.lastText || '')}</div>
       </div>
-      <div class="chat-item-time">${c.lastTime ? c.lastTime.split(' ')[1]?.substring(0,5) || '' : ''}</div>
+      <div class="chat-item-time">${c.lastTime ? (c.lastTime.split(' ')[1]||'').substring(0,5) : ''}</div>
     </div>
   `).join('');
 }
@@ -540,11 +749,13 @@ let contactSearchTimer = null;
 function searchContacts() {
   clearTimeout(contactSearchTimer);
   const q = document.getElementById('contactSearch').value.trim();
-  contactSearchTimer = setTimeout(() => doSearchContacts(q), 300);
+  contactSearchTimer = setTimeout(() => {
+    if (!q) { loadContactsList(); return; }
+    doSearchContacts(q);
+  }, 300);
 }
 async function doSearchContacts(q) {
   const container = document.getElementById('contactsResult');
-  if (!q) { container.innerHTML = '<div class="empty-state">Начните вводить юзернейм для поиска</div>'; return; }
   try {
     const res = await fetch(`${API_BASE}/api/contacts/search?q=${encodeURIComponent(q)}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -555,10 +766,10 @@ async function doSearchContacts(q) {
       return;
     }
     container.innerHTML = data.results.map(u => `
-      <div class="chat-list-item" onclick="openChat('${u.username}', '${u.name}')">
-        <div class="avatar">${u.name.charAt(0).toUpperCase()}</div>
+      <div class="chat-list-item" onclick="openChat('${u.username}', '${escapeHtml(u.name)}')">
+        ${avatarHtml(u.name.charAt(0).toUpperCase(), u.avatar_url)}
         <div class="chat-item-body">
-          <div class="chat-item-name">${u.name}</div>
+          <div class="chat-item-name">${escapeHtml(u.name)} ${u.is_verified ? '<span class="verified-badge">✓</span>' : ''}</div>
           <div class="chat-item-last">@${u.username}</div>
         </div>
       </div>
@@ -567,14 +778,207 @@ async function doSearchContacts(q) {
     container.innerHTML = '<div class="empty-state">Нет связи с сервером</div>';
   }
 }
+async function loadContactsList() {
+  const container = document.getElementById('contactsResult');
+  try {
+    const res = await fetch(`${API_BASE}/api/contacts/list`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (!data.ok || !data.contacts.length) {
+      container.innerHTML = '<div class="empty-state">У вас пока нет контактов. Нажмите ＋, чтобы добавить.</div>';
+      return;
+    }
+    container.innerHTML = data.contacts.map(c => {
+      const live = c.live_user;
+      const displayName = c.contact_name + (c.contact_surname ? ' ' + c.contact_surname : '');
+      const uname = live ? live.username : (c.contact_username || '');
+      const avatarUrl = live ? live.avatar_url : '';
+      const verified = live && live.is_verified;
+      return `
+      <div class="chat-list-item" onclick="${uname ? `openChat('${uname}', '${escapeHtml(displayName)}')` : ''}">
+        ${avatarHtml(displayName.charAt(0).toUpperCase(), avatarUrl)}
+        <div class="chat-item-body">
+          <div class="chat-item-name">${escapeHtml(displayName)} ${verified ? '<span class="verified-badge">✓</span>' : ''}</div>
+          <div class="chat-item-last">${c.contact_phone}${uname ? ' · @'+uname : ' · не в DICEGRAM'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = '<div class="empty-state">Нет связи с сервером</div>';
+  }
+}
+
+function openAddContactModal() {
+  document.getElementById('contactName').value = '';
+  document.getElementById('contactSurname').value = '';
+  document.getElementById('contactPhone').value = '+777 ';
+  document.getElementById('addContactHint').textContent = '';
+  openModal('addContactModal');
+}
+async function submitAddContact() {
+  const name = document.getElementById('contactName').value.trim();
+  const surname = document.getElementById('contactSurname').value.trim();
+  const phone = document.getElementById('contactPhone').value.trim();
+  const hint = document.getElementById('addContactHint');
+  if (!name) { hint.textContent = 'Имя обязательно'; return; }
+  if (!phone || phone.replace(/\D/g,'').length < 8) { hint.textContent = 'Введите корректный номер телефона DICEGRAM'; return; }
+  try {
+    const res = await fetch(`${API_BASE}/api/contacts/add`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+      body: JSON.stringify({ name, surname, phone })
+    });
+    const data = await res.json();
+    if (!data.ok) { hint.textContent = data.error || 'Не удалось создать контакт'; return; }
+    closeModal('addContactModal');
+    showToast('Контакт создан');
+    loadContactsList();
+  } catch (e) {
+    hint.textContent = 'Нет связи с сервером';
+  }
+}
+
+// ---------- ПРОФИЛЬ: ИМЯ / ЮЗЕРНЕЙМ / АВАТАР ----------
+function openEditNameModal() {
+  document.getElementById('editNameInput').value = session.name || '';
+  document.getElementById('editSurnameInput').value = session.surname || '';
+  document.getElementById('editNameHint').textContent = '';
+  openModal('editNameModal');
+}
+async function submitEditName() {
+  const name = document.getElementById('editNameInput').value.trim();
+  const surname = document.getElementById('editSurnameInput').value.trim();
+  const hint = document.getElementById('editNameHint');
+  if (!name) { hint.textContent = 'Имя не может быть пустым'; return; }
+  try {
+    const res = await fetch(`${API_BASE}/api/profile/update`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+      body: JSON.stringify({ name, surname })
+    });
+    const data = await res.json();
+    if (!data.ok) { hint.textContent = data.error || 'Ошибка'; return; }
+    session.name = data.name; session.surname = data.surname;
+    localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
+    renderProfileTab();
+    closeModal('editNameModal');
+    showToast('Имя обновлено');
+  } catch(e) { hint.textContent = 'Нет связи с сервером'; }
+}
+
+function openEditUsernameModal() {
+  document.getElementById('editUsernameInput').value = session.username || '';
+  document.getElementById('editUsernameHint').textContent = '';
+  openModal('editUsernameModal');
+}
+let editUsernameTimer = null;
+document.getElementById('editUsernameInput').addEventListener('input', e => {
+  const val = e.target.value.trim();
+  const hint = document.getElementById('editUsernameHint');
+  const btn = document.getElementById('editUsernameSaveBtn');
+  btn.disabled = true;
+  if (!val) { hint.textContent = ''; return; }
+  hint.textContent = 'Проверяем...'; hint.className = 'hint muted';
+  clearTimeout(editUsernameTimer);
+  editUsernameTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/check_username`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+        body: JSON.stringify({ username: val, exclude_current_for_token: true })
+      });
+      const data = await res.json();
+      if (data.available) {
+        hint.textContent = data.same_as_current ? 'Это ваш текущий юзернейм' : 'Свободен ✓';
+        hint.className = 'hint ok';
+        btn.disabled = false;
+      } else {
+        hint.textContent = data.error || 'Занят';
+        hint.className = 'hint err';
+      }
+    } catch(e) { hint.textContent = 'Нет связи с сервером'; hint.className = 'hint err'; }
+  }, 400);
+});
+async function submitEditUsername() {
+  const username = document.getElementById('editUsernameInput').value.trim();
+  const hint = document.getElementById('editUsernameHint');
+  if (username.length < 3) { hint.textContent = 'Минимум 3 символа'; hint.className='hint err'; return; }
+  try {
+    const res = await fetch(`${API_BASE}/api/profile/update`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+      body: JSON.stringify({ username })
+    });
+    const data = await res.json();
+    if (!data.ok) { hint.textContent = data.error || 'Ошибка'; hint.className='hint err'; return; }
+    session.username = data.username;
+    localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
+    renderProfileTab();
+    closeModal('editUsernameModal');
+    showToast('Юзернейм обновлён');
+    if (ws) { ws.close(); connectWebSocket(); }
+  } catch(e) { hint.textContent = 'Нет связи с сервером'; hint.className='hint err'; }
+}
+
+async function uploadAvatar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('avatar', file);
+  try {
+    const res = await fetch(`${API_BASE}/api/profile/avatar`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${session.token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (!data.ok) { showToast(data.error || 'Не удалось загрузить фото'); return; }
+    session.avatar_url = data.avatar_url;
+    localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
+    renderProfileTab();
+    showToast('Аватар обновлён');
+  } catch(e) { showToast('Нет связи с сервером'); }
+  event.target.value = '';
+}
+
+// ---------- ЧУЖОЙ ПРОФИЛЬ ----------
+let viewedProfileUser = null;
+async function openUserProfile(username) {
+  if (!username || username === 'dicegram_support') return;
+  try {
+    const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (!data.ok) { showToast(data.error || 'Не удалось загрузить профиль'); return; }
+    viewedProfileUser = data.user;
+    document.getElementById('upAvatarWrap').innerHTML = data.user.avatar_url
+      ? `<img src="${API_BASE}${data.user.avatar_url}">`
+      : `<span>${data.user.name.charAt(0).toUpperCase()}</span>`;
+    document.getElementById('upName').innerHTML = escapeHtml(data.user.name) + (data.user.surname ? ' ' + escapeHtml(data.user.surname) : '') + (data.user.is_owner ? ' <span style="color:#ffd24d;">★</span>' : '');
+    document.getElementById('upUsername').textContent = '@' + data.user.username;
+    document.getElementById('upPhone').textContent = data.user.phone;
+    document.getElementById('upVerifiedLine').style.display = data.user.is_verified ? 'flex' : 'none';
+    document.getElementById('upBannedLine').style.display = data.user.is_banned ? 'block' : 'none';
+    document.getElementById('upMessageBtn').style.display = data.user.is_banned ? 'none' : 'block';
+    document.getElementById('userProfileView').classList.add('active');
+  } catch(e) { showToast('Нет связи с сервером'); }
+}
+function closeUserProfile() {
+  document.getElementById('userProfileView').classList.remove('active');
+}
+function messageFromProfile() {
+  if (!viewedProfileUser) return;
+  closeUserProfile();
+  openChat(viewedProfileUser.username, viewedProfileUser.name);
+}
 
 // ---------- ОТКРЫТИЕ ЧАТА ----------
 async function openChat(username, name) {
   currentChatWith = username;
-  document.getElementById('chatHeaderName').textContent = name;
-  document.getElementById('chatHeaderAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('chatHeaderName').innerHTML = escapeHtml(name) + (chats[username]?.is_verified ? ' <span class="verified-badge">✓</span>' : '');
+  document.getElementById('chatHeaderAvatar').innerHTML = chats[username]?.avatar_url
+    ? `<img src="${API_BASE}${chats[username].avatar_url}">` : name.charAt(0).toUpperCase();
+  document.getElementById('chatHeaderStatus').textContent = username === 'dicegram_support' ? 'официальная поддержка' : presenceLabel(username);
   document.getElementById('chatView').classList.add('active');
   document.getElementById('messagesContainer').innerHTML = '';
+  cancelImagePreview();
 
   chats[username] = chats[username] || { name, lastText: '', lastTime: '' };
 
@@ -584,7 +988,7 @@ async function openChat(username, name) {
     });
     const data = await res.json();
     if (data.ok) {
-      data.messages.forEach(m => appendBubble(m.sender === session.username ? 'out' : 'in', m.text, m.created_at));
+      data.messages.forEach(m => appendBubble(m.sender === session.username ? 'out' : 'in', m.text, m.created_at, m.attachment_url));
     }
   } catch (e) { /* offline */ }
 
@@ -593,31 +997,82 @@ async function openChat(username, name) {
 function closeChat() {
   document.getElementById('chatView').classList.remove('active');
   currentChatWith = null;
+  cancelImagePreview();
 }
 
-function appendBubble(dir, text, time) {
+function appendBubble(dir, text, time, attachmentUrl) {
   const container = document.getElementById('messagesContainer');
   const div = document.createElement('div');
   div.className = `bubble ${dir}`;
-  div.innerHTML = `${escapeHtml(text)}<div class="bubble-time">${(time || '').split(' ')[1]?.substring(0,5) || ''}</div>`;
+  let inner = '';
+  if (attachmentUrl) inner += `<img class="attachment" src="${API_BASE}${attachmentUrl}">`;
+  if (text) inner += escapeHtml(text);
+  inner += `<div class="bubble-time">${(time || '').split(' ')[1]?.substring(0,5) || ''}</div>`;
+  div.innerHTML = inner;
   container.appendChild(div);
-}
-function escapeHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 function scrollMessagesToBottom() {
   const c = document.getElementById('messagesContainer');
   c.scrollTop = c.scrollHeight;
 }
 
+// ---------- ФОТО В ЧАТЕ ----------
+function onChatImageSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  pendingImageFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('imagePreviewImg').src = e.target.result;
+    document.getElementById('imagePreviewBar').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+function cancelImagePreview() {
+  pendingImageFile = null;
+  document.getElementById('imagePreviewBar').style.display = 'none';
+  document.getElementById('chatFileInput').value = '';
+}
+
 // ---------- ОТПРАВКА СООБЩЕНИЯ ----------
-function sendMessage() {
+async function sendMessage() {
   const input = document.getElementById('messageInput');
   const text = input.value.trim();
-  if (!text || !currentChatWith) return;
+  if (!currentChatWith) return;
 
+  if (pendingImageFile) {
+    const formData = new FormData();
+    formData.append('file', pendingImageFile);
+    formData.append('to', currentChatWith);
+    formData.append('text', text);
+    try {
+      const res = await fetch(`${API_BASE}/api/chat/upload`, {
+        method: 'POST', headers: { 'Authorization': `Bearer ${session.token}` },
+        body: formData
+      });
+      const data = await res.json();
+      if (data.ok) {
+        appendBubble('out', text, data.created_at, data.attachment_url);
+        scrollMessagesToBottom();
+        chats[currentChatWith] = chats[currentChatWith] || { name: currentChatWith };
+        chats[currentChatWith].lastText = text || '📷 Фото';
+        chats[currentChatWith].lastTime = data.created_at;
+        renderChatList();
+      } else {
+        showToast(data.error || 'Не удалось отправить фото');
+      }
+    } catch(e) { showToast('Нет связи с сервером — фото не отправлено'); }
+    cancelImagePreview();
+    input.value = '';
+    return;
+  }
+
+  if (!text) return;
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ type: 'message', to: currentChatWith, text }));
+  } else {
+    showToast('Нет соединения с сервером. Сообщение не отправлено.');
+    return;
   }
   input.value = '';
 }
@@ -626,23 +1081,43 @@ function sendMessage() {
 function connectWebSocket() {
   try {
     ws = new WebSocket(`${WS_BASE}/ws`);
-    ws.onopen = () => { ws.send(session.token); };
+    ws.onopen = () => {
+      ws.send(session.token);
+      serverReachable = true;
+    };
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      if (data.type === 'banned') {
+        showToast('Ваш аккаунт заблокирован администрацией');
+        setTimeout(() => logout(), 1500);
+        return;
+      }
+      if (data.type === 'presence') {
+        presenceMap[data.username] = { online: data.online, last_seen: data.last_seen };
+        if (currentChatWith === data.username) {
+          document.getElementById('chatHeaderStatus').textContent = presenceLabel(data.username);
+        }
+        return;
+      }
       if (data.type === 'message') {
         const other = data.from === session.username ? data.to : data.from;
         chats[other] = chats[other] || { name: other, lastText: '', lastTime: '' };
-        chats[other].lastText = data.text;
+        chats[other].lastText = data.attachment_url ? (data.text || '📷 Фото') : data.text;
         chats[other].lastTime = data.created_at;
         renderChatList();
 
         if (currentChatWith === other) {
-          appendBubble(data.from === session.username ? 'out' : 'in', data.text, data.created_at);
+          appendBubble(data.from === session.username ? 'out' : 'in', data.text, data.created_at, data.attachment_url);
           scrollMessagesToBottom();
         }
       }
     };
-    ws.onclose = () => { setTimeout(connectWebSocket, 3000); };
+    ws.onclose = () => {
+      serverReachable = false;
+      clearTimeout(wsReconnectTimer);
+      wsReconnectTimer = setTimeout(connectWebSocket, 3000);
+    };
+    ws.onerror = () => { serverReachable = false; };
   } catch (e) { console.error('WS error', e); }
 }
 
@@ -656,38 +1131,81 @@ async function checkServerConnection() {
     if (data.ok) {
       el.textContent = 'Сервер онлайн ✓';
       el.style.color = '#4dd68d';
+      serverReachable = true;
     } else {
       el.textContent = 'Сервер отвечает, но с ошибкой';
       el.style.color = '#ff5c5c';
     }
   } catch (e) {
-    el.textContent = 'Нет связи с сервером: ' + (e.message || 'проверь, что bot.py запущен на порту 8080 и адрес API_BASE верный');
+    serverReachable = false;
+    el.textContent = 'Нет связи с сервером';
     el.style.color = '#ff5c5c';
   }
 }
 
-// ---------- АВТО-ВХОД ПРИ ПЕРЕЗАГРУЗКЕ ----------
+// ---------- СТАРТ ПРИЛОЖЕНИЯ (ключевая логика: сервер офлайн ≠ аккаунт потерян) ----------
 window.addEventListener('load', async () => {
-  checkServerConnection();
   const savedToken = localStorage.getItem('dicegram_token');
-  if (!savedToken) return;
-  try {
-    const res = await fetch(`${API_BASE}/api/me`, {
-      headers: { 'Authorization': `Bearer ${savedToken}` }
-    });
-    const data = await res.json();
-    if (data.ok) {
-      session = { token: savedToken, username: data.username, name: data.name, phone: data.phone };
-      enterApp();
-    }
-  } catch (e) { /* сервер недоступен, останется на экране приветствия */ }
+  const cachedSessionRaw = localStorage.getItem('dicegram_session_cache');
 
-  // Telegram Mini App интеграция
+  if (!savedToken) {
+    // токена нет — это действительно новый посетитель, показываем приветствие
+    goTo('welcome');
+    checkServerConnection();
+  } else {
+    // Токен есть -> считаем пользователя авторизованным СРАЗУ, не дожидаясь сервера.
+    // Если сервер недоступен — просто работаем в режиме "переподключение",
+    // но НЕ выкидываем на экран регистрации/входа.
+    if (cachedSessionRaw) {
+      try { session = JSON.parse(cachedSessionRaw); } catch(e) {}
+    }
+    if (!session.username) {
+      session = { token: savedToken, username: '...', name: 'Загрузка...', phone: '', is_owner: false, is_verified: false };
+    } else {
+      session.token = savedToken;
+    }
+    enterApp();
+    checkServerConnection();
+
+    // В фоне пытаемся обновить данные профиля с сервера (если он появится)
+    tryRefreshSessionFromServer(savedToken);
+  }
+
   if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
   }
 });
+
+async function tryRefreshSessionFromServer(token) {
+  try {
+    const res = await fetch(`${API_BASE}/api/me`, { headers: { 'Authorization': `Bearer ${token}` } });
+    const data = await res.json();
+    if (data.ok) {
+      session = {
+        token, username: data.username, name: data.name, phone: data.phone,
+        surname: data.surname, avatar_url: data.avatar_url,
+        is_owner: !!data.is_owner, is_verified: !!data.is_verified
+      };
+      localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
+      renderProfileTab();
+      if (data.is_banned) {
+        showToast('Ваш аккаунт заблокирован');
+        setTimeout(() => logout(), 1500);
+      }
+    } else if (data.banned) {
+      showToast('Ваш аккаунт заблокирован');
+      setTimeout(() => logout(), 1500);
+    } else if (res.status === 401) {
+      // токен реально невалиден на сервере (не путать с недоступностью сети) — выходим
+      logout();
+    }
+    // при любой сетевой ошибке (сервер выключен) — просто молчим и повторяем позже
+  } catch (e) {
+    // сервер недоступен: НЕ трогаем сессию, просто попробуем ещё раз через некоторое время
+    setTimeout(() => tryRefreshSessionFromServer(token), 5000);
+  }
+}
 </script>
 </body>
 </html>

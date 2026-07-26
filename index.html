@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DICEGRAM</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: #0e1621;
+    --bg2: #17212b;
+    --accent: #4d9fec;
+    --accent2: #6ec6ff;
+    --text: #e6ecf2;
+    --muted: #7c8a99;
+    --bubble-in: #202b36;
+    --bubble-out: #2b5278;
+    --danger: #ff5c5c;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    overflow: hidden;
+  }
+  #app { position: relative; height: 100vh; width: 100vw; max-width: 480px; margin: 0 auto; background: var(--bg); display: flex; flex-direction: column; }
+
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transform: translateX(20px);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .screen.active { opacity: 1; pointer-events: auto; transform: translateX(0); }
+
+  /* ---------- ЭКРАН ПРИВЕТСТВИЯ ---------- */
+  #welcome {
+    justify-content: center; align-items: center; text-align: center;
+    background: radial-gradient(circle at 50% 20%, #1c2b3a, var(--bg) 70%);
+    padding: 32px;
+  }
+  .logo-circle {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #8e6fec);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px; font-weight: 700; color: white;
+    box-shadow: 0 10px 40px rgba(77,159,236,.4);
+    margin-bottom: 28px;
+  }
+  .brand {
+    font-size: 34px; font-weight: 800; letter-spacing: .5px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 8px;
+  }
+  .tagline { color: var(--muted); font-size: 15px; margin-bottom: 48px; }
+  .btn {
+    width: 100%; padding: 16px; border-radius: 14px; border: none;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: transform .1s ease, opacity .2s ease;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: linear-gradient(90deg, var(--accent), #6ec6ff); color: #06131f; }
+  .btn-secondary { background: transparent; color: var(--accent2); border: 1.5px solid #2a3b4a; }
+  .btn-row { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 320px; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* ---------- ЭКРАНЫ РЕГИСТРАЦИИ ---------- */
+  .auth-screen { padding: 28px 24px; justify-content: flex-start; }
+  .auth-header { margin-top: 20px; margin-bottom: 32px; }
+  .auth-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .auth-sub { color: var(--muted); font-size: 14px; }
+  .field {
+    background: var(--bg2); border: 1.5px solid #223140; border-radius: 14px;
+    padding: 14px 16px; font-size: 16px; color: var(--text);
+    width: 100%; margin-bottom: 12px; outline: none;
+  }
+  .field:focus { border-color: var(--accent); }
+  .hint { font-size: 13px; margin-top: -4px; margin-bottom: 16px; min-height: 18px; }
+  .hint.ok { color: #4dd68d; }
+  .hint.err { color: var(--danger); }
+  .hint.muted { color: var(--muted); }
+  .spacer { flex: 1; }
+  .back-btn {
+    align-self: flex-start; color: var(--accent2); background: none; border: none;
+    font-size: 15px; margin-bottom: 8px; cursor: pointer;
+  }
+
+  /* ---------- УСПЕХ РЕГИСТРАЦИИ ---------- */
+  #success { justify-content: center; align-items: center; text-align: center; padding: 32px; }
+  .check-circle {
+    width: 90px; height: 90px; border-radius: 50%; background: #1c3a2b;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+    font-size: 42px; color: #4dd68d;
+  }
+  .phone-card {
+    background: var(--bg2); border: 1.5px solid #223140; border-radius: 16px;
+    padding: 20px; margin: 20px 0 28px; width: 100%; max-width: 320px;
+  }
+  .phone-num { font-size: 26px; font-weight: 700; color: var(--accent2); letter-spacing: 1px; }
+  .phone-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .security-note { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 28px; max-width: 320px; }
+
+  /* ---------- ГЛАВНОЕ ПРИЛОЖЕНИЕ ---------- */
+  #mainApp { display: none; flex-direction: column; height: 100%; }
+  #mainApp.active { display: flex; }
+  .tab-content { flex: 1; overflow-y: auto; display: none; flex-direction: column; }
+  .tab-content.active { display: flex; }
+
+  .top-bar {
+    padding: 16px 18px; font-size: 20px; font-weight: 700;
+    border-bottom: 1px solid #1c2733; background: var(--bg2);
+  }
+
+  .chat-list-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border-bottom: 1px solid #16202b; cursor: pointer;
+  }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 18px; color: white;
+    background: linear-gradient(135deg, #4d9fec, #8e6fec);
+  }
+  .avatar.support { background: linear-gradient(135deg, #4dd68d, #2fa8e0); }
+  .chat-item-body { flex: 1; min-width: 0; }
+  .chat-item-name { font-weight: 600; font-size: 15px; }
+  .chat-item-last { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-item-time { color: var(--muted); font-size: 12px; }
+
+  /* ---------- ЧАТ ---------- */
+  #chatView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 10; }
+  #chatView.active { display: flex; }
+  .chat-header {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    background: var(--bg2); border-bottom: 1px solid #1c2733;
+  }
+  .chat-header-name { font-weight: 700; font-size: 16px; }
+  .chat-header-status { font-size: 12px; color: var(--muted); }
+  .messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .bubble { max-width: 78%; padding: 10px 14px; border-radius: var(--radius); font-size: 15px; line-height: 1.4; white-space: pre-wrap; }
+  .bubble.in { background: var(--bubble-in); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .bubble.out { background: var(--bubble-out); align-self: flex-end; border-bottom-right-radius: 4px; }
+  .bubble-time { font-size: 11px; color: var(--muted); margin-top: 4px; text-align: right; }
+  .input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid #1c2733; }
+  .input-bar input {
+    flex: 1; background: var(--bg); border: 1px solid #223140; border-radius: 22px;
+    padding: 12px 16px; color: var(--text); font-size: 15px; outline: none;
+  }
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--accent);
+    border: none; color: #06131f; font-size: 18px; cursor: pointer;
+  }
+
+  /* ---------- НИЖНЯЯ НАВИГАЦИЯ ---------- */
+  .bottom-nav {
+    display: flex; background: var(--bg2); border-top: 1px solid #1c2733;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    color: var(--muted); font-size: 11px; cursor: pointer; padding: 4px;
+  }
+  .nav-item.active { color: var(--accent2); }
+  .nav-icon { font-size: 22px; }
+
+  /* ---------- ПРОФИЛЬ / КОНТАКТЫ / НАСТРОЙКИ ---------- */
+  .profile-header { display: flex; flex-direction: column; align-items: center; padding: 32px 16px; }
+  .profile-avatar { width: 96px; height: 96px; font-size: 34px; margin-bottom: 14px; }
+  .profile-name { font-size: 20px; font-weight: 700; }
+  .profile-phone { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .list-row {
+    padding: 16px; border-bottom: 1px solid #16202b; display: flex;
+    justify-content: space-between; align-items: center; font-size: 15px;
+  }
+  .search-box { padding: 12px 16px; }
+  .search-box input {
+    width: 100%; background: var(--bg2); border: 1px solid #223140; border-radius: 20px;
+    padding: 10px 16px; color: var(--text); outline: none; font-size: 14px;
+  }
+  .empty-state { text-align: center; color: var(--muted); padding: 40px 20px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ЭКРАН 1: ПРИВЕТСТВИЕ -->
+  <div class="screen active" id="welcome">
+    <div class="logo-circle">D</div>
+    <div class="brand">DICEGRAM</div>
+    <div class="tagline">Добро пожаловать!</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goTo('regName')">Зарегистрировать аккаунт</button>
+      <button class="btn btn-secondary" onclick="goTo('loginScreen')">Войти</button>
+    </div>
+  </div>
+
+  <!-- ШАГ 1: ИМЯ -->
+  <div class="screen auth-screen" id="regName">
+    <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
+    <div class="auth-header">
+      <div class="auth-title">Как вас зовут?</div>
+      <div class="auth-sub">Напишите ваше имя</div>
+    </div>
+    <input class="field" id="inputName" placeholder="Имя" maxlength="40">
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnNameNext" onclick="stepNameNext()" disabled>Далее</button>
+  </div>
+
+  <!-- ШАГ 2: ЮЗЕРНЕЙМ -->
+  <div class="screen auth-screen" id="regUsername">
+    <button class="back-btn" onclick="goTo('regName')">← Назад</button>
+    <div class="auth-header">
+      <div class="auth-title">Придумайте юзернейм</div>
+      <div class="auth-sub">Только латиница, цифры и _, от 3 до 20 символов</div>
+    </div>
+    <input class="field" id="inputUsername" placeholder="username" maxlength="20" autocapitalize="off">
+    <div class="hint muted" id="usernameHint"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnUserNext" onclick="stepUsernameNext()" disabled>Далее</button>
+  </div>
+
+  <!-- ШАГ 3: ПАРОЛЬ -->
+  <div class="screen auth-screen" id="regPassword">
+    <button class="back-btn" onclick="goTo('regUsername')">← Назад</button>
+    <div class="auth-header">
+      <div class="auth-title">Придумайте пароль</div>
+      <div class="auth-sub">Не менее 6 символов</div>
+    </div>
+    <input class="field" type="password" id="inputPassword" placeholder="Пароль">
+    <input class="field" type="password" id="inputPassword2" placeholder="Подтвердите пароль">
+    <div class="hint err" id="passwordHint"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnPassNext" onclick="stepPasswordNext()">Далее</button>
+  </div>
+
+  <!-- ЭКРАН УСПЕХА -->
+  <div class="screen" id="success">
+    <div class="check-circle">✓</div>
+    <div class="auth-title">Вы успешно зарегистрировали аккаунт</div>
+    <div class="phone-card">
+      <div class="phone-label">Ваш личный номер в DICEGRAM</div>
+      <div class="phone-num" id="phoneDisplay">+777 00-00-00</div>
+    </div>
+    <div class="security-note">
+      Чтобы снова войти в аккаунт после выхода, используйте этот номер и пароль.<br><br>
+      Мы сосредоточены на максимальной защите!
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="finishRegistration()">Продолжить</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН ВХОДА -->
+  <div class="screen auth-screen" id="loginScreen">
+    <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
+    <div class="auth-header">
+      <div class="auth-title">Вход в DICEGRAM</div>
+      <div class="auth-sub">Введите номер и пароль</div>
+    </div>
+    <input class="field" id="loginPhone" placeholder="+777 xx-xx-xx">
+    <input class="field" type="password" id="loginPassword" placeholder="Пароль">
+    <div class="hint err" id="loginHint"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+  </div>
+
+  <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
+  <div id="mainApp">
+
+    <!-- ВКЛАДКА: ЧАТЫ -->
+    <div class="tab-content active" id="tabChats">
+      <div class="top-bar">Чаты</div>
+      <div id="chatListContainer"></div>
+    </div>
+
+    <!-- ВКЛАДКА: КОНТАКТЫ -->
+    <div class="tab-content" id="tabContacts">
+      <div class="top-bar">Контакты</div>
+      <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
+      <div id="contactsResult"><div class="empty-state">Начните вводить юзернейм для поиска</div></div>
+    </div>
+
+    <!-- ВКЛАДКА: НАСТРОЙКИ -->
+    <div class="tab-content" id="tabSettings">
+      <div class="top-bar">Настройки</div>
+      <div class="list-row"><span>Уведомления</span><span>Вкл</span></div>
+      <div class="list-row"><span>Конфиденциальность</span><span>›</span></div>
+      <div class="list-row"><span>Тема</span><span>Тёмная</span></div>
+      <div class="list-row" onclick="logout()" style="color: var(--danger); cursor:pointer;"><span>Выйти из аккаунта</span></div>
+    </div>
+
+    <!-- ВКЛАДКА: ПРОФИЛЬ -->
+    <div class="tab-content" id="tabProfile">
+      <div class="top-bar">Профиль</div>
+      <div class="profile-header">
+        <div class="avatar profile-avatar" id="profileAvatarLetter">?</div>
+        <div class="profile-name" id="profileNameDisplay">—</div>
+        <div class="profile-phone" id="profilePhoneDisplay">—</div>
+      </div>
+      <div class="list-row"><span>Юзернейм</span><span id="profileUsernameDisplay">—</span></div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" data-tab="tabChats" onclick="switchTab('tabChats')">
+        <div class="nav-icon">💬</div>Чаты
+      </div>
+      <div class="nav-item" data-tab="tabContacts" onclick="switchTab('tabContacts')">
+        <div class="nav-icon">👥</div>Контакты
+      </div>
+      <div class="nav-item" data-tab="tabSettings" onclick="switchTab('tabSettings')">
+        <div class="nav-icon">⚙️</div>Настройки
+      </div>
+      <div class="nav-item" data-tab="tabProfile" onclick="switchTab('tabProfile')">
+        <div class="nav-icon">👤</div>Профиль
+      </div>
+    </div>
+  </div>
+
+  <!-- ЭКРАН ЧАТА -->
+  <div id="chatView">
+    <div class="chat-header">
+      <button class="back-btn" style="margin:0;" onclick="closeChat()">←</button>
+      <div class="avatar" id="chatHeaderAvatar" style="width:38px;height:38px;font-size:15px;">?</div>
+      <div>
+        <div class="chat-header-name" id="chatHeaderName">—</div>
+        <div class="chat-header-status" id="chatHeaderStatus">в сети</div>
+      </div>
+    </div>
+    <div class="messages" id="messagesContainer"></div>
+    <div class="input-bar">
+      <input id="messageInput" placeholder="Сообщение" onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// НАСТРОЙ ЭТОТ АДРЕС НА СВОЙ VPS С bot.py (http и ws на одном сервере)
+// ============================================================
+const API_BASE = "https://a48778-c397.e.jrnm.app"; // <-- поменяй на адрес своего VPS
+const WS_BASE = API_BASE.replace("https://", "wss://").replace("http://", "ws://");
+
+let regData = { name: "", username: "", password: "" };
+let session = { token: null, username: null, name: null, phone: null };
+let currentChatWith = null;
+let ws = null;
+let chats = {}; // username -> {name, lastText, lastTime}
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ---------- ШАГ 1: ИМЯ ----------
+document.getElementById('inputName').addEventListener('input', e => {
+  document.getElementById('btnNameNext').disabled = e.target.value.trim().length === 0;
+});
+function stepNameNext() {
+  regData.name = document.getElementById('inputName').value.trim();
+  goTo('regUsername');
+}
+
+// ---------- ШАГ 2: ЮЗЕРНЕЙМ ----------
+let usernameCheckTimer = null;
+document.getElementById('inputUsername').addEventListener('input', e => {
+  const val = e.target.value.trim();
+  const hint = document.getElementById('usernameHint');
+  document.getElementById('btnUserNext').disabled = true;
+  if (!val) { hint.textContent = ''; return; }
+
+  hint.textContent = 'Проверяем...';
+  hint.className = 'hint muted';
+
+  clearTimeout(usernameCheckTimer);
+  usernameCheckTimer = setTimeout(() => checkUsername(val), 400);
+});
+
+async function checkUsername(username) {
+  const hint = document.getElementById('usernameHint');
+  try {
+    const res = await fetch(`${API_BASE}/api/check_username`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    });
+    const data = await res.json();
+    if (data.available) {
+      hint.textContent = 'Свободен ✓';
+      hint.className = 'hint ok';
+      document.getElementById('btnUserNext').disabled = false;
+      regData.username = username;
+    } else {
+      hint.textContent = data.error || 'Занят';
+      hint.className = 'hint err';
+    }
+  } catch (e) {
+    hint.textContent = 'Нет связи с сервером';
+    hint.className = 'hint err';
+  }
+}
+function stepUsernameNext() { goTo('regPassword'); }
+
+// ---------- ШАГ 3: ПАРОЛЬ ----------
+function stepPasswordNext() {
+  const p1 = document.getElementById('inputPassword').value;
+  const p2 = document.getElementById('inputPassword2').value;
+  const hint = document.getElementById('passwordHint');
+
+  if (p1.length < 6) { hint.textContent = 'Пароль должен быть не менее 6 символов'; return; }
+  if (p1 !== p2) { hint.textContent = 'Пароли не совпадают'; return; }
+
+  hint.textContent = '';
+  regData.password = p1;
+  submitRegistration();
+}
+
+async function submitRegistration() {
+  try {
+    const res = await fetch(`${API_BASE}/api/register`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: regData.name,
+        username: regData.username,
+        password: regData.password,
+        password2: regData.password,
+        device: navigator.userAgent.substring(0, 60)
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      document.getElementById('passwordHint').textContent = data.error || 'Ошибка регистрации';
+      return;
+    }
+    session = { token: data.token, username: data.username, name: data.name, phone: data.phone };
+    document.getElementById('phoneDisplay').textContent = data.phone;
+    goTo('success');
+  } catch (e) {
+    document.getElementById('passwordHint').textContent = 'Нет связи с сервером';
+  }
+}
+
+function finishRegistration() {
+  localStorage.setItem('dicegram_token', session.token);
+  enterApp();
+}
+
+// ---------- ВХОД ----------
+async function doLogin() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const hint = document.getElementById('loginHint');
+  try {
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, password })
+    });
+    const data = await res.json();
+    if (!data.ok) { hint.textContent = data.error || 'Ошибка входа'; return; }
+    session = { token: data.token, username: data.username, name: data.name, phone: data.phone };
+    localStorage.setItem('dicegram_token', data.token);
+    enterApp();
+  } catch (e) {
+    hint.textContent = 'Нет связи с сервером';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('dicegram_token');
+  if (ws) ws.close();
+  location.reload();
+}
+
+// ---------- ГЛАВНОЕ ПРИЛОЖЕНИЕ ----------
+function enterApp() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('mainApp').classList.add('active');
+
+  document.getElementById('profileNameDisplay').textContent = session.name;
+  document.getElementById('profilePhoneDisplay').textContent = session.phone;
+  document.getElementById('profileUsernameDisplay').textContent = '@' + session.username;
+  document.getElementById('profileAvatarLetter').textContent = session.name.charAt(0).toUpperCase();
+
+  connectWebSocket();
+  loadSupportChat();
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add('active');
+}
+
+// ---------- ЧАТЫ (список) ----------
+function renderChatList() {
+  const container = document.getElementById('chatListContainer');
+  const entries = Object.entries(chats);
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-state">У вас пока нет чатов</div>';
+    return;
+  }
+  container.innerHTML = entries.map(([username, c]) => `
+    <div class="chat-list-item" onclick="openChat('${username}', '${c.name}')">
+      <div class="avatar ${username === 'dicegram_support' ? 'support' : ''}">${c.name.charAt(0).toUpperCase()}</div>
+      <div class="chat-item-body">
+        <div class="chat-item-name">${c.name}</div>
+        <div class="chat-item-last">${c.lastText || ''}</div>
+      </div>
+      <div class="chat-item-time">${c.lastTime ? c.lastTime.split(' ')[1]?.substring(0,5) || '' : ''}</div>
+    </div>
+  `).join('');
+}
+
+async function loadSupportChat() {
+  chats['dicegram_support'] = { name: 'DICEGRAM SUPPORT', lastText: 'Добро пожаловать!', lastTime: '' };
+  renderChatList();
+  try {
+    const res = await fetch(`${API_BASE}/api/history?with=dicegram_support`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (data.ok && data.messages.length) {
+      const last = data.messages[data.messages.length - 1];
+      chats['dicegram_support'].lastText = last.text.split('\n')[0];
+      chats['dicegram_support'].lastTime = last.created_at;
+      renderChatList();
+    }
+  } catch (e) { /* сервер недоступен - просто покажем локально */ }
+}
+
+// ---------- КОНТАКТЫ ----------
+let contactSearchTimer = null;
+function searchContacts() {
+  clearTimeout(contactSearchTimer);
+  const q = document.getElementById('contactSearch').value.trim();
+  contactSearchTimer = setTimeout(() => doSearchContacts(q), 300);
+}
+async function doSearchContacts(q) {
+  const container = document.getElementById('contactsResult');
+  if (!q) { container.innerHTML = '<div class="empty-state">Начните вводить юзернейм для поиска</div>'; return; }
+  try {
+    const res = await fetch(`${API_BASE}/api/contacts/search?q=${encodeURIComponent(q)}`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (!data.ok || data.results.length === 0) {
+      container.innerHTML = '<div class="empty-state">Никого не найдено</div>';
+      return;
+    }
+    container.innerHTML = data.results.map(u => `
+      <div class="chat-list-item" onclick="openChat('${u.username}', '${u.name}')">
+        <div class="avatar">${u.name.charAt(0).toUpperCase()}</div>
+        <div class="chat-item-body">
+          <div class="chat-item-name">${u.name}</div>
+          <div class="chat-item-last">@${u.username}</div>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = '<div class="empty-state">Нет связи с сервером</div>';
+  }
+}
+
+// ---------- ОТКРЫТИЕ ЧАТА ----------
+async function openChat(username, name) {
+  currentChatWith = username;
+  document.getElementById('chatHeaderName').textContent = name;
+  document.getElementById('chatHeaderAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('chatView').classList.add('active');
+  document.getElementById('messagesContainer').innerHTML = '';
+
+  chats[username] = chats[username] || { name, lastText: '', lastTime: '' };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/history?with=${username}`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (data.ok) {
+      data.messages.forEach(m => appendBubble(m.sender === session.username ? 'out' : 'in', m.text, m.created_at));
+    }
+  } catch (e) { /* offline */ }
+
+  scrollMessagesToBottom();
+}
+function closeChat() {
+  document.getElementById('chatView').classList.remove('active');
+  currentChatWith = null;
+}
+
+function appendBubble(dir, text, time) {
+  const container = document.getElementById('messagesContainer');
+  const div = document.createElement('div');
+  div.className = `bubble ${dir}`;
+  div.innerHTML = `${escapeHtml(text)}<div class="bubble-time">${(time || '').split(' ')[1]?.substring(0,5) || ''}</div>`;
+  container.appendChild(div);
+}
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function scrollMessagesToBottom() {
+  const c = document.getElementById('messagesContainer');
+  c.scrollTop = c.scrollHeight;
+}
+
+// ---------- ОТПРАВКА СООБЩЕНИЯ ----------
+function sendMessage() {
+  const input = document.getElementById('messageInput');
+  const text = input.value.trim();
+  if (!text || !currentChatWith) return;
+
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ type: 'message', to: currentChatWith, text }));
+  }
+  input.value = '';
+}
+
+// ---------- WEBSOCKET ----------
+function connectWebSocket() {
+  try {
+    ws = new WebSocket(`${WS_BASE}/ws`);
+    ws.onopen = () => { ws.send(session.token); };
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'message') {
+        const other = data.from === session.username ? data.to : data.from;
+        chats[other] = chats[other] || { name: other, lastText: '', lastTime: '' };
+        chats[other].lastText = data.text;
+        chats[other].lastTime = data.created_at;
+        renderChatList();
+
+        if (currentChatWith === other) {
+          appendBubble(data.from === session.username ? 'out' : 'in', data.text, data.created_at);
+          scrollMessagesToBottom();
+        }
+      }
+    };
+    ws.onclose = () => { setTimeout(connectWebSocket, 3000); };
+  } catch (e) { console.error('WS error', e); }
+}
+
+// ---------- АВТО-ВХОД ПРИ ПЕРЕЗАГРУЗКЕ ----------
+window.addEventListener('load', async () => {
+  const savedToken = localStorage.getItem('dicegram_token');
+  if (!savedToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/me`, {
+      headers: { 'Authorization': `Bearer ${savedToken}` }
+    });
+    const data = await res.json();
+    if (data.ok) {
+      session = { token: savedToken, username: data.username, name: data.name, phone: data.phone };
+      enterApp();
+    }
+  } catch (e) { /* сервер недоступен, останется на экране приветствия */ }
+
+  // Telegram Mini App интеграция
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+  }
+});
+</script>
+</body>
+</html>

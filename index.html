@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -6,8 +6,6 @@
 <title>DICEGRAM</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-/* ================== DICEGRAM — DESIGN SYSTEM ================== */
-
 :root[data-theme="dark"] {
   --bg: #0a0e17;
   --bg2: #131a26;
@@ -83,7 +81,6 @@ html, body {
 }
 .screen.active { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); }
 
-/* ---------- ЗАГРУЗКА ---------- */
 #loadingScreen { justify-content: center; align-items: center; background: var(--bg); z-index: 999; }
 .spinner {
   width: 42px; height: 42px; border-radius: 50%;
@@ -92,7 +89,6 @@ html, body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ---------- ПРИВЕТСТВИЕ ---------- */
 #welcome {
   justify-content: center; align-items: center; text-align: center;
   background:
@@ -129,7 +125,6 @@ html, body {
 .btn-row { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 320px; }
 .btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
 
-/* ---------- РЕГИСТРАЦИЯ ---------- */
 .auth-screen { padding: 28px 24px; justify-content: flex-start; background: var(--bg); }
 .auth-header { margin-top: 20px; margin-bottom: 32px; }
 .auth-title { font-size: 25px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.3px; }
@@ -152,7 +147,6 @@ html, body {
   font-size: 15px; margin-bottom: 8px; cursor: pointer; padding: 8px 14px; border-radius: 12px; font-weight: 600;
 }
 
-/* ---------- УСПЕХ ---------- */
 #success { justify-content: center; align-items: center; text-align: center; padding: 32px; }
 .check-circle {
   width: 92px; height: 92px; border-radius: 50%;
@@ -170,7 +164,6 @@ html, body {
 .phone-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .security-note { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 28px; max-width: 320px; }
 
-/* ---------- ГЛАВНОЕ ПРИЛОЖЕНИЕ ---------- */
 #mainApp { display: none; flex-direction: column; height: 100%; background: var(--bg); }
 #mainApp.active { display: flex; }
 .tab-content { flex: 1; overflow-y: auto; display: none; flex-direction: column; -webkit-overflow-scrolling: touch; }
@@ -215,7 +208,6 @@ html, body {
 }
 .banned-badge { color: var(--danger); font-size: 10.5px; font-weight: 800; background: rgba(255,84,112,.12); padding: 2px 7px; border-radius: 7px; letter-spacing: .3px; }
 
-/* ---------- ЧАТ ---------- */
 #chatView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 10; }
 #chatView.active { display: flex; }
 .chat-header {
@@ -256,7 +248,6 @@ html, body {
 .typing-indicator span:nth-child(3) { animation-delay: .3s; }
 @keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:.5} 30%{transform:translateY(-5px);opacity:1} }
 
-/* ---------- ГОЛОСОВЫЕ СООБЩЕНИЯ ---------- */
 .voice-bubble { display: flex; align-items: center; gap: 10px; min-width: 180px; padding: 4px 2px; }
 .voice-play-btn {
   width: 36px; height: 36px; border-radius: 50%; border: none; flex-shrink: 0; cursor: pointer;
@@ -268,7 +259,6 @@ html, body {
 .voice-wave span { width: 3px; border-radius: 2px; background: currentColor; opacity: .55; }
 .voice-duration { font-size: 12px; opacity: .8; flex-shrink: 0; min-width: 30px; }
 
-/* ---------- ЗАПИСЬ ГОЛОСОВОГО (удержание кнопки) ---------- */
 .voice-recording-bar {
   display: none; align-items: center; gap: 12px; padding: 12px 18px; background: var(--bg2);
   border-top: 1px solid var(--border);
@@ -285,20 +275,27 @@ html, body {
   padding: 13px 18px; color: var(--text); font-size: 15px; outline: none;
 }
 .input-bar input:focus { border-color: var(--accent); }
-.send-btn, .attach-btn, .mic-btn {
+.send-btn, .attach-btn {
   width: 46px; height: 46px; border-radius: 50%; background: var(--accent-grad);
   border: none; color: #fff; font-size: 18px; cursor: pointer; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-pop);
   user-select: none; -webkit-user-select: none; touch-action: none;
 }
 .attach-btn { background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; }
-.mic-btn { background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; }
-.mic-btn.recording { background: var(--danger); color: #fff; box-shadow: 0 0 0 8px rgba(255,84,112,.15); }
+.mic-hold-area {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--surface); border: 1.5px solid var(--border);
+  color: var(--accent); font-size: 18px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none; -webkit-user-select: none; touch-action: none;
+  transition: all .15s ease;
+}
+.mic-hold-area.recording { background: var(--danger); color: #fff; border-color: var(--danger); box-shadow: 0 0 0 8px rgba(255,84,112,.15); }
+
 #imagePreviewBar { display: none; padding: 10px 14px; background: var(--bg2); align-items: center; gap: 10px; border-top: 1px solid var(--border); }
 #imagePreviewBar img { width: 52px; height: 52px; object-fit: cover; border-radius: 12px; }
 #imagePreviewBar .cancel-preview { color: var(--danger); background: rgba(255,84,112,.12); border: none; font-size: 18px; cursor: pointer; margin-left: auto; width:32px;height:32px;border-radius:10px; }
 
-/* ---------- НИЖНЯЯ НАВИГАЦИЯ ---------- */
 .bottom-nav {
   display: flex; background: var(--bg2); border-top: 1px solid var(--border);
   padding: 10px 4px max(10px, env(safe-area-inset-bottom));
@@ -312,7 +309,6 @@ html, body {
 .nav-icon { font-size: 22px; transition: transform .15s ease; }
 .nav-item.active .nav-icon { transform: scale(1.12); }
 
-/* ---------- ПРОФИЛЬ ---------- */
 .profile-header { display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; position: relative;
   background: linear-gradient(180deg, var(--accent-grad-soft), transparent 70%);
 }
@@ -359,7 +355,6 @@ html, body {
   cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 
-/* ---------- ТУМБЛЕР (переключатель темы/настроек) ---------- */
 .toggle { position: relative; width: 48px; height: 28px; border-radius: 16px; background: var(--border); cursor: pointer; transition: background .2s ease; flex-shrink:0; }
 .toggle.on { background: var(--accent-grad); }
 .toggle-knob { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
@@ -369,7 +364,6 @@ html, body {
 .segmented-option { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--text-dim); transition: all .2s ease; }
 .segmented-option.active { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
 
-/* ---------- ЧАСОВОЙ ПОЯС ---------- */
 .tz-option {
   display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
   border-radius: 14px; background: var(--surface); border: 1.5px solid var(--border); margin-bottom: 10px; cursor: pointer;
@@ -380,7 +374,6 @@ html, body {
 .tz-option-check { color: var(--accent); font-size: 18px; opacity: 0; }
 .tz-option.active .tz-option-check { opacity: 1; }
 
-/* ---------- МОДАЛКИ ---------- */
 .modal-overlay {
   position: absolute; inset: 0; background: rgba(5,8,14,.6); z-index: 50; backdrop-filter: blur(3px);
   display: none; align-items: flex-end; justify-content: center;
@@ -396,7 +389,6 @@ html, body {
 .modal-close { float: right; background: var(--surface); border:none; color: var(--text-dim); font-size: 18px; cursor: pointer; width:32px;height:32px;border-radius:10px; }
 .char-counter { font-size: 12px; color: var(--muted); text-align: right; margin-top: -8px; margin-bottom: 14px; }
 
-/* ---------- АВАТАР: КРОП/ПРЕВЬЮ МОДАЛКА ---------- */
 #avatarCropModal .modal-sheet { text-align: center; }
 .avatar-crop-preview {
   width: 220px; height: 220px; border-radius: 50%; margin: 12px auto 20px; overflow: hidden;
@@ -405,7 +397,6 @@ html, body {
 }
 .avatar-crop-preview img { width: 100%; height: 100%; object-fit: cover; }
 
-/* ---------- ЧУЖОЙ ПРОФИЛЬ ---------- */
 #userProfileView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; }
 #userProfileView.active { display: flex; }
 .up-header { display:flex; align-items:center; gap:12px; padding:14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); }
@@ -429,10 +420,8 @@ html, body {
 <body>
 <div id="app">
 
-  <!-- ЭКРАН ЗАГРУЗКИ -->
   <div class="screen active" id="loadingScreen"><div class="spinner"></div></div>
 
-  <!-- ЭКРАН 1: ПРИВЕТСТВИЕ -->
   <div class="screen" id="welcome">
     <div class="logo-circle">D</div>
     <div class="brand">DICEGRAM</div>
@@ -444,7 +433,6 @@ html, body {
     <div id="connStatus" style="margin-top:18px;font-size:12px;color:var(--muted);">Проверка связи с сервером...</div>
   </div>
 
-  <!-- ШАГ 1: ИМЯ -->
   <div class="screen auth-screen" id="regName">
     <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
     <div class="auth-header">
@@ -456,7 +444,6 @@ html, body {
     <button class="btn btn-primary" id="btnNameNext" onclick="stepNameNext()" disabled>Далее</button>
   </div>
 
-  <!-- ШАГ 2: ЮЗЕРНЕЙМ -->
   <div class="screen auth-screen" id="regUsername">
     <button class="back-btn" onclick="goTo('regName')">← Назад</button>
     <div class="auth-header">
@@ -469,7 +456,6 @@ html, body {
     <button class="btn btn-primary" id="btnUserNext" onclick="stepUsernameNext()" disabled>Далее</button>
   </div>
 
-  <!-- ШАГ 3: ПАРОЛЬ -->
   <div class="screen auth-screen" id="regPassword">
     <button class="back-btn" onclick="goTo('regUsername')">← Назад</button>
     <div class="auth-header">
@@ -483,7 +469,6 @@ html, body {
     <button class="btn btn-primary" id="btnPassNext" onclick="stepPasswordNext()">Далее</button>
   </div>
 
-  <!-- ЭКРАН УСПЕХА -->
   <div class="screen" id="success">
     <div class="check-circle">✓</div>
     <div class="auth-title" id="successTitle">Вы успешно зарегистрировали аккаунт</div>
@@ -500,7 +485,6 @@ html, body {
     </div>
   </div>
 
-  <!-- ЭКРАН ВХОДА -->
   <div class="screen auth-screen" id="loginScreen">
     <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
     <div class="auth-header">
@@ -514,16 +498,13 @@ html, body {
     <button class="btn btn-primary" onclick="doLogin()">Войти</button>
   </div>
 
-  <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
   <div id="mainApp">
 
-    <!-- ВКЛАДКА: ЧАТЫ -->
     <div class="tab-content active" id="tabChats">
       <div class="top-bar"><span>Чаты</span></div>
       <div id="chatListContainer"></div>
     </div>
 
-    <!-- ВКЛАДКА: КОНТАКТЫ -->
     <div class="tab-content" id="tabContacts" style="position:relative;">
       <div class="top-bar"><span>Контакты</span></div>
       <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
@@ -531,7 +512,6 @@ html, body {
       <button class="fab" onclick="openAddContactModal()">＋</button>
     </div>
 
-    <!-- ВКЛАДКА: НАСТРОЙКИ -->
     <div class="tab-content" id="tabSettings">
       <div class="top-bar"><span>Настройки</span></div>
 
@@ -566,7 +546,6 @@ html, body {
       </div>
     </div>
 
-    <!-- ВКЛАДКА: ПРОФИЛЬ -->
     <div class="tab-content" id="tabProfile">
       <div class="top-bar"><span>Профиль</span></div>
       <div class="profile-header">
@@ -612,7 +591,6 @@ html, body {
     </div>
   </div>
 
-  <!-- ЭКРАН ЧАТА -->
   <div id="chatView">
     <div class="chat-header" onclick="openUserProfile(currentChatWith)">
       <button class="back-btn" style="margin:0;" onclick="event.stopPropagation(); closeChat();">←</button>
@@ -638,11 +616,10 @@ html, body {
       <input type="file" id="chatFileInput" accept="image/*" style="display:none" onchange="onChatImageSelected(event)">
       <input id="messageInput" placeholder="Сообщение" oninput="onTypingInput()" onkeydown="if(event.key==='Enter') sendMessage()">
       <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
-      <button class="mic-btn" id="micBtn">🎤</button>
+      <div class="mic-hold-area" id="micHoldArea">🎤</div>
     </div>
   </div>
 
-  <!-- ЭКРАН ЧУЖОГО ПРОФИЛЯ -->
   <div id="userProfileView">
     <div class="up-header">
       <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
@@ -667,7 +644,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: ДОБАВИТЬ КОНТАКТ -->
   <div class="modal-overlay" id="addContactModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -681,7 +657,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: ИЗМЕНИТЬ ИМЯ -->
   <div class="modal-overlay" id="editNameModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -694,7 +669,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: ИЗМЕНИТЬ ЮЗЕРНЕЙМ -->
   <div class="modal-overlay" id="editUsernameModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -706,7 +680,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: ИЗМЕНИТЬ БИО -->
   <div class="modal-overlay" id="editBioModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -719,7 +692,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: КОНФИДЕНЦИАЛЬНОСТЬ (СПИСОК) -->
   <div class="modal-overlay" id="privacyModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -736,7 +708,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: ЧАСОВОЙ ПОЯС -->
   <div class="modal-overlay" id="timezoneModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -746,7 +717,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: КРОП/ПРЕВЬЮ АВАТАРА -->
   <div class="modal-overlay" id="avatarCropModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -760,7 +730,6 @@ html, body {
     </div>
   </div>
 
-  <!-- МОДАЛКА: СМЕНА ПАРОЛЯ (шаг 1 — текущий пароль) -->
   <div class="modal-overlay" id="changePasswordModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -784,23 +753,19 @@ html, body {
 
 </div>
 <div id="toast"></div>
-</body>
 <script>
-// ============================================================
-// НАСТРОЙ ЭТОТ АДРЕС НА СВОЙ VPS С bot.py (http и ws на одном сервере)
-// ============================================================
 const API_BASE = "https://a48794-5d18.e.jrnm.app";
 const WS_BASE = API_BASE.replace("https://", "wss://").replace("http://", "ws://");
 const SUPPORT_USERNAME = "dicegram_support";
 
 let regData = { name: "", username: "", password: "" };
-let session = { token: null, username: null, name: null, phone: null, is_owner: false, is_verified: false, bio: "", timezone: "kazakhstan" };
+let session = { token: null, username: null, name: null, phone: null, surname: null, is_owner: false, is_verified: false, bio: "", timezone: "kazakhstan", avatar_url: null };
 let currentChatWith = null;
 let ws = null;
 let wsReconnectTimer = null;
 let wsPingTimer = null;
-let chats = {}; // username -> {name, lastText, lastTime, avatar_url, avatar_letter, is_verified, is_owner, is_banned}
-let presenceMap = {}; // username -> {online, last_seen}
+let chats = {};
+let presenceMap = {};
 let pendingImageFile = null;
 let pendingAvatarFile = null;
 let serverReachable = false;
@@ -809,11 +774,8 @@ let typingIndicatorTimeout = null;
 let notifEnabled = true;
 let soundEnabled = true;
 let timezoneOptionsCache = [];
-
-// Защита от дублей: не даём второй раз отправить то же фото, пока первое ещё грузится
 let isSendingAttachment = false;
 
-// ---------- ТЕМА ----------
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('dicegram_theme', theme);
@@ -845,8 +807,6 @@ function genClientMsgId() {
   return 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
 }
 
-// Аватар: для реальных пользователей — фото или буква имени.
-// Для системных сущностей (Support, BOT LOG и т.п.) — просто буква без фото (по требованию).
 function avatarHtml(nameLetter, avatarUrl, extraClass, forceLetterOnly) {
   if (avatarUrl && !forceLetterOnly) {
     const src = avatarUrl.startsWith('http') ? avatarUrl : `${API_BASE}${avatarUrl}`;
@@ -855,7 +815,6 @@ function avatarHtml(nameLetter, avatarUrl, extraClass, forceLetterOnly) {
   return `<div class="avatar ${extraClass||''}">${nameLetter}</div>`;
 }
 
-// ---------- ШАГ 1: ИМЯ ----------
 document.getElementById('inputName').addEventListener('input', e => {
   document.getElementById('btnNameNext').disabled = e.target.value.trim().length === 0;
 });
@@ -864,17 +823,14 @@ function stepNameNext() {
   goTo('regUsername');
 }
 
-// ---------- ШАГ 2: ЮЗЕРНЕЙМ ----------
 let usernameCheckTimer = null;
 document.getElementById('inputUsername').addEventListener('input', e => {
   const val = e.target.value.trim();
   const hint = document.getElementById('usernameHint');
   document.getElementById('btnUserNext').disabled = true;
   if (!val) { hint.textContent = ''; return; }
-
   hint.textContent = 'Проверяем...';
   hint.className = 'hint muted';
-
   clearTimeout(usernameCheckTimer);
   usernameCheckTimer = setTimeout(() => checkUsername(val), 400);
 });
@@ -903,15 +859,12 @@ async function checkUsername(username) {
 }
 function stepUsernameNext() { goTo('regPassword'); }
 
-// ---------- ШАГ 3: ПАРОЛЬ ----------
 function stepPasswordNext() {
   const p1 = document.getElementById('inputPassword').value;
   const p2 = document.getElementById('inputPassword2').value;
   const hint = document.getElementById('passwordHint');
-
   if (p1.length < 6) { hint.textContent = 'Пароль должен быть не менее 6 символов'; return; }
   if (p1 !== p2) { hint.textContent = 'Пароли не совпадают'; return; }
-
   hint.textContent = '';
   regData.password = p1;
   submitRegistration();
@@ -936,7 +889,7 @@ async function submitRegistration() {
     }
     session = {
       token: data.token, username: data.username, name: data.name, phone: data.phone,
-      is_owner: !!data.is_owner, is_verified: !!data.is_verified, bio: '', timezone: 'kazakhstan'
+      is_owner: !!data.is_owner, is_verified: !!data.is_verified, bio: '', timezone: 'kazakhstan', avatar_url: null, surname: null
     };
     document.getElementById('phoneDisplay').textContent = data.phone;
     document.getElementById('successTitle').textContent = data.is_owner
@@ -960,7 +913,6 @@ function finishRegistration() {
   enterApp();
 }
 
-// ---------- ВХОД ----------
 async function doLogin() {
   const phone = document.getElementById('loginPhone').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -974,7 +926,7 @@ async function doLogin() {
     if (!data.ok) { hint.textContent = data.error || 'Ошибка входа'; return; }
     session = {
       token: data.token, username: data.username, name: data.name, phone: data.phone,
-      is_owner: !!data.is_owner, is_verified: !!data.is_verified, bio: '', timezone: 'kazakhstan'
+      is_owner: !!data.is_owner, is_verified: !!data.is_verified, bio: '', timezone: 'kazakhstan', avatar_url: null, surname: null
     };
     localStorage.setItem('dicegram_token', data.token);
     localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
@@ -996,7 +948,6 @@ async function logout() {
   location.reload();
 }
 
-// ---------- ГЛАВНОЕ ПРИЛОЖЕНИЕ ----------
 function enterApp() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('mainApp').classList.add('active');
@@ -1008,10 +959,11 @@ function enterApp() {
 }
 
 function renderProfileTab() {
+  const displayName = session.name + (session.surname ? ' ' + session.surname : '');
   document.getElementById('profileNameDisplay').innerHTML =
-    escapeHtml(session.name) + (session.is_verified ? ' <span class="verified-badge">✓</span>' : '');
+    escapeHtml(displayName) + (session.is_verified ? ' <span class="verified-badge">✓</span>' : '');
   document.getElementById('profilePhoneDisplay').textContent = session.phone;
-  document.getElementById('profileNameRow').textContent = session.name;
+  document.getElementById('profileNameRow').textContent = displayName;
   document.getElementById('profileUsernameDisplay').textContent = '@' + session.username;
   document.getElementById('profileBioDisplay').textContent = session.bio || 'Привет я использую DICEGRAM';
   document.getElementById('profileBioRow').textContent = session.bio || 'Привет я использую DICEGRAM';
@@ -1029,7 +981,6 @@ function switchTab(tabId) {
   document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add('active');
 }
 
-// ---------- ЧАТЫ (список, сохраняются на сервере) ----------
 function formatLastSeen(lastSeenStr) {
   if (!lastSeenStr) return 'был(а) недавно';
   try {
@@ -1054,7 +1005,6 @@ function presenceLabel(username) {
 
 function renderChatList() {
   const container = document.getElementById('chatListContainer');
-  // сортируем по времени последнего сообщения, свежие сверху
   const entries = Object.entries(chats).sort((a, b) => {
     return (b[1].lastTime || '').localeCompare(a[1].lastTime || '');
   });
@@ -1080,7 +1030,6 @@ function renderChatList() {
 }
 
 async function loadChatsList() {
-  // виртуальный чат поддержки всегда показываем, даже если сервер недоступен
   if (!chats[SUPPORT_USERNAME]) {
     chats[SUPPORT_USERNAME] = { name: 'DICEGRAM SUPPORT', lastText: 'Добро пожаловать!', lastTime: '', is_verified: true, avatar_url: '', avatar_letter: 'D' };
   }
@@ -1100,10 +1049,9 @@ async function loadChatsList() {
       });
       renderChatList();
     }
-  } catch (e) { /* сервер недоступен - покажем то, что уже закешировано */ }
+  } catch (e) {}
 }
 
-// ---------- КОНТАКТЫ ----------
 let contactSearchTimer = null;
 function searchContacts() {
   clearTimeout(contactSearchTimer);
@@ -1124,7 +1072,7 @@ async function doSearchContacts(q) {
       container.innerHTML = '<div class="empty-state">Никого не найдено</div>';
       return;
     }
-    container.innerHTML = data.results.map(u => `
+    container.innerHTML = data.results.filter(u => u.username !== session.username).map(u => `
       <div class="chat-list-item" onclick="openChat('${u.username}', '${escapeHtml(u.name).replace(/'/g,"\\'")}')">
         ${avatarHtml(u.name.charAt(0).toUpperCase(), u.avatar_url)}
         <div class="chat-item-body">
@@ -1148,7 +1096,10 @@ async function loadContactsList() {
       container.innerHTML = '<div class="empty-state">У вас пока нет контактов.<br>Нажмите ＋, чтобы добавить.</div>';
       return;
     }
-    container.innerHTML = data.contacts.map(c => {
+    container.innerHTML = data.contacts.filter(c => {
+      if (c.live_user && c.live_user.username === session.username) return false;
+      return true;
+    }).map(c => {
       const live = c.live_user;
       const displayName = c.contact_name + (c.contact_surname ? ' ' + c.contact_surname : '');
       const uname = live ? live.username : (c.contact_username || '');
@@ -1182,6 +1133,15 @@ async function submitAddContact() {
   const hint = document.getElementById('addContactHint');
   if (!name) { hint.textContent = 'Имя обязательно'; return; }
   if (!phone || phone.replace(/\D/g,'').length < 8) { hint.textContent = 'Введите корректный номер телефона DICEGRAM'; return; }
+  
+  // Проверка: не добавляем себя
+  const myPhoneDigits = session.phone.replace(/\D/g,'');
+  const contactDigits = phone.replace(/\D/g,'');
+  if (myPhoneDigits === contactDigits) {
+    hint.textContent = 'Нельзя добавить самого себя в контакты';
+    return;
+  }
+  
   try {
     const res = await fetch(`${API_BASE}/api/contacts/add`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
@@ -1197,7 +1157,6 @@ async function submitAddContact() {
   }
 }
 
-// ---------- НАСТРОЙКИ: уведомления/звук ----------
 function toggleNotifications() {
   notifEnabled = !notifEnabled;
   document.getElementById('notifToggle').classList.toggle('on', notifEnabled);
@@ -1215,7 +1174,6 @@ function initToggles() {
   document.getElementById('soundToggle').classList.toggle('on', soundEnabled);
 }
 
-// ---------- НАСТРОЙКИ: Конфиденциальность (список: пароль / часовой пояс) ----------
 function openPrivacyModal() {
   const tzInfo = timezoneOptionsCache.find(t => t.key === session.timezone);
   document.getElementById('privacyTzValue').textContent = tzInfo ? tzInfo.label : '›';
@@ -1232,7 +1190,7 @@ async function loadTimezones() {
 
 function openTimezoneModal() {
   loadTimezones().then(() => renderTimezoneList());
-  renderTimezoneList(); // покажем то, что уже закешировано, пока грузится свежее
+  renderTimezoneList();
   openModal('timezoneModal');
 }
 function renderTimezoneList() {
@@ -1266,7 +1224,6 @@ async function selectTimezone(tzKey) {
   } catch(e) { showToast('Нет связи с сервером'); }
 }
 
-// ---------- НАСТРОЙКИ: смена пароля (2 шага) ----------
 let verifiedCurrentPassword = null;
 function openChangePasswordModal() {
   document.getElementById('pwCurrentInput').value = '';
@@ -1292,11 +1249,9 @@ async function submitNewPassword() {
   const newPass = document.getElementById('pwNewInput').value;
   const newPass2 = document.getElementById('pwNewInput2').value;
   const hint = document.getElementById('pwStep2Hint');
-
   if (newPass.length < 6) { hint.textContent = 'Новый пароль должен быть не менее 6 символов'; return; }
   if (newPass !== newPass2) { hint.textContent = 'Пароли не совпадают'; return; }
   if (newPass === verifiedCurrentPassword) { hint.textContent = 'Вы написали текущий пароль, напишите новый пароль'; return; }
-
   try {
     const res = await fetch(`${API_BASE}/api/profile/change_password`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
@@ -1320,7 +1275,6 @@ async function submitNewPassword() {
   }
 }
 
-// ---------- ПРОФИЛЬ: ИМЯ / ЮЗЕРНЕЙМ / БИО / АВАТАР ----------
 function openEditNameModal() {
   document.getElementById('editNameInput').value = session.name || '';
   document.getElementById('editSurnameInput').value = session.surname || '';
@@ -1339,7 +1293,8 @@ async function submitEditName() {
     });
     const data = await res.json();
     if (!data.ok) { hint.textContent = data.error || 'Ошибка'; return; }
-    session.name = data.name; session.surname = data.surname;
+    session.name = data.name;
+    session.surname = data.surname || null;
     localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
     renderProfileTab();
     closeModal('editNameModal');
@@ -1428,7 +1383,6 @@ async function submitEditBio() {
   } catch(e) { hint.textContent = 'Нет связи с сервером'; }
 }
 
-// ---------- АВАТАР: двойной тап по фото -> выбор -> превью в модалке -> подтверждение -> загрузка ----------
 function onAvatarFileSelected(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1461,10 +1415,13 @@ async function confirmUploadAvatar() {
   document.getElementById('avatarFileInput').value = '';
 }
 
-// ---------- ЧУЖОЙ ПРОФИЛЬ ----------
 let viewedProfileUser = null;
 async function openUserProfile(username) {
   if (!username) return;
+  if (username === session.username) {
+    showToast('Это ваш профиль');
+    return;
+  }
   try {
     const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -1473,12 +1430,21 @@ async function openUserProfile(username) {
     if (!data.ok) { showToast(data.error || 'Не удалось загрузить профиль'); return; }
     viewedProfileUser = data.user;
     const isBot = !!data.user.is_bot;
-    const forceLetterOnly = isBot; // Support/системные — только буква, без картинки
+    const forceLetterOnly = isBot;
 
     document.getElementById('upAvatarWrap').innerHTML = (data.user.avatar_url && !forceLetterOnly)
       ? `<img src="${data.user.avatar_url.startsWith('http') ? data.user.avatar_url : API_BASE + data.user.avatar_url}">`
       : `<span>${(data.user.avatar_letter || data.user.name.charAt(0)).toUpperCase()}</span>`;
-    document.getElementById('upName').innerHTML = escapeHtml(data.user.name) + (data.user.surname ? ' ' + escapeHtml(data.user.surname) : '') + (data.user.is_owner ? ' <span style="color:var(--gold);">★</span>' : '');
+    
+    const displayName = data.user.name + (data.user.surname ? ' ' + data.user.surname : '');
+    const isOwner = data.user.is_owner === true;
+    let ownerStar = '';
+    let ownerText = '';
+    if (isOwner) {
+      ownerStar = ' <span style="color:var(--gold);font-size:22px;text-shadow:0 0 12px rgba(255,203,71,0.4);">★</span>';
+      ownerText = '<div style="margin-top:4px;font-size:12px;color:var(--gold);background:linear-gradient(135deg,rgba(255,203,71,0.15),rgba(255,203,71,0.05));padding:4px 14px;border-radius:12px;display:inline-block;font-weight:700;letter-spacing:0.3px;">⭐ Создатель DICEGRAM</div>';
+    }
+    document.getElementById('upName').innerHTML = escapeHtml(displayName) + ownerStar + (data.user.is_verified ? ' <span class="verified-badge">✓</span>' : '');
     document.getElementById('upUsername').textContent = data.user.phone ? '@' + data.user.username : '';
     document.getElementById('upPhone').textContent = data.user.phone || '';
     const bioEl = document.getElementById('upBio');
@@ -1508,20 +1474,28 @@ function closeUserProfile() {
 }
 function messageFromProfile() {
   if (!viewedProfileUser) return;
+  if (viewedProfileUser.username === session.username) {
+    showToast('Нельзя написать самому себе');
+    return;
+  }
   closeUserProfile();
   openChat(viewedProfileUser.username, viewedProfileUser.name);
 }
 
-// ---------- АВТООПРЕДЕЛЕНИЕ @username В ТЕКСТЕ ----------
-// Только латиница/цифры/_ после @, кликабельно, подсвечено синим.
 function linkifyMentions(text) {
   const escaped = escapeHtml(text);
   return escaped.replace(/@([a-zA-Z0-9_]{3,20})/g, (match, uname) => {
+    if (uname.toLowerCase() === session.username.toLowerCase()) {
+      return `<span style="color:var(--accent);font-weight:700;">@${uname}</span>`;
+    }
     return `<span class="mention-link" onclick="event.stopPropagation(); handleMentionClick('${uname}')">@${uname}</span>`;
   });
 }
 async function handleMentionClick(username) {
-  // проверяем, существует ли такой пользователь, прежде чем открывать профиль
+  if (username.toLowerCase() === session.username.toLowerCase()) {
+    showToast('Это вы');
+    return;
+  }
   try {
     const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -1535,14 +1509,20 @@ async function handleMentionClick(username) {
   } catch(e) { showToast('Нет связи с сервером'); }
 }
 
-// ---------- ОТКРЫТИЕ ЧАТА ----------
 async function openChat(username, name) {
+  if (!username) return;
+  if (username === session.username) {
+    showToast('Нельзя открыть чат с самим собой');
+    return;
+  }
+  
   currentChatWith = username;
-  document.getElementById('chatHeaderName').innerHTML = escapeHtml(name) + (chats[username]?.is_verified ? ' <span class="verified-badge">✓</span>' : '');
+  const displayName = name || username;
+  document.getElementById('chatHeaderName').innerHTML = escapeHtml(displayName) + (chats[username]?.is_verified ? ' <span class="verified-badge">✓</span>' : '');
   const isSystemBot = chats[username]?.avatar_letter === 'B' || username === SUPPORT_USERNAME;
   document.getElementById('chatHeaderAvatar').innerHTML = (chats[username]?.avatar_url && !isSystemBot)
     ? `<img src="${chats[username].avatar_url.startsWith('http') ? chats[username].avatar_url : API_BASE + chats[username].avatar_url}">`
-    : (chats[username]?.avatar_letter || name.charAt(0).toUpperCase());
+    : (chats[username]?.avatar_letter || displayName.charAt(0).toUpperCase());
   const statusEl = document.getElementById('chatHeaderStatus');
   statusEl.className = 'chat-header-status';
   const isHiddenSystemChat = (username === '__owner_bot_creator__' || username === '__owner_bot_log__');
@@ -1558,14 +1538,12 @@ async function openChat(username, name) {
     }
   }
 
-  // системные чаты (BOT OR CREATOR / BOT LOG) — просмотр логов, без возможности печатать пользователю
   document.getElementById('chatInputBar').style.display = isHiddenSystemChat ? 'none' : 'flex';
-
   document.getElementById('chatView').classList.add('active');
   document.getElementById('messagesContainer').innerHTML = '';
   cancelImagePreview();
 
-  chats[username] = chats[username] || { name, lastText: '', lastTime: '' };
+  chats[username] = chats[username] || { name: displayName, lastText: '', lastTime: '' };
 
   try {
     const res = await fetch(`${API_BASE}/api/history?with=${username}`, {
@@ -1578,10 +1556,10 @@ async function openChat(username, name) {
         m.text, m.created_at, m.attachment_url, m.voice_url, m.voice_duration
       ));
     }
-  } catch (e) { /* offline */ }
+  } catch (e) {}
 
   scrollMessagesToBottom();
-  loadChatsList(); // на случай если этот диалог ещё не попал в список
+  loadChatsList();
 }
 function closeChat() {
   document.getElementById('chatView').classList.remove('active');
@@ -1608,7 +1586,6 @@ function appendBubble(dir, text, time, attachmentUrl, voiceUrl, voiceDuration) {
     const dur = voiceDuration || 0;
     const mm = Math.floor(dur / 60);
     const ss = String(dur % 60).padStart(2, '0');
-    const barId = 'voicebars_' + Math.random().toString(36).slice(2, 9);
     let bars = '';
     for (let i = 0; i < 24; i++) {
       const h = 6 + Math.round(Math.random() * 16);
@@ -1617,7 +1594,7 @@ function appendBubble(dir, text, time, attachmentUrl, voiceUrl, voiceDuration) {
     div.innerHTML = `
       <div class="voice-bubble">
         <button class="voice-play-btn" onclick="toggleVoicePlayback(this, '${src}')">▶</button>
-        <div class="voice-wave" id="${barId}">${bars}</div>
+        <div class="voice-wave">${bars}</div>
         <div class="voice-duration">${mm}:${ss}</div>
       </div>
       <div class="bubble-time">${(time || '').split(' ')[1]?.substring(0,5) || ''}</div>
@@ -1640,7 +1617,6 @@ function scrollMessagesToBottom() {
   c.scrollTop = c.scrollHeight;
 }
 
-// ---------- ВОСПРОИЗВЕДЕНИЕ ГОЛОСОВЫХ ----------
 let currentPlayingAudio = null;
 let currentPlayingBtn = null;
 function toggleVoicePlayback(btn, src) {
@@ -1667,7 +1643,6 @@ function toggleVoicePlayback(btn, src) {
   audio.onended = () => { btn.textContent = '▶'; };
 }
 
-// ---------- "ПЕЧАТАЕТ" ----------
 function onTypingInput() {
   if (!currentChatWith || currentChatWith === SUPPORT_USERNAME) return;
   if (!ws || ws.readyState !== WebSocket.OPEN) return;
@@ -1687,7 +1662,6 @@ function showTypingIndicator(fromUsername) {
   }, 2500);
 }
 
-// ---------- ФОТО В ЧАТЕ ----------
 function onChatImageSelected(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1705,15 +1679,16 @@ function cancelImagePreview() {
   document.getElementById('chatFileInput').value = '';
 }
 
-// ---------- ОТПРАВКА СООБЩЕНИЯ (с фиксом дублей) ----------
 async function sendMessage() {
   const input = document.getElementById('messageInput');
   const text = input.value.trim();
   if (!currentChatWith) return;
+  if (currentChatWith === session.username) {
+    showToast('Нельзя написать самому себе');
+    return;
+  }
 
   if (pendingImageFile) {
-    // фикс дублирования: блокируем повторный клик, пока запрос не завершится,
-    // и сразу "гасим" файл + превью, чтобы двойной тап не отправил дважды
     if (isSendingAttachment) return;
     isSendingAttachment = true;
     document.getElementById('sendBtn').disabled = true;
@@ -1721,7 +1696,7 @@ async function sendMessage() {
     const fileToSend = pendingImageFile;
     const textToSend = text;
     const clientMsgId = genClientMsgId();
-    cancelImagePreview(); // сразу очищаем UI превью, чтобы нельзя было нажать снова с тем же файлом
+    cancelImagePreview();
     input.value = '';
 
     const formData = new FormData();
@@ -1762,7 +1737,6 @@ async function sendMessage() {
   input.value = '';
 }
 
-// ---------- ГОЛОСОВЫЕ СООБЩЕНИЯ (удержание 3+ сек) ----------
 let mediaRecorder = null;
 let recordedChunks = [];
 let recordStartTime = 0;
@@ -1773,16 +1747,14 @@ let isRecordingHeld = false;
 let holdTimeout = null;
 
 function setupVoiceRecording() {
-  const micBtn = document.getElementById('micBtn');
-  if (!micBtn || micBtn._wired) return;
-  micBtn._wired = true;
+  const micArea = document.getElementById('micHoldArea');
+  if (!micArea || micArea._wired) return;
+  micArea._wired = true;
 
   const startPress = (e) => {
     e.preventDefault();
     recordTouchStartY = (e.touches ? e.touches[0].clientY : e.clientY) || 0;
     recordCancelled = false;
-    // требуем удержание минимум ~250мс перед стартом реальной записи UI,
-    // сама отправка возможна только если удержание было 3+ секунды (проверяем при отпускании)
     holdTimeout = setTimeout(() => startRecording(), 150);
   };
   const endPress = (e) => {
@@ -1792,23 +1764,27 @@ function setupVoiceRecording() {
   const moveDuring = (e) => {
     if (!isRecordingHeld) return;
     const y = (e.touches ? e.touches[0].clientY : e.clientY) || 0;
-    if (recordTouchStartY - y > 60) { // смахнули вверх — отмена
+    if (recordTouchStartY - y > 60) {
       recordCancelled = true;
       stopRecording();
     }
   };
 
-  micBtn.addEventListener('mousedown', startPress);
-  micBtn.addEventListener('touchstart', startPress, { passive: false });
-  micBtn.addEventListener('mouseup', endPress);
-  micBtn.addEventListener('touchend', endPress);
-  micBtn.addEventListener('mousemove', moveDuring);
-  micBtn.addEventListener('touchmove', moveDuring, { passive: true });
-  micBtn.addEventListener('mouseleave', () => { if (isRecordingHeld) { recordCancelled = true; stopRecording(); } });
+  micArea.addEventListener('mousedown', startPress);
+  micArea.addEventListener('touchstart', startPress, { passive: false });
+  micArea.addEventListener('mouseup', endPress);
+  micArea.addEventListener('touchend', endPress);
+  micArea.addEventListener('mousemove', moveDuring);
+  micArea.addEventListener('touchmove', moveDuring, { passive: true });
+  micArea.addEventListener('mouseleave', () => { if (isRecordingHeld) { recordCancelled = true; stopRecording(); } });
 }
 
 async function startRecording() {
   if (!currentChatWith) return;
+  if (currentChatWith === session.username) {
+    showToast('Нельзя записать голосовое для себя');
+    return;
+  }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
@@ -1827,7 +1803,7 @@ async function startRecording() {
     mediaRecorder.start();
     isRecordingHeld = true;
     recordStartTime = Date.now();
-    document.getElementById('micBtn').classList.add('recording');
+    document.getElementById('micHoldArea').classList.add('recording');
     document.getElementById('voiceRecordingBar').classList.add('active');
     document.getElementById('chatInputBar').style.display = 'none';
     recordTimerInterval = setInterval(() => {
@@ -1845,7 +1821,7 @@ function stopRecording() {
   if (!isRecordingHeld) return;
   isRecordingHeld = false;
   clearInterval(recordTimerInterval);
-  document.getElementById('micBtn').classList.remove('recording');
+  document.getElementById('micHoldArea').classList.remove('recording');
   document.getElementById('voiceRecordingBar').classList.remove('active');
   document.getElementById('chatInputBar').style.display = 'flex';
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -1891,7 +1867,6 @@ async function onRecordingStopped() {
   }
 }
 
-// ---------- WEBSOCKET ----------
 function connectWebSocket() {
   try {
     ws = new WebSocket(`${WS_BASE}/ws`);
@@ -1928,6 +1903,7 @@ function connectWebSocket() {
       }
       if (data.type === 'message') {
         const other = data.from === session.username ? data.to : data.from;
+        if (other === session.username) return;
         chats[other] = chats[other] || { name: other, lastText: '', lastTime: '' };
         chats[other].lastText = data.voice_url ? '🎤 Голосовое сообщение' : (data.attachment_url ? (data.text || '📷 Фото') : data.text);
         chats[other].lastTime = data.created_at;
@@ -1948,10 +1924,9 @@ function connectWebSocket() {
       wsReconnectTimer = setTimeout(connectWebSocket, 3000);
     };
     ws.onerror = () => { serverReachable = false; };
-  } catch (e) { console.error('WS error', e); }
+  } catch (e) {}
 }
 
-// ---------- ПРОВЕРКА СВЯЗИ С СЕРВЕРОМ ----------
 async function checkServerConnection() {
   const el = document.getElementById('connStatus');
   if (!el) return;
@@ -1973,7 +1948,6 @@ async function checkServerConnection() {
   }
 }
 
-// ---------- СТАРТ ПРИЛОЖЕНИЯ ----------
 window.addEventListener('load', async () => {
   initTheme();
   initToggles();
@@ -1990,7 +1964,7 @@ window.addEventListener('load', async () => {
       try { session = JSON.parse(cachedSessionRaw); } catch(e) {}
     }
     if (!session.username) {
-      session = { token: savedToken, username: '...', name: 'Загрузка...', phone: '', is_owner: false, is_verified: false, bio: '', timezone: 'kazakhstan' };
+      session = { token: savedToken, username: '...', name: 'Загрузка...', phone: '', is_owner: false, is_verified: false, bio: '', timezone: 'kazakhstan', avatar_url: null, surname: null };
     } else {
       session.token = savedToken;
     }
@@ -2012,7 +1986,7 @@ async function tryRefreshSessionFromServer(token) {
     if (data.ok) {
       session = {
         token, username: data.username, name: data.name, phone: data.phone,
-        surname: data.surname, avatar_url: data.avatar_url, bio: data.bio, timezone: data.timezone,
+        surname: data.surname || null, avatar_url: data.avatar_url, bio: data.bio, timezone: data.timezone,
         is_owner: !!data.is_owner, is_verified: !!data.is_verified
       };
       localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
@@ -2032,4 +2006,5 @@ async function tryRefreshSessionFromServer(token) {
   }
 }
 </script>
-</html>
+</body>
+      </html>

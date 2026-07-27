@@ -74,9 +74,877 @@
   --premium-cyan: #06b6d4;
 }
 
-/* ... остальные стили из вашего файла ... */
+/* ========== ОСНОВНЫЕ СТИЛИ ========== */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+  overflow: hidden;
+  transition: background .25s ease, color .25s ease;
+}
+#app {
+  position: relative; height: 100vh; width: 100vw; max-width: 480px; margin: 0 auto;
+  background: var(--bg); display: flex; flex-direction: column;
+}
 
-/* ===================== PREMIUM ===================== */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transform: translateX(24px) scale(.99);
+  transition: opacity .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1);
+}
+.screen.active { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); }
+
+#loadingScreen { justify-content: center; align-items: center; background: var(--bg); z-index: 999; }
+.spinner {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#welcome {
+  justify-content: center; align-items: center; text-align: center;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(124,92,255,.20), transparent 55%),
+    radial-gradient(circle at 85% 15%, rgba(91,141,239,.20), transparent 50%),
+    var(--bg);
+  padding: 32px;
+}
+.logo-circle {
+  width: 116px; height: 116px; border-radius: 32px;
+  background: var(--accent-grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 54px; font-weight: 800; color: white;
+  box-shadow: var(--shadow-pop);
+  margin-bottom: 26px;
+  transform: rotate(-4deg);
+}
+.brand {
+  font-size: 38px; font-weight: 800; letter-spacing: -.5px;
+  background: var(--accent-grad);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 8px;
+}
+.tagline { color: var(--text-dim); font-size: 15px; margin-bottom: 52px; font-weight: 500; }
+.btn {
+  width: 100%; padding: 16px; border-radius: var(--radius-md); border: none;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  transition: transform .12s ease, opacity .2s ease, box-shadow .2s ease;
+}
+.btn:active { transform: scale(.96); }
+.btn-primary { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
+.btn-secondary { background: var(--surface); color: var(--accent); border: 1.5px solid var(--border); }
+.btn-danger { background: rgba(255,84,112,.12); color: var(--danger); border: 1.5px solid rgba(255,84,112,.3); }
+.btn-success { background: var(--wallet-green); color: #fff; }
+.btn-row { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 320px; }
+.btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
+
+.auth-screen { padding: 28px 24px; justify-content: flex-start; background: var(--bg); }
+.auth-header { margin-top: 20px; margin-bottom: 32px; }
+.auth-title { font-size: 25px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.3px; }
+.auth-sub { color: var(--text-dim); font-size: 14px; }
+.field {
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 15px 16px; font-size: 16px; color: var(--text);
+  width: 100%; margin-bottom: 12px; outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.field:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-grad-soft); }
+.field::placeholder { color: var(--muted); }
+.hint { font-size: 13px; margin-top: -4px; margin-bottom: 16px; min-height: 18px; font-weight: 500; }
+.hint.ok { color: var(--success); }
+.hint.err { color: var(--danger); }
+.hint.muted { color: var(--muted); }
+.spacer { flex: 1; }
+.back-btn {
+  align-self: flex-start; color: var(--accent); background: var(--surface); border: none;
+  font-size: 15px; margin-bottom: 8px; cursor: pointer; padding: 8px 14px; border-radius: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+.back-btn svg { width: 20px; height: 20px; }
+
+#success { justify-content: center; align-items: center; text-align: center; padding: 32px; }
+.check-circle {
+  width: 92px; height: 92px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(47,217,127,.18), rgba(47,217,127,.05));
+  display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+  font-size: 44px; color: var(--success);
+  box-shadow: 0 0 0 8px rgba(47,217,127,.06);
+}
+.phone-card {
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+  padding: 22px; margin: 20px 0 28px; width: 100%; max-width: 320px;
+  box-shadow: var(--shadow-soft);
+}
+.phone-num { font-size: 27px; font-weight: 800; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: .5px; }
+.phone-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.security-note { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 28px; max-width: 320px; }
+
+#mainApp { display: none; flex-direction: column; height: 100%; background: var(--bg); }
+#mainApp.active { display: flex; }
+.tab-content { flex: 1; overflow-y: auto; display: none; flex-direction: column; -webkit-overflow-scrolling: touch; }
+.tab-content.active { display: flex; }
+.tab-content::-webkit-scrollbar { display: none; }
+
+.top-bar {
+  padding: 18px 20px; font-size: 22px; font-weight: 800; letter-spacing: -.3px;
+  border-bottom: 1px solid var(--border); background: var(--bg2);
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(10px);
+}
+.top-bar .back-btn { margin-bottom: 0; padding: 6px 12px; }
+
+/* ========== ЧАТЫ ========== */
+.chat-list-item {
+  display: flex; align-items: center; gap: 13px; padding: 13px 18px;
+  cursor: pointer; transition: background .15s ease; position: relative;
+}
+.chat-list-item:active { background: var(--surface-hover); }
+.avatar {
+  width: 52px; height: 52px; border-radius: 17px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 19px; color: white;
+  background: var(--accent-grad);
+  overflow: hidden; position: relative;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar.support { background: linear-gradient(135deg, #2fd97f, #2f9de0); }
+.avatar.system-bot { background: linear-gradient(135deg, #6b7788, #3a4456); }
+.avatar.group { background: linear-gradient(135deg, #7c5cff, #5b8def); }
+.avatar.owner-avatar {
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 20px rgba(255,203,71,0.4), inset 0 0 20px rgba(255,203,71,0.1);
+  animation: ownerGlow 2s ease-in-out infinite;
+}
+@keyframes ownerGlow {
+  0%,100% { box-shadow: 0 0 20px rgba(255,203,71,0.4), inset 0 0 20px rgba(255,203,71,0.1); }
+  50% { box-shadow: 0 0 40px rgba(255,203,71,0.6), inset 0 0 30px rgba(255,203,71,0.2); }
+}
+.avatar-online-dot {
+  position: absolute; bottom: -2px; right: -2px; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--success); border: 3px solid var(--bg2);
+}
+.chat-item-body { flex: 1; min-width: 0; }
+.chat-item-name { font-weight: 700; font-size: 15.5px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.chat-item-last { color: var(--text-dim); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.chat-item-time { color: var(--muted); font-size: 12px; font-weight: 500; flex-shrink: 0; }
+.verified-badge {
+  color: #fff; font-size: 10.5px; display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%; background: var(--accent-grad); flex-shrink:0;
+  box-shadow: 0 0 0 2px var(--bg2);
+}
+.banned-badge { color: var(--danger); font-size: 10.5px; font-weight: 800; background: rgba(255,84,112,.12); padding: 2px 7px; border-radius: 7px; letter-spacing: .3px; }
+.group-badge { color: var(--accent2); font-size: 10.5px; font-weight: 800; background: rgba(124,92,255,.12); padding: 2px 7px; border-radius: 7px; letter-spacing: .3px; }
+.nft-badge {
+  color: var(--gold); font-size: 10.5px; font-weight: 800;
+  background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05));
+  padding: 2px 8px; border-radius: 7px; letter-spacing: .3px;
+  border: 1px solid rgba(255,203,71,.2);
+}
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 8px 1px 5px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--premium-gold), #f59e0b);
+  color: #1a1a2e;
+  animation: premiumBadgePulse 2s ease-in-out infinite;
+  box-shadow: 0 2px 12px rgba(255,215,0,0.3);
+}
+@keyframes premiumBadgePulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.premium-badge svg { width: 12px; height: 12px; }
+
+/* Badge counter */
+.unread-badge {
+  background: var(--badge-bg);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(255,84,112,.3);
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes badgePop {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+#chatView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 10; }
+#chatView.active { display: flex; }
+.chat-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  background: var(--bg2); border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.chat-header-name { font-weight: 700; font-size: 16px; display:flex; align-items:center; gap:5px; flex-wrap: wrap; }
+.chat-header-status { font-size: 12.5px; color: var(--text-dim); margin-top: 1px; }
+.chat-header-status.online { color: var(--success); font-weight: 600; }
+.chat-header-status.typing { color: var(--accent); font-weight: 600; }
+.messages { flex: 1; overflow-y: auto; padding: 18px 14px; display: flex; flex-direction: column; gap: 3px;
+  background:
+    radial-gradient(circle at 15% 8%, var(--accent-grad-soft), transparent 40%),
+    var(--bg);
+}
+.bubble-row { display: flex; margin: 3px 0; flex-direction: column; }
+.bubble-row.out { align-items: flex-end; }
+.bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+}
+.bubble-row.out .bubble-wrap { align-items: flex-end; }
+.bubble {
+  padding: 10px 14px; border-radius: var(--radius-md); font-size: 15px; line-height: 1.42;
+  white-space: pre-wrap; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  cursor: default;
+  position: relative;
+}
+.bubble.in { background: var(--bubble-in); border-bottom-left-radius: 5px; color: var(--text); }
+.bubble.out { background: var(--bubble-out-grad); color: #fff; border-bottom-right-radius: 5px; }
+.bubble.system {
+  background: var(--accent-grad-soft); color: var(--text); border-radius: var(--radius-md);
+  max-width: 92%; font-size: 13.5px; align-self: center; border: 1px solid var(--border);
+}
+.bubble.nft-system {
+  background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05));
+  border: 2px solid var(--gold);
+  max-width: 92%;
+  font-size: 13.5px;
+  align-self: center;
+  text-align: center;
+  padding: 12px 16px;
+}
+.bubble.nft-system .nft-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+.bubble.nft-system .nft-name { color: var(--gold); font-weight: 800; font-size: 16px; }
+.bubble.nft-system .nft-price { color: var(--success); font-weight: 700; }
+.bubble-time {
+  font-size: 10.5px; opacity: .65; margin-top: 4px; display: flex; align-items: center; gap: 4px;
+  justify-content: flex-end;
+}
+.bubble img.attachment { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 6px; }
+
+.mention-link { color: #8fb8ff; font-weight: 700; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(143,184,255,.4); }
+.bubble.out .mention-link { color: #eaf1ff; text-decoration-color: rgba(234,241,255,.5); }
+
+.check-mark { font-size: 12px; opacity: 0.6; }
+.check-mark.sent { opacity: 0.6; }
+.check-mark.delivered { opacity: 0.8; }
+.check-mark.read { opacity: 1; color: var(--accent); }
+
+/* Context menu */
+.context-menu {
+  position: fixed;
+  background: var(--bg2);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+  padding: 6px 0;
+  z-index: 100;
+  min-width: 180px;
+  display: none;
+}
+.context-menu-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background .15s ease;
+  color: var(--text);
+}
+.context-menu-item:active { background: var(--surface-hover); }
+.context-menu-item.danger { color: var(--danger); }
+.context-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 12px;
+}
+.reaction-picker {
+  display: flex;
+  gap: 4px;
+  padding: 6px 10px;
+  flex-wrap: wrap;
+}
+.reaction-picker span {
+  font-size: 28px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 8px;
+  transition: transform .15s ease;
+}
+.reaction-picker span:active { transform: scale(1.3); }
+
+/* Reply */
+.reply-preview {
+  background: var(--surface);
+  padding: 6px 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.reply-preview .rp-name { font-weight: 700; color: var(--text); }
+.reply-preview .rp-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+#imagePreviewBar { display: none; padding: 10px 14px; background: var(--bg2); align-items: center; gap: 10px; border-top: 1px solid var(--border); }
+#imagePreviewBar img { width: 52px; height: 52px; object-fit: cover; border-radius: 12px; }
+#imagePreviewBar .cancel-preview { color: var(--danger); background: rgba(255,84,112,.12); border: none; font-size: 18px; cursor: pointer; margin-left: auto; width:32px;height:32px;border-radius:10px; }
+
+.input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid var(--border); align-items: center; }
+.input-bar input {
+  flex: 1; background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px;
+  padding: 13px 18px; color: var(--text); font-size: 15px; outline: none;
+}
+.input-bar input:focus { border-color: var(--accent); }
+.send-btn, .attach-btn {
+  width: 46px; height: 46px; border-radius: 50%; 
+  border: none; font-size: 18px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none; -webkit-user-select: none; touch-action: none;
+}
+.send-btn {
+  background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop);
+}
+.attach-btn { 
+  background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; 
+}
+
+/* ========== BOTTOM NAVIGATION ========== */
+.bottom-nav {
+  display: flex;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 8px 4px max(8px, env(safe-area-inset-bottom));
+  position: relative;
+  z-index: 5;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 6px 0;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item:active { transform: scale(0.92); }
+.nav-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+.nav-icon-svg {
+  width: 26px;
+  height: 26px;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-item.active .nav-icon-svg { transform: scale(1.08); }
+.nav-item .nav-icon-svg { color: var(--nav-icon-inactive); }
+.nav-item.active .nav-icon-svg { color: var(--nav-icon-active); }
+.nav-item .nav-icon-svg .fill-path { fill: var(--nav-icon-inactive); }
+.nav-item.active .nav-icon-svg .fill-path { fill: var(--nav-icon-active); }
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--nav-icon-inactive);
+  transition: color 0.2s ease;
+  letter-spacing: 0.2px;
+}
+.nav-item.active .nav-label { color: var(--nav-icon-active); }
+.nav-badge-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--badge-bg);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg2);
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========== PREMIUM AVATAR BORDER ========== */
+.avatar-premium-border {
+  position: relative;
+}
+.avatar-premium-border::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(from 0deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4, #ffd700);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: premiumBorderSpin 3s linear infinite;
+}
+@keyframes premiumBorderSpin {
+  0% { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+.avatar-premium-border.gold::after { background: conic-gradient(from 0deg, #ffd700, #f59e0b, #ffd700); }
+.avatar-premium-border.cyan::after { background: conic-gradient(from 0deg, #06b6d4, #3b82f6, #06b6d4); }
+.avatar-premium-border.pink::after { background: conic-gradient(from 0deg, #ec4899, #db2777, #ec4899); }
+.avatar-premium-border.purple::after { background: conic-gradient(from 0deg, #8b5cf6, #7c3aed, #8b5cf6); }
+.avatar-premium-border.white::after { background: conic-gradient(from 0deg, #fff, #e5e7eb, #fff); }
+.avatar-premium-border.rainbow::after { background: conic-gradient(from 0deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4, #ffd700); }
+
+/* ========== NICKNAME COLORS ========== */
+.nickname-gold { color: var(--premium-gold) !important; }
+.nickname-cyan { color: var(--premium-cyan) !important; }
+.nickname-pink { color: var(--premium-pink) !important; }
+.nickname-purple { color: var(--premium-purple) !important; }
+.nickname-red { color: #ef4444 !important; }
+.nickname-white { color: #fff !important; }
+.nickname-gradient { 
+  background: linear-gradient(135deg, var(--premium-gold), #ff6b6b, var(--premium-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+/* ========== PROFILE ========== */
+.profile-header { display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; position: relative;
+  background: linear-gradient(180deg, var(--accent-grad-soft), transparent 70%);
+}
+.profile-avatar { width: 104px; height: 104px; font-size: 38px; margin-bottom: 16px; position: relative; border-radius: 30px; box-shadow: var(--shadow-soft); cursor: pointer; }
+.profile-avatar.owner-avatar-profile {
+  border: 4px solid var(--gold);
+  box-shadow: 0 0 30px rgba(255,203,71,0.5), inset 0 0 30px rgba(255,203,71,0.15);
+  animation: ownerGlow 2s ease-in-out infinite;
+}
+.profile-avatar-hint { font-size: 11.5px; color: var(--muted); margin-top: -8px; margin-bottom: 8px; }
+.profile-name { font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 6px; letter-spacing: -.2px; flex-wrap: wrap; justify-content: center; }
+.rainbow-text {
+  background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbowMove 3s linear infinite;
+}
+@keyframes rainbowMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+.profile-phone { color: var(--text-dim); font-size: 14px; margin-top: 4px; font-weight: 500; }
+.profile-bio { color: var(--text-dim); font-size: 13.5px; margin-top: 8px; text-align: center; max-width: 280px; line-height: 1.4; }
+.verified-line {
+  color: var(--accent); font-size: 12.5px; margin-top: 10px; display:flex; align-items:center; gap:6px;
+  background: var(--accent-grad-soft); padding: 6px 14px; border-radius: 20px; font-weight: 700;
+}
+.verified-line .vb { width:16px;height:16px;border-radius:50%;background:var(--accent-grad); display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff; }
+.banned-line { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 700; background: rgba(255,84,112,.1); border-radius: 14px; padding: 8px 16px; }
+.owner-line {
+  color: var(--gold); font-size: 12.5px; margin-top: 8px; font-weight: 800; letter-spacing: .3px;
+  background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05)); padding: 6px 16px; border-radius: 20px;
+  display:flex; align-items:center; gap:6px;
+}
+.section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); padding: 18px 20px 8px; }
+.list-row {
+  padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex;
+  justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer;
+  background: var(--bg2); font-weight: 500; transition: background .15s ease;
+}
+.list-row:active { background: var(--surface-hover); }
+.list-row-left { display: flex; align-items: center; gap: 12px; }
+.list-row-icon { width: 34px; height: 34px; border-radius: 11px; display:flex;align-items:center;justify-content:center; font-size:16px; background: var(--accent-grad-soft); }
+.list-row-value { color: var(--text-dim); font-size: 14px; display:flex; align-items:center; gap:6px; }
+.search-box { padding: 12px 18px; }
+.search-box input {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 22px;
+  padding: 12px 18px; color: var(--text); outline: none; font-size: 14.5px;
+}
+.search-box input:focus { border-color: var(--accent); }
+.empty-state { text-align: center; color: var(--muted); padding: 60px 30px; font-size: 14px; line-height: 1.6; }
+.fab {
+  position: absolute; right: 20px; bottom: max(20px, env(safe-area-inset-bottom));
+  width: 58px; height: 58px; border-radius: 20px; background: var(--accent-grad);
+  color: #fff; font-size: 26px; border: none; box-shadow: var(--shadow-pop);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+.toggle { position: relative; width: 48px; height: 28px; border-radius: 16px; background: var(--border); cursor: pointer; transition: background .2s ease; flex-shrink:0; }
+.toggle.on { background: var(--accent-grad); }
+.toggle-knob { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.toggle.on .toggle-knob { transform: translateX(20px); }
+
+.segmented { display: flex; background: var(--surface); border-radius: 14px; padding: 4px; gap: 4px; margin: 0 20px 16px; }
+.segmented-option { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--text-dim); transition: all .2s ease; }
+.segmented-option.active { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
+
+.tz-option {
+  display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
+  border-radius: 14px; background: var(--surface); border: 1.5px solid var(--border); margin-bottom: 10px; cursor: pointer;
+}
+.tz-option.active { border-color: var(--accent); background: var(--accent-grad-soft); }
+.tz-option-label { font-weight: 700; font-size: 15px; }
+.tz-option-time { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.tz-option-check { color: var(--accent); font-size: 18px; opacity: 0; }
+.tz-option.active .tz-option-check { opacity: 1; }
+
+/* ========== MODALS ========== */
+.modal-overlay {
+  position: absolute; inset: 0; background: rgba(5,8,14,.6); z-index: 50; backdrop-filter: blur(3px);
+  display: none; align-items: flex-end; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-sheet {
+  background: var(--bg2); width: 100%; max-width: 480px; border-radius: 26px 26px 0 0;
+  padding: 12px 20px max(24px, env(safe-area-inset-bottom));
+  max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,.3);
+}
+.modal-handle { width: 40px; height: 4px; border-radius: 3px; background: var(--border); margin: 0 auto 16px; }
+.modal-title { font-size: 19px; font-weight: 800; margin-bottom: 18px; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
+.modal-title svg { width: 24px; height: 24px; flex-shrink: 0; color: var(--accent); }
+.modal-close { float: right; background: var(--surface); border:none; color: var(--text-dim); font-size: 18px; cursor: pointer; width:32px;height:32px;border-radius:10px; }
+.char-counter { font-size: 12px; color: var(--muted); text-align: right; margin-top: -8px; margin-bottom: 14px; }
+
+#avatarCropModal .modal-sheet { text-align: center; }
+.avatar-crop-preview {
+  width: 220px; height: 220px; border-radius: 50%; margin: 12px auto 20px; overflow: hidden;
+  border: 4px solid var(--accent); box-shadow: var(--shadow-pop); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar-crop-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+#userProfileView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; }
+#userProfileView.active { display: flex; }
+.up-header { display:flex; align-items:center; gap:12px; padding:14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.bot-notice {
+  margin: 18px 20px 0; padding: 14px 16px; border-radius: var(--radius-md);
+  background: var(--accent-grad-soft); border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.bot-notice .bi { font-size: 18px; flex-shrink: 0; }
+
+#toast {
+  position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: var(--surface); color: var(--text); padding: 12px 20px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; z-index: 200; opacity: 0; transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none; max-width: 85%; text-align: center; box-shadow: var(--shadow-soft); border: 1px solid var(--border);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.group-member-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.group-member-item .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 14px; }
+.group-member-name { flex: 1; font-weight: 600; font-size: 14px; }
+.group-member-role { font-size: 11px; color: var(--muted); font-weight: 600; }
+.group-member-role.admin { color: var(--accent); }
+.group-member-role.owner { color: var(--gold); }
+.group-member-action { color: var(--accent); font-size: 13px; cursor: pointer; padding: 4px 10px; border-radius: 8px; background: var(--surface-hover); }
+
+.add-member-input {
+  display: flex; gap: 8px; padding: 12px 16px;
+}
+.add-member-input input { flex: 1; }
+
+.context-menu { display: none; }
+.context-menu.active { display: block; }
+
+/* ========== SETTINGS ========== */
+.settings-container {
+  padding: 16px 20px 32px;
+  background: var(--bg);
+  flex: 1;
+  overflow-y: auto;
+}
+.settings-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  padding: 10px 4px 12px 4px;
+}
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.settings-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease,
+              background 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
+  border: 1px solid transparent;
+  position: relative;
+  min-height: 60px;
+}
+.settings-card:active { transform: scale(0.97); }
+.settings-card.card-ai {
+  border: 1.5px solid rgba(6, 182, 212, 0.25);
+  box-shadow: 0 4px 24px rgba(6, 182, 212, 0.08), 0 0 40px rgba(6, 182, 212, 0.04);
+  background: linear-gradient(135deg, var(--surface), rgba(6, 182, 212, 0.04));
+}
+.settings-icon {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+.settings-card:active .settings-icon { transform: scale(0.92); }
+.settings-icon svg { width: 24px; height: 24px; }
+.settings-card-content { flex: 1; min-width: 0; }
+.settings-card-title { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.2px; line-height: 1.3; }
+.settings-card-sub { font-size: 12.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+.settings-card-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto; }
+.settings-chevron { color: var(--muted); font-size: 16px; opacity: 0.5; font-weight: 300; }
+.settings-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+  background: var(--accent-grad); color: #fff; letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(47, 128, 237, 0.25);
+}
+.settings-badge.gold { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
+.settings-badge.green { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25); }
+.settings-balance { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: -0.2px; }
+
+:root[data-theme="dark"] .settings-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+:root[data-theme="dark"] .settings-card.card-ai {
+  border-color: rgba(6, 182, 212, 0.15);
+  box-shadow: 0 4px 24px rgba(6, 182, 212, 0.06), 0 0 40px rgba(6, 182, 212, 0.02);
+}
+:root[data-theme="dark"] .settings-icon { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25); }
+
+/* ========== SUB SETTINGS PAGES ========== */
+.sub-settings-page {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  z-index: 30;
+}
+.sub-settings-page.active { display: flex; }
+.sub-settings-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 32px;
+}
+.sub-settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sub-settings-item:active { transform: scale(0.97); }
+.sub-settings-item .left { display: flex; align-items: center; gap: 12px; }
+.sub-settings-item .left svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
+.sub-settings-item .label { font-weight: 600; font-size: 15px; }
+.sub-settings-item .value { color: var(--text-dim); font-size: 14px; }
+
+.device-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.device-item .device-info { display: flex; flex-direction: column; gap: 2px; }
+.device-item .device-name { font-weight: 600; font-size: 14px; }
+.device-item .device-detail { font-size: 12px; color: var(--text-dim); }
+.device-item .device-remove {
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgba(255,84,112,.1);
+  border: none;
+}
+.device-item .device-current {
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.wallet-balance-card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.wallet-balance-card .amount {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -1px;
+}
+.wallet-balance-card .currency {
+  font-size: 16px;
+  color: var(--text-dim);
+}
+.wallet-balance-card .sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.transaction-item .info { display: flex; flex-direction: column; gap: 2px; }
+.transaction-item .info .name { font-weight: 600; font-size: 14px; }
+.transaction-item .info .date { font-size: 12px; color: var(--muted); }
+.transaction-item .amount.positive { color: var(--success); font-weight: 700; }
+.transaction-item .amount.negative { color: var(--danger); font-weight: 700; }
+
+.ai-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ai-chat-message {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.ai-chat-message.user {
+  align-self: flex-end;
+  background: var(--accent-grad);
+  color: #fff;
+}
+.ai-chat-message.assistant {
+  align-self: flex-start;
+  background: var(--bubble-in);
+  color: var(--text);
+}
+.ai-chat-message .time { font-size: 10px; opacity: 0.5; margin-top: 4px; display: block; }
+.ai-chat-input-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+}
+.ai-chat-input-bar input {
+  flex: 1;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 12px 18px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+}
+.ai-chat-input-bar input:focus { border-color: var(--accent); }
+.ai-chat-input-bar .send-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pin-dots {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 20px 0;
+}
+.pin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  transition: all 0.2s ease;
+}
+.pin-dot.filled {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.1);
+}
+
+/* ========== PREMIUM PAGE ========== */
 .premium-page {
   position: absolute;
   inset: 0;
@@ -87,7 +955,6 @@
   overflow-y: auto;
 }
 .premium-page.active { display: flex; }
-
 .premium-backdrop {
   position: absolute;
   inset: 0;
@@ -97,7 +964,6 @@
     radial-gradient(circle at 50% 50%, rgba(236,72,153,0.05), transparent 70%);
   pointer-events: none;
 }
-
 .premium-header {
   padding: 24px 20px 16px;
   display: flex;
@@ -112,7 +978,6 @@
   color: #fff;
 }
 .premium-header .back-btn svg { stroke: #fff; }
-
 .premium-hero {
   text-align: center;
   padding: 20px 20px 30px;
@@ -129,7 +994,6 @@
   0%,100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-10px) scale(1.05); }
 }
-
 .premium-hero .title {
   font-size: 32px;
   font-weight: 800;
@@ -145,13 +1009,11 @@
   0% { background-position: 0% 50%; }
   100% { background-position: 300% 50%; }
 }
-
 .premium-hero .subtitle {
   color: rgba(255,255,255,0.6);
   font-size: 14px;
   margin-top: 4px;
 }
-
 .premium-features {
   padding: 0 20px 20px;
   position: relative;
@@ -177,26 +1039,11 @@
   border-color: rgba(255,255,255,0.15);
   transform: translateX(4px);
 }
-.premium-feature .icon {
-  font-size: 28px;
-  flex-shrink: 0;
-}
+.premium-feature .icon { font-size: 28px; flex-shrink: 0; }
 .premium-feature .info { flex: 1; }
-.premium-feature .info .name {
-  font-weight: 700;
-  font-size: 15px;
-  color: #fff;
-}
-.premium-feature .info .desc {
-  font-size: 12.5px;
-  color: rgba(255,255,255,0.5);
-  margin-top: 2px;
-}
-.premium-feature .check {
-  color: var(--premium-gold);
-  font-size: 18px;
-}
-
+.premium-feature .info .name { font-weight: 700; font-size: 15px; color: #fff; }
+.premium-feature .info .desc { font-size: 12.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.premium-feature .check { color: var(--premium-gold); font-size: 18px; }
 .premium-price {
   padding: 20px;
   text-align: center;
@@ -218,7 +1065,6 @@
   font-size: 13px;
   margin-top: 4px;
 }
-
 .btn-premium {
   width: 100%;
   padding: 18px;
@@ -247,72 +1093,6 @@
   box-shadow: none;
   animation: none;
 }
-.btn-premium .shine {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: rotate(45deg) translateX(-100%);
-  animation: shineSweep 3s ease-in-out infinite;
-}
-@keyframes shineSweep {
-  0%,100% { transform: rotate(45deg) translateX(-100%); }
-  50% { transform: rotate(45deg) translateX(100%); }
-}
-
-/* ===================== PREMIUM BORDER ===================== */
-.avatar-premium-border {
-  position: relative;
-}
-.avatar-premium-border::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  padding: 3px;
-  background: conic-gradient(from 0deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4, #ffd700);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: premiumBorderSpin 3s linear infinite;
-}
-@keyframes premiumBorderSpin {
-  0% { --gradient-angle: 0deg; }
-  100% { --gradient-angle: 360deg; }
-}
-.avatar-premium-border.gold::after { background: conic-gradient(from 0deg, #ffd700, #f59e0b, #ffd700); }
-.avatar-premium-border.cyan::after { background: conic-gradient(from 0deg, #06b6d4, #3b82f6, #06b6d4); }
-.avatar-premium-border.pink::after { background: conic-gradient(from 0deg, #ec4899, #db2777, #ec4899); }
-.avatar-premium-border.purple::after { background: conic-gradient(from 0deg, #8b5cf6, #7c3aed, #8b5cf6); }
-.avatar-premium-border.white::after { background: conic-gradient(from 0deg, #fff, #e5e7eb, #fff); }
-
-/* ===================== PREMIUM BADGE ===================== */
-.premium-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 10px 2px 6px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--premium-gold), #f59e0b);
-  color: #1a1a2e;
-  animation: premiumBadgePulse 2s ease-in-out infinite;
-  box-shadow: 0 2px 12px rgba(255,215,0,0.3);
-}
-@keyframes premiumBadgePulse {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-.premium-badge svg {
-  width: 14px;
-  height: 14px;
-}
-
-/* ===================== COLOR PICKER ===================== */
 .premium-color-picker {
   display: flex;
   gap: 12px;
@@ -348,62 +1128,11 @@
 }
 .premium-color-picker .color-option.active .check { opacity: 1; }
 
-/* ===================== PREMIUM STATUS ===================== */
-.premium-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px 4px 8px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  background: rgba(255,215,0,0.15);
-  color: var(--premium-gold);
-  border: 1px solid rgba(255,215,0,0.2);
-}
-.premium-status .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--premium-gold);
-  animation: premiumDotPulse 1.5s ease-in-out infinite;
-}
-@keyframes premiumDotPulse {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(0.6); }
-}
-
-/* ===================== PREMIUM NICKNAME ===================== */
-.nickname-premium {
-  background: linear-gradient(135deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: premiumNicknameShine 4s linear infinite;
-  font-weight: 700;
-}
-@keyframes premiumNicknameShine {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
-
-.nickname-gold { color: #ffd700 !important; }
-.nickname-cyan { color: #06b6d4 !important; }
-.nickname-pink { color: #ec4899 !important; }
-.nickname-purple { color: #8b5cf6 !important; }
-.nickname-red { color: #ef4444 !important; }
-.nickname-white { color: #fff !important; }
-.nickname-gradient { 
-  background: linear-gradient(135deg, #ffd700, #ff6b6b, #8b5cf6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 700;
-}
-
-/* ===================== RESPONSIVE ===================== */
 @media (max-width: 380px) {
+  .wallet-balance-card .amount { font-size: 32px; }
+  .settings-card { padding: 10px 14px; min-height: 50px; }
+  .settings-icon { width: 38px; height: 38px; min-width: 38px; }
+  .settings-icon svg { width: 20px; height: 20px; }
   .premium-hero .crown { font-size: 48px; }
   .premium-hero .title { font-size: 26px; }
   .premium-price .price { font-size: 32px; }
@@ -493,12 +1222,14 @@
 
   <!-- MAIN APP -->
   <div id="mainApp">
+    <!-- CHATS TAB -->
     <div class="tab-content active" id="tabChats" style="position:relative;">
       <div class="top-bar"><span>Чаты</span></div>
       <div id="chatListContainer"></div>
       <button class="fab" onclick="openCreateGroupModal()">＋</button>
     </div>
 
+    <!-- CONTACTS TAB -->
     <div class="tab-content" id="tabContacts" style="position:relative;">
       <div class="top-bar"><span>Контакты</span></div>
       <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
@@ -506,12 +1237,11 @@
       <button class="fab" onclick="openAddContactModal()">＋</button>
     </div>
 
-    <!-- ==================== SETTINGS TAB ==================== -->
+    <!-- SETTINGS TAB -->
     <div class="tab-content" id="tabSettings">
       <div class="top-bar"><span>Настройки</span></div>
       <div class="settings-container">
         
-        <!-- Раздел 1: Аккаунт и безопасность -->
         <div class="settings-section-title">Аккаунт и безопасность</div>
         <div class="settings-grid">
           <div class="settings-card" onclick="openAccountSecurityPage()">
@@ -528,7 +1258,6 @@
           </div>
         </div>
 
-        <!-- Раздел 2: ИИ и монетизация -->
         <div class="settings-section-title">ИИ и монетизация</div>
         <div class="settings-grid">
           <div class="settings-card card-ai" onclick="openAIChat()">
@@ -559,7 +1288,6 @@
           </div>
         </div>
 
-        <!-- Раздел 3: Интерфейс и связь -->
         <div class="settings-section-title">Интерфейс и связь</div>
         <div class="settings-grid">
           <div class="settings-card" onclick="toggleNotifications()">
@@ -588,7 +1316,6 @@
           </div>
         </div>
 
-        <!-- Оформление -->
         <div class="settings-section-title">Оформление</div>
         <div class="settings-grid">
           <div class="settings-card" onclick="event.stopPropagation()">
@@ -625,7 +1352,6 @@
           </div>
         </div>
 
-        <!-- Аккаунт -->
         <div class="settings-section-title" style="margin-top:4px;">Аккаунт</div>
         <div class="settings-grid">
           <div class="settings-card" onclick="logout()" style="border-color: rgba(239,68,68,0.2);">
@@ -640,10 +1366,10 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
+    <!-- PROFILE TAB -->
     <div class="tab-content" id="tabProfile">
       <div class="top-bar"><span>Профиль</span></div>
       <div class="profile-header">
@@ -674,7 +1400,7 @@
         <div class="list-row-left"><div class="list-row-icon">📝</div><span>О себе</span></div>
         <span class="list-row-value" id="profileBioRow">—</span>
       </div>
-      <!-- Premium настройки в профиле -->
+      <!-- Premium настройки -->
       <div id="premiumProfileSettings" style="display:none;">
         <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
         <div class="list-row" onclick="openPremiumBorderPicker()">
@@ -742,10 +1468,136 @@
     </div>
   </div>
 
-  <!-- ==================== PREMIUM PAGE ==================== -->
+  <!-- ========== SUB SETTINGS PAGES ========== -->
+  
+  <div class="sub-settings-page" id="accountSecurityPage">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeSubSettings('accountSecurityPage')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад
+      </button>
+      <span>Аккаунт</span>
+      <span style="width:60px;"></span>
+    </div>
+    <div class="sub-settings-content">
+      <div class="sub-settings-item" onclick="openChangePasswordModal()">
+        <div class="left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="label">Смена пароля</span>
+        </div>
+        <span class="value">›</span>
+      </div>
+      <div class="sub-settings-item" onclick="openDevicesPage()">
+        <div class="left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg>
+          <span class="label">Устройства</span>
+        </div>
+        <span class="value" id="devicesCount">0 сессий ›</span>
+      </div>
+      <div class="sub-settings-item" onclick="openPinPage()">
+        <div class="left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>
+          <span class="label">Код-пароль (PIN)</span>
+        </div>
+        <div class="toggle" id="pinToggle" onclick="event.stopPropagation(); togglePin()"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-settings-page" id="devicesPage">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeSubSettings('devicesPage')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад
+      </button>
+      <span>Устройства</span>
+      <span style="width:60px;"></span>
+    </div>
+    <div class="sub-settings-content"><div id="devicesList"></div></div>
+  </div>
+
+  <div class="sub-settings-page" id="pinPage">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeSubSettings('pinPage')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад
+      </button>
+      <span>Код-пароль</span>
+      <span style="width:60px;"></span>
+    </div>
+    <div class="sub-settings-content" style="text-align:center;padding-top:40px;">
+      <div style="font-size:48px;margin-bottom:20px;">🔐</div>
+      <div class="auth-title" style="font-size:22px;">Введите PIN-код</div>
+      <div class="auth-sub">4 цифры для защиты аккаунта</div>
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" data-index="0"></div>
+        <div class="pin-dot" data-index="1"></div>
+        <div class="pin-dot" data-index="2"></div>
+        <div class="pin-dot" data-index="3"></div>
+      </div>
+      <div class="hint err" id="pinHint" style="min-height:24px;"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;">
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('1')" style="padding:18px;font-size:20px;">1</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('2')" style="padding:18px;font-size:20px;">2</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('3')" style="padding:18px;font-size:20px;">3</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('4')" style="padding:18px;font-size:20px;">4</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('5')" style="padding:18px;font-size:20px;">5</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('6')" style="padding:18px;font-size:20px;">6</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('7')" style="padding:18px;font-size:20px;">7</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('8')" style="padding:18px;font-size:20px;">8</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('9')" style="padding:18px;font-size:20px;">9</button>
+        <div></div>
+        <button class="btn btn-secondary pin-btn" onclick="pinInput('0')" style="padding:18px;font-size:20px;">0</button>
+        <button class="btn btn-secondary pin-btn" onclick="pinDelete()" style="padding:18px;font-size:20px;">⌫</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-settings-page" id="walletPage">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeSubSettings('walletPage')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад
+      </button>
+      <span>Dice Wallet</span>
+      <span style="width:60px;"></span>
+    </div>
+    <div class="sub-settings-content">
+      <div class="wallet-balance-card">
+        <div class="currency">Баланс</div>
+        <div class="amount" id="walletBalanceAmount">0</div>
+        <div class="currency">❤️ Dice Wallet</div>
+      </div>
+      <button class="btn btn-primary" onclick="openGiftWalletModal()" style="margin-bottom:20px;">🎁 Подарить Dice Wallet</button>
+      <div class="section-label" style="padding:8px 0;">История операций</div>
+      <div id="walletTransactions"></div>
+    </div>
+  </div>
+
+  <div class="sub-settings-page" id="aiChatPage">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeSubSettings('aiChatPage')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад
+      </button>
+      <span>Dice AI Ассистент</span>
+      <span style="width:60px;"></span>
+    </div>
+    <div class="ai-chat-messages" id="aiChatMessages">
+      <div class="ai-chat-message assistant">
+        Привет! Я Dice AI Ассистент. Чем могу помочь? 🤖
+        <span class="time">сейчас</span>
+      </div>
+    </div>
+    <div class="ai-chat-input-bar">
+      <input id="aiChatInput" placeholder="Спросите что-нибудь..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+      <button class="send-btn" onclick="sendAIMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- PREMIUM PAGE -->
   <div class="premium-page" id="premiumPage">
     <div class="premium-backdrop"></div>
-    
     <div class="premium-header">
       <button class="back-btn" onclick="closePremiumPage()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -753,13 +1605,11 @@
       </button>
       <span style="color:rgba(255,255,255,0.6);font-size:14px;font-weight:600;" id="premiumHeaderStatus">⭐ PREMIUM</span>
     </div>
-
     <div class="premium-hero">
       <span class="crown">👑</span>
       <div class="title">Dicegram Premium</div>
       <div class="subtitle">Расширьте возможности мессенджера</div>
     </div>
-
     <div class="premium-features">
       <div class="premium-feature">
         <span class="icon">🖼️</span>
@@ -810,12 +1660,10 @@
         <span class="check">✓</span>
       </div>
     </div>
-
     <div class="premium-price">
       <div class="price">$4.99 <span>/ месяц</span></div>
       <div class="period">Отмена в любой момент</div>
       <button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()">
-        <span class="shine"></span>
         <span id="premiumBtnText">✨ Купить подписку</span>
       </button>
       <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3);">
@@ -824,74 +1672,43 @@
     </div>
   </div>
 
-  <!-- ==================== COLOR PICKER MODAL ==================== -->
+  <!-- COLOR PICKER MODALS -->
   <div class="modal-overlay" id="premiumColorModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <button class="modal-close" onclick="closeModal('premiumColorModal')">✕</button>
       <div class="modal-title">🎨 Выберите цвет никнейма</div>
       <div class="premium-color-picker" id="colorPickerColors">
-        <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectNicknameColor('gold')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectNicknameColor('cyan')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectNicknameColor('pink')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectNicknameColor('purple')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#ef4444;" data-color="red" onclick="selectNicknameColor('red')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:linear-gradient(135deg,#ffd700,#ff6b6b,#8b5cf6);" data-color="gradient" onclick="selectNicknameColor('gradient')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectNicknameColor('white')">
-          <span class="check" style="color:#000;">✓</span>
-        </div>
-        <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="default" onclick="selectNicknameColor('default')">
-          <span style="font-size:14px;color:var(--text-dim);">✕</span>
-        </div>
+        <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectNicknameColor('gold')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectNicknameColor('cyan')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectNicknameColor('pink')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectNicknameColor('purple')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ef4444;" data-color="red" onclick="selectNicknameColor('red')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:linear-gradient(135deg,#ffd700,#ff6b6b,#8b5cf6);" data-color="gradient" onclick="selectNicknameColor('gradient')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectNicknameColor('white')"><span class="check" style="color:#000;">✓</span></div>
+        <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="default" onclick="selectNicknameColor('default')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== BORDER PICKER MODAL ==================== -->
   <div class="modal-overlay" id="premiumBorderModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
       <button class="modal-close" onclick="closeModal('premiumBorderModal')">✕</button>
       <div class="modal-title">🖼️ Выберите рамку аватара</div>
       <div class="premium-color-picker" id="borderPickerColors">
-        <div class="color-option" style="background:conic-gradient(from 0deg,#ffd700,#ff6b6b,#8b5cf6,#06b6d4,#ffd700);" data-color="rainbow" onclick="selectBorderColor('rainbow')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectBorderColor('gold')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectBorderColor('cyan')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectBorderColor('pink')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectBorderColor('purple')">
-          <span class="check">✓</span>
-        </div>
-        <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectBorderColor('white')">
-          <span class="check" style="color:#000;">✓</span>
-        </div>
-        <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="none" onclick="selectBorderColor('none')">
-          <span style="font-size:14px;color:var(--text-dim);">✕</span>
-        </div>
+        <div class="color-option" style="background:conic-gradient(from 0deg,#ffd700,#ff6b6b,#8b5cf6,#06b6d4,#ffd700);" data-color="rainbow" onclick="selectBorderColor('rainbow')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectBorderColor('gold')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectBorderColor('cyan')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectBorderColor('pink')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectBorderColor('purple')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectBorderColor('white')"><span class="check" style="color:#000;">✓</span></div>
+        <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="none" onclick="selectBorderColor('none')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Остальные модальные окна из вашего файла -->
+  <!-- USER PROFILE VIEW -->
   <div id="userProfileView">
     <div class="up-header">
       <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
@@ -904,9 +1721,7 @@
       <div class="profile-phone" id="upPhone">—</div>
       <div class="profile-bio" id="upBio" style="display:none;"></div>
       <div class="profile-phone" id="upStatusLine" style="margin-top:6px;"></div>
-      <div id="upPremiumBadge" style="display:none;margin-top:6px;">
-        <span class="premium-badge">⭐ PREMIUM</span>
-      </div>
+      <div id="upPremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
       <div class="verified-line" id="upVerifiedLine" style="display:none;"><span class="vb">✓</span> <span id="upVerifiedText">Верифицирован DICEGRAM</span></div>
       <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
       <div class="btn-row" style="margin-top:24px;">
@@ -915,7 +1730,7 @@
     </div>
     <div class="bot-notice" id="upBotNotice" style="display:none;">
       <span class="bi">🤖</span>
-      <span>Это официальный бот поддержки DICEGRAM. Он отвечает автоматически и присылает системные уведомления о вашем аккаунте: входы, верификацию, важные изменения.</span>
+      <span>Это официальный бот поддержки DICEGRAM.</span>
     </div>
   </div>
 
@@ -946,9 +1761,6 @@
       <span onclick="addReaction('🌏')">🌏</span>
       <span onclick="addReaction('😍')">😍</span>
       <span onclick="addReaction('😎')">😎</span>
-      <!-- Premium реакции -->
-      <span onclick="addReaction('🌟')" style="background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,107,107,0.2));border-radius:8px;">🌟</span>
-      <span onclick="addReaction('💎')" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(6,182,212,0.2));border-radius:8px;">💎</span>
     </div>
     <div class="context-menu-divider"></div>
     <div class="context-menu-item" onclick="replyToMessage()">↩️ Ответить</div>
@@ -1132,10 +1944,6 @@ let aiMessages = [];
 // ===================== DEVICES =====================
 let devices = [];
 
-// ===================== PREMIUM =====================
-let premiumColors = ['gold', 'cyan', 'pink', 'purple', 'red', 'gradient', 'white', 'default'];
-let premiumBorders = ['rainbow', 'gold', 'cyan', 'pink', 'purple', 'white', 'none'];
-
 // ===================== UTILITY =====================
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -1259,7 +2067,6 @@ function updatePremiumUI() {
     daysDisplay.textContent = '30 дней бесплатно';
   }
   
-  // Показываем/скрываем настройки Premium в профиле
   const settings = document.getElementById('premiumProfileSettings');
   if (isPremium) {
     settings.style.display = 'block';
@@ -1269,7 +2076,6 @@ function updatePremiumUI() {
     settings.style.display = 'none';
   }
   
-  // Показываем бейдж в профиле
   const badge = document.getElementById('profilePremiumBadge');
   if (isPremium) {
     badge.style.display = 'block';
@@ -1283,8 +2089,6 @@ function buyPremium() {
     showToast('⭐ У вас уже есть Premium!');
     return;
   }
-  
-  // Симуляция покупки
   showToast('💳 Обработка платежа...');
   setTimeout(() => {
     session.is_premium = true;
@@ -1864,7 +2668,6 @@ function renderProfileTab() {
   document.getElementById('profileOwnerLine').style.display = isOwner ? 'flex' : 'none';
   document.getElementById('profilePremiumBadge').style.display = isPremium ? 'block' : 'none';
   
-  // Premium настройки
   const settings = document.getElementById('premiumProfileSettings');
   if (isPremium) {
     settings.style.display = 'block';
@@ -2718,7 +3521,6 @@ async function openUserProfile(username) {
     document.getElementById('upUsername').textContent = '@' + u.username;
     document.getElementById('upPhone').textContent = u.phone || '';
     
-    // Показываем Premium бейдж
     document.getElementById('upPremiumBadge').style.display = isPremium ? 'block' : 'none';
     
     const bioEl = document.getElementById('upBio');
@@ -3042,6 +3844,9 @@ function connectWebSocket() {
       } else if (data.type === 'nft_gift') {
         showToast(`🏆 ${data.message || 'Вы получили NFT!'}`);
         loadChatsList();
+      } else if (data.type === 'premium_activated') {
+        showToast(`⭐ ${data.message || 'Premium активирован!'}`);
+        syncProfileFromServer();
       }
     } catch(e) {}
   };

@@ -544,7 +544,7 @@ html, body {
   font-weight: 700;
 }
 
-/* ========== PROFILE ========== */
+/* ========== ПРОФИЛЬ — НОВЫЙ ДИЗАЙН 2026 (Glassmorphism) ========== */
 .profile-header { 
   display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; 
   background: 
@@ -603,7 +603,7 @@ html, body {
   display:flex; align-items:center; gap:6px;
 }
 
-/* ========== PROFILE TABS ========== */
+/* ========== ПРОФИЛЬ ТАБЫ (НОВЫЙ СТИЛЬ) ========== */
 .profile-tabs {
   display: flex;
   background: var(--bg2);
@@ -611,6 +611,7 @@ html, body {
   padding: 0 16px;
   gap: 4px;
   flex-shrink: 0;
+  position: relative;
 }
 .profile-tab {
   padding: 14px 20px;
@@ -619,12 +620,24 @@ html, body {
   color: var(--text-dim);
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.profile-tab svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-dim);
+  transition: stroke 0.3s ease;
 }
 .profile-tab.active {
   color: var(--accent);
   border-bottom-color: var(--accent);
+}
+.profile-tab.active svg {
+  stroke: var(--accent);
 }
 .profile-tab:active { transform: scale(0.95); }
 .profile-tab-content {
@@ -634,8 +647,72 @@ html, body {
   display: none;
   flex-direction: column;
   gap: 12px;
+  animation: tabFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .profile-tab-content.active { display: flex; }
+
+/* ========== ПРОФИЛЬ КАРТОЧКИ (Glassmorphism) ========== */
+.profile-glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+.profile-glass-card:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.08);
+}
+.profile-glass-card .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.profile-glass-card .icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-grad-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.profile-glass-card .icon-wrap svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}
+.profile-glass-card .label {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+}
+.profile-glass-card .value {
+  color: var(--text-dim);
+  font-size: 14px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-glass-card .arrow {
+  color: var(--muted);
+  font-size: 18px;
+  opacity: 0.3;
+}
 
 /* ========== GIFTS GRID ========== */
 .gifts-grid {
@@ -1666,7 +1743,7 @@ html, body {
       </div>
     </div>
 
-    <!-- PROFILE TAB -->
+    <!-- PROFILE TAB (НОВЫЙ ДИЗАЙН) -->
     <div class="tab-content" id="tabProfile">
       <div class="top-bar"><span>Профиль</span></div>
       <div style="flex:1;overflow-y:auto;">
@@ -1690,34 +1767,78 @@ html, body {
           </div>
         </div>
         
+        <!-- НОВЫЕ ТАБЫ С SVG-ИКОНКАМИ -->
         <div class="profile-tabs">
-          <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')">Инфо</div>
-          <div class="profile-tab" data-tab="profileGifts" onclick="switchProfileTab('profileGifts')">🎁 Подарки</div>
-          <div class="profile-tab" data-tab="profileMedia" onclick="switchProfileTab('profileMedia')">📸 Медиа</div>
+          <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Инфо
+          </div>
+          <div class="profile-tab" data-tab="profileGifts" onclick="switchProfileTab('profileGifts')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            Подарки
+          </div>
+          <div class="profile-tab" data-tab="profileMedia" onclick="switchProfileTab('profileMedia')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Медиа
+          </div>
         </div>
         
+        <!-- ИНФО (НОВЫЕ КАРТОЧКИ) -->
         <div class="profile-tab-content active" id="profileInfo">
-          <div class="list-row" onclick="openEditNameModal()">
-            <div class="list-row-left"><div class="list-row-icon">🖊️</div><span>Имя</span></div>
-            <span class="list-row-value" id="profileNameRow">—</span>
+          <div class="profile-glass-card" onclick="openEditNameModal()">
+            <div class="left">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <span class="label">Имя</span>
+            </div>
+            <span class="value" id="profileNameRow">—</span>
+            <span class="arrow">›</span>
           </div>
-          <div class="list-row" onclick="openEditUsernameModal()">
-            <div class="list-row-left"><div class="list-row-icon">@</div><span>Юзернейм</span></div>
-            <span class="list-row-value" id="profileUsernameDisplay">—</span>
+          
+          <div class="profile-glass-card" onclick="openEditUsernameModal()">
+            <div class="left">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>
+              </div>
+              <span class="label">Юзернейм</span>
+            </div>
+            <span class="value" id="profileUsernameDisplay">—</span>
+            <span class="arrow">›</span>
           </div>
-          <div class="list-row" onclick="openEditBioModal()">
-            <div class="list-row-left"><div class="list-row-icon">📝</div><span>О себе</span></div>
-            <span class="list-row-value" id="profileBioRow">—</span>
+          
+          <div class="profile-glass-card" onclick="openEditBioModal()">
+            <div class="left">
+              <div class="icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <span class="label">О себе</span>
+            </div>
+            <span class="value" id="profileBioRow">—</span>
+            <span class="arrow">›</span>
           </div>
+          
           <div id="premiumProfileSettings" style="display:none;">
             <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
-            <div class="list-row" onclick="openPremiumBorderPicker()">
-              <div class="list-row-left"><div class="list-row-icon">🖼️</div><span>Рамка аватара</span></div>
-              <span class="list-row-value" id="premiumBorderDisplay">Выбрать цвет ›</span>
+            <div class="profile-glass-card" onclick="openPremiumBorderPicker()">
+              <div class="left">
+                <div class="icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                </div>
+                <span class="label">Рамка аватара</span>
+              </div>
+              <span class="value" id="premiumBorderDisplay">Выбрать</span>
+              <span class="arrow">›</span>
             </div>
-            <div class="list-row" onclick="openPremiumColorPicker()">
-              <div class="list-row-left"><div class="list-row-icon">🎨</div><span>Цвет никнейма</span></div>
-              <span class="list-row-value" id="premiumColorDisplay">Выбрать цвет ›</span>
+            <div class="profile-glass-card" onclick="openPremiumColorPicker()">
+              <div class="left">
+                <div class="icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+                </div>
+                <span class="label">Цвет никнейма</span>
+              </div>
+              <span class="value" id="premiumColorDisplay">Выбрать</span>
+              <span class="arrow">›</span>
             </div>
           </div>
         </div>
@@ -2700,7 +2821,7 @@ function openGiftWalletModal() {
   openModal('giftWalletModal');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT =====
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (РАБОТАЕТ КОРРЕКТНО) =====
 async function submitGift() {
   const phone = document.getElementById('giftPhone').value.trim();
   const amount = parseInt(document.getElementById('giftAmount').value);
@@ -2714,6 +2835,19 @@ async function submitGift() {
     hint.textContent = 'Введите сумму больше 0';
     return;
   }
+  
+  // Проверяем баланс перед отправкой
+  try {
+    const balanceRes = await fetch(`${API_BASE}/api/wallet/balance`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const balanceData = await balanceRes.json();
+    if (balanceData.ok) {
+      walletBalance = balanceData.balance;
+      localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+    }
+  } catch(e) {}
+  
   if (amount > walletBalance) {
     hint.textContent = 'Недостаточно средств';
     return;
@@ -2758,15 +2892,20 @@ async function submitGift() {
       return;
     }
     
-    walletBalance = data.new_balance || walletBalance - amount;
+    // ОБНОВЛЯЕМ БАЛАНС С СЕРВЕРА
+    walletBalance = data.new_balance !== undefined ? data.new_balance : walletBalance - amount;
     localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+    
+    // Добавляем транзакцию
     walletTransactions.unshift({
       name: `Подарок пользователю ${phone}`,
       amount: -amount,
       date: new Date().toLocaleString()
     });
     localStorage.setItem('dicegram_wallet_transactions_' + session.username, JSON.stringify(walletTransactions));
+    
     renderWallet();
+    renderProfileGifts();
     document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
     closeModal('giftWalletModal');
     showToast(`✅ Подарок отправлен! -${amount} ❤️`);

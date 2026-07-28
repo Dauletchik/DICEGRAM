@@ -1084,26 +1084,6 @@ html, body {
   flex-shrink: 0;
 }
 
-.pin-dots {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin: 20px 0;
-}
-.pin-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  transition: all 0.2s ease;
-}
-.pin-dot.filled {
-  background: var(--accent);
-  border-color: var(--accent);
-  transform: scale(1.1);
-}
-
 /* ========== PREMIUM PAGE ========== */
 .premium-page {
   position: absolute;
@@ -1433,7 +1413,7 @@ html, body {
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Аккаунт и безопасность</div>
-              <div class="settings-card-sub">Пароль, устройства, PIN-код</div>
+              <div class="settings-card-sub">Пароль, устройства</div>
             </div>
             <div class="settings-card-right">
               <span class="settings-chevron">›</span>
@@ -1717,13 +1697,6 @@ html, body {
         </div>
         <span class="value" id="devicesCount">0 сессий ›</span>
       </div>
-      <div class="sub-settings-item" onclick="openPinPage()">
-        <div class="left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>
-          <span class="label">Код-пароль (PIN)</span>
-        </div>
-        <div class="toggle" id="pinToggle" onclick="event.stopPropagation(); togglePin()"><div class="toggle-knob"></div></div>
-      </div>
     </div>
   </div>
 
@@ -1737,43 +1710,6 @@ html, body {
       <span style="width:60px;"></span>
     </div>
     <div class="sub-settings-content"><div id="devicesList"></div></div>
-  </div>
-
-  <div class="sub-settings-page" id="pinPage">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeSubSettings('pinPage')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Назад
-      </button>
-      <span>Код-пароль</span>
-      <span style="width:60px;"></span>
-    </div>
-    <div class="sub-settings-content" style="text-align:center;padding-top:40px;">
-      <div style="font-size:48px;margin-bottom:20px;">🔐</div>
-      <div class="auth-title" style="font-size:22px;">Введите PIN-код</div>
-      <div class="auth-sub">4 цифры для защиты аккаунта</div>
-      <div class="pin-dots" id="pinDots">
-        <div class="pin-dot" data-index="0"></div>
-        <div class="pin-dot" data-index="1"></div>
-        <div class="pin-dot" data-index="2"></div>
-        <div class="pin-dot" data-index="3"></div>
-      </div>
-      <div class="hint err" id="pinHint" style="min-height:24px;"></div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;">
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('1')" style="padding:18px;font-size:20px;">1</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('2')" style="padding:18px;font-size:20px;">2</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('3')" style="padding:18px;font-size:20px;">3</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('4')" style="padding:18px;font-size:20px;">4</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('5')" style="padding:18px;font-size:20px;">5</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('6')" style="padding:18px;font-size:20px;">6</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('7')" style="padding:18px;font-size:20px;">7</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('8')" style="padding:18px;font-size:20px;">8</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('9')" style="padding:18px;font-size:20px;">9</button>
-        <div></div>
-        <button class="btn btn-secondary pin-btn" onclick="pinInput('0')" style="padding:18px;font-size:20px;">0</button>
-        <button class="btn btn-secondary pin-btn" onclick="pinDelete()" style="padding:18px;font-size:20px;">⌫</button>
-      </div>
-    </div>
   </div>
 
   <div class="sub-settings-page" id="walletPage">
@@ -2217,12 +2153,6 @@ let sentMessages = new Set();
 let unreadCounts = {};
 let totalUnread = 0;
 
-// PIN
-let pinEntered = [];
-let pinStep = 'create';
-let pinFirst = '';
-let pinEnabled = false;
-
 // Wallet
 let walletBalance = 0;
 let walletTransactions = [];
@@ -2413,22 +2343,28 @@ function updatePremiumUI() {
   }
 }
 
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ BUY PREMIUM =====
 function buyPremium() {
   if (session.is_premium) {
     showToast('⭐ У вас уже есть Premium!');
     return;
   }
-  showToast('💳 Обработка платежа...');
-  setTimeout(() => {
-    session.is_premium = true;
-    session.premium_days = 30;
-    localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
-    updatePremiumUI();
-    renderProfileTab();
-    renderChatList();
-    showToast('🎉 Добро пожаловать в Dicegram Premium!');
-    playSound('click');
-  }, 1500);
+  if (walletBalance < 499) {
+    showToast('❌ Недостаточно средств. Нужно 499 ❤️');
+    return;
+  }
+  // Списываем средства
+  walletBalance -= 499;
+  localStorage.setItem('dicegram_wallet', String(walletBalance));
+  session.is_premium = true;
+  session.premium_days = 30;
+  localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
+  updatePremiumUI();
+  renderProfileTab();
+  renderChatList();
+  renderWallet();
+  showToast('🎉 Добро пожаловать в Dicegram Premium!');
+  playSound('click');
 }
 
 function selectNicknameColor(color) {
@@ -2484,179 +2420,8 @@ function closeSubSettings(id) {
 
 function openAccountSecurityPage() { openSubSettings('accountSecurityPage'); }
 function openDevicesPage() { openSubSettings('devicesPage'); loadDevices(); }
-function openPinPage() { 
-  openSubSettings('pinPage');
-  pinEntered = [];
-  pinStep = 'create';
-  pinFirst = '';
-  updatePinDots();
-  document.getElementById('pinHint').textContent = '';
-  const savedPin = localStorage.getItem('dicegram_pin');
-  pinEnabled = !!savedPin;
-  document.getElementById('pinToggle').classList.toggle('on', pinEnabled);
-}
 function openWalletPage() { openSubSettings('walletPage'); loadWallet(); }
 function openAIChat() { openSubSettings('aiChatPage'); document.getElementById('aiChatInput').focus(); }
-
-// ===================== PIN =====================
-function updatePinDots() {
-  document.querySelectorAll('.pin-dot').forEach((dot, i) => {
-    dot.classList.toggle('filled', i < pinEntered.length);
-  });
-}
-
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ PIN INPUT =====
-function pinInput(num) {
-  if (pinEntered.length >= 4) return;
-  pinEntered.push(num);
-  updatePinDots();
-  playSound('click');
-  if (pinEntered.length === 4) {
-    const pin = pinEntered.join('');
-    if (pinStep === 'create') {
-      pinFirst = pin;
-      pinStep = 'confirm';
-      pinEntered = [];
-      updatePinDots();
-      document.getElementById('pinHint').textContent = 'Повторите PIN-код';
-      document.getElementById('pinHint').className = 'hint muted';
-    } else {
-      if (pin === pinFirst) {
-        // СОХРАНЯЕМ НА СЕРВЕР
-        fetch(`${API_BASE}/api/pin/set`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.token}`
-          },
-          body: JSON.stringify({ pin: pin })
-        })
-        .then(r => r.json())
-        .then(data => {
-          if (data.ok) {
-            localStorage.setItem('dicegram_pin', pin);
-            pinEnabled = true;
-            document.getElementById('pinToggle').classList.add('on');
-            document.getElementById('pinHint').textContent = '✅ PIN-код установлен!';
-            document.getElementById('pinHint').className = 'hint ok';
-            showToast('PIN-код установлен на сервере!');
-            setTimeout(() => closeSubSettings('pinPage'), 1000);
-          } else {
-            document.getElementById('pinHint').textContent = data.error || 'Ошибка сохранения PIN';
-            document.getElementById('pinHint').className = 'hint err';
-          }
-        })
-        .catch(() => {
-          document.getElementById('pinHint').textContent = 'Ошибка соединения с сервером';
-          document.getElementById('pinHint').className = 'hint err';
-        });
-      } else {
-        document.getElementById('pinHint').textContent = '❌ PIN-коды не совпадают. Попробуйте снова.';
-        document.getElementById('pinHint').className = 'hint err';
-        pinStep = 'create';
-        pinFirst = '';
-        pinEntered = [];
-        updatePinDots();
-      }
-    }
-  }
-}
-
-function pinDelete() {
-  if (pinEntered.length > 0) {
-    pinEntered.pop();
-    updatePinDots();
-    playSound('click');
-  }
-}
-
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ TOGGLE PIN =====
-function togglePin() {
-  const toggle = document.getElementById('pinToggle');
-  if (pinEnabled) {
-    if (confirm('Отключить PIN-код?')) {
-      // УДАЛЯЕМ С СЕРВЕРА
-      fetch(`${API_BASE}/api/pin/remove`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.token}`
-        },
-        body: JSON.stringify({ pin: localStorage.getItem('dicegram_pin') || '' })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.ok) {
-          localStorage.removeItem('dicegram_pin');
-          pinEnabled = false;
-          toggle.classList.remove('on');
-          showToast('PIN-код отключен на сервере');
-        } else {
-          showToast(data.error || 'Ошибка отключения PIN');
-        }
-      })
-      .catch(() => {
-        showToast('Ошибка соединения с сервером');
-      });
-    }
-  } else {
-    openPinPage();
-  }
-}
-
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ CHECK PIN ON LAUNCH =====
-function checkPinOnLaunch() {
-  const savedPin = localStorage.getItem('dicegram_pin');
-  if (savedPin) {
-    // ПРОВЕРЯЕМ PIN НА СЕРВЕРЕ
-    fetch(`${API_BASE}/api/pin/verify`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token}`
-      },
-      body: JSON.stringify({ pin: savedPin })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.ok) {
-        pinEnabled = true;
-        document.getElementById('pinToggle').classList.add('on');
-        showToast('PIN подтверждён');
-      } else {
-        localStorage.removeItem('dicegram_pin');
-        pinEnabled = false;
-        document.getElementById('pinToggle').classList.remove('on');
-        showToast('PIN неверный, введите заново');
-        openPinPage();
-      }
-    })
-    .catch(() => {
-      // Если сервер недоступен, пробуем локально
-      pinEnabled = true;
-      document.getElementById('pinToggle').classList.add('on');
-    });
-    return true;
-  }
-  // Проверяем есть ли PIN на сервере
-  fetch(`${API_BASE}/api/pin/status`, {
-    headers: { 'Authorization': `Bearer ${session.token}` }
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (data.ok && data.has_pin) {
-      pinEnabled = true;
-      document.getElementById('pinToggle').classList.add('on');
-      showToast('На сервере установлен PIN');
-      openPinPage();
-    } else {
-      pinEnabled = false;
-      document.getElementById('pinToggle').classList.remove('on');
-    }
-  })
-  .catch(() => {});
-  return false;
-}
 
 // ===================== DEVICES =====================
 function loadDevices() {
@@ -2701,6 +2466,7 @@ function loadWallet() {
 
 function renderWallet() {
   document.getElementById('walletBalanceAmount').textContent = walletBalance;
+  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
   const container = document.getElementById('walletTransactions');
   if (walletTransactions.length === 0) {
     container.innerHTML = '<div class="empty-state">Нет операций</div>';
@@ -2726,6 +2492,7 @@ function openGiftWalletModal() {
   openModal('giftWalletModal');
 }
 
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT =====
 function submitGift() {
   const phone = document.getElementById('giftPhone').value.trim();
   const amount = parseInt(document.getElementById('giftAmount').value);
@@ -2742,6 +2509,7 @@ function submitGift() {
     hint.textContent = 'Недостаточно средств';
     return;
   }
+  // МГНОВЕННОЕ СПИСАНИЕ
   walletBalance -= amount;
   localStorage.setItem('dicegram_wallet', String(walletBalance));
   walletTransactions.unshift({
@@ -2751,6 +2519,7 @@ function submitGift() {
   });
   localStorage.setItem('dicegram_wallet_transactions', JSON.stringify(walletTransactions));
   renderWallet();
+  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
   closeModal('giftWalletModal');
   showToast(`✅ Подарок отправлен! -${amount} ❤️`);
   playSound('click');
@@ -2936,7 +2705,6 @@ async function doLogin() {
     };
     localStorage.setItem('dicegram_token', data.token);
     localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
-    if (checkPinOnLaunch()) { openPinPage(); return; }
     enterApp();
   } catch (e) {
     hint.textContent = 'Нет связи с сервером';
@@ -3043,7 +2811,6 @@ function selectGiftShopItem(index) {
   playSound('click');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ GIFT CONFIRM PURCHASE =====
 function giftConfirmPurchase() {
   if (!giftShopSelected) return;
   if (!giftRecipient) return;
@@ -4646,7 +4413,6 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       session = JSON.parse(savedSession);
       session.token = savedToken;
-      if (checkPinOnLaunch()) { openPinPage(); return; }
       enterApp();
       return;
     } catch(e) {}

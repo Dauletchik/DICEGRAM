@@ -1290,6 +1290,101 @@ html, body {
 }
 .media-grid .media-item img:active { transform: scale(1.05); }
 
+/* ========== BANNED SCREEN (UI/UX 2026) ========== */
+.banned-screen {
+  position: absolute;
+  inset: 0;
+  background: #0a0e17;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 32px;
+  text-align: center;
+}
+.banned-screen.active {
+  display: flex;
+}
+.banned-icon-wrap {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: rgba(255,84,112,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  border: 2px solid rgba(255,84,112,0.15);
+  animation: bannedPulse 2.5s ease-in-out infinite;
+}
+@keyframes bannedPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,84,112,0.05); }
+  50% { transform: scale(1.04); box-shadow: 0 0 50px rgba(255,84,112,0.12); }
+}
+.banned-icon-wrap svg {
+  width: 44px;
+  height: 44px;
+  stroke: #ff5470;
+  stroke-width: 1.5;
+}
+.banned-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #ff5470 0%, #ff2d55 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+}
+.banned-text {
+  color: rgba(255,255,255,0.6);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 320px;
+  font-weight: 400;
+}
+.banned-reason {
+  color: rgba(255,255,255,0.9);
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(255,84,112,0.06);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,84,112,0.1);
+  margin: 16px 0 8px;
+  max-width: 320px;
+}
+.banned-duration {
+  color: #ff5470;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  margin-bottom: 32px;
+}
+.banned-btn {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.8);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  padding: 16px 40px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 200px;
+  letter-spacing: 0.3px;
+}
+.banned-btn:active {
+  transform: scale(0.96);
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.15);
+}
+.banned-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+
 @media (max-width: 380px) {
   .wallet-balance-card .amount { font-size: 32px; }
   .settings-card { padding: 10px 14px; min-height: 50px; }
@@ -1299,6 +1394,9 @@ html, body {
   .premium-hero .title { font-size: 26px; }
   .premium-price .price { font-size: 32px; }
   .gifts-grid, .gift-shop-grid { grid-template-columns: repeat(2, 1fr); }
+  .banned-title { font-size: 24px; }
+  .banned-icon-wrap { width: 76px; height: 76px; }
+  .banned-icon-wrap svg { width: 34px; height: 34px; }
 }
 </style>
 </head>
@@ -1381,6 +1479,24 @@ html, body {
     <div class="hint err" id="loginHint"></div>
     <div class="spacer"></div>
     <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+  </div>
+
+  <!-- BANNED SCREEN (UI/UX 2026) -->
+  <div class="banned-screen" id="bannedScreen">
+    <div class="banned-icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        <circle cx="12" cy="16" r="1.5"/>
+      </svg>
+    </div>
+    <div class="banned-title">ДОСТУП ОГРАНИЧЕН</div>
+    <div class="banned-text">
+      Ваш аккаунт в DICEGRAM был заблокирован Создателем мессенджера за нарушение правил платформы.
+    </div>
+    <div class="banned-reason">Причина: Нарушение условий пользовательского соглашения</div>
+    <div class="banned-duration">Срок блокировки: Навсегда</div>
+    <button class="banned-btn" onclick="logoutFromBanned()">Выйти из аккаунта</button>
   </div>
 
   <!-- MAIN APP -->
@@ -1483,7 +1599,6 @@ html, body {
               <span class="settings-chevron">›</span>
             </div>
           </div>
-          <!-- ===== ИСПРАВЛЕНИЕ: Пригласить друзей ===== -->
           <div class="settings-card" onclick="openInviteFriends()">
             <div class="settings-icon" style="background: #0EA5E9;">
               <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -1756,7 +1871,6 @@ html, body {
     </div>
   </div>
 
-  <!-- ===== ПРИГЛАСИТЬ ДРУЗЕЙ (НОВАЯ СТРАНИЦА) ===== -->
   <div class="sub-settings-page" id="inviteFriendsPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('inviteFriendsPage')">
@@ -2157,7 +2271,8 @@ let session = {
   is_owner: false, is_verified: false, bio: "", timezone: "kazakhstan", 
   avatar_url: null, is_premium: false, premium_days: 0,
   premium_nickname_color: "default", premium_avatar_border: "none",
-  is_nft: false, nft_username: null 
+  is_nft: false, nft_username: null,
+  is_banned: false
 };
 let currentChatWith = null;
 let currentChatIsGroup = false;
@@ -2247,11 +2362,16 @@ function genClientMsgId() {
   return 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
 }
 
-function avatarHtml(nameLetter, avatarUrl, extraClass, forceLetterOnly, isOwner, isPremium, borderColor) {
+function avatarHtml(nameLetter, avatarUrl, extraClass, forceLetterOnly, isOwner, isPremium, borderColor, isBanned) {
   let classes = extraClass || '';
   if (isOwner) classes += ' owner-avatar';
   if (isPremium && borderColor && borderColor !== 'none') {
     classes += ' avatar-premium-border ' + borderColor;
+  }
+  if (isBanned) {
+    return `<div class="avatar ${classes}" style="filter:grayscale(1);background:#6b7788;">
+      <span style="font-size:20px;">🚫</span>
+    </div>`;
   }
   if (avatarUrl && !forceLetterOnly) {
     const src = avatarUrl.startsWith('http') ? avatarUrl : `${API_BASE}${avatarUrl}`;
@@ -2326,6 +2446,28 @@ function updateNavBadges() {
   } else {
     badge.style.display = 'none';
   }
+}
+
+// ===================== BANNED FUNCTIONS =====================
+function showBannedScreen(phone) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('mainApp').classList.remove('active');
+  document.getElementById('bannedScreen').classList.add('active');
+  if (ws) {
+    ws.close();
+    ws = null;
+  }
+  localStorage.removeItem('dicegram_token');
+  localStorage.removeItem('dicegram_session_cache');
+}
+
+function logoutFromBanned() {
+  document.getElementById('bannedScreen').classList.remove('active');
+  goTo('welcome');
+  document.getElementById('loginPhone').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginHint').textContent = '';
+  showToast('Вы вышли из заблокированного аккаунта');
 }
 
 // ===================== PREMIUM FUNCTIONS =====================
@@ -2558,7 +2700,7 @@ function openGiftWalletModal() {
   openModal('giftWalletModal');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (С ПРОВЕРКОЙ НОМЕРА) =====
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT =====
 async function submitGift() {
   const phone = document.getElementById('giftPhone').value.trim();
   const amount = parseInt(document.getElementById('giftAmount').value);
@@ -2591,6 +2733,10 @@ async function submitGift() {
       hint.textContent = 'Нельзя отправить подарок себе';
       return;
     }
+    if (checkData.user.is_banned) {
+      hint.textContent = 'Аккаунт получателя заблокирован';
+      return;
+    }
   } catch(e) {
     hint.textContent = 'Ошибка проверки пользователя';
     return;
@@ -2612,7 +2758,6 @@ async function submitGift() {
       return;
     }
     
-    // Мгновенное обновление баланса
     walletBalance = data.new_balance || walletBalance - amount;
     localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
     walletTransactions.unshift({
@@ -2764,7 +2909,7 @@ async function submitRegistration() {
       is_owner: !!data.is_owner, is_verified: !!data.is_verified, bio: '', timezone: 'kazakhstan', 
       avatar_url: null, surname: null, is_premium: false, premium_days: 0,
       premium_nickname_color: 'default', premium_avatar_border: 'none',
-      is_nft: false, nft_username: null
+      is_nft: false, nft_username: null, is_banned: false
     };
     document.getElementById('phoneDisplay').textContent = data.phone;
     document.getElementById('successTitle').textContent = data.is_owner
@@ -2798,7 +2943,17 @@ async function doLogin() {
       body: JSON.stringify({ phone, password, device: navigator.userAgent.substring(0, 60) })
     });
     const data = await res.json();
-    if (!data.ok) { hint.textContent = data.error || 'Ошибка входа'; return; }
+    if (!data.ok) { 
+      hint.textContent = data.error || 'Ошибка входа';
+      if (data.banned) {
+        showBannedScreen(phone);
+      }
+      return; 
+    }
+    if (data.is_banned) {
+      showBannedScreen(phone);
+      return;
+    }
     session = {
       token: data.token, username: data.username, name: data.name, phone: data.phone,
       is_owner: !!data.is_owner, is_verified: !!data.is_verified, bio: '', timezone: 'kazakhstan',
@@ -2807,7 +2962,8 @@ async function doLogin() {
       premium_nickname_color: data.premium_nickname_color || 'default',
       premium_avatar_border: data.premium_avatar_border || 'none',
       is_nft: data.is_nft || false,
-      nft_username: data.nft_username || null
+      nft_username: data.nft_username || null,
+      is_banned: data.is_banned || false
     };
     localStorage.setItem('dicegram_token', data.token);
     localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
@@ -2841,7 +2997,6 @@ function openGiftShop() {
   openModal('giftShopModal');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОИСКА ПОЛУЧАТЕЛЯ =====
 function giftFindRecipient() {
   const phone = document.getElementById('giftRecipientPhone').value.trim();
   const hint = document.getElementById('giftRecipientHint');
@@ -2855,7 +3010,6 @@ function giftFindRecipient() {
     hint.textContent = 'Нельзя подарить подарок самому себе';
     return;
   }
-  // Поиск пользователя по номеру через сервер
   fetch(`${API_BASE}/api/user/profile/by_phone?phone=${encodeURIComponent(phone)}`, {
     headers: { 'Authorization': `Bearer ${session.token}` }
   })
@@ -2863,6 +3017,10 @@ function giftFindRecipient() {
   .then(data => {
     if (!data.ok || !data.user) {
       hint.textContent = 'Пользователь с таким номером не найден в DICEGRAM';
+      return;
+    }
+    if (data.user.is_banned) {
+      hint.textContent = 'Пользователь заблокирован';
       return;
     }
     giftRecipient = data.user;
@@ -2918,7 +3076,6 @@ function selectGiftShopItem(index) {
   playSound('click');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОКУПКИ ПОДАРКА (ЧЕРЕЗ СЕРВЕР) =====
 async function giftConfirmPurchase() {
   if (!giftShopSelected) return;
   if (!giftRecipient) return;
@@ -2948,7 +3105,6 @@ async function giftConfirmPurchase() {
       return;
     }
     
-    // Мгновенное обновление баланса
     walletBalance = data.new_balance || walletBalance - price;
     localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
     walletTransactions.unshift({
@@ -2964,7 +3120,6 @@ async function giftConfirmPurchase() {
     closeModal('giftShopModal');
     showToast(`🎁 Подарок ${giftShopSelected.emoji} отправлен ${giftRecipient.name}!`);
     
-    // Уведомление через WebSocket
     if (ws && ws.readyState === WebSocket.OPEN && giftRecipient.username !== session.username) {
       ws.send(JSON.stringify({
         type: 'message',
@@ -2979,7 +3134,6 @@ async function giftConfirmPurchase() {
   }
 }
 
-// ===== ФУНКЦИЯ ЗАГРУЗКИ ПОДАРКОВ (с сервера) =====
 function renderProfileGifts() {
   const grid = document.getElementById('profileGiftsGrid');
   const empty = document.getElementById('profileGiftsEmpty');
@@ -3011,7 +3165,6 @@ function renderProfileGifts() {
   });
 }
 
-// ===== ФУНКЦИЯ ПРОДАЖИ ПОДАРКА (через сервер) =====
 async function sellGift(giftId) {
   if (!confirm('Продать подарок?')) return;
   try {
@@ -3026,7 +3179,6 @@ async function sellGift(giftId) {
     const data = await res.json();
     if (data.ok) {
       showToast('✅ ' + data.message);
-      // Обновляем баланс
       walletBalance = data.new_balance || walletBalance + (data.sell_price || 0);
       localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
       renderWallet();
@@ -3138,6 +3290,10 @@ function blockUser() {
 
 // ===================== ENTER APP =====================
 function enterApp() {
+  if (session.is_banned) {
+    showBannedScreen(session.phone);
+    return;
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('mainApp').classList.add('active');
   renderProfileTab();
@@ -3160,26 +3316,36 @@ async function syncProfileFromServer() {
       headers: { 'Authorization': `Bearer ${session.token}` }
     });
     const data = await res.json();
-    if (data.ok) {
-      session.name = data.name;
-      session.surname = data.surname || '';
-      session.username = data.username;
-      session.phone = data.phone;
-      session.avatar_url = data.avatar_url || null;
-      session.bio = data.bio || '';
-      session.timezone = data.timezone || 'kazakhstan';
-      session.is_owner = !!data.is_owner;
-      session.is_verified = !!data.is_verified;
-      session.is_premium = data.is_premium || false;
-      session.premium_days = data.premium_days || 0;
-      session.premium_nickname_color = data.premium_nickname_color || 'default';
-      session.premium_avatar_border = data.premium_avatar_border || 'none';
-      session.is_nft = data.is_nft || false;
-      session.nft_username = data.nft_username || null;
-      localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
-      renderProfileTab();
-      updatePremiumUI();
+    if (!data.ok) {
+      if (data.banned) {
+        showBannedScreen(session.phone);
+        return;
+      }
+      return;
     }
+    if (data.is_banned) {
+      showBannedScreen(data.phone);
+      return;
+    }
+    session.name = data.name;
+    session.surname = data.surname || '';
+    session.username = data.username;
+    session.phone = data.phone;
+    session.avatar_url = data.avatar_url || null;
+    session.bio = data.bio || '';
+    session.timezone = data.timezone || 'kazakhstan';
+    session.is_owner = !!data.is_owner;
+    session.is_verified = !!data.is_verified;
+    session.is_premium = data.is_premium || false;
+    session.premium_days = data.premium_days || 0;
+    session.premium_nickname_color = data.premium_nickname_color || 'default';
+    session.premium_avatar_border = data.premium_avatar_border || 'none';
+    session.is_nft = data.is_nft || false;
+    session.nft_username = data.nft_username || null;
+    session.is_banned = data.is_banned || false;
+    localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
+    renderProfileTab();
+    updatePremiumUI();
   } catch (e) {}
 }
 
@@ -3188,6 +3354,7 @@ function renderProfileTab() {
   const isOwner = session.phone === OWNER_PHONE || session.is_owner;
   const isPremium = session.is_premium || false;
   const isNft = session.is_nft || false;
+  const isBanned = session.is_banned || false;
   
   let nameHtml = escapeHtml(displayName);
   if (isOwner) {
@@ -3214,7 +3381,10 @@ function renderProfileTab() {
   }
   if (isOwner) avatarWrap.classList.add('owner-avatar-profile');
   
-  if (session.avatar_url) {
+  if (isBanned) {
+    avatarWrap.innerHTML = `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236b7788' width='100' height='100'/%3E%3Ctext x='50' y='58' font-size='36' text-anchor='middle' fill='%23a8b3c4' font-family='Arial'%3E🚫%3C/text%3E%3C/svg%3E" style="filter:grayscale(1);">`;
+    document.getElementById('profileNameDisplay').innerHTML = 'Удалённый аккаунт';
+  } else if (session.avatar_url) {
     avatarWrap.innerHTML = `<img src="${API_BASE}${session.avatar_url}">`;
   } else {
     avatarWrap.innerHTML = `<span>${session.name.charAt(0).toUpperCase()}</span>`;
@@ -3226,7 +3396,7 @@ function renderProfileTab() {
   document.getElementById('profileNftBadge').style.display = isNft ? 'block' : 'none';
   
   const settings = document.getElementById('premiumProfileSettings');
-  if (isPremium) {
+  if (isPremium && !isBanned) {
     settings.style.display = 'block';
     document.getElementById('premiumBorderDisplay').textContent = session.premium_avatar_border || 'Выбрать цвет ›';
     document.getElementById('premiumColorDisplay').textContent = session.premium_nickname_color || 'Выбрать цвет ›';
@@ -3270,9 +3440,12 @@ function renderChatList() {
     const nftBadge = isNFT ? ' <span class="nft-badge">🏆 NFT</span>' : '';
     const isPremium = c.is_premium || false;
     const premiumBadge = isPremium ? ' <span class="premium-badge">⭐</span>' : '';
+    const isBanned = c.is_banned || false;
     
     let nameHtml = escapeHtml(c.name);
-    if (isOwner) {
+    if (isBanned) {
+      nameHtml = 'Удалённый аккаунт';
+    } else if (isOwner) {
       nameHtml = `<span class="rainbow-text">${nameHtml}</span>`;
     } else if (isPremium && c.premium_nickname_color && c.premium_nickname_color !== 'default') {
       const colorClass = `nickname-${c.premium_nickname_color}`;
@@ -3281,9 +3454,9 @@ function renderChatList() {
     
     return `
     <div class="chat-list-item" onclick="openChat('${username}', '${escapeHtml(c.name).replace(/'/g,"\\'")}', ${isGroup})">
-      ${avatarHtml(letter, c.avatar_url, avatarClass, isSystemBot, isOwner, isPremium, c.premium_avatar_border)}
+      ${avatarHtml(letter, c.avatar_url, avatarClass, isSystemBot, isOwner, isPremium, c.premium_avatar_border, isBanned)}
       <div class="chat-item-body">
-        <div class="chat-item-name">${nameHtml}${groupBadge}${nftBadge}${premiumBadge} ${c.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${c.is_banned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''} ${unreadHtml}</div>
+        <div class="chat-item-name">${nameHtml}${groupBadge}${nftBadge}${premiumBadge} ${c.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${isBanned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''} ${unreadHtml}</div>
         <div class="chat-item-last">${escapeHtml(c.lastText || '')}</div>
       </div>
       <div class="chat-item-time">${c.lastTime ? (c.lastTime.split(' ')[1]||'').substring(0,5) : ''}</div>
@@ -3298,7 +3471,7 @@ async function loadChatsList() {
       name: 'DICEGRAM SUPPORT', lastText: 'Добро пожаловать!', lastTime: '', 
       is_verified: true, avatar_url: '', avatar_letter: 'D',
       is_premium: false, premium_nickname_color: 'default', premium_avatar_border: 'none',
-      is_nft: false
+      is_nft: false, is_banned: false
     };
   }
   renderChatList();
@@ -3310,9 +3483,15 @@ async function loadChatsList() {
     if (data.ok) {
       data.chats.forEach(c => {
         chats[c.username] = {
-          name: c.name, lastText: c.last_text, lastTime: c.last_time,
-          avatar_url: c.avatar_url, avatar_letter: c.avatar_letter, is_verified: c.is_verified,
-          is_owner: c.is_owner, is_banned: c.is_banned, is_group: c.is_group || false,
+          name: c.is_banned ? 'Удалённый аккаунт' : c.name,
+          lastText: c.last_text,
+          lastTime: c.last_time,
+          avatar_url: c.is_banned ? '' : c.avatar_url,
+          avatar_letter: c.is_banned ? '🚫' : c.avatar_letter,
+          is_verified: c.is_verified,
+          is_owner: c.is_owner,
+          is_banned: c.is_banned || false,
+          is_group: c.is_group || false,
           phone: c.phone || '',
           is_nft: c.is_nft || false,
           is_premium: c.is_premium || false,
@@ -3382,11 +3561,13 @@ async function doSearchContacts(q) {
       const isOwner = u.phone === OWNER_PHONE || u.is_owner;
       const isPremium = u.is_premium || false;
       const isNFT = u.is_nft || false;
+      const isBanned = u.is_banned || false;
+      const displayName = isBanned ? 'Удалённый аккаунт' : u.name;
       return `
-      <div class="chat-list-item" onclick="openChat('${u.username}', '${escapeHtml(u.name).replace(/'/g,"\\'")}')">
-        ${avatarHtml(u.name.charAt(0).toUpperCase(), u.avatar_url, '', false, isOwner, isPremium, u.premium_avatar_border)}
+      <div class="chat-list-item" onclick="openChat('${u.username}', '${escapeHtml(displayName).replace(/'/g,"\\'")}')">
+        ${avatarHtml(isBanned ? '🚫' : u.name.charAt(0).toUpperCase(), isBanned ? '' : u.avatar_url, '', false, isOwner, isPremium, u.premium_avatar_border, isBanned)}
         <div class="chat-item-body">
-          <div class="chat-item-name">${escapeHtml(u.name)} ${u.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''}</div>
+          <div class="chat-item-name">${escapeHtml(displayName)} ${u.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''} ${isBanned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''}</div>
           <div class="chat-item-last">@${u.username}</div>
         </div>
       </div>
@@ -3419,11 +3600,13 @@ async function loadContactsList() {
       const isOwner = live && (live.phone === OWNER_PHONE || live.is_owner);
       const isPremium = live && live.is_premium;
       const isNFT = live && live.is_nft;
+      const isBanned = live && live.is_banned;
+      const finalName = isBanned ? 'Удалённый аккаунт' : displayName;
       return `
-      <div class="chat-list-item" onclick="${uname ? `openChat('${uname}', '${escapeHtml(displayName).replace(/'/g,"\\'")}')` : ''}">
-        ${avatarHtml(displayName.charAt(0).toUpperCase(), avatarUrl, '', false, isOwner, isPremium, live?.premium_avatar_border)}
+      <div class="chat-list-item" onclick="${uname ? `openChat('${uname}', '${escapeHtml(finalName).replace(/'/g,"\\'")}')` : ''}">
+        ${avatarHtml(isBanned ? '🚫' : displayName.charAt(0).toUpperCase(), isBanned ? '' : avatarUrl, '', false, isOwner, isPremium, live?.premium_avatar_border, isBanned)}
         <div class="chat-item-body">
-          <div class="chat-item-name">${escapeHtml(displayName)} ${verified ? '<span class="verified-badge">✓</span>' : ''} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''}</div>
+          <div class="chat-item-name">${escapeHtml(finalName)} ${verified ? '<span class="verified-badge">✓</span>' : ''} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''} ${isBanned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''}</div>
           <div class="chat-item-last">${c.contact_phone}${uname ? ' · @'+uname : ' · не в DICEGRAM'}</div>
         </div>
       </div>`;
@@ -3645,27 +3828,31 @@ async function openChat(username, name, isGroup = false) {
   const isOwner = chats[username]?.phone === OWNER_PHONE || chats[username]?.is_owner;
   const isPremium = chats[username]?.is_premium || false;
   const isNFT = chats[username]?.is_nft || false;
+  const isBanned = chats[username]?.is_banned || false;
   
   let nameHtml = escapeHtml(displayName);
-  if (isOwner) {
+  if (isBanned) {
+    nameHtml = 'Удалённый аккаунт';
+  } else if (isOwner) {
     nameHtml = `<span class="rainbow-text">${nameHtml}</span>`;
   } else if (isPremium && chats[username]?.premium_nickname_color && chats[username]?.premium_nickname_color !== 'default') {
     const colorClass = `nickname-${chats[username]?.premium_nickname_color}`;
     nameHtml = `<span class="${colorClass}">${nameHtml}</span>`;
   }
   
-  document.getElementById('chatHeaderName').innerHTML = nameHtml + (chats[username]?.is_verified ? ' <span class="verified-badge">✓</span>' : '') + (isGroup ? ' <span class="group-badge">ГРУППА</span>' : '') + (isPremium ? ' <span class="premium-badge">⭐</span>' : '') + (isNFT ? ' <span class="nft-badge">🏆 NFT</span>' : '');
+  document.getElementById('chatHeaderName').innerHTML = nameHtml + (chats[username]?.is_verified ? ' <span class="verified-badge">✓</span>' : '') + (isGroup ? ' <span class="group-badge">ГРУППА</span>' : '') + (isPremium ? ' <span class="premium-badge">⭐</span>' : '') + (isNFT ? ' <span class="nft-badge">🏆 NFT</span>' : '') + (isBanned ? ' <span class="banned-badge">ЗАБЛОКИРОВАН</span>' : '');
   
   const isSystemBot = chats[username]?.avatar_letter === 'B' || username === SUPPORT_USERNAME;
   const avatarClasses = isGroup ? 'group' : (username === SUPPORT_USERNAME ? 'support' : '');
   document.getElementById('chatHeaderAvatar').innerHTML = avatarHtml(
-    chats[username]?.avatar_letter || displayName.charAt(0).toUpperCase(),
-    chats[username]?.avatar_url,
+    isBanned ? '🚫' : (chats[username]?.avatar_letter || displayName.charAt(0).toUpperCase()),
+    isBanned ? '' : chats[username]?.avatar_url,
     avatarClasses,
-    isSystemBot,
+    isSystemBot || isBanned,
     isOwner,
     isPremium,
-    chats[username]?.premium_avatar_border
+    chats[username]?.premium_avatar_border,
+    isBanned
   );
   
   const statusEl = document.getElementById('chatHeaderStatus');
@@ -3674,6 +3861,9 @@ async function openChat(username, name, isGroup = false) {
     statusEl.textContent = 'группа';
   } else if (username === SUPPORT_USERNAME) {
     statusEl.textContent = 'официальный бот поддержки';
+  } else if (isBanned) {
+    statusEl.textContent = 'аккаунт заблокирован';
+    statusEl.className = 'chat-header-status banned-line';
   } else {
     statusEl.textContent = presenceLabel(username);
     if (presenceMap[username]?.online) statusEl.classList.add('online');
@@ -3682,7 +3872,7 @@ async function openChat(username, name, isGroup = false) {
     }
   }
 
-  document.getElementById('chatInputBar').style.display = 'flex';
+  document.getElementById('chatInputBar').style.display = isBanned ? 'none' : 'flex';
   document.getElementById('chatView').classList.add('active');
   document.getElementById('messagesContainer').innerHTML = '';
   cancelImagePreview();
@@ -4082,9 +4272,10 @@ async function openUserProfile(username) {
     const isOwner = u.phone === OWNER_PHONE || u.is_owner;
     const isPremium = u.is_premium || false;
     const isNFT = u.is_nft || false;
+    const isBanned = u.is_banned || false;
     
-    let contactName = u.name;
-    let contactSurname = u.surname || '';
+    let contactName = isBanned ? 'Удалённый аккаунт' : u.name;
+    let contactSurname = isBanned ? '' : (u.surname || '');
     try {
       const contactsRes = await fetch(`${API_BASE}/api/contacts/list`, {
         headers: { 'Authorization': `Bearer ${session.token}` }
@@ -4092,7 +4283,7 @@ async function openUserProfile(username) {
       const contactsData = await contactsRes.json();
       if (contactsData.ok) {
         const contact = contactsData.contacts.find(c => c.contact_username === username);
-        if (contact) {
+        if (contact && !isBanned) {
           contactName = contact.contact_name;
           contactSurname = contact.contact_surname || '';
         }
@@ -4100,7 +4291,9 @@ async function openUserProfile(username) {
     } catch(e) {}
     
     let nameHtml = escapeHtml(contactName);
-    if (isOwner) {
+    if (isBanned) {
+      nameHtml = 'Удалённый аккаунт';
+    } else if (isOwner) {
       nameHtml = `<span class="rainbow-text">${nameHtml}</span>`;
     } else if (isPremium && u.premium_nickname_color && u.premium_nickname_color !== 'default') {
       const colorClass = `nickname-${u.premium_nickname_color}`;
@@ -4115,12 +4308,12 @@ async function openUserProfile(username) {
     document.getElementById('upNftBadge').style.display = isNFT ? 'block' : 'none';
     
     const bioEl = document.getElementById('upBio');
-    if (u.bio) { bioEl.textContent = u.bio; bioEl.style.display = 'block'; }
+    if (u.bio && !isBanned) { bioEl.textContent = u.bio; bioEl.style.display = 'block'; }
     else { bioEl.style.display = 'none'; }
 
-    document.getElementById('upStatusLine').textContent = u.online ? 'в сети' : formatLastSeen(u.last_seen);
+    document.getElementById('upStatusLine').textContent = isBanned ? 'аккаунт заблокирован' : (u.online ? 'в сети' : formatLastSeen(u.last_seen));
     document.getElementById('upVerifiedLine').style.display = u.is_verified ? 'flex' : 'none';
-    document.getElementById('upBannedLine').style.display = u.is_banned ? 'block' : 'none';
+    document.getElementById('upBannedLine').style.display = isBanned ? 'block' : 'none';
 
     const avatarWrap = document.getElementById('upAvatarWrap');
     avatarWrap.className = 'avatar profile-avatar';
@@ -4129,7 +4322,9 @@ async function openUserProfile(username) {
     }
     if (isOwner) avatarWrap.classList.add('owner-avatar-profile');
     
-    if (u.avatar_url) {
+    if (isBanned) {
+      avatarWrap.innerHTML = `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%236b7788' width='100' height='100'/%3E%3Ctext x='50' y='58' font-size='36' text-anchor='middle' fill='%23a8b3c4' font-family='Arial'%3E🚫%3C/text%3E%3C/svg%3E" style="filter:grayscale(1);">`;
+    } else if (u.avatar_url) {
       avatarWrap.innerHTML = `<img src="${API_BASE}${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;">`;
     } else {
       avatarWrap.innerHTML = `<span>${u.name.charAt(0).toUpperCase()}</span>`;
@@ -4374,6 +4569,12 @@ function connectWebSocket() {
     try {
       const data = JSON.parse(event.data);
       
+      if (data.type === 'banned') {
+        showBannedScreen(session.phone);
+        showToast('🚫 Аккаунт заблокирован!');
+        return;
+      }
+      
       if (data.type === 'message') {
         if (data.client_msg_id && sentMessages.has(data.client_msg_id)) {
           sentMessages.delete(data.client_msg_id);
@@ -4450,7 +4651,6 @@ function connectWebSocket() {
         showToast(`⭐ ${data.message || 'Premium активирован!'}`);
         syncProfileFromServer();
       } else if (data.type === 'wallet_gift') {
-        // ===== ИСПРАВЛЕНИЕ: МГНОВЕННОЕ ОБНОВЛЕНИЕ =====
         if (data.new_balance !== undefined) {
           walletBalance = data.new_balance;
           localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
@@ -4463,6 +4663,17 @@ function connectWebSocket() {
         }
         showToast(data.message || '🎁 Подарок получен!');
         playSound('click');
+      } else if (data.type === 'wallet_update') {
+        // Мгновенное обновление баланса от бота (/givedc)
+        walletBalance = data.balance;
+        localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+        document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+        if (document.getElementById('walletPage').classList.contains('active')) {
+          renderWallet();
+        }
+        renderProfileTab();
+        renderProfileGifts();
+        showToast(`💰 Баланс обновлён: ${walletBalance} ❤️`);
       }
     } catch(e) {}
   };
@@ -4525,6 +4736,10 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       session = JSON.parse(savedSession);
       session.token = savedToken;
+      if (session.is_banned) {
+        showBannedScreen(session.phone);
+        return;
+      }
       enterApp();
       return;
     } catch(e) {}

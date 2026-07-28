@@ -1822,6 +1822,7 @@ html, body {
     <div class="premium-price">
       <div class="price">$4.99 <span>/ месяц</span></div>
       <div class="period">Отмена в любой момент</div>
+      <!-- ===== ИСПРАВЛЕНИЕ PREMIUM: КНОПКА ПОКАЗЫВАЕТ "ВРЕМЕННО НЕ ДОСТУПНО" ===== -->
       <button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()">
         <span id="premiumBtnText">✨ Купить подписку</span>
       </button>
@@ -2345,26 +2346,8 @@ function updatePremiumUI() {
 
 // ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ BUY PREMIUM =====
 function buyPremium() {
-  if (session.is_premium) {
-    showToast('⭐ У вас уже есть Premium!');
-    return;
-  }
-  if (walletBalance < 499) {
-    showToast('❌ Недостаточно средств. Нужно 499 ❤️');
-    return;
-  }
-  // Списываем средства
-  walletBalance -= 499;
-  localStorage.setItem('dicegram_wallet', String(walletBalance));
-  session.is_premium = true;
-  session.premium_days = 30;
-  localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
-  updatePremiumUI();
-  renderProfileTab();
-  renderChatList();
-  renderWallet();
-  showToast('🎉 Добро пожаловать в Dicegram Premium!');
-  playSound('click');
+  showToast('⏳ Временно не доступно');
+  return;
 }
 
 function selectNicknameColor(color) {
@@ -2458,9 +2441,11 @@ function removeDevice(deviceId) {
 }
 
 // ===================== WALLET =====================
+// ===== ИСПРАВЛЕНИЕ: БАЛАНС СОХРАНЯЕТСЯ НА АККАУНТЕ (через localStorage привязан к сессии) =====
 function loadWallet() {
-  walletBalance = parseInt(localStorage.getItem('dicegram_wallet') || '0');
-  walletTransactions = JSON.parse(localStorage.getItem('dicegram_wallet_transactions') || '[]');
+  // Баланс привязан к сессии (аккаунту)
+  walletBalance = parseInt(localStorage.getItem('dicegram_wallet_' + session.username) || '0');
+  walletTransactions = JSON.parse(localStorage.getItem('dicegram_wallet_transactions_' + session.username) || '[]');
   renderWallet();
 }
 
@@ -2492,7 +2477,7 @@ function openGiftWalletModal() {
   openModal('giftWalletModal');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT =====
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (баланс привязан к аккаунту) =====
 function submitGift() {
   const phone = document.getElementById('giftPhone').value.trim();
   const amount = parseInt(document.getElementById('giftAmount').value);
@@ -2509,15 +2494,15 @@ function submitGift() {
     hint.textContent = 'Недостаточно средств';
     return;
   }
-  // МГНОВЕННОЕ СПИСАНИЕ
+  // МГНОВЕННОЕ СПИСАНИЕ (баланс привязан к аккаунту)
   walletBalance -= amount;
-  localStorage.setItem('dicegram_wallet', String(walletBalance));
+  localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
   walletTransactions.unshift({
     name: `Подарок пользователю ${phone}`,
     amount: -amount,
     date: new Date().toLocaleString()
   });
-  localStorage.setItem('dicegram_wallet_transactions', JSON.stringify(walletTransactions));
+  localStorage.setItem('dicegram_wallet_transactions_' + session.username, JSON.stringify(walletTransactions));
   renderWallet();
   document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
   closeModal('giftWalletModal');
@@ -2821,15 +2806,15 @@ function giftConfirmPurchase() {
     return;
   }
   
-  // Списываем средства
+  // Списываем средства (баланс привязан к аккаунту)
   walletBalance -= price;
-  localStorage.setItem('dicegram_wallet', String(walletBalance));
+  localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
   walletTransactions.unshift({
     name: `🎁 ${giftShopSelected.emoji} ${giftShopSelected.name} для ${giftRecipient.name}`,
     amount: -price,
     date: new Date().toLocaleString()
   });
-  localStorage.setItem('dicegram_wallet_transactions', JSON.stringify(walletTransactions));
+  localStorage.setItem('dicegram_wallet_transactions_' + session.username, JSON.stringify(walletTransactions));
   
   // МГНОВЕННОЕ ОБНОВЛЕНИЕ
   renderWallet();
@@ -2847,10 +2832,10 @@ function giftConfirmPurchase() {
     sold: false
   };
   
-  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts') || '{}');
+  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts_' + session.username) || '{}');
   if (!allGifts[giftRecipient.username]) allGifts[giftRecipient.username] = [];
   allGifts[giftRecipient.username].push(giftData);
-  localStorage.setItem('dicegram_gifts', JSON.stringify(allGifts));
+  localStorage.setItem('dicegram_gifts_' + session.username, JSON.stringify(allGifts));
   
   closeModal('giftShopModal');
   showToast(`🎁 Подарок ${giftShopSelected.emoji} отправлен ${giftRecipient.name}!`);
@@ -2870,7 +2855,7 @@ function giftConfirmPurchase() {
 function renderProfileGifts() {
   const grid = document.getElementById('profileGiftsGrid');
   const empty = document.getElementById('profileGiftsEmpty');
-  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts') || '{}');
+  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts_' + session.username) || '{}');
   const myGifts = allGifts[session.username] || [];
   
   if (myGifts.length === 0) {
@@ -2908,24 +2893,24 @@ function renderProfileGifts() {
 function sellGift(index) {
   if (!confirm('Продать этот подарок за ' + Math.round(GIFTS.find(g => g.id === GIFTS[index]?.id)?.price * 0.85) + ' ❤️?')) return;
   
-  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts') || '{}');
+  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts_' + session.username) || '{}');
   const myGifts = allGifts[session.username] || [];
   const gift = myGifts[index];
   if (!gift || gift.sold) return;
   
   const sellPrice = Math.round(gift.price * 0.85);
   walletBalance += sellPrice;
-  localStorage.setItem('dicegram_wallet', String(walletBalance));
+  localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
   walletTransactions.unshift({
     name: `💰 Продажа ${gift.emoji} ${gift.name}`,
     amount: sellPrice,
     date: new Date().toLocaleString()
   });
-  localStorage.setItem('dicegram_wallet_transactions', JSON.stringify(walletTransactions));
+  localStorage.setItem('dicegram_wallet_transactions_' + session.username, JSON.stringify(walletTransactions));
   
   gift.sold = true;
   allGifts[session.username] = myGifts;
-  localStorage.setItem('dicegram_gifts', JSON.stringify(allGifts));
+  localStorage.setItem('dicegram_gifts_' + session.username, JSON.stringify(allGifts));
   
   renderProfileGifts();
   renderWallet();
@@ -2936,7 +2921,7 @@ function sellGift(index) {
 function renderUpGifts(username) {
   const grid = document.getElementById('upGiftsGrid');
   const empty = document.getElementById('upGiftsEmpty');
-  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts') || '{}');
+  const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts_' + session.username) || '{}');
   const userGifts = allGifts[username] || [];
   
   if (userGifts.length === 0) {
@@ -3037,7 +3022,8 @@ function enterApp() {
   updateNavBadges();
   updatePremiumUI();
   
-  const savedBalance = localStorage.getItem('dicegram_wallet');
+  // Баланс привязан к аккаунту
+  const savedBalance = localStorage.getItem('dicegram_wallet_' + session.username);
   if (savedBalance) walletBalance = parseInt(savedBalance);
   document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
 }
@@ -4341,7 +4327,7 @@ function connectWebSocket() {
         // ===== ИСПРАВЛЕНИЕ: МГНОВЕННОЕ ОБНОВЛЕНИЕ =====
         if (data.new_balance !== undefined) {
           walletBalance = data.new_balance;
-          localStorage.setItem('dicegram_wallet', String(walletBalance));
+          localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
           document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
           if (document.getElementById('walletPage').classList.contains('active')) {
             renderWallet();

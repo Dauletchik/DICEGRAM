@@ -4476,6 +4476,17 @@ function connectWebSocket() {
       } else if (data.type === 'premium_activated') {
         showToast(`⭐ ${data.message || 'Premium активирован!'}`);
         syncProfileFromServer();
+      } else if (data.type === 'wallet_gift') {
+        if (data.new_balance !== undefined) {
+          walletBalance = data.new_balance;
+          localStorage.setItem('dicegram_wallet', String(walletBalance));
+          document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+          if (document.getElementById('walletPage').classList.contains('active')) {
+            renderWallet();
+          }
+        }
+        showToast(data.message || '🎁 Подарок получен!');
+        playSound('click');
       }
     } catch(e) {}
   };
@@ -4501,19 +4512,19 @@ function onGroupAvatarSelected(event) {
     headers: { 'Authorization': `Bearer ${session.token}` },
     body: formData
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.ok) {
-      showToast('Аватар группы обновлен');
-      openGroupProfile(currentGroupId);
-      loadGroupsList();
-      loadChatsList();
-      playSound('click');
-    } else {
-      showToast(data.error || 'Ошибка загрузки');
-    }
-  })
-  .catch(() => showToast('Ошибка соединения'));
+    .then(res => res.json())
+    .then(data => {
+      if (data.ok) {
+        showToast('Аватар группы обновлен');
+        openGroupProfile(currentGroupId);
+        loadGroupsList();
+        loadChatsList();
+        playSound('click');
+      } else {
+        showToast(data.error || 'Ошибка загрузки');
+      }
+    })
+    .catch(() => showToast('Ошибка соединения'));
 }
 
 // ===================== INITIALIZATION =====================
@@ -4546,6 +4557,7 @@ window.addEventListener('DOMContentLoaded', () => {
   goTo('welcome');
   document.getElementById('loadingScreen').classList.remove('active');
 });
+
 </script>
 </body>
 </html>

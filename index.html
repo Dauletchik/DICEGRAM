@@ -6,9 +6,10 @@
 <title>DICEGRAM</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
+/* ===================== ROOT VARIABLES ===================== */
 :root[data-theme="dark"] {
   --bg: #0a0e17;
-  --bg2: #131a26;
+  --bg2: #111827;
   --bg3: #1a2332;
   --surface: #182030;
   --surface-hover: #202a3c;
@@ -25,11 +26,11 @@
   --danger: #ff5470;
   --success: #2fd97f;
   --gold: #ffcb47;
-  --radius-lg: 22px;
+  --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 12px;
-  --shadow-soft: 0 8px 30px rgba(0,0,0,.35);
-  --shadow-pop: 0 4px 16px rgba(91,141,239,.35);
+  --shadow-soft: 0 8px 30px rgba(0,0,0,.45);
+  --shadow-pop: 0 4px 20px rgba(91,141,239,.35);
   --badge-bg: #ff5470;
   --nav-icon-active: #5b8def;
   --nav-icon-inactive: #6b7788;
@@ -39,10 +40,12 @@
   --premium-pink: #ec4899;
   --premium-cyan: #06b6d4;
   --gift-shadow: 0 4px 20px rgba(255,203,71,0.15);
+  --verified-color: #2fd97f;
+  --verified-glow: 0 0 20px rgba(47,217,127,0.3);
 }
 
 :root[data-theme="light"] {
-  --bg: #f5f7fa;
+  --bg: #f0f2f5;
   --bg2: #ffffff;
   --bg3: #eef1f8;
   --surface: #ffffff;
@@ -60,10 +63,10 @@
   --danger: #ef4444;
   --success: #22c55e;
   --gold: #f59e0b;
-  --radius-lg: 22px;
+  --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 12px;
-  --shadow-soft: 0 8px 30px rgba(0,0,0,.06);
+  --shadow-soft: 0 8px 30px rgba(0,0,0,.08);
   --shadow-pop: 0 4px 16px rgba(47,128,237,.25);
   --badge-bg: #ef4444;
   --nav-icon-active: #2f80ed;
@@ -74,9 +77,11 @@
   --premium-pink: #ec4899;
   --premium-cyan: #06b6d4;
   --gift-shadow: 0 4px 20px rgba(245,158,11,0.15);
+  --verified-color: #22c55e;
+  --verified-glow: 0 0 20px rgba(34,197,94,0.25);
 }
 
-/* ========== ОСНОВНЫЕ СТИЛИ ========== */
+/* ===================== RESET & BASE ===================== */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body {
   height: 100%;
@@ -84,13 +89,14 @@ html, body {
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
   overflow: hidden;
-  transition: background .25s ease, color .25s ease;
+  transition: background .3s ease, color .3s ease;
 }
 #app {
   position: relative; height: 100vh; width: 100vw; max-width: 480px; margin: 0 auto;
   background: var(--bg); display: flex; flex-direction: column;
 }
 
+/* ===================== SCREENS ===================== */
 .screen {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
@@ -102,12 +108,13 @@ html, body {
 
 #loadingScreen { justify-content: center; align-items: center; background: var(--bg); z-index: 999; }
 .spinner {
-  width: 42px; height: 42px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   border: 3px solid var(--border); border-top-color: var(--accent);
   animation: spin .8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ===================== WELCOME ===================== */
 #welcome {
   justify-content: center; align-items: center; text-align: center;
   background:
@@ -117,25 +124,29 @@ html, body {
   padding: 32px;
 }
 .logo-circle {
-  width: 116px; height: 116px; border-radius: 32px;
+  width: 120px; height: 120px; border-radius: 32px;
   background: var(--accent-grad);
   display: flex; align-items: center; justify-content: center;
-  font-size: 54px; font-weight: 800; color: white;
+  font-size: 56px; font-weight: 800; color: white;
   box-shadow: var(--shadow-pop);
-  margin-bottom: 26px;
+  margin-bottom: 28px;
   transform: rotate(-4deg);
 }
 .brand {
-  font-size: 38px; font-weight: 800; letter-spacing: -.5px;
+  font-size: 40px; font-weight: 800; letter-spacing: -.5px;
   background: var(--accent-grad);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   margin-bottom: 8px;
 }
 .tagline { color: var(--text-dim); font-size: 15px; margin-bottom: 52px; font-weight: 500; }
+
+/* ===================== BUTTONS ===================== */
 .btn {
   width: 100%; padding: 16px; border-radius: var(--radius-md); border: none;
   font-size: 16px; font-weight: 700; cursor: pointer;
   transition: transform .12s ease, opacity .2s ease, box-shadow .2s ease;
+  position: relative;
+  overflow: hidden;
 }
 .btn:active { transform: scale(.96); }
 .btn-primary { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
@@ -143,9 +154,11 @@ html, body {
 .btn-danger { background: rgba(255,84,112,.12); color: var(--danger); border: 1.5px solid rgba(255,84,112,.3); }
 .btn-success { background: var(--wallet-green); color: #fff; }
 .btn-gold { background: linear-gradient(135deg, #ffd700, #f59e0b); color: #1a1a2e; box-shadow: 0 4px 24px rgba(255,215,0,0.3); }
+.btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
 .btn-row { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 320px; }
 .btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
 
+/* ===================== AUTH ===================== */
 .auth-screen { padding: 28px 24px; justify-content: flex-start; background: var(--bg); }
 .auth-header { margin-top: 20px; margin-bottom: 32px; }
 .auth-title { font-size: 25px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.3px; }
@@ -187,6 +200,7 @@ html, body {
 .phone-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .security-note { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 28px; max-width: 320px; }
 
+/* ===================== MAIN APP ===================== */
 #mainApp { display: none; flex-direction: column; height: 100%; background: var(--bg); }
 #mainApp.active { display: flex; }
 .tab-content { flex: 1; overflow-y: auto; display: none; flex-direction: column; -webkit-overflow-scrolling: touch; }
@@ -202,7 +216,22 @@ html, body {
 }
 .top-bar .back-btn { margin-bottom: 0; padding: 6px 12px; }
 
-/* ========== ЧАТЫ ========== */
+/* ===================== SEARCH BAR ===================== */
+.search-bar {
+  padding: 12px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.search-bar input {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px;
+  padding: 12px 18px 12px 44px; color: var(--text); outline: none; font-size: 14.5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7788' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 14px center;
+}
+.search-bar input:focus { border-color: var(--accent); }
+.search-bar input::placeholder { color: var(--muted); }
+
+/* ===================== CHAT LIST ===================== */
 .chat-list-item {
   display: flex; align-items: center; gap: 13px; padding: 13px 18px;
   cursor: pointer; transition: background .15s ease; position: relative;
@@ -236,11 +265,14 @@ html, body {
 .chat-item-name { font-weight: 700; font-size: 15.5px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .chat-item-last { color: var(--text-dim); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .chat-item-time { color: var(--muted); font-size: 12px; font-weight: 500; flex-shrink: 0; }
+
+/* ===================== BADGES ===================== */
 .verified-badge {
   color: #fff; font-size: 10.5px; display: inline-flex; align-items: center; justify-content: center;
-  width: 16px; height: 16px; border-radius: 50%; background: var(--accent-grad); flex-shrink:0;
-  box-shadow: 0 0 0 2px var(--bg2);
+  width: 16px; height: 16px; border-radius: 50%; background: var(--verified-color); flex-shrink:0;
+  box-shadow: var(--verified-glow);
 }
+.verified-badge svg { width: 10px; height: 10px; }
 .banned-badge { color: var(--danger); font-size: 10.5px; font-weight: 800; background: rgba(255,84,112,.12); padding: 2px 7px; border-radius: 7px; letter-spacing: .3px; }
 .group-badge { color: var(--accent2); font-size: 10.5px; font-weight: 800; background: rgba(124,92,255,.12); padding: 2px 7px; border-radius: 7px; letter-spacing: .3px; }
 .nft-badge {
@@ -266,8 +298,6 @@ html, body {
   0%,100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
-.premium-badge svg { width: 12px; height: 12px; }
-
 .unread-badge {
   background: var(--badge-bg);
   color: #fff;
@@ -289,7 +319,26 @@ html, body {
   0% { transform: scale(0); }
   100% { transform: scale(1); }
 }
+.nav-badge-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--badge-bg);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg2);
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
+/* ===================== CHAT VIEW ===================== */
 #chatView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 10; }
 #chatView.active { display: flex; }
 .chat-header {
@@ -301,24 +350,18 @@ html, body {
 .chat-header-status { font-size: 12.5px; color: var(--text-dim); margin-top: 1px; }
 .chat-header-status.online { color: var(--success); font-weight: 600; }
 .chat-header-status.typing { color: var(--accent); font-weight: 600; }
+
 .messages { flex: 1; overflow-y: auto; padding: 18px 14px; display: flex; flex-direction: column; gap: 3px;
-  background:
-    radial-gradient(circle at 15% 8%, var(--accent-grad-soft), transparent 40%),
-    var(--bg);
+  background: radial-gradient(circle at 15% 8%, var(--accent-grad-soft), transparent 40%), var(--bg);
 }
 .bubble-row { display: flex; margin: 3px 0; flex-direction: column; }
 .bubble-row.out { align-items: flex-end; }
-.bubble-wrap {
-  display: flex;
-  flex-direction: column;
-  max-width: 85%;
-}
+.bubble-wrap { display: flex; flex-direction: column; max-width: 85%; }
 .bubble-row.out .bubble-wrap { align-items: flex-end; }
 .bubble {
   padding: 10px 14px; border-radius: var(--radius-md); font-size: 15px; line-height: 1.42;
   white-space: pre-wrap; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,.06);
-  cursor: default;
-  position: relative;
+  cursor: default; position: relative;
 }
 .bubble.in { background: var(--bubble-in); border-bottom-left-radius: 5px; color: var(--text); }
 .bubble.out { background: var(--bubble-out-grad); color: #fff; border-bottom-right-radius: 5px; }
@@ -326,93 +369,12 @@ html, body {
   background: var(--accent-grad-soft); color: var(--text); border-radius: var(--radius-md);
   max-width: 92%; font-size: 13.5px; align-self: center; border: 1px solid var(--border);
 }
-.bubble.nft-system {
-  background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05));
-  border: 2px solid var(--gold);
-  max-width: 92%;
-  font-size: 13.5px;
-  align-self: center;
-  text-align: center;
-  padding: 12px 16px;
-}
-.bubble.nft-system .nft-icon { font-size: 28px; display: block; margin-bottom: 6px; }
-.bubble.nft-system .nft-name { color: var(--gold); font-weight: 800; font-size: 16px; }
-.bubble.nft-system .nft-price { color: var(--success); font-weight: 700; }
-.bubble.nft-system .nft-from { color: var(--text-dim); font-size: 12px; margin-top: 4px; }
-.bubble-time {
-  font-size: 10.5px; opacity: .65; margin-top: 4px; display: flex; align-items: center; gap: 4px;
-  justify-content: flex-end;
-}
+.bubble-time { font-size: 10.5px; opacity: .65; margin-top: 4px; display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
 .bubble img.attachment { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 6px; }
-
 .mention-link { color: #8fb8ff; font-weight: 700; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(143,184,255,.4); }
 .bubble.out .mention-link { color: #eaf1ff; text-decoration-color: rgba(234,241,255,.5); }
 
-.check-mark { font-size: 12px; opacity: 0.6; }
-.check-mark.sent { opacity: 0.6; }
-.check-mark.delivered { opacity: 0.8; }
-.check-mark.read { opacity: 1; color: var(--accent); }
-
-.context-menu {
-  position: fixed;
-  background: var(--bg2);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-soft);
-  border: 1px solid var(--border);
-  padding: 6px 0;
-  z-index: 100;
-  min-width: 180px;
-  display: none;
-}
-.context-menu-item {
-  padding: 10px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background .15s ease;
-  color: var(--text);
-}
-.context-menu-item:active { background: var(--surface-hover); }
-.context-menu-item.danger { color: var(--danger); }
-.context-menu-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 4px 12px;
-}
-.reaction-picker {
-  display: flex;
-  gap: 4px;
-  padding: 6px 10px;
-  flex-wrap: wrap;
-}
-.reaction-picker span {
-  font-size: 28px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 8px;
-  transition: transform .15s ease;
-}
-.reaction-picker span:active { transform: scale(1.3); }
-
-.reply-preview {
-  background: var(--surface);
-  padding: 6px 12px;
-  border-left: 3px solid var(--accent);
-  border-radius: 4px;
-  margin-bottom: 4px;
-  font-size: 13px;
-  color: var(--text-dim);
-  cursor: pointer;
-}
-.reply-preview .rp-name { font-weight: 700; color: var(--text); }
-.reply-preview .rp-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-#imagePreviewBar { display: none; padding: 10px 14px; background: var(--bg2); align-items: center; gap: 10px; border-top: 1px solid var(--border); }
-#imagePreviewBar img { width: 52px; height: 52px; object-fit: cover; border-radius: 12px; }
-#imagePreviewBar .cancel-preview { color: var(--danger); background: rgba(255,84,112,.12); border: none; font-size: 18px; cursor: pointer; margin-left: auto; width:32px;height:32px;border-radius:10px; }
-
+/* ===================== INPUT BAR ===================== */
 .input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid var(--border); align-items: center; flex-shrink: 0; }
 .input-bar input {
   flex: 1; background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px;
@@ -425,14 +387,10 @@ html, body {
   display: flex; align-items: center; justify-content: center;
   user-select: none; -webkit-user-select: none; touch-action: none;
 }
-.send-btn {
-  background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop);
-}
-.attach-btn { 
-  background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; 
-}
+.send-btn { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
+.attach-btn { background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; }
 
-/* ========== BOTTOM NAVIGATION ========== */
+/* ===================== BOTTOM NAV ===================== */
 .bottom-nav {
   display: flex;
   background: var(--bg2);
@@ -482,29 +440,9 @@ html, body {
   letter-spacing: 0.2px;
 }
 .nav-item.active .nav-label { color: var(--nav-icon-active); }
-.nav-badge-count {
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: var(--badge-bg);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--bg2);
-  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
 
-/* ========== PREMIUM AVATAR BORDER ========== */
-.avatar-premium-border {
-  position: relative;
-}
+/* ===================== PREMIUM AVATAR BORDER ===================== */
+.avatar-premium-border { position: relative; }
 .avatar-premium-border::after {
   content: '';
   position: absolute;
@@ -529,7 +467,7 @@ html, body {
 .avatar-premium-border.white::after { background: conic-gradient(from 0deg, #fff, #e5e7eb, #fff); }
 .avatar-premium-border.rainbow::after { background: conic-gradient(from 0deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4, #ffd700); }
 
-/* ========== NICKNAME COLORS ========== */
+/* ===================== NICKNAME COLORS ===================== */
 .nickname-gold { color: var(--premium-gold) !important; }
 .nickname-cyan { color: var(--premium-cyan) !important; }
 .nickname-pink { color: var(--premium-pink) !important; }
@@ -543,40 +481,6 @@ html, body {
   color: transparent;
   font-weight: 700;
 }
-
-/* ========== PROFILE ========== */
-.profile-header { 
-  display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; 
-  background: 
-    radial-gradient(circle at 50% 0%, var(--accent-grad-soft), transparent 60%),
-    var(--bg);
-  position: relative;
-  flex-shrink: 0;
-}
-.profile-cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 140px;
-  background: var(--accent-grad-soft);
-  border-radius: 0 0 30px 30px;
-  opacity: 0.3;
-  transition: height 0.3s ease;
-}
-.profile-avatar { 
-  width: 104px; height: 104px; font-size: 38px; margin-bottom: 16px; 
-  position: relative; border-radius: 30px; box-shadow: var(--shadow-soft); 
-  cursor: pointer;
-  z-index: 1;
-}
-.profile-avatar.owner-avatar-profile {
-  border: 4px solid var(--gold);
-  box-shadow: 0 0 30px rgba(255,203,71,0.5), inset 0 0 30px rgba(255,203,71,0.15);
-  animation: ownerGlow 2s ease-in-out infinite;
-}
-.profile-avatar-hint { font-size: 11.5px; color: var(--muted); margin-top: -8px; margin-bottom: 8px; }
-.profile-name { font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 6px; letter-spacing: -.2px; flex-wrap: wrap; justify-content: center; }
 .rainbow-text {
   background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b);
   background-size: 300% 100%;
@@ -589,13 +493,66 @@ html, body {
   0% { background-position: 0% 50%; }
   100% { background-position: 300% 50%; }
 }
+
+/* ===================== PROFILE HEADER ===================== */
+.profile-header { 
+  display: flex; flex-direction: column; align-items: center; padding: 30px 16px 24px; 
+  background: 
+    radial-gradient(circle at 50% 0%, var(--accent-grad-soft), transparent 60%),
+    var(--bg);
+  position: relative;
+  flex-shrink: 0;
+}
+.profile-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: var(--accent-grad-soft);
+  border-radius: 0 0 30px 30px;
+  opacity: 0.25;
+  transition: height 0.3s ease;
+}
+.profile-avatar { 
+  width: 104px; height: 104px; font-size: 38px; margin-bottom: 14px; 
+  position: relative; border-radius: 50%; box-shadow: var(--shadow-soft); 
+  cursor: pointer;
+  z-index: 1;
+  border: 4px solid var(--bg2);
+}
+.profile-avatar.owner-avatar-profile {
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(255,203,71,0.5), inset 0 0 30px rgba(255,203,71,0.15);
+  animation: ownerGlow 2s ease-in-out infinite;
+}
+.profile-avatar-hint { font-size: 11px; color: var(--muted); margin-top: -6px; margin-bottom: 6px; }
+.profile-name { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -.2px; flex-wrap: wrap; justify-content: center; }
 .profile-phone { color: var(--text-dim); font-size: 14px; margin-top: 4px; font-weight: 500; }
+.profile-phone .copy-btn {
+  background: var(--surface);
+  border: none;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+.profile-phone .copy-btn:active { transform: scale(0.92); }
 .profile-bio { color: var(--text-dim); font-size: 13.5px; margin-top: 8px; text-align: center; max-width: 280px; line-height: 1.4; }
 .verified-line {
-  color: var(--accent); font-size: 12.5px; margin-top: 10px; display:flex; align-items:center; gap:6px;
+  color: var(--verified-color); font-size: 12.5px; margin-top: 10px; display:flex; align-items:center; gap:6px;
   background: var(--accent-grad-soft); padding: 6px 14px; border-radius: 20px; font-weight: 700;
 }
-.verified-line .vb { width:16px;height:16px;border-radius:50%;background:var(--accent-grad); display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff; }
+.verified-line .vb { 
+  width:18px;height:18px;border-radius:50%;background:var(--verified-color); 
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;
+  box-shadow: var(--verified-glow);
+}
+.verified-line .vb svg { width: 12px; height: 12px; stroke: #fff; }
 .banned-line { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 700; background: rgba(255,84,112,.1); border-radius: 14px; padding: 8px 16px; }
 .owner-line {
   color: var(--gold); font-size: 12.5px; margin-top: 8px; font-weight: 800; letter-spacing: .3px;
@@ -603,7 +560,7 @@ html, body {
   display:flex; align-items:center; gap:6px;
 }
 
-/* ========== PROFILE TABS ========== */
+/* ===================== PROFILE TABS ===================== */
 .profile-tabs {
   display: flex;
   background: var(--bg2);
@@ -637,7 +594,7 @@ html, body {
 }
 .profile-tab-content.active { display: flex; }
 
-/* ========== GIFTS GRID ========== */
+/* ===================== GIFTS GRID ===================== */
 .gifts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -678,10 +635,7 @@ html, body {
   transition: all 0.2s ease;
 }
 .gift-item .gift-sell-btn:active { transform: scale(0.92); }
-.gift-item .gift-sell-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+.gift-item .gift-sell-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .gift-item .gift-owner-badge {
   position: absolute;
   top: -6px;
@@ -708,7 +662,7 @@ html, body {
   backdrop-filter: blur(2px);
 }
 
-/* ========== GIFT SHOP ========== */
+/* ===================== GIFT SHOP ===================== */
 .gift-shop-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -757,7 +711,7 @@ html, body {
   transform: scale(1);
 }
 
-/* ========== SECTION LABELS ========== */
+/* ===================== SECTION LABELS & LIST ===================== */
 .section-label { 
   font-size: 12px; font-weight: 700; text-transform: uppercase; 
   letter-spacing: .6px; color: var(--muted); padding: 18px 20px 8px; 
@@ -769,15 +723,15 @@ html, body {
 }
 .list-row:active { background: var(--surface-hover); }
 .list-row-left { display: flex; align-items: center; gap: 12px; }
-.list-row-icon { width: 34px; height: 34px; border-radius: 11px; display:flex;align-items:center;justify-content:center; font-size:16px; background: var(--accent-grad-soft); }
-.list-row-value { color: var(--text-dim); font-size: 14px; display:flex; align-items:center; gap:6px; }
-.search-box { padding: 12px 18px; }
-.search-box input {
-  width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 22px;
-  padding: 12px 18px; color: var(--text); outline: none; font-size: 14.5px;
+.list-row-icon { 
+  width: 34px; height: 34px; border-radius: 11px; display:flex;align-items:center;justify-content:center; 
+  font-size:16px; background: var(--accent-grad-soft); 
 }
-.search-box input:focus { border-color: var(--accent); }
+.list-row-value { color: var(--text-dim); font-size: 14px; display:flex; align-items:center; gap:6px; }
+
 .empty-state { text-align: center; color: var(--muted); padding: 60px 30px; font-size: 14px; line-height: 1.6; }
+
+/* ===================== FAB ===================== */
 .fab {
   position: absolute; right: 20px; bottom: max(20px, env(safe-area-inset-bottom));
   width: 58px; height: 58px; border-radius: 20px; background: var(--accent-grad);
@@ -785,26 +739,18 @@ html, body {
   cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 
+/* ===================== TOGGLE ===================== */
 .toggle { position: relative; width: 48px; height: 28px; border-radius: 16px; background: var(--border); cursor: pointer; transition: background .2s ease; flex-shrink:0; }
 .toggle.on { background: var(--accent-grad); }
 .toggle-knob { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
 .toggle.on .toggle-knob { transform: translateX(20px); }
 
+/* ===================== SEGMENTED ===================== */
 .segmented { display: flex; background: var(--surface); border-radius: 14px; padding: 4px; gap: 4px; margin: 0 20px 16px; }
 .segmented-option { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--text-dim); transition: all .2s ease; }
 .segmented-option.active { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
 
-.tz-option {
-  display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
-  border-radius: 14px; background: var(--surface); border: 1.5px solid var(--border); margin-bottom: 10px; cursor: pointer;
-}
-.tz-option.active { border-color: var(--accent); background: var(--accent-grad-soft); }
-.tz-option-label { font-weight: 700; font-size: 15px; }
-.tz-option-time { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-.tz-option-check { color: var(--accent); font-size: 18px; opacity: 0; }
-.tz-option.active .tz-option-check { opacity: 1; }
-
-/* ========== MODALS ========== */
+/* ===================== MODALS ===================== */
 .modal-overlay {
   position: absolute; inset: 0; background: rgba(5,8,14,.6); z-index: 50; backdrop-filter: blur(3px);
   display: none; align-items: flex-end; justify-content: center;
@@ -822,31 +768,9 @@ html, body {
 }
 .modal-handle { width: 40px; height: 4px; border-radius: 3px; background: var(--border); margin: 0 auto 16px; }
 .modal-title { font-size: 19px; font-weight: 800; margin-bottom: 18px; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
-.modal-title svg { width: 24px; height: 24px; flex-shrink: 0; color: var(--accent); }
 .modal-close { float: right; background: var(--surface); border:none; color: var(--text-dim); font-size: 18px; cursor: pointer; width:32px;height:32px;border-radius:10px; }
-.char-counter { font-size: 12px; color: var(--muted); text-align: right; margin-top: -8px; margin-bottom: 14px; }
 
-#avatarCropModal .modal-sheet { text-align: center; }
-.avatar-crop-preview {
-  width: 220px; height: 220px; border-radius: 50%; margin: 12px auto 20px; overflow: hidden;
-  border: 4px solid var(--accent); box-shadow: var(--shadow-pop); background: var(--surface);
-  display: flex; align-items: center; justify-content: center;
-}
-.avatar-crop-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-#userProfileView { 
-  position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; 
-}
-#userProfileView.active { display: flex; }
-.up-header { display:flex; align-items:center; gap:12px; padding:14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink:0; }
-.bot-notice {
-  margin: 18px 20px 0; padding: 14px 16px; border-radius: var(--radius-md);
-  background: var(--accent-grad-soft); border: 1px solid var(--border);
-  font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;
-  display: flex; gap: 10px; align-items: flex-start;
-}
-.bot-notice .bi { font-size: 18px; flex-shrink: 0; }
-
+/* ===================== TOAST ===================== */
 #toast {
   position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px);
   background: var(--surface); color: var(--text); padding: 12px 20px; border-radius: var(--radius-sm);
@@ -855,61 +779,19 @@ html, body {
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.group-member-item {
-  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.group-member-item .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 14px; }
-.group-member-name { flex: 1; font-weight: 600; font-size: 14px; }
-.group-member-role { font-size: 11px; color: var(--muted); font-weight: 600; }
-.group-member-role.admin { color: var(--accent); }
-.group-member-role.owner { color: var(--gold); }
-.group-member-action { color: var(--accent); font-size: 13px; cursor: pointer; padding: 4px 10px; border-radius: 8px; background: var(--surface-hover); }
-
-.add-member-input {
-  display: flex; gap: 8px; padding: 12px 16px;
-}
-.add-member-input input { flex: 1; }
-
-.context-menu { display: none; }
-.context-menu.active { display: block; }
-
-/* ========== SETTINGS ========== */
-.settings-container {
-  padding: 16px 20px 32px;
-  background: var(--bg);
-  flex: 1;
-  overflow-y: auto;
-}
+/* ===================== SETTINGS ===================== */
+.settings-container { padding: 16px 20px 32px; background: var(--bg); flex: 1; overflow-y: auto; }
 .settings-section-title {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--muted);
-  padding: 10px 4px 12px 4px;
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--muted); padding: 10px 4px 12px 4px;
 }
-.settings-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
+.settings-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
 .settings-card {
-  background: var(--surface);
-  border-radius: 20px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.2s ease,
-              background 0.2s ease;
+  background: var(--surface); border-radius: 20px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 14px; cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
-  border: 1px solid transparent;
-  position: relative;
-  min-height: 60px;
+  border: 1px solid transparent; position: relative; min-height: 60px;
 }
 .settings-card:active { transform: scale(0.97); }
 .settings-card.card-ai {
@@ -923,17 +805,9 @@ html, body {
   background: linear-gradient(135deg, var(--surface), rgba(255, 215, 0, 0.04));
 }
 .settings-icon {
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 400;
-  color: #fff;
-  flex-shrink: 0;
+  width: 46px; height: 46px; min-width: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 400; color: #fff; flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease;
 }
@@ -953,31 +827,17 @@ html, body {
 .settings-badge.green { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25); }
 .settings-balance { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: -0.2px; }
 
-/* ========== SUB SETTINGS PAGES ========== */
+/* ===================== SUB SETTINGS ===================== */
 .sub-settings-page {
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-  display: none;
-  flex-direction: column;
-  z-index: 30;
+  position: absolute; inset: 0; background: var(--bg);
+  display: none; flex-direction: column; z-index: 30;
 }
 .sub-settings-page.active { display: flex; }
-.sub-settings-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 20px 32px;
-}
+.sub-settings-content { flex: 1; overflow-y: auto; padding: 16px 20px 32px; }
 .sub-settings-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  background: var(--surface);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  margin-bottom: 10px;
-  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--surface); border-radius: 14px;
+  border: 1px solid var(--border); margin-bottom: 10px; cursor: pointer;
   transition: all 0.2s ease;
 }
 .sub-settings-item:active { transform: scale(0.97); }
@@ -986,36 +846,20 @@ html, body {
 .sub-settings-item .label { font-weight: 600; font-size: 15px; }
 .sub-settings-item .value { color: var(--text-dim); font-size: 14px; }
 
+/* ===================== WALLET ===================== */
 .wallet-balance-card {
-  background: var(--surface);
-  border-radius: 20px;
-  padding: 24px;
-  text-align: center;
-  border: 1px solid var(--border);
-  margin-bottom: 20px;
+  background: var(--surface); border-radius: 20px; padding: 24px;
+  text-align: center; border: 1px solid var(--border); margin-bottom: 20px;
 }
 .wallet-balance-card .amount {
-  font-size: 42px;
-  font-weight: 800;
-  color: var(--gold);
-  letter-spacing: -1px;
+  font-size: 42px; font-weight: 800; color: var(--gold); letter-spacing: -1px;
 }
-.wallet-balance-card .currency {
-  font-size: 16px;
-  color: var(--text-dim);
-}
-.wallet-balance-card .sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 4px;
-}
+.wallet-balance-card .currency { font-size: 16px; color: var(--text-dim); }
+.wallet-balance-card .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
 .transaction-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
 }
 .transaction-item .info { display: flex; flex-direction: column; gap: 2px; }
 .transaction-item .info .name { font-weight: 600; font-size: 14px; }
@@ -1023,101 +867,52 @@ html, body {
 .transaction-item .amount.positive { color: var(--success); font-weight: 700; }
 .transaction-item .amount.negative { color: var(--danger); font-weight: 700; }
 
-.ai-chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+/* ===================== AI CHAT ===================== */
+.ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
 .ai-chat-message {
-  max-width: 85%;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  font-size: 15px;
-  line-height: 1.5;
+  max-width: 85%; padding: 10px 14px; border-radius: var(--radius-md);
+  font-size: 15px; line-height: 1.5;
 }
-.ai-chat-message.user {
-  align-self: flex-end;
-  background: var(--accent-grad);
-  color: #fff;
-}
-.ai-chat-message.assistant {
-  align-self: flex-start;
-  background: var(--bubble-in);
-  color: var(--text);
-}
+.ai-chat-message.user { align-self: flex-end; background: var(--accent-grad); color: #fff; }
+.ai-chat-message.assistant { align-self: flex-start; background: var(--bubble-in); color: var(--text); }
 .ai-chat-message .time { font-size: 10px; opacity: 0.5; margin-top: 4px; display: block; }
 
 .ai-chat-input-bar {
-  display: flex;
-  gap: 8px;
-  padding: 10px 12px;
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
+  display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2);
+  border-top: 1px solid var(--border); flex-shrink: 0;
 }
 .ai-chat-input-bar input {
-  flex: 1;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 24px;
-  padding: 12px 18px;
-  color: var(--text);
-  font-size: 15px;
-  outline: none;
+  flex: 1; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 24px; padding: 12px 18px; color: var(--text);
+  font-size: 15px; outline: none;
 }
 .ai-chat-input-bar input:focus { border-color: var(--accent); }
 .ai-chat-input-bar .send-btn {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--accent-grad);
-  color: #fff;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--accent-grad); color: #fff; border: none;
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
-.pin-dots {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin: 20px 0;
-}
+/* ===================== PIN ===================== */
+.pin-dots { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
 .pin-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: var(--surface);
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--border); background: var(--surface);
   transition: all 0.2s ease;
 }
-.pin-dot.filled {
-  background: var(--accent);
-  border-color: var(--accent);
-  transform: scale(1.1);
-}
+.pin-dot.filled { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
 
-/* ========== PREMIUM PAGE ========== */
+/* ===================== PREMIUM PAGE ===================== */
 .premium-page {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: linear-gradient(145deg, #0a0e17 0%, #1a0a2e 50%, #0a0e17 100%);
-  display: none;
-  flex-direction: column;
-  z-index: 40;
-  overflow-y: auto;
+  display: none; flex-direction: column; z-index: 40; overflow-y: auto;
 }
 .premium-page.active { display: flex; }
 .premium-backdrop {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: 
     radial-gradient(circle at 20% 20%, rgba(139,92,246,0.15), transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(6,182,212,0.1), transparent 50%),
@@ -1126,27 +921,16 @@ html, body {
 }
 .premium-header {
   padding: 24px 20px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 1;
 }
-.premium-header .back-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #fff;
-}
+.premium-header .back-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #fff; }
 .premium-header .back-btn svg { stroke: #fff; }
 .premium-hero {
-  text-align: center;
-  padding: 20px 20px 30px;
-  position: relative;
-  z-index: 1;
+  text-align: center; padding: 20px 20px 30px; position: relative; z-index: 1;
 }
 .premium-hero .crown {
-  font-size: 72px;
-  display: block;
+  font-size: 72px; display: block;
   animation: premiumFloat 3s ease-in-out infinite;
   filter: drop-shadow(0 0 30px rgba(255,215,0,0.3));
 }
@@ -1155,161 +939,123 @@ html, body {
   50% { transform: translateY(-10px) scale(1.05); }
 }
 .premium-hero .title {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 32px; font-weight: 800;
   background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 40%, #8b5cf6 70%, #06b6d4 100%);
   background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: premiumShine 4s linear infinite;
-  margin-top: 8px;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: premiumShine 4s linear infinite; margin-top: 8px;
 }
 @keyframes premiumShine {
   0% { background-position: 0% 50%; }
   100% { background-position: 300% 50%; }
 }
-.premium-hero .subtitle {
-  color: rgba(255,255,255,0.6);
-  font-size: 14px;
-  margin-top: 4px;
-}
-.premium-features {
-  padding: 0 20px 20px;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.premium-hero .subtitle { color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; }
+
+.premium-features { padding: 0 20px 20px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 12px; }
 .premium-feature {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-.premium-feature:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.15);
-  transform: translateX(4px);
+  background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+  padding: 14px 16px; display: flex; align-items: center; gap: 14px;
+  transition: all 0.3s ease; cursor: default;
 }
 .premium-feature .icon { font-size: 28px; flex-shrink: 0; }
 .premium-feature .info { flex: 1; }
 .premium-feature .info .name { font-weight: 700; font-size: 15px; color: #fff; }
 .premium-feature .info .desc { font-size: 12.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 .premium-feature .check { color: var(--premium-gold); font-size: 18px; }
-.premium-price {
-  padding: 20px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-.premium-price .price {
-  font-size: 42px;
-  font-weight: 800;
-  color: #fff;
-}
-.premium-price .price span {
-  font-size: 18px;
-  font-weight: 400;
-  color: rgba(255,255,255,0.5);
-}
-.premium-price .period {
-  color: rgba(255,255,255,0.4);
-  font-size: 13px;
-  margin-top: 4px;
-}
+
+.premium-price { padding: 20px; text-align: center; position: relative; z-index: 1; }
+.premium-price .price { font-size: 42px; font-weight: 800; color: #fff; }
+.premium-price .price span { font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.5); }
+.premium-price .period { color: rgba(255,255,255,0.4); font-size: 13px; margin-top: 4px; }
+
 .btn-premium {
-  width: 100%;
-  padding: 18px;
-  border-radius: 16px;
-  border: none;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
+  width: 100%; padding: 18px; border-radius: 16px; border: none;
+  font-size: 17px; font-weight: 700; cursor: pointer;
   background: linear-gradient(135deg, #ffd700, #f59e0b, #ff6b6b);
-  background-size: 200% 100%;
-  color: #1a1a2e;
+  background-size: 200% 100%; color: #1a1a2e;
   transition: all 0.3s ease;
   box-shadow: 0 4px 30px rgba(255,215,0,0.25);
   animation: premiumBtnShine 3s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
 @keyframes premiumBtnShine {
   0%,100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
 }
 .btn-premium:active { transform: scale(0.96); }
-.btn-premium.active {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  box-shadow: none;
-  animation: none;
-}
+.btn-premium.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: none; animation: none; }
+
 .premium-color-picker {
-  display: flex;
-  gap: 12px;
-  padding: 12px 0;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: flex; gap: 12px; padding: 12px 0; flex-wrap: wrap; justify-content: center;
 }
 .premium-color-picker .color-option {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid transparent;
-  transition: all 0.3s ease;
-  position: relative;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+  border: 3px solid transparent; transition: all 0.3s ease; position: relative;
 }
 .premium-color-picker .color-option:hover { transform: scale(1.1); }
 .premium-color-picker .color-option.active {
-  border-color: #fff;
-  box-shadow: 0 0 20px rgba(255,255,255,0.2);
-  transform: scale(1.1);
+  border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); transform: scale(1.1);
 }
 .premium-color-picker .color-option .check {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 16px;
-  opacity: 0;
-  text-shadow: 0 0 10px rgba(0,0,0,0.5);
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px; opacity: 0; text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 .premium-color-picker .color-option.active .check { opacity: 1; }
 
-/* ========== MEDIA GRID ========== */
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
+/* ===================== MEDIA GRID ===================== */
+.media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
 .media-grid .media-item {
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border);
 }
 .media-grid .media-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  cursor: pointer;
+  width: 100%; height: 100%; object-fit: cover; cursor: pointer;
   transition: transform 0.3s ease;
 }
 .media-grid .media-item img:active { transform: scale(1.05); }
 
+/* ===================== GROUP MEMBERS ===================== */
+.group-member-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.group-member-item .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 14px; }
+.group-member-name { flex: 1; font-weight: 600; font-size: 14px; }
+.group-member-role { font-size: 11px; color: var(--muted); font-weight: 600; }
+.group-member-role.admin { color: var(--accent); }
+.group-member-role.owner { color: var(--gold); }
+.group-member-action { color: var(--accent); font-size: 13px; cursor: pointer; padding: 4px 10px; border-radius: 8px; background: var(--surface-hover); }
+
+.add-member-input { display: flex; gap: 8px; padding: 12px 16px; }
+.add-member-input input { flex: 1; }
+
+/* ===================== CONTEXT MENU ===================== */
+.context-menu {
+  position: fixed; background: var(--bg2); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft); border: 1px solid var(--border);
+  padding: 6px 0; z-index: 100; min-width: 180px; display: none;
+}
+.context-menu-item {
+  padding: 10px 16px; cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; gap: 10px;
+  transition: background .15s ease; color: var(--text);
+}
+.context-menu-item:active { background: var(--surface-hover); }
+.context-menu-item.danger { color: var(--danger); }
+.context-menu-divider { height: 1px; background: var(--border); margin: 4px 12px; }
+.context-menu.active { display: block; }
+
+/* ===================== BOT NOTICE ===================== */
+.bot-notice {
+  margin: 18px 20px 0; padding: 14px 16px; border-radius: var(--radius-md);
+  background: var(--accent-grad-soft); border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.bot-notice .bi { font-size: 18px; flex-shrink: 0; }
+
+/* ===================== RESPONSIVE ===================== */
 @media (max-width: 380px) {
   .wallet-balance-card .amount { font-size: 32px; }
   .settings-card { padding: 10px 14px; min-height: 50px; }
@@ -1403,11 +1149,15 @@ html, body {
     <button class="btn btn-primary" onclick="doLogin()">Войти</button>
   </div>
 
-  <!-- MAIN APP -->
+  <!-- ===================== MAIN APP ===================== -->
   <div id="mainApp">
+
     <!-- CHATS TAB -->
     <div class="tab-content active" id="tabChats" style="position:relative;">
       <div class="top-bar"><span>Чаты</span></div>
+      <div class="search-bar">
+        <input id="chatSearchInput" placeholder="Поиск по чатам, контактам и группам..." oninput="searchChats()">
+      </div>
       <div id="chatListContainer"></div>
       <button class="fab" onclick="openCreateGroupModal()">＋</button>
     </div>
@@ -1415,7 +1165,9 @@ html, body {
     <!-- CONTACTS TAB -->
     <div class="tab-content" id="tabContacts" style="position:relative;">
       <div class="top-bar"><span>Контакты</span></div>
-      <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
+      <div class="search-bar">
+        <input id="contactSearch" placeholder="Поиск по юзернейму..." oninput="searchContacts()">
+      </div>
       <div id="contactsResult"><div class="empty-state">Начните вводить юзернейм для поиска,<br>или откройте список контактов</div></div>
       <button class="fab" onclick="openAddContactModal()">＋</button>
     </div>
@@ -1429,7 +1181,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card" onclick="openAccountSecurityPage()">
             <div class="settings-icon" style="background: #2F80ED;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Аккаунт и безопасность</div>
@@ -1445,7 +1197,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card card-ai" onclick="openAIChat()">
             <div class="settings-icon" style="background: linear-gradient(135deg, #06B6D4, #3B82F6);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="15" r="1"/><circle cx="15" cy="15" r="1"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="15" r="1"/><circle cx="15" cy="15" r="1"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Dice AI Ассистент</div>
@@ -1458,7 +1210,7 @@ html, body {
           </div>
           <div class="settings-card" onclick="openWalletPage()">
             <div class="settings-icon" style="background: #FBBF24;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M16 10h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2"/><circle cx="18" cy="12" r=".5" fill="white"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M16 10h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2"/><circle cx="18" cy="12" r=".5" fill="white"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Dice Wallet</div>
@@ -1475,7 +1227,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card card-gift" onclick="openGiftShop()">
             <div class="settings-icon" style="background: linear-gradient(135deg, #ffd700, #f59e0b);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Магазин подарков</div>
@@ -1492,7 +1244,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card" onclick="toggleNotifications()">
             <div class="settings-icon" style="background: #EF4444;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Уведомления и звуки</div>
@@ -1503,9 +1255,9 @@ html, body {
               <span class="settings-chevron">›</span>
             </div>
           </div>
-          <div class="settings-card" onclick="showToast('👥 Поделитесь DICEGRAM с друзьями!')">
+          <div class="settings-card" onclick="openInviteFriends()">
             <div class="settings-icon" style="background: #0EA5E9;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Пригласить друзей</div>
@@ -1520,7 +1272,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card" onclick="event.stopPropagation()">
             <div class="settings-icon" style="background: var(--accent);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title">Тема</div>
@@ -1539,7 +1291,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card" onclick="openPremiumPage()" style="border: 2px solid rgba(255,215,0,0.3); background: linear-gradient(135deg, var(--surface), rgba(255,215,0,0.05));">
             <div class="settings-icon" style="background: linear-gradient(135deg, #ffd700, #f59e0b);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title" style="color: var(--premium-gold);">Dicegram Premium</div>
@@ -1556,7 +1308,7 @@ html, body {
         <div class="settings-grid">
           <div class="settings-card" onclick="logout()" style="border-color: rgba(239,68,68,0.2);">
             <div class="settings-icon" style="background: rgba(239,68,68,0.15); color: #EF4444;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </div>
             <div class="settings-card-content">
               <div class="settings-card-title" style="color: #EF4444;">Выйти из аккаунта</div>
@@ -1586,7 +1338,12 @@ html, body {
           <div id="profilePremiumBadge" style="display:none;margin-top:6px;">
             <span class="premium-badge">⭐ PREMIUM</span>
           </div>
-          <div class="verified-line" id="profileVerifiedLine" style="display:none;"><span class="vb">✓</span> <span>Верифицирован DICEGRAM</span></div>
+          <div class="verified-line" id="profileVerifiedLine" style="display:none;">
+            <span class="vb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>Верифицирован DICEGRAM</span>
+          </div>
           <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
           <div id="profileNftBadge" style="display:none;margin-top:6px;">
             <span class="nft-badge">🏆 NFT</span>
@@ -1667,7 +1424,7 @@ html, body {
     </div>
   </div>
 
-  <!-- CHAT VIEW -->
+  <!-- ===================== CHAT VIEW ===================== -->
   <div id="chatView">
     <div class="chat-header" onclick="openChatProfile()">
       <button class="back-btn" style="margin:0;" onclick="event.stopPropagation(); closeChat();">←</button>
@@ -1691,12 +1448,11 @@ html, body {
     </div>
   </div>
 
-  <!-- ========== SUB SETTINGS PAGES ========== -->
-  
+  <!-- ===================== SUB SETTINGS PAGES ===================== -->
   <div class="sub-settings-page" id="accountSecurityPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('accountSecurityPage')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Назад
       </button>
       <span>Аккаунт</span>
@@ -1705,21 +1461,21 @@ html, body {
     <div class="sub-settings-content">
       <div class="sub-settings-item" onclick="openChangePasswordModal()">
         <div class="left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <span class="label">Смена пароля</span>
         </div>
         <span class="value">›</span>
       </div>
       <div class="sub-settings-item" onclick="openDevicesPage()">
         <div class="left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg>
           <span class="label">Устройства</span>
         </div>
         <span class="value" id="devicesCount">0 сессий ›</span>
       </div>
       <div class="sub-settings-item" onclick="openPinPage()">
         <div class="left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>
           <span class="label">Код-пароль (PIN)</span>
         </div>
         <div class="toggle" id="pinToggle" onclick="event.stopPropagation(); togglePin()"><div class="toggle-knob"></div></div>
@@ -1730,7 +1486,7 @@ html, body {
   <div class="sub-settings-page" id="devicesPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('devicesPage')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Назад
       </button>
       <span>Устройства</span>
@@ -1742,7 +1498,7 @@ html, body {
   <div class="sub-settings-page" id="pinPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('pinPage')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Назад
       </button>
       <span>Код-пароль</span>
@@ -1779,7 +1535,7 @@ html, body {
   <div class="sub-settings-page" id="walletPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('walletPage')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Назад
       </button>
       <span>Dice Wallet</span>
@@ -1800,7 +1556,7 @@ html, body {
   <div class="sub-settings-page" id="aiChatPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('aiChatPage')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Назад
       </button>
       <span>Dice AI Ассистент</span>
@@ -1818,12 +1574,12 @@ html, body {
     </div>
   </div>
 
-  <!-- PREMIUM PAGE -->
+  <!-- ===================== PREMIUM PAGE ===================== -->
   <div class="premium-page" id="premiumPage">
     <div class="premium-backdrop"></div>
     <div class="premium-header">
       <button class="back-btn" onclick="closePremiumPage()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Назад
       </button>
       <span style="color:rgba(255,255,255,0.6);font-size:14px;font-weight:600;" id="premiumHeaderStatus">⭐ PREMIUM</span>
@@ -1895,7 +1651,7 @@ html, body {
     </div>
   </div>
 
-  <!-- GIFT SHOP MODAL -->
+  <!-- ===================== GIFT SHOP MODAL ===================== -->
   <div class="modal-overlay" id="giftShopModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -1921,7 +1677,7 @@ html, body {
     </div>
   </div>
 
-  <!-- COLOR PICKER MODALS -->
+  <!-- ===================== COLOR PICKER MODALS ===================== -->
   <div class="modal-overlay" id="premiumColorModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -1957,7 +1713,7 @@ html, body {
     </div>
   </div>
 
-  <!-- USER PROFILE VIEW -->
+  <!-- ===================== USER PROFILE VIEW ===================== -->
   <div id="userProfileView">
     <div class="up-header">
       <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
@@ -1974,15 +1730,21 @@ html, body {
         <div class="profile-phone" id="upStatusLine" style="margin-top:6px;"></div>
         <div id="upPremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
         <div id="upNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
-        <div class="verified-line" id="upVerifiedLine" style="display:none;"><span class="vb">✓</span> <span id="upVerifiedText">Верифицирован DICEGRAM</span></div>
-        <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
-        
-        <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;justify-content:center;">
-          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">💬</button>
-          <button class="btn btn-secondary" onclick="showToast('📞 Звонок скоро будет доступен')" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">📞</button>
-          <button class="btn btn-gold" onclick="giftToProfile()" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">🎁</button>
-          <button class="btn btn-danger" onclick="blockUser()" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">🚫</button>
+        <div class="verified-line" id="upVerifiedLine" style="display:none;">
+          <span class="vb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span id="upVerifiedText">Верифицирован DICEGRAM</span>
         </div>
+        <div class="banned-line" id="upBannedLine" style="display:none;">🚫 Аккаунт заблокирован</div>
+        
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:360px;">
+          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="padding:12px 16px;width:auto;flex:1;min-width:60px;border-radius:14px;">💬</button>
+          <button class="btn btn-secondary" onclick="showToast('📞 Звонок скоро будет доступен')" style="padding:12px 16px;width:auto;flex:1;min-width:60px;border-radius:14px;">📞</button>
+          <button class="btn btn-gold" onclick="giftToProfile()" style="padding:12px 16px;width:auto;flex:1;min-width:60px;border-radius:14px;">🎁</button>
+          <button class="btn btn-danger" id="upBlockBtn" onclick="blockUser()" style="padding:12px 16px;width:auto;flex:1;min-width:60px;border-radius:14px;">🚫</button>
+        </div>
+        <button class="btn btn-outline" id="upAddContactBtn" onclick="addContactFromProfile()" style="margin-top:10px;padding:10px;width:auto;min-width:160px;border-radius:14px;">➕ Добавить в контакты</button>
       </div>
       
       <div class="profile-tabs" id="upTabs">
@@ -2010,7 +1772,7 @@ html, body {
     </div>
   </div>
 
-  <!-- GROUP PROFILE -->
+  <!-- ===================== GROUP PROFILE ===================== -->
   <div id="groupProfileView" style="position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:25;">
     <div class="up-header">
       <button class="back-btn" style="margin:0;" onclick="closeGroupProfile()">←</button>
@@ -2024,11 +1786,17 @@ html, body {
       <div class="profile-name" id="gpName">—</div>
       <div class="profile-phone" id="gpId">—</div>
       <div class="profile-phone" id="gpOwner">Владелец: —</div>
+      <div class="verified-line" id="gpVerifiedLine" style="display:none;">
+        <span class="vb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <span>The group was verified under the creators of dicegram</span>
+      </div>
     </div>
     <div id="gpMembersList" style="flex:1;overflow-y:auto;padding-bottom:20px;"></div>
   </div>
 
-  <!-- CONTEXT MENU -->
+  <!-- ===================== CONTEXT MENU ===================== -->
   <div class="context-menu" id="contextMenu">
     <div class="reaction-picker" id="reactionPicker">
       <span onclick="addReaction('😂')">😂</span>
@@ -2044,7 +1812,7 @@ html, body {
     <div class="context-menu-item danger" id="deleteMsgBtn" onclick="deleteMessage()">🗑️ Удалить</div>
   </div>
 
-  <!-- MODALS -->
+  <!-- ===================== MODALS ===================== -->
   <div class="modal-overlay" id="addContactModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -2237,6 +2005,8 @@ let devices = [];
 let userGifts = [];
 let giftShopSelected = null;
 let giftRecipient = null;
+let currentUpUser = null;
+let upIsBlocked = false;
 
 // ===================== UTILITY =====================
 function setTheme(theme) {
@@ -2360,6 +2130,55 @@ function updateNavBadges() {
   } else {
     badge.style.display = 'none';
   }
+}
+
+// ===================== SEARCH =====================
+function searchChats() {
+  const q = document.getElementById('chatSearchInput').value.trim().toLowerCase();
+  const container = document.getElementById('chatListContainer');
+  const items = container.querySelectorAll('.chat-list-item');
+  let found = false;
+  items.forEach(item => {
+    const name = item.querySelector('.chat-item-name')?.textContent?.toLowerCase() || '';
+    const last = item.querySelector('.chat-item-last')?.textContent?.toLowerCase() || '';
+    const match = name.includes(q) || last.includes(q);
+    item.style.display = match ? 'flex' : 'none';
+    if (match) found = true;
+  });
+  if (!found && q.length > 0) {
+    const empty = container.querySelector('.empty-state');
+    if (!empty) {
+      const div = document.createElement('div');
+      div.className = 'empty-state';
+      div.textContent = 'Ничего не найдено';
+      container.appendChild(div);
+    }
+  } else {
+    const empty = container.querySelector('.empty-state:not(.chat-list-item)');
+    if (empty) empty.remove();
+  }
+}
+
+// ===================== PIN CHECK =====================
+function checkPin() {
+  const savedPin = localStorage.getItem('dicegram_pin');
+  if (savedPin) {
+    pinEnabled = true;
+    document.getElementById('pinToggle').classList.add('on');
+    showPinPrompt();
+    return true;
+  }
+  return false;
+}
+
+function showPinPrompt() {
+  pinEntered = [];
+  pinStep = 'verify';
+  pinFirst = '';
+  updatePinDots();
+  document.getElementById('pinHint').textContent = 'Введите PIN-код';
+  document.getElementById('pinHint').className = 'hint muted';
+  openModal('pinPage');
 }
 
 // ===================== PREMIUM FUNCTIONS =====================
@@ -2497,6 +2316,16 @@ function openPinPage() {
 }
 function openWalletPage() { openSubSettings('walletPage'); loadWallet(); }
 function openAIChat() { openSubSettings('aiChatPage'); document.getElementById('aiChatInput').focus(); }
+function openInviteFriends() {
+  showToast('👥 Поделитесь ссылкой на DICEGRAM с друзьями!');
+  if (navigator.share) {
+    navigator.share({
+      title: 'DICEGRAM',
+      text: 'Присоединяйся к DICEGRAM!',
+      url: 'https://dauletchik.github.io/DICEGRAM'
+    }).catch(() => {});
+  }
+}
 
 // ===================== PIN =====================
 function updatePinDots() {
@@ -2512,14 +2341,33 @@ function pinInput(num) {
   playSound('click');
   if (pinEntered.length === 4) {
     const pin = pinEntered.join('');
-    if (pinStep === 'create') {
+    if (pinStep === 'verify') {
+      const savedPin = localStorage.getItem('dicegram_pin');
+      if (pin === savedPin) {
+        document.getElementById('pinHint').textContent = '✅ PIN верный!';
+        document.getElementById('pinHint').className = 'hint ok';
+        setTimeout(() => {
+          closeModal('pinPage');
+          document.getElementById('pinHint').textContent = '';
+        }, 500);
+      } else {
+        document.getElementById('pinHint').textContent = '❌ Неверный PIN-код';
+        document.getElementById('pinHint').className = 'hint err';
+        pinEntered = [];
+        updatePinDots();
+        setTimeout(() => {
+          document.getElementById('pinHint').textContent = 'Введите PIN-код';
+          document.getElementById('pinHint').className = 'hint muted';
+        }, 1500);
+      }
+    } else if (pinStep === 'create') {
       pinFirst = pin;
       pinStep = 'confirm';
       pinEntered = [];
       updatePinDots();
       document.getElementById('pinHint').textContent = 'Повторите PIN-код';
       document.getElementById('pinHint').className = 'hint muted';
-    } else {
+    } else if (pinStep === 'confirm') {
       if (pin === pinFirst) {
         localStorage.setItem('dicegram_pin', pin);
         pinEnabled = true;
@@ -2883,8 +2731,7 @@ function giftFindRecipient() {
     hint.textContent = 'Нельзя подарить подарок самому себе';
     return;
   }
-  // Поиск пользователя по номеру
-  fetch(`${API_BASE}/api/user/profile?phone=${encodeURIComponent(phone)}`, {
+  fetch(`${API_BASE}/api/user/profile/by_phone?phone=${encodeURIComponent(phone)}`, {
     headers: { 'Authorization': `Bearer ${session.token}` }
   })
   .then(r => r.json())
@@ -2956,7 +2803,6 @@ function giftConfirmPurchase() {
     return;
   }
   
-  // Списываем средства
   walletBalance -= price;
   localStorage.setItem('dicegram_wallet', String(walletBalance));
   walletTransactions.unshift({
@@ -2966,7 +2812,6 @@ function giftConfirmPurchase() {
   });
   localStorage.setItem('dicegram_wallet_transactions', JSON.stringify(walletTransactions));
   
-  // Добавляем подарок в коллекцию получателя
   const giftData = {
     id: giftShopSelected.id,
     emoji: giftShopSelected.emoji,
@@ -2977,17 +2822,14 @@ function giftConfirmPurchase() {
     sold: false
   };
   
-  // Сохраняем в локальное хранилище (в будущем на сервер)
   const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts') || '{}');
   if (!allGifts[giftRecipient.username]) allGifts[giftRecipient.username] = [];
   allGifts[giftRecipient.username].push(giftData);
   localStorage.setItem('dicegram_gifts', JSON.stringify(allGifts));
   
-  // Обновляем UI
   closeModal('giftShopModal');
   showToast(`🎁 Подарок ${giftShopSelected.emoji} отправлен ${giftRecipient.name}!`);
   
-  // Отправляем системное сообщение через WebSocket
   if (ws && ws.readyState === WebSocket.OPEN && giftRecipient.username !== session.username) {
     ws.send(JSON.stringify({
       type: 'message',
@@ -2997,9 +2839,9 @@ function giftConfirmPurchase() {
     }));
   }
   
-  // Обновляем профиль и список подарков
   renderProfileGifts();
   renderWallet();
+  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
   playSound('click');
 }
 
@@ -3016,7 +2858,6 @@ function renderProfileGifts() {
   }
   empty.style.display = 'none';
   
-  // Сортируем по дате (сначала новые)
   myGifts.sort((a, b) => new Date(b.date) - new Date(a.date));
   
   grid.innerHTML = myGifts.map((g, i) => {
@@ -3043,14 +2884,14 @@ function renderProfileGifts() {
 }
 
 function sellGift(index) {
-  if (!confirm('Продать этот подарок за ' + Math.round(GIFTS.find(g => g.id === GIFTS[index]?.id)?.price * 0.85) + ' ❤️?')) return;
-  
   const allGifts = JSON.parse(localStorage.getItem('dicegram_gifts') || '{}');
   const myGifts = allGifts[session.username] || [];
   const gift = myGifts[index];
   if (!gift || gift.sold) return;
   
   const sellPrice = Math.round(gift.price * 0.85);
+  if (!confirm(`Продать этот подарок за ${sellPrice} ❤️?`)) return;
+  
   walletBalance += sellPrice;
   localStorage.setItem('dicegram_wallet', String(walletBalance));
   walletTransactions.unshift({
@@ -3066,6 +2907,7 @@ function sellGift(index) {
   
   renderProfileGifts();
   renderWallet();
+  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
   showToast(`✅ Подарок продан за ${sellPrice} ❤️`);
   playSound('click');
 }
@@ -3116,12 +2958,9 @@ function switchUpTab(tabId) {
   if (tabId === 'upMedia') renderUpMedia();
 }
 
-let currentUpUser = null;
-
 function renderProfileMedia() {
   const grid = document.getElementById('profileMediaGrid');
   const empty = document.getElementById('profileMediaEmpty');
-  // TODO: Загрузить медиа из чатов
   grid.innerHTML = '';
   empty.style.display = 'block';
 }
@@ -3156,9 +2995,54 @@ function giftToProfile() {
 }
 
 function blockUser() {
+  if (upIsBlocked) {
+    if (confirm('Разблокировать пользователя?')) {
+      upIsBlocked = false;
+      document.getElementById('upBlockBtn').textContent = '🚫';
+      document.getElementById('upBlockBtn').className = 'btn btn-danger';
+      document.getElementById('upMessageBtn').disabled = false;
+      document.getElementById('upMessageBtn').style.opacity = '1';
+      showToast('✅ Пользователь разблокирован');
+      playSound('click');
+    }
+    return;
+  }
   if (confirm('Заблокировать пользователя?')) {
+    upIsBlocked = true;
+    document.getElementById('upBlockBtn').textContent = '🔓';
+    document.getElementById('upBlockBtn').className = 'btn btn-success';
+    document.getElementById('upMessageBtn').disabled = true;
+    document.getElementById('upMessageBtn').style.opacity = '0.4';
     showToast('🚫 Пользователь заблокирован');
     playSound('click');
+  }
+}
+
+async function addContactFromProfile() {
+  const uname = document.getElementById('upUsername').textContent.replace('@','');
+  const name = document.getElementById('upName').textContent;
+  const phone = document.getElementById('upPhone').textContent;
+  
+  if (!uname || uname === session.username) {
+    showToast('Нельзя добавить себя');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/contacts/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+      body: JSON.stringify({ name, phone, username: uname })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast('✅ Контакт добавлен');
+      playSound('click');
+    } else {
+      showToast(data.error || 'Ошибка добавления');
+    }
+  } catch(e) {
+    showToast('Ошибка соединения');
   }
 }
 
@@ -3178,6 +3062,11 @@ function enterApp() {
   const savedBalance = localStorage.getItem('dicegram_wallet');
   if (savedBalance) walletBalance = parseInt(savedBalance);
   document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+  
+  // Проверка PIN
+  if (localStorage.getItem('dicegram_pin')) {
+    setTimeout(() => showPinPrompt(), 500);
+  }
 }
 
 async function syncProfileFromServer() {
@@ -3202,6 +3091,14 @@ async function syncProfileFromServer() {
       session.premium_avatar_border = data.premium_avatar_border || 'none';
       session.is_nft = data.is_nft || false;
       session.nft_username = data.nft_username || null;
+      
+      // Обновляем баланс с сервера
+      if (data.wallet_balance !== undefined) {
+        walletBalance = data.wallet_balance;
+        localStorage.setItem('dicegram_wallet', String(walletBalance));
+        document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+      }
+      
       localStorage.setItem('dicegram_session_cache', JSON.stringify(session));
       renderProfileTab();
       updatePremiumUI();
@@ -3223,7 +3120,7 @@ function renderProfileTab() {
     nameHtml = `<span class="${colorClass}">${nameHtml}</span>`;
   }
   
-  document.getElementById('profileNameDisplay').innerHTML = nameHtml + (session.is_verified ? ' <span class="verified-badge">✓</span>' : '');
+  document.getElementById('profileNameDisplay').innerHTML = nameHtml + (session.is_verified ? ' <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>' : '');
   document.getElementById('profilePhoneDisplay').textContent = session.phone;
   document.getElementById('profileNameRow').textContent = displayName;
   document.getElementById('profileUsernameDisplay').textContent = '@' + session.username;
@@ -3305,17 +3202,31 @@ function renderChatList() {
       nameHtml = `<span class="${colorClass}">${nameHtml}</span>`;
     }
     
+    const verifiedHtml = c.is_verified ? ` <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : '';
+    
     return `
     <div class="chat-list-item" onclick="openChat('${username}', '${escapeHtml(c.name).replace(/'/g,"\\'")}', ${isGroup})">
       ${avatarHtml(letter, c.avatar_url, avatarClass, isSystemBot, isOwner, isPremium, c.premium_avatar_border)}
       <div class="chat-item-body">
-        <div class="chat-item-name">${nameHtml}${groupBadge}${nftBadge}${premiumBadge} ${c.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${c.is_banned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''} ${unreadHtml}</div>
+        <div class="chat-item-name">${nameHtml}${groupBadge}${nftBadge}${premiumBadge} ${verifiedHtml} ${c.is_banned ? '<span class="banned-badge">ЗАБЛОКИРОВАН</span>' : ''} ${unreadHtml}</div>
         <div class="chat-item-last">${escapeHtml(c.lastText || '')}</div>
       </div>
       <div class="chat-item-time">${c.lastTime ? (c.lastTime.split(' ')[1]||'').substring(0,5) : ''}</div>
     </div>
   `;
   }).join('');
+  
+  // Применяем поиск если есть
+  const searchVal = document.getElementById('chatSearchInput')?.value?.trim()?.toLowerCase();
+  if (searchVal) {
+    const items = container.querySelectorAll('.chat-list-item');
+    items.forEach(item => {
+      const name = item.querySelector('.chat-item-name')?.textContent?.toLowerCase() || '';
+      const last = item.querySelector('.chat-item-last')?.textContent?.toLowerCase() || '';
+      const match = name.includes(searchVal) || last.includes(searchVal);
+      item.style.display = match ? 'flex' : 'none';
+    });
+  }
 }
 
 async function loadChatsList() {
@@ -3408,11 +3319,12 @@ async function doSearchContacts(q) {
       const isOwner = u.phone === OWNER_PHONE || u.is_owner;
       const isPremium = u.is_premium || false;
       const isNFT = u.is_nft || false;
+      const verifiedHtml = u.is_verified ? ` <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : '';
       return `
       <div class="chat-list-item" onclick="openChat('${u.username}', '${escapeHtml(u.name).replace(/'/g,"\\'")}')">
         ${avatarHtml(u.name.charAt(0).toUpperCase(), u.avatar_url, '', false, isOwner, isPremium, u.premium_avatar_border)}
         <div class="chat-item-body">
-          <div class="chat-item-name">${escapeHtml(u.name)} ${u.is_verified ? '<span class="verified-badge">✓</span>' : ''} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''}</div>
+          <div class="chat-item-name">${escapeHtml(u.name)} ${verifiedHtml} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''}</div>
           <div class="chat-item-last">@${u.username}</div>
         </div>
       </div>
@@ -3445,11 +3357,12 @@ async function loadContactsList() {
       const isOwner = live && (live.phone === OWNER_PHONE || live.is_owner);
       const isPremium = live && live.is_premium;
       const isNFT = live && live.is_nft;
+      const verifiedHtml = verified ? ` <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : '';
       return `
       <div class="chat-list-item" onclick="${uname ? `openChat('${uname}', '${escapeHtml(displayName).replace(/'/g,"\\'")}')` : ''}">
         ${avatarHtml(displayName.charAt(0).toUpperCase(), avatarUrl, '', false, isOwner, isPremium, live?.premium_avatar_border)}
         <div class="chat-item-body">
-          <div class="chat-item-name">${escapeHtml(displayName)} ${verified ? '<span class="verified-badge">✓</span>' : ''} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''}</div>
+          <div class="chat-item-name">${escapeHtml(displayName)} ${verifiedHtml} ${isPremium ? '<span class="premium-badge">⭐</span>' : ''} ${isNFT ? '<span class="nft-badge">🏆 NFT</span>' : ''}</div>
           <div class="chat-item-last">${c.contact_phone}${uname ? ' · @'+uname : ' · не в DICEGRAM'}</div>
         </div>
       </div>`;
@@ -3583,6 +3496,10 @@ async function openGroupProfile(groupId) {
     const owner = members.find(m => m.role === 'owner');
     document.getElementById('gpOwner').textContent = owner ? 'Владелец: @' + owner.username : 'Владелец: —';
     
+    // Проверяем верификацию группы (создатель)
+    const isVerified = group.owner_username === 'owner' || group.owner_username === session.username && session.is_owner;
+    document.getElementById('gpVerifiedLine').style.display = isVerified ? 'flex' : 'none';
+    
     const list = document.getElementById('gpMembersList');
     let html = `<div class="section-label" style="margin-top:12px;">Участники (${members.length})</div>`;
     
@@ -3680,7 +3597,9 @@ async function openChat(username, name, isGroup = false) {
     nameHtml = `<span class="${colorClass}">${nameHtml}</span>`;
   }
   
-  document.getElementById('chatHeaderName').innerHTML = nameHtml + (chats[username]?.is_verified ? ' <span class="verified-badge">✓</span>' : '') + (isGroup ? ' <span class="group-badge">ГРУППА</span>' : '') + (isPremium ? ' <span class="premium-badge">⭐</span>' : '') + (isNFT ? ' <span class="nft-badge">🏆 NFT</span>' : '');
+  const verifiedHtml = chats[username]?.is_verified ? ` <span class="verified-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>` : '';
+  
+  document.getElementById('chatHeaderName').innerHTML = nameHtml + verifiedHtml + (isGroup ? ' <span class="group-badge">ГРУППА</span>' : '') + (isPremium ? ' <span class="premium-badge">⭐</span>' : '') + (isNFT ? ' <span class="nft-badge">🏆 NFT</span>' : '');
   
   const isSystemBot = chats[username]?.avatar_letter === 'B' || username === SUPPORT_USERNAME;
   const avatarClasses = isGroup ? 'group' : (username === SUPPORT_USERNAME ? 'support' : '');
@@ -3750,38 +3669,6 @@ let messageCounter = 0;
 
 function appendBubble(dir, text, time, attachmentUrl, msgId, replyTo, isSystem) {
   const container = document.getElementById('messagesContainer');
-  
-  if (isSystem && text && text.includes('NFT')) {
-    const div = document.createElement('div');
-    div.className = 'bubble nft-system';
-    const lines = text.split('\n');
-    let nftName = '';
-    let price = '';
-    let from = '';
-    lines.forEach(line => {
-      if (line.includes('@') && !line.includes('🏆')) {
-        const match = line.match(/@([a-zA-Z0-9_]{3,20})/);
-        if (match) nftName = match[1];
-      }
-      if (line.includes('$')) {
-        const match = line.match(/\$(\d+\.?\d*)/);
-        if (match) price = match[1];
-      }
-      if (line.includes('Приобретено:')) {
-        const match = line.match(/@([a-zA-Z0-9_]{3,20})/);
-        if (match) from = match[1];
-      }
-    });
-    div.innerHTML = `
-      <span class="nft-icon">🏆</span>
-      <div class="nft-name">@${nftName || 'NFT'}</div>
-      <div>${linkifyMentions(text)}</div>
-      ${price ? `<div class="nft-price">💰 $${price}</div>` : ''}
-      ${from ? `<div class="nft-from">🎁 от @${from}</div>` : ''}
-    `;
-    container.appendChild(div);
-    return;
-  }
   
   if (dir === 'system' || isSystem) {
     const div = document.createElement('div');
@@ -3897,7 +3784,6 @@ function showContextMenu(e, msgId, sender, text) {
   
   document.getElementById('editMsgBtn').style.display = isOwn ? 'flex' : 'none';
   document.getElementById('deleteMsgBtn').style.display = isOwn ? 'flex' : 'none';
-  document.getElementById('deleteMsgBtn').textContent = isOwn ? '🗑️ Удалить у всех' : '🗑️ Удалить у себя';
   
   menu.style.left = Math.min(rect.clientX, window.innerWidth - 200) + 'px';
   menu.style.top = Math.min(rect.clientY, window.innerHeight - 200) + 'px';
@@ -4105,6 +3991,7 @@ async function openUserProfile(username) {
 
     const u = data.user;
     currentUpUser = username;
+    upIsBlocked = false;
     const isOwner = u.phone === OWNER_PHONE || u.is_owner;
     const isPremium = u.is_premium || false;
     const isNFT = u.is_nft || false;
@@ -4135,7 +4022,7 @@ async function openUserProfile(username) {
     
     document.getElementById('upName').innerHTML = nameHtml;
     document.getElementById('upUsername').textContent = '@' + u.username;
-    document.getElementById('upPhone').textContent = u.phone || '';
+    document.getElementById('upPhone').innerHTML = u.phone + ` <button class="copy-btn" onclick="navigator.clipboard.writeText('${u.phone}'); showToast('Номер скопирован')">Копировать</button>`;
     
     document.getElementById('upPremiumBadge').style.display = isPremium ? 'block' : 'none';
     document.getElementById('upNftBadge').style.display = isNFT ? 'block' : 'none';
@@ -4162,6 +4049,16 @@ async function openUserProfile(username) {
     }
 
     document.getElementById('upBotNotice').style.display = (u.username === SUPPORT_USERNAME) ? 'flex' : 'none';
+    
+    // Кнопка блокировки
+    document.getElementById('upBlockBtn').textContent = '🚫';
+    document.getElementById('upBlockBtn').className = 'btn btn-danger';
+    document.getElementById('upMessageBtn').disabled = false;
+    document.getElementById('upMessageBtn').style.opacity = '1';
+    
+    // Кнопка добавления в контакты
+    document.getElementById('upAddContactBtn').style.display = (u.username === SUPPORT_USERNAME || u.username === session.username) ? 'none' : 'block';
+    
     document.getElementById('userProfileView').classList.add('active');
     
     // Переключаем на вкладку Инфо
@@ -4184,6 +4081,10 @@ function closeUserProfile() {
 }
 
 function messageFromProfile() {
+  if (upIsBlocked) {
+    showToast('🚫 Пользователь заблокирован');
+    return;
+  }
   const uname = document.getElementById('upUsername').textContent.replace('@','');
   const name = document.getElementById('upName').textContent;
   closeUserProfile();

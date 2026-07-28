@@ -2164,34 +2164,44 @@ html, body {
     </div>
   </div>
 
-  <!-- USER PROFILE VIEW -->
+  <!-- USER PROFILE VIEW (АПГРЕЙД) -->
   <div id="userProfileView">
     <div class="up-header">
       <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
       <span style="font-weight:700;font-size:16px;">Профиль</span>
     </div>
     <div style="flex:1;overflow-y:auto;">
+      <!-- Шапка профиля (крупный юзернейм и номер) -->
       <div class="profile-header" id="upProfileHeader">
         <div class="profile-cover" id="upCover"></div>
-        <div class="avatar profile-avatar" id="upAvatarWrap" style="cursor:default;"><span id="upAvatarLetter">?</span></div>
-        <div class="profile-name" id="upName">—</div>
-        <div class="profile-phone" id="upUsername">—</div>
-        <div class="profile-phone" id="upPhone">—</div>
+        <div class="avatar profile-avatar" id="upAvatarWrap" style="cursor:default;">
+          <span id="upAvatarLetter">?</span>
+        </div>
+        <div class="profile-name" id="upName" style="font-size:26px;">—</div>
+        <div class="profile-phone" id="upUsername" style="font-size:18px;font-weight:700;color:var(--text);">@—</div>
+        <div class="profile-phone" id="upPhone" style="font-size:15px;font-weight:500;">—</div>
         <div class="profile-bio" id="upBio" style="display:none;"></div>
-        <div class="profile-phone" id="upStatusLine" style="margin-top:6px;"></div>
+        <div class="profile-phone" id="upStatusLine" style="margin-top:6px;font-size:13px;"></div>
         <div id="upPremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
         <div id="upNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
         <div class="verified-line" id="upVerifiedLine" style="display:none;"><span class="vb">✓</span> <span id="upVerifiedText">Верифицирован DICEGRAM</span></div>
         <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
         
-        <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;justify-content:center;">
-          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">💬</button>
-          <button class="btn btn-secondary" onclick="showToast('📞 Звонок скоро будет доступен')" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">📞</button>
-          <button class="btn btn-gold" onclick="giftToProfile()" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">🎁</button>
-          <button class="btn btn-danger" onclick="blockUser()" style="padding:12px 20px;width:auto;flex:1;min-width:80px;">🚫</button>
+        <!-- КНОПКИ В СТИЛЕ GLASSMORPHISM -->
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:340px;">
+          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:var(--accent-grad);border:none;color:#fff;font-weight:700;cursor:pointer;transition:transform .15s ease;">
+            💬 Сообщение
+          </button>
+          <button class="btn btn-gold" onclick="giftFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:linear-gradient(135deg,#ffd700,#f59e0b);border:none;color:#1a1a2e;font-weight:700;cursor:pointer;transition:transform .15s ease;">
+            🎁 Подарок
+          </button>
+          <button class="btn btn-danger" onclick="blockUser()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);font-weight:700;cursor:pointer;transition:transform .15s ease;">
+            🚫 Блок
+          </button>
         </div>
       </div>
       
+      <!-- ТАБЫ -->
       <div class="profile-tabs" id="upTabs">
         <div class="profile-tab active" data-tab="upInfo" onclick="switchUpTab('upInfo')">Инфо</div>
         <div class="profile-tab" data-tab="upGifts" onclick="switchUpTab('upGifts')">🎁 Подарки</div>
@@ -2202,6 +2212,28 @@ html, body {
         <div class="bot-notice" id="upBotNotice" style="display:none;">
           <span class="bi">🤖</span>
           <span>Это официальный бот поддержки DICEGRAM.</span>
+        </div>
+        <!-- Информационные карточки -->
+        <div class="profile-glass-card" style="cursor:default;">
+          <div class="left">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <span class="label">Имя</span>
+          </div>
+          <span class="value" id="upInfoName">—</span>
+        </div>
+        <div class="profile-glass-card" style="cursor:default;">
+          <div class="left">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></div>
+            <span class="label">Юзернейм</span>
+          </div>
+          <span class="value" id="upInfoUsername">—</span>
+        </div>
+        <div class="profile-glass-card" style="cursor:default;">
+          <div class="left">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <span class="label">О себе</span>
+          </div>
+          <span class="value" id="upInfoBio">—</span>
         </div>
       </div>
       
@@ -2439,6 +2471,7 @@ let devices = [];
 let userGifts = [];
 let giftShopSelected = null;
 let giftRecipient = null;
+let giftFromProfileTarget = null; // для умной отправки подарка из профиля
 
 // ===================== UTILITY =====================
 function setTheme(theme) {
@@ -2821,7 +2854,7 @@ function openGiftWalletModal() {
   openModal('giftWalletModal');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (РАБОТАЕТ КОРРЕКТНО) =====
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (С МГНОВЕННЫМ ОБНОВЛЕНИЕМ) =====
 async function submitGift() {
   const phone = document.getElementById('giftPhone').value.trim();
   const amount = parseInt(document.getElementById('giftAmount').value);
@@ -2892,7 +2925,7 @@ async function submitGift() {
       return;
     }
     
-    // ОБНОВЛЯЕМ БАЛАНС С СЕРВЕРА
+    // МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА
     walletBalance = data.new_balance !== undefined ? data.new_balance : walletBalance - amount;
     localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
     
@@ -3133,6 +3166,7 @@ function openGiftShop() {
   document.getElementById('giftShopTitle').textContent = '🎁 Магазин подарков';
   giftRecipient = null;
   giftShopSelected = null;
+  giftFromProfileTarget = null;
   openModal('giftShopModal');
 }
 
@@ -3398,6 +3432,7 @@ function renderUpMedia() {
   empty.style.display = 'block';
 }
 
+// ===== УМНАЯ ОТПРАВКА ПОДАРКА ИЗ ПРОФИЛЯ =====
 function giftToProfile() {
   const nameEl = document.getElementById('upName');
   const usernameEl = document.getElementById('upUsername');
@@ -3409,15 +3444,63 @@ function giftToProfile() {
     return;
   }
   
-  giftRecipient = { username: uname, name: name };
-  document.getElementById('giftRecipientName').textContent = name + ' (@' + uname + ')';
+  // Сохраняем цель
+  giftFromProfileTarget = { username: uname, name: name };
+  
+  // Получаем телефон пользователя
+  const phoneEl = document.getElementById('upPhone');
+  let phone = phoneEl.textContent.trim();
+  
+  // Если телефона нет в профиле, получаем через API
+  if (!phone || phone === '—') {
+    fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(uname)}`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok && data.user && data.user.phone) {
+        giftFromProfileTarget.phone = data.user.phone;
+        openGiftShopFromProfile();
+      } else {
+        showToast('Не удалось найти номер получателя');
+      }
+    })
+    .catch(() => showToast('Ошибка загрузки'));
+    return;
+  }
+  
+  giftFromProfileTarget.phone = phone;
+  openGiftShopFromProfile();
+}
+
+function openGiftShopFromProfile() {
+  if (!giftFromProfileTarget || !giftFromProfileTarget.phone) {
+    showToast('Ошибка: нет номера получателя');
+    return;
+  }
+  
+  // Открываем магазин сразу на шаге выбора подарка
   document.getElementById('giftShopStep1').style.display = 'none';
   document.getElementById('giftShopStep2').style.display = 'block';
-  document.getElementById('giftShopTitle').textContent = '🎁 Подарок для ' + name;
+  document.getElementById('giftShopTitle').textContent = `🎁 Подарок для ${giftFromProfileTarget.name}`;
+  document.getElementById('giftRecipientName').textContent = giftFromProfileTarget.name + ' (@' + giftFromProfileTarget.username + ')';
+  
+  // Устанавливаем получателя
+  giftRecipient = {
+    username: giftFromProfileTarget.username,
+    name: giftFromProfileTarget.name,
+    phone: giftFromProfileTarget.phone
+  };
+  
   renderGiftShop();
   giftShopSelected = null;
   document.getElementById('giftBuyBtn').disabled = true;
   openModal('giftShopModal');
+}
+
+// ===== ФУНКЦИЯ ДЛЯ КНОПКИ "ПОДАРОК" В ПРОФИЛЕ (АЛЬЯС) =====
+function giftFromProfile() {
+  giftToProfile();
 }
 
 function blockUser() {
@@ -4397,7 +4480,7 @@ async function sendMessage() {
   playSound('click');
 }
 
-// ===================== USER PROFILE VIEW =====================
+// ===================== USER PROFILE VIEW (АПГРЕЙД) =====================
 async function openUserProfile(username) {
   try {
     const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
@@ -4429,7 +4512,8 @@ async function openUserProfile(username) {
       }
     } catch(e) {}
     
-    let nameHtml = escapeHtml(contactName);
+    // Имя с цветами
+    let nameHtml = escapeHtml(contactName + (contactSurname ? ' ' + contactSurname : ''));
     if (isBanned) {
       nameHtml = 'Удалённый аккаунт';
     } else if (isOwner) {
@@ -4439,21 +4523,23 @@ async function openUserProfile(username) {
       nameHtml = `<span class="${colorClass}">${nameHtml}</span>`;
     }
     
-    document.getElementById('upName').innerHTML = nameHtml;
+    // Заголовок профиля
+    document.getElementById('upName').innerHTML = nameHtml + (u.is_verified && !isBanned ? ' <span class="verified-badge">✓</span>' : '');
     document.getElementById('upUsername').textContent = '@' + u.username;
-    document.getElementById('upPhone').textContent = u.phone || '';
+    document.getElementById('upPhone').textContent = isBanned ? '' : (u.phone || '');
     
-    document.getElementById('upPremiumBadge').style.display = isPremium ? 'block' : 'none';
-    document.getElementById('upNftBadge').style.display = isNFT ? 'block' : 'none';
+    document.getElementById('upPremiumBadge').style.display = isPremium && !isBanned ? 'block' : 'none';
+    document.getElementById('upNftBadge').style.display = isNFT && !isBanned ? 'block' : 'none';
     
     const bioEl = document.getElementById('upBio');
     if (u.bio && !isBanned) { bioEl.textContent = u.bio; bioEl.style.display = 'block'; }
     else { bioEl.style.display = 'none'; }
 
     document.getElementById('upStatusLine').textContent = isBanned ? 'аккаунт заблокирован' : (u.online ? 'в сети' : formatLastSeen(u.last_seen));
-    document.getElementById('upVerifiedLine').style.display = u.is_verified ? 'flex' : 'none';
+    document.getElementById('upVerifiedLine').style.display = u.is_verified && !isBanned ? 'flex' : 'none';
     document.getElementById('upBannedLine').style.display = isBanned ? 'block' : 'none';
 
+    // Аватар
     const avatarWrap = document.getElementById('upAvatarWrap');
     avatarWrap.className = 'avatar profile-avatar';
     if (isPremium && u.premium_avatar_border && u.premium_avatar_border !== 'none') {
@@ -4469,9 +4555,29 @@ async function openUserProfile(username) {
       avatarWrap.innerHTML = `<span>${u.name.charAt(0).toUpperCase()}</span>`;
     }
 
+    // Информационные карточки
+    document.getElementById('upInfoName').textContent = contactName + (contactSurname ? ' ' + contactSurname : '');
+    document.getElementById('upInfoUsername').textContent = '@' + u.username;
+    document.getElementById('upInfoBio').textContent = isBanned ? 'Аккаунт удалён' : (u.bio || 'Не указано');
+
+    // Бот-нотис
     document.getElementById('upBotNotice').style.display = (u.username === SUPPORT_USERNAME) ? 'flex' : 'none';
+    
+    // Кнопка сообщения
+    const msgBtn = document.getElementById('upMessageBtn');
+    if (isBanned) {
+      msgBtn.disabled = true;
+      msgBtn.textContent = '🚫 Заблокирован';
+      msgBtn.style.opacity = '0.5';
+    } else {
+      msgBtn.disabled = false;
+      msgBtn.textContent = '💬 Сообщение';
+      msgBtn.style.opacity = '1';
+    }
+    
     document.getElementById('userProfileView').classList.add('active');
     
+    // Активируем первую вкладку
     document.querySelectorAll('#userProfileView .profile-tab').forEach(t => t.classList.remove('active'));
     document.querySelector('#userProfileView .profile-tab[data-tab="upInfo"]')?.classList.add('active');
     document.querySelectorAll('#userProfileView .profile-tab-content').forEach(c => c.classList.remove('active'));
@@ -4488,6 +4594,7 @@ async function openUserProfile(username) {
 function closeUserProfile() {
   document.getElementById('userProfileView').classList.remove('active');
   currentUpUser = null;
+  giftFromProfileTarget = null;
 }
 
 function messageFromProfile() {
@@ -4790,6 +4897,7 @@ function connectWebSocket() {
         showToast(`⭐ ${data.message || 'Premium активирован!'}`);
         syncProfileFromServer();
       } else if (data.type === 'wallet_gift') {
+        // МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА ПРИ ПОЛУЧЕНИИ ПОДАРКА
         if (data.new_balance !== undefined) {
           walletBalance = data.new_balance;
           localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));

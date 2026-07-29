@@ -714,7 +714,7 @@ html, body {
   opacity: 0.3;
 }
 
-/* ========== GIFTS GRID ========== */
+/* ========== ПОДАРКИ (НОВАЯ СЕТКА) ========== */
 .gifts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -832,6 +832,150 @@ html, body {
 .gift-shop-item.selected .gift-check {
   opacity: 1;
   transform: scale(1);
+}
+
+/* ========== МОДАЛЬНОЕ ОКНО ПОДАРКА (Glassmorphism 2026) ========== */
+.gift-detail-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 20px;
+  animation: modalFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gift-detail-modal.active {
+  display: flex;
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.gift-detail-card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 28px;
+  padding: 32px 28px 28px;
+  width: 100%;
+  max-width: 360px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.gift-detail-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 20%, rgba(255,215,0,0.05), transparent 50%);
+  pointer-events: none;
+}
+.gift-detail-emoji {
+  font-size: 80px;
+  display: block;
+  margin-bottom: 12px;
+  animation: giftFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 30px rgba(255,215,0,0.15));
+}
+@keyframes giftFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.04); }
+}
+.gift-detail-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+}
+.gift-detail-divider {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 16px;
+  border-radius: 2px;
+}
+.gift-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,0.03);
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.gift-detail-info .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.gift-detail-info .row .label {
+  color: var(--muted);
+  font-weight: 500;
+}
+.gift-detail-info .row .value {
+  color: var(--text);
+  font-weight: 600;
+}
+.gift-detail-info .row .value.gold {
+  color: var(--gold);
+}
+.gift-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.gift-detail-actions .btn {
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.gift-detail-actions .btn:active { transform: scale(0.96); }
+.gift-detail-actions .btn-sell {
+  background: linear-gradient(135deg, #ff5470, #ff2d55);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 20px rgba(255,84,112,0.25);
+}
+.gift-detail-actions .btn-sell:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.gift-detail-actions .btn-close {
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.gift-detail-actions .btn-close:active {
+  background: rgba(255,255,255,0.1);
+}
+.gift-detail-sold-badge {
+  display: inline-block;
+  background: rgba(255,84,112,0.15);
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,84,112,0.15);
+  margin-top: 4px;
 }
 
 /* ========== SECTION LABELS ========== */
@@ -1965,7 +2109,6 @@ html, body {
         <div class="amount" id="walletBalanceAmount">0</div>
         <div class="currency">❤️ Dice Wallet</div>
       </div>
-      <button class="btn btn-primary" onclick="openGiftWalletModal()" style="margin-bottom:20px;">🎁 Подарить Dice Wallet</button>
       <div class="section-label" style="padding:8px 0;">История операций</div>
       <div id="walletTransactions"></div>
     </div>
@@ -2160,6 +2303,24 @@ html, body {
         <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectBorderColor('purple')"><span class="check">✓</span></div>
         <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectBorderColor('white')"><span class="check" style="color:#000;">✓</span></div>
         <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="none" onclick="selectBorderColor('none')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО ПРОСМОТРА ПОДАРКА -->
+  <div class="gift-detail-modal" id="giftDetailModal">
+    <div class="gift-detail-card">
+      <span class="gift-detail-emoji" id="giftDetailEmoji">🎁</span>
+      <div class="gift-detail-title" id="giftDetailTitle">ПОДАРОК</div>
+      <div class="gift-detail-divider"></div>
+      <div class="gift-detail-info">
+        <div class="row"><span class="label">От</span><span class="value" id="giftDetailFrom">—</span></div>
+        <div class="row"><span class="label">Дата</span><span class="value" id="giftDetailDate">—</span></div>
+        <div class="row"><span class="label">Стоимость</span><span class="value gold" id="giftDetailPrice">—</span></div>
+        <div class="row" id="giftDetailSoldRow" style="display:none;"><span class="label">Статус</span><span class="value" style="color:var(--danger);font-weight:700;">Продан</span></div>
+      </div>
+      <div class="gift-detail-actions" id="giftDetailActions">
+        <button class="btn btn-close" onclick="closeGiftDetail()">ОК</button>
       </div>
     </div>
   </div>
@@ -2369,18 +2530,6 @@ html, body {
     </div>
   </div>
 
-  <div class="modal-overlay" id="giftWalletModal">
-    <div class="modal-sheet">
-      <div class="modal-handle"></div>
-      <button class="modal-close" onclick="closeModal('giftWalletModal')">✕</button>
-      <div class="modal-title">🎁 Подарить Dice Wallet</div>
-      <input class="field" id="giftPhone" placeholder="Номер телефона +777 xx-xx-xx">
-      <input class="field" id="giftAmount" placeholder="Количество ❤️" type="number" min="1">
-      <div class="hint err" id="giftHint"></div>
-      <button class="btn btn-primary" onclick="submitGift()">Отправить подарок</button>
-    </div>
-  </div>
-
   <div class="modal-overlay" id="avatarCropModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
@@ -2471,7 +2620,9 @@ let devices = [];
 let userGifts = [];
 let giftShopSelected = null;
 let giftRecipient = null;
-let giftFromProfileTarget = null; // для умной отправки подарка из профиля
+let giftFromProfileTarget = null;
+let viewingGiftId = null;
+let viewingGiftOwner = null;
 
 // ===================== UTILITY =====================
 function setTheme(theme) {
@@ -2821,9 +2972,27 @@ function removeDevice(deviceId) {
 
 // ===================== WALLET =====================
 function loadWallet() {
-  walletBalance = parseInt(localStorage.getItem('dicegram_wallet_' + session.username) || '0');
+  // ЗАГРУЖАЕМ БАЛАНС С СЕРВЕРА
+  fetchWalletBalance();
   walletTransactions = JSON.parse(localStorage.getItem('dicegram_wallet_transactions_' + session.username) || '[]');
   renderWallet();
+}
+
+async function fetchWalletBalance() {
+  try {
+    const res = await fetch(`${API_BASE}/api/wallet/balance`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (data.ok) {
+      walletBalance = data.balance;
+      localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+      document.getElementById('walletBalanceAmount').textContent = walletBalance;
+      document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+    }
+  } catch(e) {
+    console.error('Ошибка загрузки баланса:', e);
+  }
 }
 
 function renderWallet() {
@@ -2847,106 +3016,7 @@ function renderWallet() {
   `).join('');
 }
 
-function openGiftWalletModal() {
-  document.getElementById('giftPhone').value = '';
-  document.getElementById('giftAmount').value = '';
-  document.getElementById('giftHint').textContent = '';
-  openModal('giftWalletModal');
-}
-
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (С МГНОВЕННЫМ ОБНОВЛЕНИЕМ) =====
-async function submitGift() {
-  const phone = document.getElementById('giftPhone').value.trim();
-  const amount = parseInt(document.getElementById('giftAmount').value);
-  const hint = document.getElementById('giftHint');
-  
-  if (!phone || phone.replace(/\D/g,'').length < 8) {
-    hint.textContent = 'Введите корректный номер телефона';
-    return;
-  }
-  if (!amount || amount < 1) {
-    hint.textContent = 'Введите сумму больше 0';
-    return;
-  }
-  
-  // Проверяем баланс перед отправкой
-  try {
-    const balanceRes = await fetch(`${API_BASE}/api/wallet/balance`, {
-      headers: { 'Authorization': `Bearer ${session.token}` }
-    });
-    const balanceData = await balanceRes.json();
-    if (balanceData.ok) {
-      walletBalance = balanceData.balance;
-      localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-    }
-  } catch(e) {}
-  
-  if (amount > walletBalance) {
-    hint.textContent = 'Недостаточно средств';
-    return;
-  }
-  
-  // Проверяем существует ли пользователь с таким номером
-  try {
-    const checkRes = await fetch(`${API_BASE}/api/user/profile/by_phone?phone=${encodeURIComponent(phone)}`, {
-      headers: { 'Authorization': `Bearer ${session.token}` }
-    });
-    const checkData = await checkRes.json();
-    if (!checkData.ok || !checkData.user) {
-      hint.textContent = 'Пользователь с таким номером не найден в DICEGRAM';
-      return;
-    }
-    if (checkData.user.username === session.username) {
-      hint.textContent = 'Нельзя отправить подарок себе';
-      return;
-    }
-    if (checkData.user.is_banned) {
-      hint.textContent = 'Аккаунт получателя заблокирован';
-      return;
-    }
-  } catch(e) {
-    hint.textContent = 'Ошибка проверки пользователя';
-    return;
-  }
-  
-  // Отправляем подарок через сервер
-  try {
-    const res = await fetch(`${API_BASE}/api/wallet/gift`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.token}`
-      },
-      body: JSON.stringify({ phone, amount })
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      hint.textContent = data.error || 'Ошибка отправки';
-      return;
-    }
-    
-    // МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА
-    walletBalance = data.new_balance !== undefined ? data.new_balance : walletBalance - amount;
-    localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-    
-    // Добавляем транзакцию
-    walletTransactions.unshift({
-      name: `Подарок пользователю ${phone}`,
-      amount: -amount,
-      date: new Date().toLocaleString()
-    });
-    localStorage.setItem('dicegram_wallet_transactions_' + session.username, JSON.stringify(walletTransactions));
-    
-    renderWallet();
-    renderProfileGifts();
-    document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
-    closeModal('giftWalletModal');
-    showToast(`✅ Подарок отправлен! -${amount} ❤️`);
-    playSound('click');
-  } catch(e) {
-    hint.textContent = 'Нет связи с сервером';
-  }
-}
+// УДАЛЕНА КНОПКА "Подарить Dice Wallet"
 
 // ===================== AI CHAT =====================
 async function sendAIMessage() {
@@ -3307,39 +3377,97 @@ async function giftConfirmPurchase() {
   }
 }
 
-function renderProfileGifts() {
-  const grid = document.getElementById('profileGiftsGrid');
-  const empty = document.getElementById('profileGiftsEmpty');
+// ===================== ПРОСМОТР ПОДАРКА =====================
+function openGiftDetail(giftId, isOwner) {
+  viewingGiftId = giftId;
+  viewingGiftOwner = isOwner;
   
+  // Ищем подарок в списке
   fetch(`${API_BASE}/api/gifts/user`, {
     headers: { 'Authorization': `Bearer ${session.token}` }
   })
   .then(r => r.json())
   .then(data => {
-    if (!data.ok || !data.gifts || data.gifts.length === 0) {
-      grid.innerHTML = '';
-      empty.style.display = 'block';
+    if (!data.ok || !data.gifts) {
+      showToast('Ошибка загрузки подарка');
       return;
     }
-    empty.style.display = 'none';
-    const gifts = data.gifts || [];
-    grid.innerHTML = gifts.filter(g => !g.sold).map((g, i) => `
-      <div class="gift-item" style="animation-delay:${i * 0.05}s">
-        <span class="gift-emoji">${g.gift_emoji || '🎁'}</span>
-        <div class="gift-name">${g.gift_name || 'Подарок'}</div>
-        <div class="gift-price">${g.price || 0} ❤️</div>
-        <div class="gift-from">от ${g.from_username || 'неизвестно'}</div>
-        ${g.from_username !== session.username && !g.sold ? `<button class="gift-sell-btn" onclick="sellGift(${g.id})">Продать</button>` : ''}
-      </div>
-    `).join('');
+    const gift = data.gifts.find(g => g.id === giftId);
+    if (!gift) {
+      showToast('Подарок не найден');
+      return;
+    }
+    
+    // Заполняем модалку
+    document.getElementById('giftDetailEmoji').textContent = gift.gift_emoji || '🎁';
+    document.getElementById('giftDetailTitle').textContent = isOwner ? 'ПОДАРОК ВАМ' : 'ПОДАРОК';
+    
+    const fromText = gift.from_username === session.username ? 'Куплено вами' : '@' + gift.from_username;
+    document.getElementById('giftDetailFrom').textContent = fromText;
+    
+    const date = gift.created_at ? new Date(gift.created_at) : new Date();
+    const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    const dateStr = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} в ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('giftDetailDate').textContent = dateStr;
+    document.getElementById('giftDetailPrice').textContent = `${gift.price} ❤️`;
+    
+    // Проверяем статус продажи
+    const soldRow = document.getElementById('giftDetailSoldRow');
+    if (gift.sold) {
+      soldRow.style.display = 'flex';
+    } else {
+      soldRow.style.display = 'none';
+    }
+    
+    // Кнопки действий
+    const actions = document.getElementById('giftDetailActions');
+    actions.innerHTML = '';
+    
+    // Кнопка продажи (только для своих подарков, не от себя, не проданных, в течение 7 дней)
+    const canSell = isOwner && 
+                    gift.from_username !== session.username && 
+                    !gift.sold &&
+                    gift.created_at;
+    
+    if (canSell) {
+      // Проверяем 7 дней
+      const createdDate = new Date(gift.created_at);
+      const now = new Date();
+      const daysDiff = (now - createdDate) / (1000 * 60 * 60 * 24);
+      const isWithin7Days = daysDiff <= 7;
+      
+      if (isWithin7Days) {
+        const sellBtn = document.createElement('button');
+        sellBtn.className = 'btn btn-sell';
+        sellBtn.textContent = 'Продать подарок';
+        sellBtn.onclick = () => sellGiftFromDetail(giftId);
+        actions.appendChild(sellBtn);
+      }
+    }
+    
+    // Кнопка ОК
+    const okBtn = document.createElement('button');
+    okBtn.className = 'btn btn-close';
+    okBtn.textContent = 'ОК';
+    okBtn.onclick = closeGiftDetail;
+    actions.appendChild(okBtn);
+    
+    document.getElementById('giftDetailModal').classList.add('active');
   })
   .catch(() => {
-    grid.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+    showToast('Ошибка загрузки подарка');
   });
 }
 
-async function sellGift(giftId) {
+function closeGiftDetail() {
+  document.getElementById('giftDetailModal').classList.remove('active');
+  viewingGiftId = null;
+  viewingGiftOwner = null;
+}
+
+async function sellGiftFromDetail(giftId) {
   if (!confirm('Продать подарок?')) return;
+  
   try {
     const res = await fetch(`${API_BASE}/api/gifts/sell`, {
       method: 'POST',
@@ -3357,12 +3485,43 @@ async function sellGift(giftId) {
       renderWallet();
       renderProfileGifts();
       document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+      closeGiftDetail();
     } else {
       showToast(data.error || 'Ошибка');
     }
   } catch(e) {
     showToast('Нет связи с сервером');
   }
+}
+
+function renderProfileGifts() {
+  const grid = document.getElementById('profileGiftsGrid');
+  const empty = document.getElementById('profileGiftsEmpty');
+  
+  fetch(`${API_BASE}/api/gifts/user`, {
+    headers: { 'Authorization': `Bearer ${session.token}` }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.ok || !data.gifts || data.gifts.length === 0) {
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    const gifts = data.gifts || [];
+    grid.innerHTML = gifts.filter(g => !g.sold).map((g, i) => `
+      <div class="gift-item" style="animation-delay:${i * 0.05}s" onclick="openGiftDetail(${g.id}, true)">
+        <span class="gift-emoji">${g.gift_emoji || '🎁'}</span>
+        <div class="gift-name">${g.gift_name || 'Подарок'}</div>
+        <div class="gift-price">${g.price || 0} ❤️</div>
+        <div class="gift-from">от ${g.from_username || 'неизвестно'}</div>
+      </div>
+    `).join('');
+  })
+  .catch(() => {
+    grid.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+  });
 }
 
 function renderUpGifts(username) {
@@ -3382,7 +3541,7 @@ function renderUpGifts(username) {
     empty.style.display = 'none';
     const gifts = data.gifts || [];
     grid.innerHTML = gifts.filter(g => !g.sold).map((g, i) => `
-      <div class="gift-item" style="animation-delay:${i * 0.05}s">
+      <div class="gift-item" style="animation-delay:${i * 0.05}s" onclick="openGiftDetail(${g.id}, false)">
         <span class="gift-emoji">${g.gift_emoji || '🎁'}</span>
         <div class="gift-name">${g.gift_name || 'Подарок'}</div>
         <div class="gift-from">от ${g.from_username || 'неизвестно'}</div>
@@ -3444,14 +3603,11 @@ function giftToProfile() {
     return;
   }
   
-  // Сохраняем цель
   giftFromProfileTarget = { username: uname, name: name };
   
-  // Получаем телефон пользователя
   const phoneEl = document.getElementById('upPhone');
   let phone = phoneEl.textContent.trim();
   
-  // Если телефона нет в профиле, получаем через API
   if (!phone || phone === '—') {
     fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(uname)}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -3479,13 +3635,11 @@ function openGiftShopFromProfile() {
     return;
   }
   
-  // Открываем магазин сразу на шаге выбора подарка
   document.getElementById('giftShopStep1').style.display = 'none';
   document.getElementById('giftShopStep2').style.display = 'block';
   document.getElementById('giftShopTitle').textContent = `🎁 Подарок для ${giftFromProfileTarget.name}`;
   document.getElementById('giftRecipientName').textContent = giftFromProfileTarget.name + ' (@' + giftFromProfileTarget.username + ')';
   
-  // Устанавливаем получателя
   giftRecipient = {
     username: giftFromProfileTarget.username,
     name: giftFromProfileTarget.name,
@@ -3498,7 +3652,6 @@ function openGiftShopFromProfile() {
   openModal('giftShopModal');
 }
 
-// ===== ФУНКЦИЯ ДЛЯ КНОПКИ "ПОДАРОК" В ПРОФИЛЕ (АЛЬЯС) =====
 function giftFromProfile() {
   giftToProfile();
 }
@@ -3527,9 +3680,8 @@ function enterApp() {
   updateNavBadges();
   updatePremiumUI();
   
-  const savedBalance = localStorage.getItem('dicegram_wallet_' + session.username);
-  if (savedBalance) walletBalance = parseInt(savedBalance);
-  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+  // ЗАГРУЖАЕМ БАЛАНС С СЕРВЕРА
+  fetchWalletBalance();
 }
 
 async function syncProfileFromServer() {
@@ -4902,6 +5054,7 @@ function connectWebSocket() {
           walletBalance = data.new_balance;
           localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
           document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+          document.getElementById('walletBalanceAmount').textContent = walletBalance;
           if (document.getElementById('walletPage').classList.contains('active')) {
             renderWallet();
           }
@@ -4915,6 +5068,7 @@ function connectWebSocket() {
         walletBalance = data.balance;
         localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
         document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+        document.getElementById('walletBalanceAmount').textContent = walletBalance;
         if (document.getElementById('walletPage').classList.contains('active')) {
           renderWallet();
         }

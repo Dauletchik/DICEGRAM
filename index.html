@@ -6,7 +6,7 @@
 <title>DICEGRAM</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-/* ===== ВСЕ ТВОИ СТИЛИ ОСТАЮТСЯ ===== */
+/* ===== ВСЕ ТВОИ СТИЛИ ===== */
 :root[data-theme="dark"] {
   --bg: #0a0e17;
   --bg2: #131a26;
@@ -81,14 +81,11 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif; overflow: hidden; transition: background .25s ease, color .25s ease; }
 #app { position: relative; height: 100vh; width: 100vw; max-width: 480px; margin: 0 auto; background: var(--bg); display: flex; flex-direction: column; }
-
 .screen { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transform: translateX(24px) scale(.99); transition: opacity .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1); }
 .screen.active { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); }
-
 #loadingScreen { justify-content: center; align-items: center; background: var(--bg); z-index: 999; }
 .spinner { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 #welcome { justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at 20% 0%, rgba(124,92,255,.20), transparent 55%), radial-gradient(circle at 85% 15%, rgba(91,141,239,.20), transparent 50%), var(--bg); padding: 32px; }
 .logo-circle { width: 116px; height: 116px; border-radius: 32px; background: var(--accent-grad); display: flex; align-items: center; justify-content: center; font-size: 54px; font-weight: 800; color: white; box-shadow: var(--shadow-pop); margin-bottom: 26px; transform: rotate(-4deg); }
 .brand { font-size: 38px; font-weight: 800; letter-spacing: -.5px; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; }
@@ -102,7 +99,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .btn-gold { background: linear-gradient(135deg, #ffd700, #f59e0b); color: #1a1a2e; box-shadow: 0 4px 24px rgba(255,215,0,0.3); }
 .btn-row { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 320px; }
 .btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
-
 .auth-screen { padding: 28px 24px; justify-content: flex-start; background: var(--bg); }
 .auth-header { margin-top: 20px; margin-bottom: 32px; }
 .auth-title { font-size: 25px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.3px; }
@@ -117,24 +113,19 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .spacer { flex: 1; }
 .back-btn { align-self: flex-start; color: var(--accent); background: var(--surface); border: none; font-size: 15px; margin-bottom: 8px; cursor: pointer; padding: 8px 14px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .back-btn svg { width: 20px; height: 20px; }
-
 #success { justify-content: center; align-items: center; text-align: center; padding: 32px; }
 .check-circle { width: 92px; height: 92px; border-radius: 50%; background: radial-gradient(circle, rgba(47,217,127,.18), rgba(47,217,127,.05)); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; font-size: 44px; color: var(--success); box-shadow: 0 0 0 8px rgba(47,217,127,.06); }
 .phone-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 22px; margin: 20px 0 28px; width: 100%; max-width: 320px; box-shadow: var(--shadow-soft); }
 .phone-num { font-size: 27px; font-weight: 800; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: .5px; }
 .phone-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .security-note { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 28px; max-width: 320px; }
-
 #mainApp { display: none; flex-direction: column; height: 100%; background: var(--bg); }
 #mainApp.active { display: flex; }
 .tab-content { flex: 1; overflow-y: auto; display: none; flex-direction: column; -webkit-overflow-scrolling: touch; }
 .tab-content.active { display: flex; }
 .tab-content::-webkit-scrollbar { display: none; }
-
 .top-bar { padding: 18px 20px; font-size: 22px; font-weight: 800; letter-spacing: -.3px; border-bottom: 1px solid var(--border); background: var(--bg2); display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); flex-shrink: 0; }
 .top-bar .back-btn { margin-bottom: 0; padding: 6px 12px; }
-
-/* ========== ЧАТЫ ========== */
 .chat-list-item { display: flex; align-items: center; gap: 13px; padding: 13px 18px; cursor: pointer; transition: background .15s ease; position: relative; }
 .chat-list-item:active { background: var(--surface-hover); }
 .avatar { width: 52px; height: 52px; border-radius: 17px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 19px; color: white; background: var(--accent-grad); overflow: hidden; position: relative; }
@@ -156,10 +147,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .premium-badge { display: inline-flex; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 700; padding: 1px 8px 1px 5px; border-radius: 10px; background: linear-gradient(135deg, var(--premium-gold), #f59e0b); color: #1a1a2e; animation: premiumBadgePulse 2s ease-in-out infinite; box-shadow: 0 2px 12px rgba(255,215,0,0.3); }
 @keyframes premiumBadgePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .premium-badge svg { width: 12px; height: 12px; }
-
 .unread-badge { background: var(--badge-bg); color: #fff; font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-left: 6px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(255,84,112,.3); animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes badgePop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
 #chatView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 10; }
 #chatView.active { display: flex; }
 .chat-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); cursor: pointer; flex-shrink: 0; }
@@ -183,19 +172,15 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .bubble.nft-system .nft-from { color: var(--text-dim); font-size: 12px; margin-top: 4px; }
 .bubble-time { font-size: 10.5px; opacity: .65; margin-top: 4px; display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
 .bubble img.attachment { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 6px; }
-
 .mention-link { color: #8fb8ff; font-weight: 700; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(143,184,255,.4); }
 .bubble.out .mention-link { color: #eaf1ff; text-decoration-color: rgba(234,241,255,.5); }
-
 .check-mark { font-size: 12px; opacity: 0.6; }
 .check-mark.sent { opacity: 0.6; }
 .check-mark.delivered { opacity: 0.8; }
 .check-mark.read { opacity: 1; color: var(--accent); }
-
 .context-menu { position: fixed; background: rgba(18, 26, 40, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05); padding: 8px 0; z-index: 1000; min-width: 220px; display: none; animation: menuAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: bottom center; }
 @keyframes menuAppear { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .context-menu.active { display: block; }
-
 .context-menu-item { padding: 12px 18px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.15s ease; color: rgba(255, 255, 255, 0.9); font-weight: 500; border: none; background: transparent; width: 100%; text-align: left; position: relative; }
 .context-menu-item:active { background: rgba(255, 255, 255, 0.06); transform: scale(0.96); }
 .context-menu-item .menu-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
@@ -204,13 +189,11 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .context-menu-item.danger { color: #ff5470; }
 .context-menu-item.danger .menu-shortcut { color: rgba(255, 84, 112, 0.4); }
 .context-menu-divider { height: 1px; background: rgba(255, 255, 255, 0.06); margin: 4px 12px; }
-
 .sticker-picker { display: flex; gap: 4px; padding: 8px 12px; flex-wrap: wrap; justify-content: center; }
 .sticker-picker .dice-sticker { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 6px 10px; min-width: 48px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
 .sticker-picker .dice-sticker:active { transform: scale(0.88); background: rgba(255, 255, 255, 0.1); border-color: rgba(91, 141, 239, 0.3); }
 .sticker-picker .dice-sticker .sticker-icon { font-size: 24px; display: block; }
 .sticker-picker .dice-sticker .sticker-label { font-size: 7px; color: rgba(255, 255, 255, 0.4); font-weight: 600; display: block; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.3px; }
-
 .reactions-row { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
 .reaction-bubble { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 2px 10px 2px 8px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: all 0.2s ease; user-select: none; }
 .reaction-bubble:active { transform: scale(0.92); }
@@ -218,23 +201,18 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .reaction-bubble .reaction-count { font-size: 11px; color: rgba(255, 255, 255, 0.5); font-weight: 600; }
 .reaction-bubble.my-reaction { border-color: rgba(91, 141, 239, 0.4); background: rgba(91, 141, 239, 0.1); }
 .reaction-bubble.my-reaction .reaction-count { color: #5b8def; }
-
 .reply-preview { background: var(--surface); padding: 6px 12px; border-left: 3px solid var(--accent); border-radius: 4px; margin-bottom: 4px; font-size: 13px; color: var(--text-dim); cursor: pointer; }
 .reply-preview .rp-name { font-weight: 700; color: var(--text); }
 .reply-preview .rp-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
 #imagePreviewBar { display: none; padding: 10px 14px; background: var(--bg2); align-items: center; gap: 10px; border-top: 1px solid var(--border); }
 #imagePreviewBar img { width: 52px; height: 52px; object-fit: cover; border-radius: 12px; }
 #imagePreviewBar .cancel-preview { color: var(--danger); background: rgba(255,84,112,.12); border: none; font-size: 18px; cursor: pointer; margin-left: auto; width:32px;height:32px;border-radius:10px; }
-
 .input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid var(--border); align-items: center; flex-shrink: 0; }
 .input-bar input { flex: 1; background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px; padding: 13px 18px; color: var(--text); font-size: 15px; outline: none; }
 .input-bar input:focus { border-color: var(--accent); }
 .send-btn, .attach-btn { width: 46px; height: 46px; border-radius: 50%; border: none; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; user-select: none; -webkit-user-select: none; touch-action: none; }
 .send-btn { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
 .attach-btn { background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; }
-
-/* ========== BOTTOM NAVIGATION ========== */
 .bottom-nav { display: flex; background: var(--bg2); border-top: 1px solid var(--border); padding: 8px 4px max(8px, env(safe-area-inset-bottom)); position: relative; z-index: 5; flex-shrink: 0; }
 .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 6px 0; border-radius: 12px; transition: all 0.2s ease; position: relative; -webkit-tap-highlight-color: transparent; }
 .nav-item:active { transform: scale(0.92); }
@@ -248,8 +226,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .nav-label { font-size: 10px; font-weight: 600; color: var(--nav-icon-inactive); transition: color 0.2s ease; letter-spacing: 0.2px; }
 .nav-item.active .nav-label { color: var(--nav-icon-active); }
 .nav-badge-count { position: absolute; top: -6px; right: -8px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--badge-bg); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg2); animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-/* ========== PREMIUM AVATAR BORDER ========== */
 .avatar-premium-border { position: relative; }
 .avatar-premium-border::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; padding: 3px; background: conic-gradient(from 0deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4, #ffd700); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: premiumBorderSpin 3s linear infinite; }
 @keyframes premiumBorderSpin { 0% { --gradient-angle: 0deg; } 100% { --gradient-angle: 360deg; } }
@@ -259,8 +235,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .avatar-premium-border.purple::after { background: conic-gradient(from 0deg, #8b5cf6, #7c3aed, #8b5cf6); }
 .avatar-premium-border.white::after { background: conic-gradient(from 0deg, #fff, #e5e7eb, #fff); }
 .avatar-premium-border.rainbow::after { background: conic-gradient(from 0deg, #ffd700, #ff6b6b, #8b5cf6, #06b6d4, #ffd700); }
-
-/* ========== NICKNAME COLORS ========== */
 .nickname-gold { color: var(--premium-gold) !important; }
 .nickname-cyan { color: var(--premium-cyan) !important; }
 .nickname-pink { color: var(--premium-pink) !important; }
@@ -268,8 +242,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .nickname-red { color: #ef4444 !important; }
 .nickname-white { color: #fff !important; }
 .nickname-gradient { background: linear-gradient(135deg, var(--premium-gold), #ff6b6b, var(--premium-purple)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
-
-/* ========== ПРОФИЛЬ ========== */
 .profile-header { display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; background: radial-gradient(circle at 50% 0%, var(--accent-grad-soft), transparent 60%), var(--bg); position: relative; flex-shrink: 0; }
 .profile-cover { position: absolute; top: 0; left: 0; right: 0; height: 140px; background: var(--accent-grad-soft); border-radius: 0 0 30px 30px; opacity: 0.3; transition: height 0.3s ease; }
 .profile-avatar { width: 104px; height: 104px; font-size: 38px; margin-bottom: 16px; position: relative; border-radius: 30px; box-shadow: var(--shadow-soft); cursor: pointer; z-index: 1; }
@@ -284,7 +256,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .verified-line .vb { width:16px;height:16px;border-radius:50%;background:var(--accent-grad); display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff; }
 .banned-line { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 700; background: rgba(255,84,112,.1); border-radius: 14px; padding: 8px 16px; }
 .owner-line { color: var(--gold); font-size: 12.5px; margin-top: 8px; font-weight: 800; letter-spacing: .3px; background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05)); padding: 6px 16px; border-radius: 20px; display:flex; align-items:center; gap:6px; }
-
 .profile-tabs { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 16px; gap: 4px; flex-shrink: 0; position: relative; }
 .profile-tab { padding: 14px 20px; font-size: 14px; font-weight: 600; color: var(--text-dim); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; display: flex; align-items: center; gap: 6px; }
 .profile-tab svg { width: 18px; height: 18px; stroke: var(--text-dim); transition: stroke 0.3s ease; }
@@ -294,7 +265,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .profile-tab-content { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 12px; animation: tabFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .profile-tab-content.active { display: flex; }
-
 .profile-glass-card { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08); }
 .profile-glass-card:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.08); }
 .profile-glass-card .left { display: flex; align-items: center; gap: 12px; }
@@ -303,8 +273,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .profile-glass-card .label { font-weight: 600; font-size: 15px; color: var(--text); }
 .profile-glass-card .value { color: var(--text-dim); font-size: 14px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile-glass-card .arrow { color: var(--muted); font-size: 18px; opacity: 0.3; }
-
-/* ========== GIFTS ========== */
 .gifts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .gift-item { background: var(--surface); border-radius: 16px; padding: 16px 8px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid var(--border); position: relative; animation: giftAppear 0.4s ease forwards; opacity: 0; transform: scale(0.9); }
 @keyframes giftAppear { to { opacity: 1; transform: scale(1); } }
@@ -319,7 +287,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .gift-item .gift-sell-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .gift-item .gift-owner-badge { position: absolute; top: -6px; right: -6px; background: var(--accent-grad); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; box-shadow: var(--shadow-pop); }
 .gift-item .gift-sold-badge { position: absolute; inset: 0; background: rgba(0,0,0,0.6); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--danger); backdrop-filter: blur(2px); }
-
 .gift-shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .gift-shop-item { background: var(--surface); border-radius: 16px; padding: 18px 8px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 2px solid var(--border); position: relative; animation: giftAppear 0.4s ease forwards; opacity: 0; transform: scale(0.9); }
 .gift-shop-item:active { transform: scale(0.92); }
@@ -329,8 +296,30 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .gift-shop-item.selected { border-color: var(--accent); box-shadow: var(--shadow-pop); }
 .gift-shop-item .gift-check { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-grad); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; opacity: 0; transform: scale(0); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .gift-shop-item.selected .gift-check { opacity: 1; transform: scale(1); }
-
-/* ========== MODALS ========== */
+.section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); padding: 18px 20px 8px; }
+.list-row { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer; background: var(--bg2); font-weight: 500; transition: background .15s ease; }
+.list-row:active { background: var(--surface-hover); }
+.list-row-left { display: flex; align-items: center; gap: 12px; }
+.list-row-icon { width: 34px; height: 34px; border-radius: 11px; display:flex;align-items:center;justify-content:center; font-size:16px; background: var(--accent-grad-soft); }
+.list-row-value { color: var(--text-dim); font-size: 14px; display:flex; align-items:center; gap:6px; }
+.search-box { padding: 12px 18px; }
+.search-box input { width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 22px; padding: 12px 18px; color: var(--text); outline: none; font-size: 14.5px; }
+.search-box input:focus { border-color: var(--accent); }
+.empty-state { text-align: center; color: var(--muted); padding: 60px 30px; font-size: 14px; line-height: 1.6; }
+.fab { position: absolute; right: 20px; bottom: max(20px, env(safe-area-inset-bottom)); width: 58px; height: 58px; border-radius: 20px; background: var(--accent-grad); color: #fff; font-size: 26px; border: none; box-shadow: var(--shadow-pop); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.toggle { position: relative; width: 48px; height: 28px; border-radius: 16px; background: var(--border); cursor: pointer; transition: background .2s ease; flex-shrink:0; }
+.toggle.on { background: var(--accent-grad); }
+.toggle-knob { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.toggle.on .toggle-knob { transform: translateX(20px); }
+.segmented { display: flex; background: var(--surface); border-radius: 14px; padding: 4px; gap: 4px; margin: 0 20px 16px; }
+.segmented-option { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--text-dim); transition: all .2s ease; }
+.segmented-option.active { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
+.tz-option { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1.5px solid var(--border); margin-bottom: 10px; cursor: pointer; }
+.tz-option.active { border-color: var(--accent); background: var(--accent-grad-soft); }
+.tz-option-label { font-weight: 700; font-size: 15px; }
+.tz-option-time { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.tz-option-check { color: var(--accent); font-size: 18px; opacity: 0; }
+.tz-option.active .tz-option-check { opacity: 1; }
 .modal-overlay { position: absolute; inset: 0; background: rgba(5,8,14,.6); z-index: 50; backdrop-filter: blur(3px); display: none; align-items: flex-end; justify-content: center; }
 .modal-overlay.active { display: flex; }
 .modal-sheet { background: var(--bg2); width: 100%; max-width: 480px; border-radius: 26px 26px 0 0; padding: 12px 20px max(24px, env(safe-area-inset-bottom)); max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,.3); animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -340,20 +329,16 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .modal-title svg { width: 24px; height: 24px; flex-shrink: 0; color: var(--accent); }
 .modal-close { float: right; background: var(--surface); border:none; color: var(--text-dim); font-size: 18px; cursor: pointer; width:32px;height:32px;border-radius:10px; }
 .char-counter { font-size: 12px; color: var(--muted); text-align: right; margin-top: -8px; margin-bottom: 14px; }
-
 #avatarCropModal .modal-sheet { text-align: center; }
 .avatar-crop-preview { width: 220px; height: 220px; border-radius: 50%; margin: 12px auto 20px; overflow: hidden; border: 4px solid var(--accent); box-shadow: var(--shadow-pop); background: var(--surface); display: flex; align-items: center; justify-content: center; }
 .avatar-crop-preview img { width: 100%; height: 100%; object-fit: cover; }
-
 #userProfileView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; }
 #userProfileView.active { display: flex; }
 .up-header { display:flex; align-items:center; gap:12px; padding:14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink:0; }
 .bot-notice { margin: 18px 20px 0; padding: 14px 16px; border-radius: var(--radius-md); background: var(--accent-grad-soft); border: 1px solid var(--border); font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left; display: flex; gap: 10px; align-items: flex-start; }
 .bot-notice .bi { font-size: 18px; flex-shrink: 0; }
-
 #toast { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--surface); color: var(--text); padding: 12px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; z-index: 200; opacity: 0; transition: opacity .3s ease, transform .3s ease; pointer-events: none; max-width: 85%; text-align: center; box-shadow: var(--shadow-soft); border: 1px solid var(--border); }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 .group-member-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
 .group-member-item .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 14px; }
 .group-member-name { flex: 1; font-weight: 600; font-size: 14px; }
@@ -361,11 +346,10 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .group-member-role.admin { color: var(--accent); }
 .group-member-role.owner { color: var(--gold); }
 .group-member-action { color: var(--accent); font-size: 13px; cursor: pointer; padding: 4px 10px; border-radius: 8px; background: var(--surface-hover); }
-
 .add-member-input { display: flex; gap: 8px; padding: 12px 16px; }
 .add-member-input input { flex: 1; }
-
-/* ========== SETTINGS ========== */
+.context-menu { display: none; }
+.context-menu.active { display: block; }
 .settings-container { padding: 16px 20px 32px; background: var(--bg); flex: 1; overflow-y: auto; }
 .settings-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding: 10px 4px 12px 4px; }
 .settings-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
@@ -385,7 +369,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .settings-badge.gold { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
 .settings-badge.green { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25); }
 .settings-balance { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: -0.2px; }
-
 .sub-settings-page { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 30; }
 .sub-settings-page.active { display: flex; }
 .sub-settings-content { flex: 1; overflow-y: auto; padding: 16px 20px 32px; }
@@ -395,31 +378,25 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .sub-settings-item .left svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
 .sub-settings-item .label { font-weight: 600; font-size: 15px; }
 .sub-settings-item .value { color: var(--text-dim); font-size: 14px; }
-
 .wallet-balance-card { background: var(--surface); border-radius: 20px; padding: 24px; text-align: center; border: 1px solid var(--border); margin-bottom: 20px; }
 .wallet-balance-card .amount { font-size: 42px; font-weight: 800; color: var(--gold); letter-spacing: -1px; }
 .wallet-balance-card .currency { font-size: 16px; color: var(--text-dim); }
 .wallet-balance-card .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
 .transaction-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .transaction-item .info { display: flex; flex-direction: column; gap: 2px; }
 .transaction-item .info .name { font-weight: 600; font-size: 14px; }
 .transaction-item .info .date { font-size: 12px; color: var(--muted); }
 .transaction-item .amount.positive { color: var(--success); font-weight: 700; }
 .transaction-item .amount.negative { color: var(--danger); font-weight: 700; }
-
 .ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
 .ai-chat-message { max-width: 85%; padding: 10px 14px; border-radius: var(--radius-md); font-size: 15px; line-height: 1.5; }
 .ai-chat-message.user { align-self: flex-end; background: var(--accent-grad); color: #fff; }
 .ai-chat-message.assistant { align-self: flex-start; background: var(--bubble-in); color: var(--text); }
 .ai-chat-message .time { font-size: 10px; opacity: 0.5; margin-top: 4px; display: block; }
-
 .ai-chat-input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid var(--border); flex-shrink: 0; }
 .ai-chat-input-bar input { flex: 1; background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px; padding: 12px 18px; color: var(--text); font-size: 15px; outline: none; }
 .ai-chat-input-bar input:focus { border-color: var(--accent); }
 .ai-chat-input-bar .send-btn { width: 46px; height: 46px; border-radius: 50%; background: var(--accent-grad); color: #fff; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-/* ========== PREMIUM PAGE ========== */
 .premium-page { position: absolute; inset: 0; background: linear-gradient(145deg, #0a0e17 0%, #1a0a2e 50%, #0a0e17 100%); display: none; flex-direction: column; z-index: 40; overflow-y: auto; }
 .premium-page.active { display: flex; }
 .premium-backdrop { position: absolute; inset: 0; background: radial-gradient(circle at 20% 20%, rgba(139,92,246,0.15), transparent 50%), radial-gradient(circle at 80% 80%, rgba(6,182,212,0.1), transparent 50%), radial-gradient(circle at 50% 50%, rgba(236,72,153,0.05), transparent 70%); pointer-events: none; }
@@ -454,13 +431,10 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .premium-color-picker .color-option.active { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); transform: scale(1.1); }
 .premium-color-picker .color-option .check { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; opacity: 0; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 .premium-color-picker .color-option.active .check { opacity: 1; }
-
 .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
 .media-grid .media-item { aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--surface); border: 1px solid var(--border); }
 .media-grid .media-item img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.3s ease; }
 .media-grid .media-item img:active { transform: scale(1.05); }
-
-/* ========== BANNED SCREEN ========== */
 .banned-screen { position: absolute; inset: 0; background: #0a0e17; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 32px; text-align: center; }
 .banned-screen.active { display: flex; }
 .banned-icon-wrap { width: 96px; height: 96px; border-radius: 50%; background: rgba(255,84,112,0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 28px; border: 2px solid rgba(255,84,112,0.15); animation: bannedPulse 2.5s ease-in-out infinite; }
@@ -473,8 +447,42 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .banned-btn { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.08); padding: 16px 40px; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; min-width: 200px; letter-spacing: 0.3px; }
 .banned-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
 .banned-btn:hover { background: rgba(255,255,255,0.06); }
-
 @media (max-width: 380px) { .wallet-balance-card .amount { font-size: 32px; } .settings-card { padding: 10px 14px; min-height: 50px; } .settings-icon { width: 38px; height: 38px; min-width: 38px; } .settings-icon svg { width: 20px; height: 20px; } .premium-hero .crown { font-size: 48px; } .premium-hero .title { font-size: 26px; } .premium-price .price { font-size: 32px; } .gifts-grid, .gift-shop-grid { grid-template-columns: repeat(2, 1fr); } .banned-title { font-size: 24px; } .banned-icon-wrap { width: 76px; height: 76px; } .banned-icon-wrap svg { width: 34px; height: 34px; } }
+
+/* ===== НОВЫЕ СТИЛИ ДЛЯ ГРУПП/КАНАЛОВ ===== */
+.group-profile-username {
+  font-size: 13px;
+  color: var(--text-dim);
+  background: var(--surface);
+  padding: 4px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  font-family: monospace;
+}
+.group-profile-username:active {
+  transform: scale(0.95);
+  background: var(--surface-hover);
+}
+.gp-copy-toast {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  color: var(--text);
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-weight: 600;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+  pointer-events: none;
+}
+.gp-copy-toast.show { opacity: 1; }
 
 /* Скрываем стандартные контекстные меню */
 * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
@@ -484,718 +492,713 @@ input, textarea, [contenteditable] { -webkit-user-select: text; user-select: tex
 <body>
 <div id="app">
 
-<!-- LOADING -->
-<div class="screen active" id="loadingScreen"><div class="spinner"></div></div>
+  <!-- LOADING -->
+  <div class="screen active" id="loadingScreen"><div class="spinner"></div></div>
 
-<!-- WELCOME -->
-<div class="screen" id="welcome">
-  <div class="logo-circle">D</div>
-  <div class="brand">DICEGRAM</div>
-  <div class="tagline">Добро пожаловать!</div>
-  <div class="btn-row">
-    <button class="btn btn-primary" onclick="goTo('regName')">Зарегистрировать аккаунт</button>
-    <button class="btn btn-secondary" onclick="goTo('loginScreen')">Войти</button>
-  </div>
-  <div id="connStatus" style="margin-top:18px;font-size:12px;color:var(--muted);">Проверка связи с сервером...</div>
-</div>
-
-<!-- AUTH SCREENS -->
-<div class="screen auth-screen" id="regName">
-  <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
-  <div class="auth-header"><div class="auth-title">Как вас зовут?</div><div class="auth-sub">Напишите ваше имя</div></div>
-  <input class="field" id="inputName" placeholder="Имя" maxlength="40">
-  <div class="spacer"></div>
-  <button class="btn btn-primary" id="btnNameNext" onclick="stepNameNext()" disabled>Далее</button>
-</div>
-
-<div class="screen auth-screen" id="regUsername">
-  <button class="back-btn" onclick="goTo('regName')">← Назад</button>
-  <div class="auth-header"><div class="auth-title">Придумайте юзернейм</div><div class="auth-sub">Только латиница, цифры и _, от 3 до 20 символов</div></div>
-  <input class="field" id="inputUsername" placeholder="username" maxlength="20" autocapitalize="off">
-  <div class="hint muted" id="usernameHint"></div>
-  <div class="spacer"></div>
-  <button class="btn btn-primary" id="btnUserNext" onclick="stepUsernameNext()" disabled>Далее</button>
-</div>
-
-<div class="screen auth-screen" id="regPassword">
-  <button class="back-btn" onclick="goTo('regUsername')">← Назад</button>
-  <div class="auth-header"><div class="auth-title">Придумайте пароль</div><div class="auth-sub">Не менее 6 символов</div></div>
-  <input class="field" type="password" id="inputPassword" placeholder="Пароль">
-  <input class="field" type="password" id="inputPassword2" placeholder="Подтвердите пароль">
-  <div class="hint err" id="passwordHint"></div>
-  <div class="spacer"></div>
-  <button class="btn btn-primary" id="btnPassNext" onclick="stepPasswordNext()">Далее</button>
-</div>
-
-<div class="screen" id="success">
-  <div class="check-circle">✓</div>
-  <div class="auth-title" id="successTitle">Вы успешно зарегистрировали аккаунт</div>
-  <div class="phone-card"><div class="phone-label">Ваш личный номер в DICEGRAM</div><div class="phone-num" id="phoneDisplay">+777 00-00-00</div></div>
-  <div class="security-note" id="successNote"></div>
-  <div class="btn-row"><button class="btn btn-primary" onclick="finishRegistration()">Продолжить</button></div>
-</div>
-
-<div class="screen auth-screen" id="loginScreen">
-  <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
-  <div class="auth-header"><div class="auth-title">Вход в DICEGRAM</div><div class="auth-sub">Введите номер и пароль</div></div>
-  <input class="field" id="loginPhone" placeholder="+777 xx-xx-xx">
-  <input class="field" type="password" id="loginPassword" placeholder="Пароль">
-  <div class="hint err" id="loginHint"></div>
-  <div class="spacer"></div>
-  <button class="btn btn-primary" onclick="doLogin()">Войти</button>
-</div>
-
-<!-- BANNED SCREEN -->
-<div class="banned-screen" id="bannedScreen">
-  <div class="banned-icon-wrap">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-      <circle cx="12" cy="16" r="1.5"/>
-    </svg>
-  </div>
-  <div class="banned-title">ДОСТУП ОГРАНИЧЕН</div>
-  <div class="banned-text">Ваш аккаунт в DICEGRAM был заблокирован Создателем мессенджера за нарушение правил платформы.</div>
-  <div class="banned-reason">Причина: Нарушение условий пользовательского соглашения</div>
-  <div class="banned-duration">Срок блокировки: Навсегда</div>
-  <button class="banned-btn" onclick="logoutFromBanned()">Выйти из аккаунта</button>
-</div>
-
-<!-- MAIN APP -->
-<div id="mainApp">
-  <div class="tab-content active" id="tabChats" style="position:relative;">
-    <div class="top-bar"><span>Чаты</span></div>
-    <div id="chatListContainer"></div>
-    <button class="fab" onclick="openCreateMenu()">＋</button>
+  <!-- WELCOME -->
+  <div class="screen" id="welcome">
+    <div class="logo-circle">D</div>
+    <div class="brand">DICEGRAM</div>
+    <div class="tagline">Добро пожаловать!</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goTo('regName')">Зарегистрировать аккаунт</button>
+      <button class="btn btn-secondary" onclick="goTo('loginScreen')">Войти</button>
+    </div>
+    <div id="connStatus" style="margin-top:18px;font-size:12px;color:var(--muted);">Проверка связи с сервером...</div>
   </div>
 
-  <div class="tab-content" id="tabContacts" style="position:relative;">
-    <div class="top-bar"><span>Контакты</span></div>
-    <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
-    <div id="contactsResult"><div class="empty-state">Начните вводить юзернейм для поиска,<br>или откройте список контактов</div></div>
-    <button class="fab" onclick="openAddContactModal()">＋</button>
+  <!-- AUTH SCREENS -->
+  <div class="screen auth-screen" id="regName">
+    <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
+    <div class="auth-header"><div class="auth-title">Как вас зовут?</div><div class="auth-sub">Напишите ваше имя</div></div>
+    <input class="field" id="inputName" placeholder="Имя" maxlength="40">
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnNameNext" onclick="stepNameNext()" disabled>Далее</button>
   </div>
 
-  <div class="tab-content" id="tabSettings">
-    <div class="top-bar"><span>Настройки</span></div>
-    <div class="settings-container">
-      <div class="settings-section-title">Аккаунт и безопасность</div>
-      <div class="settings-grid">
-        <div class="settings-card" onclick="openAccountSecurityPage()">
-          <div class="settings-icon" style="background: #2F80ED;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title">Аккаунт и безопасность</div><div class="settings-card-sub">Пароль, устройства</div></div>
-          <div class="settings-card-right"><span class="settings-chevron">›</span></div>
-        </div>
-      </div>
+  <div class="screen auth-screen" id="regUsername">
+    <button class="back-btn" onclick="goTo('regName')">← Назад</button>
+    <div class="auth-header"><div class="auth-title">Придумайте юзернейм</div><div class="auth-sub">Только латиница, цифры и _, от 3 до 20 символов</div></div>
+    <input class="field" id="inputUsername" placeholder="username" maxlength="20" autocapitalize="off">
+    <div class="hint muted" id="usernameHint"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnUserNext" onclick="stepUsernameNext()" disabled>Далее</button>
+  </div>
 
-      <div class="settings-section-title">ИИ и монетизация</div>
-      <div class="settings-grid">
-        <div class="settings-card card-ai" onclick="openAIChat()">
-          <div class="settings-icon" style="background: linear-gradient(135deg, #06B6D4, #3B82F6);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="15" r="1"/><circle cx="15" cy="15" r="1"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title">Dice AI Ассистент</div><div class="settings-card-sub">Интеллектуальный помощник</div></div>
-          <div class="settings-card-right"><span class="settings-badge gold">AI</span><span class="settings-chevron">›</span></div>
-        </div>
-        <div class="settings-card" onclick="openWalletPage()">
-          <div class="settings-icon" style="background: #FBBF24;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M16 10h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2"/><circle cx="18" cy="12" r=".5" fill="white"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title">Dice Wallet</div><div class="settings-card-sub">Внутренняя валюта</div></div>
-          <div class="settings-card-right"><span class="settings-balance" id="walletBalanceDisplay">0 ❤️</span><span class="settings-chevron">›</span></div>
-        </div>
-      </div>
+  <div class="screen auth-screen" id="regPassword">
+    <button class="back-btn" onclick="goTo('regUsername')">← Назад</button>
+    <div class="auth-header"><div class="auth-title">Придумайте пароль</div><div class="auth-sub">Не менее 6 символов</div></div>
+    <input class="field" type="password" id="inputPassword" placeholder="Пароль">
+    <input class="field" type="password" id="inputPassword2" placeholder="Подтвердите пароль">
+    <div class="hint err" id="passwordHint"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="btnPassNext" onclick="stepPasswordNext()">Далее</button>
+  </div>
 
-      <div class="settings-section-title">Подарки</div>
-      <div class="settings-grid">
-        <div class="settings-card card-gift" onclick="openGiftShop()">
-          <div class="settings-icon" style="background: linear-gradient(135deg, #ffd700, #f59e0b);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title">Магазин подарков</div><div class="settings-card-sub">Купите или подарите виртуальный подарок</div></div>
-          <div class="settings-card-right"><span class="settings-badge gold">🎁</span><span class="settings-chevron">›</span></div>
-        </div>
-      </div>
+  <div class="screen" id="success">
+    <div class="check-circle">✓</div>
+    <div class="auth-title" id="successTitle">Вы успешно зарегистрировали аккаунт</div>
+    <div class="phone-card"><div class="phone-label">Ваш личный номер в DICEGRAM</div><div class="phone-num" id="phoneDisplay">+777 00-00-00</div></div>
+    <div class="security-note" id="successNote"></div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="finishRegistration()">Продолжить</button></div>
+  </div>
 
-      <div class="settings-section-title">Интерфейс и связь</div>
-      <div class="settings-grid">
-        <div class="settings-card" onclick="toggleNotifications()">
-          <div class="settings-icon" style="background: #EF4444;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title">Уведомления и звуки</div><div class="settings-card-sub">Системные звуки приложения</div></div>
-          <div class="settings-card-right"><div class="toggle on" id="notifToggle"><div class="toggle-knob"></div></div><span class="settings-chevron">›</span></div>
-        </div>
-        <div class="settings-card" onclick="openInviteFriends()">
-          <div class="settings-icon" style="background: #0EA5E9;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title">Пригласить друзей</div><div class="settings-card-sub">Поделитесь DICEGRAM</div></div>
-          <div class="settings-card-right"><span class="settings-chevron">›</span></div>
-        </div>
-      </div>
+  <div class="screen auth-screen" id="loginScreen">
+    <button class="back-btn" onclick="goTo('welcome')">← Назад</button>
+    <div class="auth-header"><div class="auth-title">Вход в DICEGRAM</div><div class="auth-sub">Введите номер и пароль</div></div>
+    <input class="field" id="loginPhone" placeholder="+777 xx-xx-xx">
+    <input class="field" type="password" id="loginPassword" placeholder="Пароль">
+    <div class="hint err" id="loginHint"></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+  </div>
 
-      <div class="settings-section-title">Оформление</div>
-      <div class="settings-grid">
-        <div class="settings-card" onclick="event.stopPropagation()">
-          <div class="settings-icon" style="background: var(--accent);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+  <!-- BANNED SCREEN -->
+  <div class="banned-screen" id="bannedScreen">
+    <div class="banned-icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        <circle cx="12" cy="16" r="1.5"/>
+      </svg>
+    </div>
+    <div class="banned-title">ДОСТУП ОГРАНИЧЕН</div>
+    <div class="banned-text">Ваш аккаунт в DICEGRAM был заблокирован Создателем мессенджера за нарушение правил платформы.</div>
+    <div class="banned-reason">Причина: Нарушение условий пользовательского соглашения</div>
+    <div class="banned-duration">Срок блокировки: Навсегда</div>
+    <button class="banned-btn" onclick="logoutFromBanned()">Выйти из аккаунта</button>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="mainApp">
+    <div class="tab-content active" id="tabChats" style="position:relative;">
+      <div class="top-bar"><span>Чаты</span></div>
+      <div id="chatListContainer"></div>
+      <button class="fab" onclick="openCreateMenu()">＋</button>
+    </div>
+
+    <div class="tab-content" id="tabContacts" style="position:relative;">
+      <div class="top-bar"><span>Контакты</span></div>
+      <div class="search-box"><input id="contactSearch" placeholder="Найти по юзернейму" oninput="searchContacts()"></div>
+      <div id="contactsResult"><div class="empty-state">Начните вводить юзернейм для поиска,<br>или откройте список контактов</div></div>
+      <button class="fab" onclick="openAddContactModal()">＋</button>
+    </div>
+
+    <div class="tab-content" id="tabSettings">
+      <div class="top-bar"><span>Настройки</span></div>
+      <div class="settings-container">
+        <div class="settings-section-title">Аккаунт и безопасность</div>
+        <div class="settings-grid">
+          <div class="settings-card" onclick="openAccountSecurityPage()">
+            <div class="settings-icon" style="background: #2F80ED;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Аккаунт и безопасность</div><div class="settings-card-sub">Пароль, устройства</div></div>
+            <div class="settings-card-right"><span class="settings-chevron">›</span></div>
           </div>
-          <div class="settings-card-content"><div class="settings-card-title">Тема</div></div>
-          <div class="settings-card-right">
-            <div class="segmented" style="margin:0;padding:3px;border-radius:10px;background:var(--bg3);">
-              <div class="segmented-option" id="themeOptDark" onclick="setTheme('dark')" style="padding:6px 12px;font-size:12px;">Тёмная</div>
-              <div class="segmented-option" id="themeOptLight" onclick="setTheme('light')" style="padding:6px 12px;font-size:12px;">Светлая</div>
+        </div>
+
+        <div class="settings-section-title">ИИ и монетизация</div>
+        <div class="settings-grid">
+          <div class="settings-card card-ai" onclick="openAIChat()">
+            <div class="settings-icon" style="background: linear-gradient(135deg, #06B6D4, #3B82F6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="15" r="1"/><circle cx="15" cy="15" r="1"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Dice AI Ассистент</div><div class="settings-card-sub">Интеллектуальный помощник</div></div>
+            <div class="settings-card-right"><span class="settings-badge gold">AI</span><span class="settings-chevron">›</span></div>
+          </div>
+          <div class="settings-card" onclick="openWalletPage()">
+            <div class="settings-icon" style="background: #FBBF24;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M16 10h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2"/><circle cx="18" cy="12" r=".5" fill="white"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Dice Wallet</div><div class="settings-card-sub">Внутренняя валюта</div></div>
+            <div class="settings-card-right"><span class="settings-balance" id="walletBalanceDisplay">0 ❤️</span><span class="settings-chevron">›</span></div>
+          </div>
+        </div>
+
+        <div class="settings-section-title">Подарки</div>
+        <div class="settings-grid">
+          <div class="settings-card card-gift" onclick="openGiftShop()">
+            <div class="settings-icon" style="background: linear-gradient(135deg, #ffd700, #f59e0b);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Магазин подарков</div><div class="settings-card-sub">Купите или подарите виртуальный подарок</div></div>
+            <div class="settings-card-right"><span class="settings-badge gold">🎁</span><span class="settings-chevron">›</span></div>
+          </div>
+        </div>
+
+        <div class="settings-section-title">Интерфейс и связь</div>
+        <div class="settings-grid">
+          <div class="settings-card" onclick="toggleNotifications()">
+            <div class="settings-icon" style="background: #EF4444;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Уведомления и звуки</div><div class="settings-card-sub">Системные звуки приложения</div></div>
+            <div class="settings-card-right"><div class="toggle on" id="notifToggle"><div class="toggle-knob"></div></div><span class="settings-chevron">›</span></div>
+          </div>
+          <div class="settings-card" onclick="openInviteFriends()">
+            <div class="settings-icon" style="background: #0EA5E9;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Пригласить друзей</div><div class="settings-card-sub">Поделитесь DICEGRAM</div></div>
+            <div class="settings-card-right"><span class="settings-chevron">›</span></div>
+          </div>
+        </div>
+
+        <div class="settings-section-title">Оформление</div>
+        <div class="settings-grid">
+          <div class="settings-card" onclick="event.stopPropagation()">
+            <div class="settings-icon" style="background: var(--accent);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title">Тема</div></div>
+            <div class="settings-card-right">
+              <div class="segmented" style="margin:0;padding:3px;border-radius:10px;background:var(--bg3);">
+                <div class="segmented-option" id="themeOptDark" onclick="setTheme('dark')" style="padding:6px 12px;font-size:12px;">Тёмная</div>
+                <div class="segmented-option" id="themeOptLight" onclick="setTheme('light')" style="padding:6px 12px;font-size:12px;">Светлая</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="settings-section-title" style="margin-top:4px;">Премиум</div>
-      <div class="settings-grid">
-        <div class="settings-card" onclick="openPremiumPage()" style="border: 2px solid rgba(255,215,0,0.3); background: linear-gradient(135deg, var(--surface), rgba(255,215,0,0.05));">
-          <div class="settings-icon" style="background: linear-gradient(135deg, #ffd700, #f59e0b);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+        <div class="settings-section-title" style="margin-top:4px;">Премиум</div>
+        <div class="settings-grid">
+          <div class="settings-card" onclick="openPremiumPage()" style="border: 2px solid rgba(255,215,0,0.3); background: linear-gradient(135deg, var(--surface), rgba(255,215,0,0.05));">
+            <div class="settings-icon" style="background: linear-gradient(135deg, #ffd700, #f59e0b);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title" style="color: var(--premium-gold);">Dicegram Premium</div><div class="settings-card-sub" id="premiumStatusText">✨ Премиум-возможности</div></div>
+            <div class="settings-card-right"><span class="settings-badge gold" id="premiumBadge">⭐</span><span class="settings-chevron">›</span></div>
           </div>
-          <div class="settings-card-content"><div class="settings-card-title" style="color: var(--premium-gold);">Dicegram Premium</div><div class="settings-card-sub" id="premiumStatusText">✨ Премиум-возможности</div></div>
-          <div class="settings-card-right"><span class="settings-badge gold" id="premiumBadge">⭐</span><span class="settings-chevron">›</span></div>
         </div>
-      </div>
 
-      <div class="settings-section-title" style="margin-top:4px;">Аккаунт</div>
-      <div class="settings-grid">
-        <div class="settings-card" onclick="logout()" style="border-color: rgba(239,68,68,0.2);">
-          <div class="settings-icon" style="background: rgba(239,68,68,0.15); color: #EF4444;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          </div>
-          <div class="settings-card-content"><div class="settings-card-title" style="color: #EF4444;">Выйти из аккаунта</div></div>
-          <div class="settings-card-right"><span class="settings-chevron" style="color:#EF4444;opacity:0.4;">›</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PROFILE TAB -->
-  <div class="tab-content" id="tabProfile">
-    <div class="top-bar"><span>Профиль</span></div>
-    <div style="flex:1;overflow-y:auto;">
-      <div class="profile-header" id="profileHeader">
-        <div class="profile-cover" id="profileCover"></div>
-        <div class="avatar profile-avatar" id="profileAvatarWrap" ondblclick="document.getElementById('avatarFileInput').click()">
-          <span id="profileAvatarLetter">?</span>
-        </div>
-        <div class="profile-avatar-hint">Двойной тап по фото — изменить</div>
-        <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileSelected(event)">
-        <div class="profile-name" id="profileNameDisplay">—</div>
-        <div class="profile-phone" id="profilePhoneDisplay">—</div>
-        <div class="profile-bio" id="profileBioDisplay"></div>
-        <div id="profilePremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
-        <div class="verified-line" id="profileVerifiedLine" style="display:none;"><span class="vb">✓</span> <span>Верифицирован DICEGRAM</span></div>
-        <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
-        <div id="profileNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
-      </div>
-      <div class="profile-tabs">
-        <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Инфо</div>
-        <div class="profile-tab" data-tab="profileGifts" onclick="switchProfileTab('profileGifts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Подарки</div>
-        <div class="profile-tab" data-tab="profileMedia" onclick="switchProfileTab('profileMedia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Медиа</div>
-      </div>
-      <div class="profile-tab-content active" id="profileInfo">
-        <div class="profile-glass-card" onclick="openEditNameModal()">
-          <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><span class="label">Имя</span></div>
-          <span class="value" id="profileNameRow">—</span><span class="arrow">›</span>
-        </div>
-        <div class="profile-glass-card" onclick="openEditUsernameModal()">
-          <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg></div><span class="label">Юзернейм</span></div>
-          <span class="value" id="profileUsernameDisplay">—</span><span class="arrow">›</span>
-        </div>
-        <div class="profile-glass-card" onclick="openEditBioModal()">
-          <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><span class="label">О себе</span></div>
-          <span class="value" id="profileBioRow">—</span><span class="arrow">›</span>
-        </div>
-        <div id="premiumProfileSettings" style="display:none;">
-          <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
-          <div class="profile-glass-card" onclick="openPremiumBorderPicker()">
-            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><span class="label">Рамка аватара</span></div>
-            <span class="value" id="premiumBorderDisplay">Выбрать</span><span class="arrow">›</span>
-          </div>
-          <div class="profile-glass-card" onclick="openPremiumColorPicker()">
-            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg></div><span class="label">Цвет никнейма</span></div>
-            <span class="value" id="premiumColorDisplay">Выбрать</span><span class="arrow">›</span>
+        <div class="settings-section-title" style="margin-top:4px;">Аккаунт</div>
+        <div class="settings-grid">
+          <div class="settings-card" onclick="logout()" style="border-color: rgba(239,68,68,0.2);">
+            <div class="settings-icon" style="background: rgba(239,68,68,0.15); color: #EF4444;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </div>
+            <div class="settings-card-content"><div class="settings-card-title" style="color: #EF4444;">Выйти из аккаунта</div></div>
+            <div class="settings-card-right"><span class="settings-chevron" style="color:#EF4444;opacity:0.4;">›</span></div>
           </div>
         </div>
       </div>
-      <div class="profile-tab-content" id="profileGifts">
-        <div id="profileGiftsGrid" class="gifts-grid"></div>
-        <div id="profileGiftsEmpty" class="empty-state">У вас пока нет подарков.<br>Загляните в магазин! 🎁</div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="tab-content" id="tabProfile">
+      <div class="top-bar"><span>Профиль</span></div>
+      <div style="flex:1;overflow-y:auto;">
+        <div class="profile-header" id="profileHeader">
+          <div class="profile-cover" id="profileCover"></div>
+          <div class="avatar profile-avatar" id="profileAvatarWrap" ondblclick="document.getElementById('avatarFileInput').click()">
+            <span id="profileAvatarLetter">?</span>
+          </div>
+          <div class="profile-avatar-hint">Двойной тап по фото — изменить</div>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileSelected(event)">
+          <div class="profile-name" id="profileNameDisplay">—</div>
+          <div class="profile-phone" id="profilePhoneDisplay">—</div>
+          <div class="profile-bio" id="profileBioDisplay"></div>
+          <div id="profilePremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
+          <div class="verified-line" id="profileVerifiedLine" style="display:none;"><span class="vb">✓</span> <span>Верифицирован DICEGRAM</span></div>
+          <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
+          <div id="profileNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
+        </div>
+        <div class="profile-tabs">
+          <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Инфо</div>
+          <div class="profile-tab" data-tab="profileGifts" onclick="switchProfileTab('profileGifts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Подарки</div>
+          <div class="profile-tab" data-tab="profileMedia" onclick="switchProfileTab('profileMedia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Медиа</div>
+        </div>
+        <div class="profile-tab-content active" id="profileInfo">
+          <div class="profile-glass-card" onclick="openEditNameModal()">
+            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><span class="label">Имя</span></div>
+            <span class="value" id="profileNameRow">—</span><span class="arrow">›</span>
+          </div>
+          <div class="profile-glass-card" onclick="openEditUsernameModal()">
+            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg></div><span class="label">Юзернейм</span></div>
+            <span class="value" id="profileUsernameDisplay">—</span><span class="arrow">›</span>
+          </div>
+          <div class="profile-glass-card" onclick="openEditBioModal()">
+            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><span class="label">О себе</span></div>
+            <span class="value" id="profileBioRow">—</span><span class="arrow">›</span>
+          </div>
+          <div id="premiumProfileSettings" style="display:none;">
+            <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
+            <div class="profile-glass-card" onclick="openPremiumBorderPicker()">
+              <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><span class="label">Рамка аватара</span></div>
+              <span class="value" id="premiumBorderDisplay">Выбрать</span><span class="arrow">›</span>
+            </div>
+            <div class="profile-glass-card" onclick="openPremiumColorPicker()">
+              <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg></div><span class="label">Цвет никнейма</span></div>
+              <span class="value" id="premiumColorDisplay">Выбрать</span><span class="arrow">›</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-tab-content" id="profileGifts">
+          <div id="profileGiftsGrid" class="gifts-grid"></div>
+          <div id="profileGiftsEmpty" class="empty-state">У вас пока нет подарков.<br>Загляните в магазин! 🎁</div>
+        </div>
+        <div class="profile-tab-content" id="profileMedia">
+          <div id="profileMediaGrid" class="media-grid"></div>
+          <div id="profileMediaEmpty" class="empty-state">Нет фото или видео в чатах</div>
+        </div>
       </div>
-      <div class="profile-tab-content" id="profileMedia">
-        <div id="profileMediaGrid" class="media-grid"></div>
-        <div id="profileMediaEmpty" class="empty-state">Нет фото или видео в чатах</div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+      <div class="nav-item active" data-tab="tabChats" onclick="switchTab('tabChats')">
+        <div class="nav-icon-wrap">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M12 2C6.48 2 2 6.04 2 11C2 13.63 3.27 16.01 5.27 17.61L4.07 21.46C3.96 21.82 4.1 22.2 4.4 22.41C4.7 22.62 5.09 22.6 5.37 22.37L8.88 19.82C9.87 20.27 10.92 20.5 12 20.5C17.52 20.5 22 16.46 22 11C22 5.54 17.52 2 12 2Z" fill="currentColor"/><circle cx="8" cy="11" r="1.5" fill="white"/><circle cx="12" cy="11" r="1.5" fill="white"/><circle cx="16" cy="11" r="1.5" fill="white"/></svg>
+          <span id="navChatsBadge" class="nav-badge-count" style="display:none;">0</span>
+        </div>
+        <span class="nav-label">Чаты</span>
+      </div>
+      <div class="nav-item" data-tab="tabContacts" onclick="switchTab('tabContacts')">
+        <div class="nav-icon-wrap">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M16 11C17.66 11 19 9.66 19 8C19 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 11 9.66 11 8C11 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.79 13 2 14.07 2 16.08V18H14V16.08C14 14.07 10.21 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C15.05 13.06 15.06 13.08 15.07 13.09L15.08 13.12C15.45 13.56 16 14.29 16 15.07V17.18H22V15.07C22 14.29 17.45 13 16 13Z" fill="currentColor"/></svg>
+        </div>
+        <span class="nav-label">Контакты</span>
+      </div>
+      <div class="nav-item" data-tab="tabSettings" onclick="switchTab('tabSettings')">
+        <div class="nav-icon-wrap">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M19.14 12.94C19.18 12.64 19.2 12.33 19.2 12C19.2 11.68 19.18 11.36 19.13 11.06L21.16 9.48C21.34 9.34 21.39 9.07 21.28 8.87L19.36 5.55C19.24 5.33 18.99 5.26 18.77 5.33L16.38 6.29C15.88 5.91 15.35 5.59 14.76 5.35L14.4 2.81C14.36 2.57 14.16 2.4 13.92 2.4H10.08C9.84 2.4 9.65 2.57 9.61 2.81L9.25 5.35C8.66 5.59 8.12 5.92 7.63 6.29L5.24 5.33C5.02 5.25 4.77 5.33 4.65 5.55L2.74 8.87C2.62 9.07 2.66 9.34 2.86 9.48L4.89 11.06C4.84 11.36 4.8 11.68 4.8 12C4.8 12.32 4.82 12.64 4.87 12.94L2.84 14.52C2.66 14.66 2.61 14.93 2.72 15.13L4.64 18.45C4.76 18.67 5.01 18.74 5.23 18.67L7.62 17.71C8.12 18.09 8.65 18.41 9.24 18.65L9.6 21.19C9.65 21.43 9.84 21.6 10.08 21.6H13.92C14.16 21.6 14.36 21.43 14.39 21.19L14.75 18.65C15.34 18.41 15.88 18.09 16.37 17.71L18.76 18.67C18.98 18.75 19.23 18.67 19.35 18.45L21.27 15.13C21.39 14.93 21.34 14.66 21.15 14.52L19.14 12.94ZM12 15.6C10.02 15.6 8.4 13.98 8.4 12C8.4 10.02 10.02 8.4 12 8.4C13.98 8.4 15.6 10.02 15.6 12C15.6 13.98 13.98 15.6 12 15.6Z" fill="currentColor"/></svg>
+        </div>
+        <span class="nav-label">Настройки</span>
+      </div>
+      <div class="nav-item" data-tab="tabProfile" onclick="switchTab('tabProfile')">
+        <div class="nav-icon-wrap">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/></svg>
+        </div>
+        <span class="nav-label">Профиль</span>
+      </div>
+    </div>
+  </div> <!-- ЗАКРЫВАЕМ #mainApp -->
+
+  <!-- ====== BOTTOM SHEET МЕНЮ ====== -->
+  <div class="modal-overlay" id="createMenuModal">
+    <div class="modal-sheet" style="padding-bottom:30px;">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('createMenuModal')">✕</button>
+      <div class="modal-title" style="font-size:22px;text-align:center;justify-content:center;">Создать</div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px;">
+        <button class="btn btn-primary" onclick="closeModal('createMenuModal'); openCreateGroupModal('group')" style="padding:18px;border-radius:18px;font-size:17px;display:flex;align-items:center;gap:12px;justify-content:center;">
+          <span style="font-size:28px;">👥</span> Создать группу
+          <span style="font-size:12px;opacity:0.6;font-weight:400;">для общения</span>
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal('createMenuModal'); openCreateGroupModal('channel')" style="padding:18px;border-radius:18px;font-size:17px;display:flex;align-items:center;gap:12px;justify-content:center;border:1.5px solid var(--accent);">
+          <span style="font-size:28px;">📢</span> Создать канал
+          <span style="font-size:12px;opacity:0.6;font-weight:400;">для вещания</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION -->
-  <div class="bottom-nav">
-    <div class="nav-item active" data-tab="tabChats" onclick="switchTab('tabChats')">
-      <div class="nav-icon-wrap">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M12 2C6.48 2 2 6.04 2 11C2 13.63 3.27 16.01 5.27 17.61L4.07 21.46C3.96 21.82 4.1 22.2 4.4 22.41C4.7 22.62 5.09 22.6 5.37 22.37L8.88 19.82C9.87 20.27 10.92 20.5 12 20.5C17.52 20.5 22 16.46 22 11C22 5.54 17.52 2 12 2Z" fill="currentColor"/><circle cx="8" cy="11" r="1.5" fill="white"/><circle cx="12" cy="11" r="1.5" fill="white"/><circle cx="16" cy="11" r="1.5" fill="white"/></svg>
-        <span id="navChatsBadge" class="nav-badge-count" style="display:none;">0</span>
+  <!-- CHAT VIEW -->
+  <div id="chatView">
+    <div class="chat-header" onclick="openChatProfile()">
+      <button class="back-btn" style="margin:0;" onclick="event.stopPropagation(); closeChat();">←</button>
+      <div class="avatar" id="chatHeaderAvatar" style="width:40px;height:40px;font-size:16px;border-radius:13px;">?</div>
+      <div>
+        <div class="chat-header-name" id="chatHeaderName">—</div>
+        <div class="chat-header-status" id="chatHeaderStatus">не в сети</div>
       </div>
-      <span class="nav-label">Чаты</span>
     </div>
-    <div class="nav-item" data-tab="tabContacts" onclick="switchTab('tabContacts')">
-      <div class="nav-icon-wrap">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M16 11C17.66 11 19 9.66 19 8C19 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 11 9.66 11 8C11 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.79 13 2 14.07 2 16.08V18H14V16.08C14 14.07 10.21 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C15.05 13.06 15.06 13.08 15.07 13.09L15.08 13.12C15.45 13.56 16 14.29 16 15.07V17.18H22V15.07C22 14.29 17.45 13 16 13Z" fill="currentColor"/></svg>
-      </div>
-      <span class="nav-label">Контакты</span>
+    <div class="messages" id="messagesContainer"></div>
+    <div id="imagePreviewBar">
+      <img id="imagePreviewImg" src="">
+      <span style="font-size:13px;color:var(--muted);">Фото готово к отправке</span>
+      <button class="cancel-preview" onclick="cancelImagePreview()">✕</button>
     </div>
-    <div class="nav-item" data-tab="tabSettings" onclick="switchTab('tabSettings')">
-      <div class="nav-icon-wrap">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M19.14 12.94C19.18 12.64 19.2 12.33 19.2 12C19.2 11.68 19.18 11.36 19.13 11.06L21.16 9.48C21.34 9.34 21.39 9.07 21.28 8.87L19.36 5.55C19.24 5.33 18.99 5.26 18.77 5.33L16.38 6.29C15.88 5.91 15.35 5.59 14.76 5.35L14.4 2.81C14.36 2.57 14.16 2.4 13.92 2.4H10.08C9.84 2.4 9.65 2.57 9.61 2.81L9.25 5.35C8.66 5.59 8.12 5.92 7.63 6.29L5.24 5.33C5.02 5.25 4.77 5.33 4.65 5.55L2.74 8.87C2.62 9.07 2.66 9.34 2.86 9.48L4.89 11.06C4.84 11.36 4.8 11.68 4.8 12C4.8 12.32 4.82 12.64 4.87 12.94L2.84 14.52C2.66 14.66 2.61 14.93 2.72 15.13L4.64 18.45C4.76 18.67 5.01 18.74 5.23 18.67L7.62 17.71C8.12 18.09 8.65 18.41 9.24 18.65L9.6 21.19C9.65 21.43 9.84 21.6 10.08 21.6H13.92C14.16 21.6 14.36 21.43 14.39 21.19L14.75 18.65C15.34 18.41 15.88 18.09 16.37 17.71L18.76 18.67C18.98 18.75 19.23 18.67 19.35 18.45L21.27 15.13C21.39 14.93 21.34 14.66 21.15 14.52L19.14 12.94ZM12 15.6C10.02 15.6 8.4 13.98 8.4 12C8.4 10.02 10.02 8.4 12 8.4C13.98 8.4 15.6 10.02 15.6 12C15.6 13.98 13.98 15.6 12 15.6Z" fill="currentColor"/></svg>
-      </div>
-      <span class="nav-label">Настройки</span>
-    </div>
-    <div class="nav-item" data-tab="tabProfile" onclick="switchTab('tabProfile')">
-      <div class="nav-icon-wrap">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none"><path class="fill-path" d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/></svg>
-      </div>
-      <span class="nav-label">Профиль</span>
+    <div class="input-bar" id="chatInputBar">
+      <button class="attach-btn" onclick="document.getElementById('chatFileInput').click()">📎</button>
+      <input type="file" id="chatFileInput" accept="image/*" style="display:none" onchange="onChatImageSelected(event)">
+      <input id="messageInput" placeholder="Сообщение" oninput="onTypingInput()" onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
     </div>
   </div>
-</div> <!-- ЗАКРЫВАЕМ #mainApp -->
 
-<!-- ====== BOTTOM SHEET МЕНЮ ====== -->
-<div class="modal-overlay" id="createMenuModal">
-  <div class="modal-sheet" style="padding-bottom:30px;">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('createMenuModal')">✕</button>
-    <div class="modal-title" style="font-size:22px;text-align:center;justify-content:center;">Создать</div>
-    <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px;">
-      <button class="btn btn-primary" onclick="closeModal('createMenuModal'); openCreateGroupModal('group')" style="padding:18px;border-radius:18px;font-size:17px;display:flex;align-items:center;gap:12px;justify-content:center;">
-        <span style="font-size:28px;">👥</span> Создать группу
-        <span style="font-size:12px;opacity:0.6;font-weight:400;">для общения</span>
-      </button>
-      <button class="btn btn-secondary" onclick="closeModal('createMenuModal'); openCreateGroupModal('channel')" style="padding:18px;border-radius:18px;font-size:17px;display:flex;align-items:center;gap:12px;justify-content:center;border:1.5px solid var(--accent);">
-        <span style="font-size:28px;">📢</span> Создать канал
-        <span style="font-size:12px;opacity:0.6;font-weight:400;">для вещания</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- CHAT VIEW -->
-<div id="chatView">
-  <div class="chat-header" onclick="openChatProfile()">
-    <button class="back-btn" style="margin:0;" onclick="event.stopPropagation(); closeChat();">←</button>
-    <div class="avatar" id="chatHeaderAvatar" style="width:40px;height:40px;font-size:16px;border-radius:13px;">?</div>
-    <div>
-      <div class="chat-header-name" id="chatHeaderName">—</div>
-      <div class="chat-header-status" id="chatHeaderStatus">не в сети</div>
-    </div>
-  </div>
-  <div class="messages" id="messagesContainer"></div>
-  <div id="imagePreviewBar">
-    <img id="imagePreviewImg" src="">
-    <span style="font-size:13px;color:var(--muted);">Фото готово к отправке</span>
-    <button class="cancel-preview" onclick="cancelImagePreview()">✕</button>
-  </div>
-  <div class="input-bar" id="chatInputBar">
-    <button class="attach-btn" onclick="document.getElementById('chatFileInput').click()">📎</button>
-    <input type="file" id="chatFileInput" accept="image/*" style="display:none" onchange="onChatImageSelected(event)">
-    <input id="messageInput" placeholder="Сообщение" oninput="onTypingInput()" onkeydown="if(event.key==='Enter') sendMessage()">
-    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
-  </div>
-</div>
-
-<!-- ====== СОЗДАНИЕ ГРУППЫ/КАНАЛА (НОВОЕ) ====== -->
-<div class="modal-overlay" id="createGroupModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('createGroupModal')">✕</button>
-    <div class="modal-title" id="createModalTitle">👥 Создать группу</div>
-    
-    <!-- ШАГ 1 -->
-    <div id="createStep1">
-      <input class="field" id="groupNameInput" placeholder="Название" maxlength="40">
-      <input class="field" id="groupDescInput" placeholder="Описание (необязательно)" maxlength="100">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-        <div class="avatar group" id="groupAvatarPreview" style="width:60px;height:60px;border-radius:16px;font-size:24px;cursor:pointer;" onclick="document.getElementById('groupAvatarFileInput').click()">📷</div>
-        <input type="file" id="groupAvatarFileInput" accept="image/*" style="display:none" onchange="onGroupAvatarPreviewSelected(event)">
-        <span style="color:var(--text-dim);font-size:13px;">Нажмите на иконку,<br>чтобы добавить фото</span>
+  <!-- ====== НОВОЕ МОДАЛЬНОЕ ОКНО СОЗДАНИЯ (ШАГИ) ====== -->
+  <div class="modal-overlay" id="createGroupModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('createGroupModal')">✕</button>
+      <div class="modal-title" id="createModalTitle">👥 Создать группу</div>
+      <!-- ШАГ 1 -->
+      <div id="createStep1">
+        <input class="field" id="groupNameInput" placeholder="Название" maxlength="40">
+        <input class="field" id="groupDescInput" placeholder="Описание (необязательно)" maxlength="100">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div class="avatar group" id="groupAvatarPreview" style="width:60px;height:60px;border-radius:16px;font-size:24px;cursor:pointer;" onclick="document.getElementById('groupAvatarFileInput').click()">📷</div>
+          <input type="file" id="groupAvatarFileInput" accept="image/*" style="display:none" onchange="onGroupAvatarPreviewSelected(event)">
+          <span style="color:var(--text-dim);font-size:13px;">Нажмите на иконку,<br>чтобы добавить фото</span>
+        </div>
+        <button class="btn btn-primary" onclick="createStep1Next()">Далее →</button>
       </div>
-      <button class="btn btn-primary" onclick="createStep1Next()">Далее →</button>
+      <!-- ШАГ 2 -->
+      <div id="createStep2" style="display:none;">
+        <div class="auth-sub" style="margin-bottom:12px;">Придумайте уникальную ссылку для вашей группы/канала</div>
+        <div style="display:flex;align-items:center;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 16px;margin-bottom:4px;">
+          <span style="color:var(--muted);font-weight:600;font-size:15px;">d.me/</span>
+          <input class="field" id="groupUsernameInput" placeholder="username" maxlength="20" autocapitalize="off" style="border:none;padding:15px 8px;margin:0;">
+        </div>
+        <div class="hint muted" id="groupUsernameHint">Только латиница, цифры и _, от 3 до 20 символов</div>
+        <button class="btn btn-primary" onclick="submitCreateGroup()">✅ Создать</button>
+        <button class="btn btn-secondary" onclick="createStep2Back()" style="margin-top:8px;">← Назад</button>
+      </div>
+      <div class="hint err" id="createGroupHint"></div>
     </div>
-    
-    <!-- ШАГ 2: Публичная ссылка -->
-    <div id="createStep2" style="display:none;">
-      <div class="auth-sub" style="margin-bottom:12px;">Придумайте уникальную ссылку для вашей группы/канала</div>
+  </div>
+
+  <!-- ====== ДОБАВЛЕНИЕ УЧАСТНИКА ====== -->
+  <div class="modal-overlay" id="addMemberModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('addMemberModal')">✕</button>
+      <div class="modal-title">➕ Добавить участника</div>
+      <input class="field" id="addMemberSearch" placeholder="Поиск по юзернейму..." oninput="searchMembersToAdd()" style="margin-bottom:8px;">
+      <div id="addMemberResults" style="max-height:300px;overflow-y:auto;"></div>
+      <div class="hint err" id="addMemberHint"></div>
+      <button class="btn btn-primary" onclick="submitAddMember()" style="margin-top:12px;">Добавить</button>
+    </div>
+  </div>
+
+  <!-- ====== РЕДАКТИРОВАНИЕ ГРУППЫ/КАНАЛА ====== -->
+  <div class="modal-overlay" id="editGroupModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('editGroupModal')">✕</button>
+      <div class="modal-title">✏️ Редактировать</div>
+      <input class="field" id="editGroupName" placeholder="Название" maxlength="40">
+      <input class="field" id="editGroupDesc" placeholder="Описание" maxlength="100">
       <div style="display:flex;align-items:center;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 16px;margin-bottom:4px;">
         <span style="color:var(--muted);font-weight:600;font-size:15px;">d.me/</span>
-        <input class="field" id="groupUsernameInput" placeholder="username" maxlength="20" autocapitalize="off" style="border:none;padding:15px 8px;margin:0;">
+        <input class="field" id="editGroupUsername" placeholder="username" maxlength="20" autocapitalize="off" style="border:none;padding:15px 8px;margin:0;">
       </div>
-      <div class="hint muted" id="groupUsernameHint">Только латиница, цифры и _, от 3 до 20 символов</div>
-      <button class="btn btn-primary" onclick="submitCreateGroup()">✅ Создать</button>
-      <button class="btn btn-secondary" onclick="createStep2Back()" style="margin-top:8px;">← Назад</button>
+      <div class="hint muted" id="editGroupHint">Измените публичную ссылку</div>
+      <button class="btn btn-primary" onclick="submitGroupEdit()">💾 Сохранить</button>
     </div>
-    
-    <div class="hint err" id="createGroupHint"></div>
   </div>
-</div>
 
-<!-- ====== РЕДАКТИРОВАНИЕ ГРУППЫ/КАНАЛА ====== -->
-<div class="modal-overlay" id="editGroupModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('editGroupModal')">✕</button>
-    <div class="modal-title">✏️ Редактировать</div>
-    <input class="field" id="editGroupName" placeholder="Название" maxlength="40">
-    <input class="field" id="editGroupDesc" placeholder="Описание" maxlength="100">
-    <div style="display:flex;align-items:center;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 16px;margin-bottom:4px;">
-      <span style="color:var(--muted);font-weight:600;font-size:15px;">d.me/</span>
-      <input class="field" id="editGroupUsername" placeholder="username" maxlength="20" autocapitalize="off" style="border:none;padding:15px 8px;margin:0;">
+  <!-- ====== НОВЫЙ ГРУППОВОЙ ПРОФИЛЬ ====== -->
+  <div id="groupProfileView" style="position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:25;">
+    <div class="up-header">
+      <button class="back-btn" style="margin:0;" onclick="closeGroupProfile()">←</button>
+      <span style="font-weight:700;font-size:16px;" id="gpTypeLabel">Информация о группе</span>
+      <span style="flex:1;"></span>
+      <button id="gpEditBtn" onclick="openGroupEdit()" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 14px;cursor:pointer;font-size:16px;display:none;">✏️</button>
     </div>
-    <div class="hint muted" id="editGroupHint">Измените публичную ссылку</div>
-    <button class="btn btn-primary" onclick="submitGroupEdit()">💾 Сохранить</button>
-  </div>
-</div>
-
-<!-- ====== ДОБАВЛЕНИЕ УЧАСТНИКА ====== -->
-<div class="modal-overlay" id="addMemberModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('addMemberModal')">✕</button>
-    <div class="modal-title">➕ Добавить участника</div>
-    <input class="field" id="addMemberSearch" placeholder="Поиск по юзернейму..." oninput="searchMembersToAdd()" style="margin-bottom:8px;">
-    <div id="addMemberResults" style="max-height:300px;overflow-y:auto;"></div>
-    <div class="hint err" id="addMemberHint"></div>
-    <button class="btn btn-primary" onclick="submitAddMember()" style="margin-top:12px;">Добавить</button>
-  </div>
-</div>
-
-<!-- ====== ОСТАЛЬНЫЕ МОДАЛЬНЫЕ ОКНА ====== -->
-<div class="sub-settings-page" id="accountSecurityPage">
-  <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('accountSecurityPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Аккаунт</span><span style="width:60px;"></span></div>
-  <div class="sub-settings-content">
-    <div class="sub-settings-item" onclick="openChangePasswordModal()"><div class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="label">Смена пароля</span></div><span class="value">›</span></div>
-    <div class="sub-settings-item" onclick="openDevicesPage()"><div class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg><span class="label">Устройства</span></div><span class="value" id="devicesCount">0 сессий ›</span></div>
-  </div>
-</div>
-
-<div class="sub-settings-page" id="devicesPage">
-  <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('devicesPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Устройства</span><span style="width:60px;"></span></div>
-  <div class="sub-settings-content"><div id="devicesList"></div></div>
-</div>
-
-<div class="sub-settings-page" id="walletPage">
-  <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('walletPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Dice Wallet</span><span style="width:60px;"></span></div>
-  <div class="sub-settings-content">
-    <div class="wallet-balance-card"><div class="currency">Баланс</div><div class="amount" id="walletBalanceAmount">0</div><div class="currency">❤️ Dice Wallet</div></div>
-    <button class="btn btn-primary" onclick="openGiftWalletModal()" style="margin-bottom:20px;">🎁 Подарить Dice Wallet</button>
-    <div class="section-label" style="padding:8px 0;">История операций</div>
-    <div id="walletTransactions"></div>
-  </div>
-</div>
-
-<div class="sub-settings-page" id="aiChatPage">
-  <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('aiChatPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Dice AI Ассистент</span><span style="width:60px;"></span></div>
-  <div class="ai-chat-messages" id="aiChatMessages"><div class="ai-chat-message assistant">Привет! Я Dice AI Ассистент. Чем могу помочь? 🤖<span class="time">сейчас</span></div></div>
-  <div class="ai-chat-input-bar"><input id="aiChatInput" placeholder="Спросите что-нибудь..." onkeydown="if(event.key==='Enter') sendAIMessage()"><button class="send-btn" onclick="sendAIMessage()">➤</button></div>
-</div>
-
-<div class="sub-settings-page" id="inviteFriendsPage">
-  <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('inviteFriendsPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Пригласить друзей</span><span style="width:60px;"></span></div>
-  <div class="sub-settings-content" style="text-align:center;padding-top:40px;">
-    <div style="font-size:64px;margin-bottom:16px;">👥</div>
-    <div class="auth-title" style="font-size:24px;">Поделитесь DICEGRAM</div>
-    <div class="auth-sub" style="margin-bottom:30px;">Приглашайте друзей в мессенджер нового поколения</div>
-    <div style="background:var(--surface);border-radius:16px;padding:20px;border:1px solid var(--border);margin-bottom:24px;">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Ваша реферальная ссылка</div>
-      <div style="font-size:14px;font-weight:600;color:var(--accent);word-break:break-all;background:var(--bg);padding:12px;border-radius:10px;font-family:monospace;" id="inviteLink">https://dicegram.com/ref/loading...</div>
-      <button class="btn btn-primary" onclick="copyInviteLink()" style="margin-top:12px;padding:12px;">📋 Скопировать ссылку</button>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;">
-      <button class="btn btn-secondary" onclick="shareVia('telegram')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">📱 Telegram</button>
-      <button class="btn btn-secondary" onclick="shareVia('whatsapp')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">💬 WhatsApp</button>
-      <button class="btn btn-secondary" onclick="shareVia('vk')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">🌐 VK</button>
-    </div>
-    <div class="section-label" style="padding:8px 0;">Приглашённые друзья</div>
-    <div id="invitedFriendsList"><div class="empty-state">Пока никто не пришёл по вашей ссылке</div></div>
-  </div>
-</div>
-
-<!-- PREMIUM PAGE -->
-<div class="premium-page" id="premiumPage">
-  <div class="premium-backdrop"></div>
-  <div class="premium-header">
-    <button class="back-btn" onclick="closePremiumPage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button>
-    <span style="color:rgba(255,255,255,0.6);font-size:14px;font-weight:600;" id="premiumHeaderStatus">⭐ PREMIUM</span>
-  </div>
-  <div class="premium-hero"><span class="crown">👑</span><div class="title">Dicegram Premium</div><div class="subtitle">Расширьте возможности мессенджера</div></div>
-  <div class="premium-features">
-    <div class="premium-feature"><span class="icon">🖼️</span><div class="info"><div class="name">Кастомная рамка аватара</div><div class="desc">Выберите цветящуюся рамку для своего профиля</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">⭐</span><div class="info"><div class="name">Эксклюзивный бейдж</div><div class="desc">Анимированный значок премиум в профиле</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">🎨</span><div class="info"><div class="name">Цветной никнейм</div><div class="desc">Изменяйте цвет имени в чатах и группах</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">😎</span><div class="info"><div class="name">Уникальные реакции</div><div class="desc">Анимированные эмодзи-реакции и статусы</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">🌌</span><div class="info"><div class="name">Эксклюзивные темы</div><div class="desc">Космическая, неоновая, киберпанк и другие</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">🚀</span><div class="info"><div class="name">Удвоенные лимиты</div><div class="desc">Больше чатов, групп и файлов без сжатия</div></div><span class="check">✓</span></div>
-  </div>
-  <div class="premium-price"><div class="price">$4.99 <span>/ месяц</span></div><div class="period">Отмена в любой момент</div><button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()"><span id="premiumBtnText">✨ Купить подписку</span></button><div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3);"><span id="premiumDaysDisplay">30 дней бесплатно</span></div></div>
-</div>
-
-<!-- GIFT SHOP MODAL -->
-<div class="modal-overlay" id="giftShopModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('giftShopModal')">✕</button>
-    <div class="modal-title" id="giftShopTitle">🎁 Магазин подарков</div>
-    <div id="giftShopStep1" style="display:block;">
-      <div class="auth-sub" style="margin-bottom:16px;">Кому отправить подарок?</div>
-      <input class="field" id="giftRecipientPhone" placeholder="Номер телефона +777 xx-xx-xx">
-      <div class="hint err" id="giftRecipientHint"></div>
-      <div class="btn-row" style="margin-top:12px;">
-        <button class="btn btn-primary" onclick="giftFindRecipient()">Найти получателя</button>
-        <button class="btn btn-secondary" onclick="giftBuySelf()">Купить себе</button>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px 32px;">
+      <div style="display:flex;flex-direction:column;align-items:center;padding:20px 0 24px;position:relative;">
+        <div class="avatar group" id="gpAvatarWrap" style="width:96px;height:96px;border-radius:28px;font-size:36px;cursor:pointer;" onclick="document.getElementById('gpAvatarInput').click()">
+          <span id="gpAvatarLetter">📷</span>
+        </div>
+        <input type="file" id="gpAvatarInput" accept="image/*" style="display:none" onchange="onGroupAvatarSelected(event)">
+        <div style="font-size:22px;font-weight:800;margin-top:12px;display:flex;align-items:center;gap:8px;" id="gpName">—</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-top:2px;cursor:pointer;" id="gpUsername" onclick="copyGroupLinkFromProfile()">—</div>
+        <div style="font-size:14px;color:var(--muted);margin-top:4px;text-align:center;max-width:300px;" id="gpDescription">—</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;opacity:0.6;" id="gpOwnerLabel">Владелец: —</div>
+        <div style="display:flex;gap:20px;margin-top:12px;">
+          <div style="text-align:center;"><div style="font-weight:800;font-size:18px;" id="gpMemberCount">0</div><div style="font-size:11px;color:var(--muted);">участников</div></div>
+          <div style="text-align:center;"><div style="font-weight:800;font-size:18px;" id="gpOnlineCount">0</div><div style="font-size:11px;color:var(--muted);">в сети</div></div>
+        </div>
       </div>
-    </div>
-    <div id="giftShopStep2" style="display:none;">
-      <div class="auth-sub" style="margin-bottom:16px;">Выберите подарок для <span id="giftRecipientName"></span></div>
-      <div class="gift-shop-grid" id="giftShopGrid"></div>
-      <div style="margin-top:16px;display:flex;gap:10px;">
-        <button class="btn btn-secondary" onclick="giftBackToStep1()" style="flex:1;">Назад</button>
-        <button class="btn btn-primary" id="giftBuyBtn" onclick="giftConfirmPurchase()" disabled style="flex:2;">Оплатить</button>
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <button class="btn btn-primary" id="gpJoinBtn" onclick="groupJoinAction()" style="flex:1;padding:14px;border-radius:14px;font-size:14px;">➕ Присоединиться</button>
+        <button class="btn btn-danger" id="gpLeaveBtn" onclick="groupLeaveAction()" style="flex:1;padding:14px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);">🚪 Выйти</button>
       </div>
+      <button class="btn btn-secondary" onclick="openAddMemberModal()" style="width:100%;padding:14px;border-radius:14px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--border);background:var(--surface);">
+        <span style="font-size:18px;">➕</span> Добавить участника
+      </button>
+      <div class="section-label" style="margin-top:20px;">Участники</div>
+      <div id="gpMembersList"></div>
     </div>
   </div>
-</div>
 
-<!-- COLOR PICKER MODALS -->
-<div class="modal-overlay" id="premiumColorModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('premiumColorModal')">✕</button>
-    <div class="modal-title">🎨 Выберите цвет никнейма</div>
-    <div class="premium-color-picker" id="colorPickerColors">
-      <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectNicknameColor('gold')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectNicknameColor('cyan')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectNicknameColor('pink')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectNicknameColor('purple')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#ef4444;" data-color="red" onclick="selectNicknameColor('red')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:linear-gradient(135deg,#ffd700,#ff6b6b,#8b5cf6);" data-color="gradient" onclick="selectNicknameColor('gradient')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectNicknameColor('white')"><span class="check" style="color:#000;">✓</span></div>
-      <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="default" onclick="selectNicknameColor('default')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
+  <!-- ========== SUB SETTINGS PAGES ========== -->
+  <div class="sub-settings-page" id="accountSecurityPage">
+    <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('accountSecurityPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Аккаунт</span><span style="width:60px;"></span></div>
+    <div class="sub-settings-content">
+      <div class="sub-settings-item" onclick="openChangePasswordModal()"><div class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="label">Смена пароля</span></div><span class="value">›</span></div>
+      <div class="sub-settings-item" onclick="openDevicesPage()"><div class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg><span class="label">Устройства</span></div><span class="value" id="devicesCount">0 сессий ›</span></div>
     </div>
   </div>
-</div>
 
-<div class="modal-overlay" id="premiumBorderModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('premiumBorderModal')">✕</button>
-    <div class="modal-title">🖼️ Выберите рамку аватара</div>
-    <div class="premium-color-picker" id="borderPickerColors">
-      <div class="color-option" style="background:conic-gradient(from 0deg,#ffd700,#ff6b6b,#8b5cf6,#06b6d4,#ffd700);" data-color="rainbow" onclick="selectBorderColor('rainbow')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectBorderColor('gold')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectBorderColor('cyan')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectBorderColor('pink')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectBorderColor('purple')"><span class="check">✓</span></div>
-      <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectBorderColor('white')"><span class="check" style="color:#000;">✓</span></div>
-      <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="none" onclick="selectBorderColor('none')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
+  <div class="sub-settings-page" id="devicesPage">
+    <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('devicesPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Устройства</span><span style="width:60px;"></span></div>
+    <div class="sub-settings-content"><div id="devicesList"></div></div>
+  </div>
+
+  <div class="sub-settings-page" id="walletPage">
+    <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('walletPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Dice Wallet</span><span style="width:60px;"></span></div>
+    <div class="sub-settings-content">
+      <div class="wallet-balance-card"><div class="currency">Баланс</div><div class="amount" id="walletBalanceAmount">0</div><div class="currency">❤️ Dice Wallet</div></div>
+      <button class="btn btn-primary" onclick="openGiftWalletModal()" style="margin-bottom:20px;">🎁 Подарить Dice Wallet</button>
+      <div class="section-label" style="padding:8px 0;">История операций</div>
+      <div id="walletTransactions"></div>
     </div>
   </div>
-</div>
 
-<!-- USER PROFILE VIEW -->
-<div id="userProfileView">
-  <div class="up-header">
-    <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
-    <span style="font-weight:700;font-size:16px;">Профиль</span>
+  <div class="sub-settings-page" id="aiChatPage">
+    <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('aiChatPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Dice AI Ассистент</span><span style="width:60px;"></span></div>
+    <div class="ai-chat-messages" id="aiChatMessages"><div class="ai-chat-message assistant">Привет! Я Dice AI Ассистент. Чем могу помочь? 🤖<span class="time">сейчас</span></div></div>
+    <div class="ai-chat-input-bar"><input id="aiChatInput" placeholder="Спросите что-нибудь..." onkeydown="if(event.key==='Enter') sendAIMessage()"><button class="send-btn" onclick="sendAIMessage()">➤</button></div>
   </div>
-  <div style="flex:1;overflow-y:auto;">
-    <div class="profile-header" id="upProfileHeader">
-      <div class="profile-cover" id="upCover"></div>
-      <div class="avatar profile-avatar" id="upAvatarWrap" style="cursor:default;"><span id="upAvatarLetter">?</span></div>
-      <div class="profile-name" id="upName" style="font-size:26px;">—</div>
-      <div class="profile-phone" id="upUsername" style="font-size:18px;font-weight:700;color:var(--text);">@—</div>
-      <div class="profile-phone" id="upPhone" style="font-size:15px;font-weight:500;">—</div>
-      <div class="profile-bio" id="upBio" style="display:none;"></div>
-      <div class="profile-phone" id="upStatusLine" style="margin-top:6px;font-size:13px;"></div>
-      <div id="upPremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
-      <div id="upNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
-      <div class="verified-line" id="upVerifiedLine" style="display:none;"><span class="vb">✓</span> <span id="upVerifiedText">Верифицирован DICEGRAM</span></div>
-      <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
-      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:340px;">
-        <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:var(--accent-grad);border:none;color:#fff;font-weight:700;cursor:pointer;transition:transform .15s ease;">💬 Сообщение</button>
-        <button class="btn btn-gold" onclick="giftFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:linear-gradient(135deg,#ffd700,#f59e0b);border:none;color:#1a1a2e;font-weight:700;cursor:pointer;transition:transform .15s ease;">🎁 Подарок</button>
-        <button class="btn btn-danger" onclick="blockUser()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);font-weight:700;cursor:pointer;transition:transform .15s ease;">🚫 Блок</button>
+
+  <div class="sub-settings-page" id="inviteFriendsPage">
+    <div class="top-bar"><button class="back-btn" onclick="closeSubSettings('inviteFriendsPage')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button><span>Пригласить друзей</span><span style="width:60px;"></span></div>
+    <div class="sub-settings-content" style="text-align:center;padding-top:40px;">
+      <div style="font-size:64px;margin-bottom:16px;">👥</div>
+      <div class="auth-title" style="font-size:24px;">Поделитесь DICEGRAM</div>
+      <div class="auth-sub" style="margin-bottom:30px;">Приглашайте друзей в мессенджер нового поколения</div>
+      <div style="background:var(--surface);border-radius:16px;padding:20px;border:1px solid var(--border);margin-bottom:24px;">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Ваша реферальная ссылка</div>
+        <div style="font-size:14px;font-weight:600;color:var(--accent);word-break:break-all;background:var(--bg);padding:12px;border-radius:10px;font-family:monospace;" id="inviteLink">https://dicegram.com/ref/loading...</div>
+        <button class="btn btn-primary" onclick="copyInviteLink()" style="margin-top:12px;padding:12px;">📋 Скопировать ссылку</button>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;">
+        <button class="btn btn-secondary" onclick="shareVia('telegram')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">📱 Telegram</button>
+        <button class="btn btn-secondary" onclick="shareVia('whatsapp')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">💬 WhatsApp</button>
+        <button class="btn btn-secondary" onclick="shareVia('vk')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">🌐 VK</button>
+      </div>
+      <div class="section-label" style="padding:8px 0;">Приглашённые друзья</div>
+      <div id="invitedFriendsList"><div class="empty-state">Пока никто не пришёл по вашей ссылке</div></div>
+    </div>
+  </div>
+
+  <!-- PREMIUM PAGE -->
+  <div class="premium-page" id="premiumPage">
+    <div class="premium-backdrop"></div>
+    <div class="premium-header">
+      <button class="back-btn" onclick="closePremiumPage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Назад</button>
+      <span style="color:rgba(255,255,255,0.6);font-size:14px;font-weight:600;" id="premiumHeaderStatus">⭐ PREMIUM</span>
+    </div>
+    <div class="premium-hero"><span class="crown">👑</span><div class="title">Dicegram Premium</div><div class="subtitle">Расширьте возможности мессенджера</div></div>
+    <div class="premium-features">
+      <div class="premium-feature"><span class="icon">🖼️</span><div class="info"><div class="name">Кастомная рамка аватара</div><div class="desc">Выберите цветящуюся рамку для своего профиля</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">⭐</span><div class="info"><div class="name">Эксклюзивный бейдж</div><div class="desc">Анимированный значок премиум в профиле</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">🎨</span><div class="info"><div class="name">Цветной никнейм</div><div class="desc">Изменяйте цвет имени в чатах и группах</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">😎</span><div class="info"><div class="name">Уникальные реакции</div><div class="desc">Анимированные эмодзи-реакции и статусы</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">🌌</span><div class="info"><div class="name">Эксклюзивные темы</div><div class="desc">Космическая, неоновая, киберпанк и другие</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">🚀</span><div class="info"><div class="name">Удвоенные лимиты</div><div class="desc">Больше чатов, групп и файлов без сжатия</div></div><span class="check">✓</span></div>
+    </div>
+    <div class="premium-price"><div class="price">$4.99 <span>/ месяц</span></div><div class="period">Отмена в любой момент</div><button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()"><span id="premiumBtnText">✨ Купить подписку</span></button><div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3);"><span id="premiumDaysDisplay">30 дней бесплатно</span></div></div>
+  </div>
+
+  <!-- GIFT SHOP MODAL -->
+  <div class="modal-overlay" id="giftShopModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('giftShopModal')">✕</button>
+      <div class="modal-title" id="giftShopTitle">🎁 Магазин подарков</div>
+      <div id="giftShopStep1" style="display:block;">
+        <div class="auth-sub" style="margin-bottom:16px;">Кому отправить подарок?</div>
+        <input class="field" id="giftRecipientPhone" placeholder="Номер телефона +777 xx-xx-xx">
+        <div class="hint err" id="giftRecipientHint"></div>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="giftFindRecipient()">Найти получателя</button>
+          <button class="btn btn-secondary" onclick="giftBuySelf()">Купить себе</button>
+        </div>
+      </div>
+      <div id="giftShopStep2" style="display:none;">
+        <div class="auth-sub" style="margin-bottom:16px;">Выберите подарок для <span id="giftRecipientName"></span></div>
+        <div class="gift-shop-grid" id="giftShopGrid"></div>
+        <div style="margin-top:16px;display:flex;gap:10px;">
+          <button class="btn btn-secondary" onclick="giftBackToStep1()" style="flex:1;">Назад</button>
+          <button class="btn btn-primary" id="giftBuyBtn" onclick="giftConfirmPurchase()" disabled style="flex:2;">Оплатить</button>
+        </div>
       </div>
     </div>
-    <div class="profile-tabs" id="upTabs">
-      <div class="profile-tab active" data-tab="upInfo" onclick="switchUpTab('upInfo')">Инфо</div>
-      <div class="profile-tab" data-tab="upGifts" onclick="switchUpTab('upGifts')">🎁 Подарки</div>
-      <div class="profile-tab" data-tab="upMedia" onclick="switchUpTab('upMedia')">📸 Медиа</div>
-    </div>
-    <div class="profile-tab-content active" id="upInfo">
-      <div class="bot-notice" id="upBotNotice" style="display:none;"><span class="bi">🤖</span><span>Это официальный бот поддержки DICEGRAM.</span></div>
-      <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><span class="label">Имя</span></div><span class="value" id="upInfoName">—</span></div>
-      <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></div><span class="label">Юзернейм</span></div><span class="value" id="upInfoUsername">—</span></div>
-      <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><span class="label">О себе</span></div><span class="value" id="upInfoBio">—</span></div>
-    </div>
-    <div class="profile-tab-content" id="upGifts"><div id="upGiftsGrid" class="gifts-grid"></div><div id="upGiftsEmpty" class="empty-state">У пользователя пока нет подарков 🎁</div></div>
-    <div class="profile-tab-content" id="upMedia"><div id="upMediaGrid" class="media-grid"></div><div id="upMediaEmpty" class="empty-state">Нет медиа в общих чатах</div></div>
   </div>
-</div>
 
-<!-- ====== НОВЫЙ ГРУППОВОЙ ПРОФИЛЬ (ПЕРЕПИСАН) ====== -->
-<div id="groupProfileView" style="position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:25;">
-  <div class="up-header">
-    <button class="back-btn" style="margin:0;" onclick="closeGroupProfile()">←</button>
-    <span style="font-weight:700;font-size:16px;" id="gpTypeLabel">Информация о группе</span>
-    <span style="flex:1;"></span>
-    <button id="gpEditBtn" onclick="openGroupEdit()" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 14px;cursor:pointer;font-size:16px;display:none;">✏️</button>
-  </div>
-  <div style="flex:1;overflow-y:auto;padding:16px 20px 32px;">
-    <div style="display:flex;flex-direction:column;align-items:center;padding:20px 0 24px;position:relative;">
-      <div class="avatar group" id="gpAvatarWrap" style="width:96px;height:96px;border-radius:28px;font-size:36px;cursor:pointer;" onclick="document.getElementById('gpAvatarInput').click()">
-        <span id="gpAvatarLetter">📷</span>
-      </div>
-      <input type="file" id="gpAvatarInput" accept="image/*" style="display:none" onchange="onGroupAvatarSelected(event)">
-      <div style="font-size:22px;font-weight:800;margin-top:12px;display:flex;align-items:center;gap:8px;" id="gpName">—</div>
-      <div style="font-size:13px;color:var(--text-dim);margin-top:2px;" id="gpUsername">—</div>
-      <div style="font-size:14px;color:var(--muted);margin-top:4px;text-align:center;max-width:300px;" id="gpDescription">—</div>
-      <div style="font-size:12px;color:var(--text-dim);margin-top:6px;opacity:0.6;" id="gpOwnerLabel">Владелец: —</div>
-      <div style="display:flex;gap:20px;margin-top:12px;">
-        <div style="text-align:center;"><div style="font-weight:800;font-size:18px;" id="gpMemberCount">0</div><div style="font-size:11px;color:var(--muted);">участников</div></div>
-        <div style="text-align:center;"><div style="font-weight:800;font-size:18px;" id="gpOnlineCount">0</div><div style="font-size:11px;color:var(--muted);">в сети</div></div>
+  <!-- COLOR PICKER MODALS -->
+  <div class="modal-overlay" id="premiumColorModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('premiumColorModal')">✕</button>
+      <div class="modal-title">🎨 Выберите цвет никнейма</div>
+      <div class="premium-color-picker" id="colorPickerColors">
+        <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectNicknameColor('gold')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectNicknameColor('cyan')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectNicknameColor('pink')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectNicknameColor('purple')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ef4444;" data-color="red" onclick="selectNicknameColor('red')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:linear-gradient(135deg,#ffd700,#ff6b6b,#8b5cf6);" data-color="gradient" onclick="selectNicknameColor('gradient')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectNicknameColor('white')"><span class="check" style="color:#000;">✓</span></div>
+        <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="default" onclick="selectNicknameColor('default')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
       </div>
     </div>
-    <div style="display:flex;gap:10px;margin-bottom:20px;">
-      <button class="btn btn-primary" id="gpJoinBtn" onclick="groupJoinAction()" style="flex:1;padding:14px;border-radius:14px;font-size:14px;">➕ Присоединиться</button>
-      <button class="btn btn-danger" id="gpLeaveBtn" onclick="groupLeaveAction()" style="flex:1;padding:14px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);">🚪 Выйти</button>
-    </div>
-    <button class="btn btn-secondary" onclick="openAddMemberModal()" style="width:100%;padding:14px;border-radius:14px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--border);background:var(--surface);">
-      <span style="font-size:18px;">➕</span> Добавить участника
-    </button>
-    <div class="section-label" style="margin-top:20px;">Участники</div>
-    <div id="gpMembersList"></div>
   </div>
-</div>
 
-<!-- CONTEXT MENU -->
-<div class="context-menu" id="contextMenu">
-  <div class="sticker-picker" id="reactionPicker">
-    <div class="dice-sticker" data-emoji="🔥" onclick="addReaction('🔥')"><span class="sticker-icon">🔥</span><span class="sticker-label">Огонь</span></div>
-    <div class="dice-sticker" data-emoji="⚡" onclick="addReaction('⚡')"><span class="sticker-icon">⚡</span><span class="sticker-label">Мощь</span></div>
-    <div class="dice-sticker" data-emoji="👑" onclick="addReaction('👑')"><span class="sticker-icon">👑</span><span class="sticker-label">Король</span></div>
-    <div class="dice-sticker" data-emoji="💎" onclick="addReaction('💎')"><span class="sticker-icon">💎</span><span class="sticker-label">Алмаз</span></div>
-    <div class="dice-sticker" data-emoji="🎯" onclick="addReaction('🎯')"><span class="sticker-icon">🎯</span><span class="sticker-label">Точно</span></div>
-    <div class="dice-sticker" data-emoji="🤝" onclick="addReaction('🤝')"><span class="sticker-icon">🤝</span><span class="sticker-label">Договор</span></div>
-  </div>
-  <div class="context-menu-divider"></div>
-  <button class="context-menu-item" onclick="copyMessageText()"><span class="menu-icon">📋</span><span class="menu-label">Копировать текст</span><span class="menu-shortcut">Ctrl+C</span></button>
-  <button class="context-menu-item" onclick="replyToMessage()"><span class="menu-icon">↩️</span><span class="menu-label">Ответить</span><span class="menu-shortcut">Ctrl+R</span></button>
-  <button class="context-menu-item" id="editMsgBtn" onclick="editMessage()" style="display:none;"><span class="menu-icon">✏️</span><span class="menu-label">Изменить</span><span class="menu-shortcut">Ctrl+E</span></button>
-  <button class="context-menu-item danger" id="deleteMsgBtn" onclick="deleteMessage()" style="display:none;"><span class="menu-icon">🗑️</span><span class="menu-label" id="deleteMsgText">Удалить у всех</span><span class="menu-shortcut">Del</span></button>
-</div>
-
-<!-- OTHER MODALS -->
-<div class="modal-overlay" id="addContactModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('addContactModal')">✕</button>
-    <div class="modal-title">Новый контакт</div>
-    <input class="field" id="contactName" placeholder="Имя (обязательно)" maxlength="40">
-    <input class="field" id="contactSurname" placeholder="Фамилия (необязательно)" maxlength="40">
-    <input class="field" id="contactPhone" placeholder="+777 xx-xx-xx" maxlength="16">
-    <div class="hint err" id="addContactHint"></div>
-    <button class="btn btn-primary" onclick="submitAddContact()">Создать контакт</button>
-  </div>
-</div>
-
-<!-- СТАРЫЙ createGroupModal ЗАМЕНЁН НА НОВЫЙ (ВЫШЕ) -->
-
-<div class="modal-overlay" id="editNameModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('editNameModal')">✕</button>
-    <div class="modal-title">Изменить имя</div>
-    <input class="field" id="editNameInput" placeholder="Имя" maxlength="40">
-    <input class="field" id="editSurnameInput" placeholder="Фамилия (необязательно)" maxlength="40">
-    <div class="hint err" id="editNameHint"></div>
-    <button class="btn btn-primary" onclick="submitEditName()">Сохранить</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="editUsernameModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('editUsernameModal')">✕</button>
-    <div class="modal-title">Изменить юзернейм</div>
-    <input class="field" id="editUsernameInput" placeholder="username" maxlength="20" autocapitalize="off">
-    <div class="hint muted" id="editUsernameHint"></div>
-    <button class="btn btn-primary" id="editUsernameSaveBtn" onclick="submitEditUsername()">Сохранить</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="editBioModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('editBioModal')">✕</button>
-    <div class="modal-title">О себе</div>
-    <input class="field" id="editBioInput" placeholder="Расскажите о себе" maxlength="70" oninput="updateBioCounter()">
-    <div class="char-counter" id="bioCounter">0 / 70</div>
-    <div class="hint err" id="editBioHint"></div>
-    <button class="btn btn-primary" onclick="submitEditBio()">Сохранить</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="changePasswordModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
-    <div class="modal-title">🔑 Смена пароля</div>
-    <div id="pwStep1">
-      <div class="hint muted" style="margin-top:-8px;">Введите текущий пароль для подтверждения</div>
-      <input class="field" type="password" id="pwCurrentInput" placeholder="Текущий пароль">
-      <div class="hint err" id="pwStep1Hint"></div>
-      <button class="btn btn-primary" onclick="submitCurrentPassword()">Далее</button>
-    </div>
-    <div id="pwStep2" style="display:none;">
-      <div class="hint muted" style="margin-top:-8px;">Придумайте новый пароль, минимум 6 символов</div>
-      <input class="field" type="password" id="pwNewInput" placeholder="Новый пароль">
-      <input class="field" type="password" id="pwNewInput2" placeholder="Подтвердите новый пароль">
-      <div class="hint err" id="pwStep2Hint"></div>
-      <button class="btn btn-primary" onclick="submitNewPassword()">Сохранить пароль</button>
+  <div class="modal-overlay" id="premiumBorderModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('premiumBorderModal')">✕</button>
+      <div class="modal-title">🖼️ Выберите рамку аватара</div>
+      <div class="premium-color-picker" id="borderPickerColors">
+        <div class="color-option" style="background:conic-gradient(from 0deg,#ffd700,#ff6b6b,#8b5cf6,#06b6d4,#ffd700);" data-color="rainbow" onclick="selectBorderColor('rainbow')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ffd700;" data-color="gold" onclick="selectBorderColor('gold')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#06b6d4;" data-color="cyan" onclick="selectBorderColor('cyan')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ec4899;" data-color="pink" onclick="selectBorderColor('pink')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#8b5cf6;" data-color="purple" onclick="selectBorderColor('purple')"><span class="check">✓</span></div>
+        <div class="color-option" style="background:#ffffff;border:2px solid var(--border);" data-color="white" onclick="selectBorderColor('white')"><span class="check" style="color:#000;">✓</span></div>
+        <div class="color-option" style="background:transparent;border:2px solid var(--border);" data-color="none" onclick="selectBorderColor('none')"><span style="font-size:14px;color:var(--text-dim);">✕</span></div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="modal-overlay" id="giftWalletModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('giftWalletModal')">✕</button>
-    <div class="modal-title">🎁 Подарить Dice Wallet</div>
-    <input class="field" id="giftPhone" placeholder="Номер телефона +777 xx-xx-xx">
-    <input class="field" id="giftAmount" placeholder="Количество ❤️" type="number" min="1">
-    <div class="hint err" id="giftHint"></div>
-    <button class="btn btn-primary" onclick="submitGift()">Отправить подарок</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="avatarCropModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('avatarCropModal')">✕</button>
-    <div class="modal-title" style="text-align:center;">Новое фото профиля</div>
-    <div class="avatar-crop-preview"><img id="avatarCropImg" src=""></div>
-    <div class="btn-row" style="max-width:100%;">
-      <button class="btn btn-primary" onclick="confirmUploadAvatar()">Сохранить фото</button>
-      <button class="btn btn-secondary" onclick="closeModal('avatarCropModal')">Отмена</button>
+  <!-- USER PROFILE VIEW -->
+  <div id="userProfileView">
+    <div class="up-header">
+      <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
+      <span style="font-weight:700;font-size:16px;">Профиль</span>
+    </div>
+    <div style="flex:1;overflow-y:auto;">
+      <div class="profile-header" id="upProfileHeader">
+        <div class="profile-cover" id="upCover"></div>
+        <div class="avatar profile-avatar" id="upAvatarWrap" style="cursor:default;"><span id="upAvatarLetter">?</span></div>
+        <div class="profile-name" id="upName" style="font-size:26px;">—</div>
+        <div class="profile-phone" id="upUsername" style="font-size:18px;font-weight:700;color:var(--text);">@—</div>
+        <div class="profile-phone" id="upPhone" style="font-size:15px;font-weight:500;">—</div>
+        <div class="profile-bio" id="upBio" style="display:none;"></div>
+        <div class="profile-phone" id="upStatusLine" style="margin-top:6px;font-size:13px;"></div>
+        <div id="upPremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
+        <div id="upNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
+        <div class="verified-line" id="upVerifiedLine" style="display:none;"><span class="vb">✓</span> <span id="upVerifiedText">Верифицирован DICEGRAM</span></div>
+        <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:340px;">
+          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:var(--accent-grad);border:none;color:#fff;font-weight:700;cursor:pointer;transition:transform .15s ease;">💬 Сообщение</button>
+          <button class="btn btn-gold" onclick="giftFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:linear-gradient(135deg,#ffd700,#f59e0b);border:none;color:#1a1a2e;font-weight:700;cursor:pointer;transition:transform .15s ease;">🎁 Подарок</button>
+          <button class="btn btn-danger" onclick="blockUser()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);font-weight:700;cursor:pointer;transition:transform .15s ease;">🚫 Блок</button>
+        </div>
+      </div>
+      <div class="profile-tabs" id="upTabs">
+        <div class="profile-tab active" data-tab="upInfo" onclick="switchUpTab('upInfo')">Инфо</div>
+        <div class="profile-tab" data-tab="upGifts" onclick="switchUpTab('upGifts')">🎁 Подарки</div>
+        <div class="profile-tab" data-tab="upMedia" onclick="switchUpTab('upMedia')">📸 Медиа</div>
+      </div>
+      <div class="profile-tab-content active" id="upInfo">
+        <div class="bot-notice" id="upBotNotice" style="display:none;"><span class="bi">🤖</span><span>Это официальный бот поддержки DICEGRAM.</span></div>
+        <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><span class="label">Имя</span></div><span class="value" id="upInfoName">—</span></div>
+        <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></div><span class="label">Юзернейм</span></div><span class="value" id="upInfoUsername">—</span></div>
+        <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><span class="label">О себе</span></div><span class="value" id="upInfoBio">—</span></div>
+      </div>
+      <div class="profile-tab-content" id="upGifts"><div id="upGiftsGrid" class="gifts-grid"></div><div id="upGiftsEmpty" class="empty-state">У пользователя пока нет подарков 🎁</div></div>
+      <div class="profile-tab-content" id="upMedia"><div id="upMediaGrid" class="media-grid"></div><div id="upMediaEmpty" class="empty-state">Нет медиа в общих чатах</div></div>
     </div>
   </div>
-</div>
+
+  <!-- ===== КАСТОМНОЕ КОНТЕКСТНОЕ МЕНЮ ===== -->
+  <div class="context-menu" id="contextMenu">
+    <div class="sticker-picker" id="reactionPicker">
+      <div class="dice-sticker" data-emoji="🔥" onclick="addReaction('🔥')"><span class="sticker-icon">🔥</span><span class="sticker-label">Огонь</span></div>
+      <div class="dice-sticker" data-emoji="⚡" onclick="addReaction('⚡')"><span class="sticker-icon">⚡</span><span class="sticker-label">Мощь</span></div>
+      <div class="dice-sticker" data-emoji="👑" onclick="addReaction('👑')"><span class="sticker-icon">👑</span><span class="sticker-label">Король</span></div>
+      <div class="dice-sticker" data-emoji="💎" onclick="addReaction('💎')"><span class="sticker-icon">💎</span><span class="sticker-label">Алмаз</span></div>
+      <div class="dice-sticker" data-emoji="🎯" onclick="addReaction('🎯')"><span class="sticker-icon">🎯</span><span class="sticker-label">Точно</span></div>
+      <div class="dice-sticker" data-emoji="🤝" onclick="addReaction('🤝')"><span class="sticker-icon">🤝</span><span class="sticker-label">Договор</span></div>
+    </div>
+    <div class="context-menu-divider"></div>
+    <button class="context-menu-item" onclick="copyMessageText()"><span class="menu-icon">📋</span><span class="menu-label">Копировать текст</span><span class="menu-shortcut">Ctrl+C</span></button>
+    <button class="context-menu-item" onclick="replyToMessage()"><span class="menu-icon">↩️</span><span class="menu-label">Ответить</span><span class="menu-shortcut">Ctrl+R</span></button>
+    <button class="context-menu-item" id="editMsgBtn" onclick="editMessage()" style="display:none;"><span class="menu-icon">✏️</span><span class="menu-label">Изменить</span><span class="menu-shortcut">Ctrl+E</span></button>
+    <button class="context-menu-item danger" id="deleteMsgBtn" onclick="deleteMessage()" style="display:none;"><span class="menu-icon">🗑️</span><span class="menu-label" id="deleteMsgText">Удалить у всех</span><span class="menu-shortcut">Del</span></button>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="addContactModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('addContactModal')">✕</button>
+      <div class="modal-title">Новый контакт</div>
+      <input class="field" id="contactName" placeholder="Имя (обязательно)" maxlength="40">
+      <input class="field" id="contactSurname" placeholder="Фамилия (необязательно)" maxlength="40">
+      <input class="field" id="contactPhone" placeholder="+777 xx-xx-xx" maxlength="16">
+      <div class="hint err" id="addContactHint"></div>
+      <button class="btn btn-primary" onclick="submitAddContact()">Создать контакт</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editNameModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('editNameModal')">✕</button>
+      <div class="modal-title">Изменить имя</div>
+      <input class="field" id="editNameInput" placeholder="Имя" maxlength="40">
+      <input class="field" id="editSurnameInput" placeholder="Фамилия (необязательно)" maxlength="40">
+      <div class="hint err" id="editNameHint"></div>
+      <button class="btn btn-primary" onclick="submitEditName()">Сохранить</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editUsernameModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('editUsernameModal')">✕</button>
+      <div class="modal-title">Изменить юзернейм</div>
+      <input class="field" id="editUsernameInput" placeholder="username" maxlength="20" autocapitalize="off">
+      <div class="hint muted" id="editUsernameHint"></div>
+      <button class="btn btn-primary" id="editUsernameSaveBtn" onclick="submitEditUsername()">Сохранить</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editBioModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('editBioModal')">✕</button>
+      <div class="modal-title">О себе</div>
+      <input class="field" id="editBioInput" placeholder="Расскажите о себе" maxlength="70" oninput="updateBioCounter()">
+      <div class="char-counter" id="bioCounter">0 / 70</div>
+      <div class="hint err" id="editBioHint"></div>
+      <button class="btn btn-primary" onclick="submitEditBio()">Сохранить</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
+      <div class="modal-title">🔑 Смена пароля</div>
+      <div id="pwStep1">
+        <div class="hint muted" style="margin-top:-8px;">Введите текущий пароль для подтверждения</div>
+        <input class="field" type="password" id="pwCurrentInput" placeholder="Текущий пароль">
+        <div class="hint err" id="pwStep1Hint"></div>
+        <button class="btn btn-primary" onclick="submitCurrentPassword()">Далее</button>
+      </div>
+      <div id="pwStep2" style="display:none;">
+        <div class="hint muted" style="margin-top:-8px;">Придумайте новый пароль, минимум 6 символов</div>
+        <input class="field" type="password" id="pwNewInput" placeholder="Новый пароль">
+        <input class="field" type="password" id="pwNewInput2" placeholder="Подтвердите новый пароль">
+        <div class="hint err" id="pwStep2Hint"></div>
+        <button class="btn btn-primary" onclick="submitNewPassword()">Сохранить пароль</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="giftWalletModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('giftWalletModal')">✕</button>
+      <div class="modal-title">🎁 Подарить Dice Wallet</div>
+      <input class="field" id="giftPhone" placeholder="Номер телефона +777 xx-xx-xx">
+      <input class="field" id="giftAmount" placeholder="Количество ❤️" type="number" min="1">
+      <div class="hint err" id="giftHint"></div>
+      <button class="btn btn-primary" onclick="submitGift()">Отправить подарок</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="avatarCropModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <button class="modal-close" onclick="closeModal('avatarCropModal')">✕</button>
+      <div class="modal-title" style="text-align:center;">Новое фото профиля</div>
+      <div class="avatar-crop-preview"><img id="avatarCropImg" src=""></div>
+      <div class="btn-row" style="max-width:100%;">
+        <button class="btn btn-primary" onclick="confirmUploadAvatar()">Сохранить фото</button>
+        <button class="btn btn-secondary" onclick="closeModal('avatarCropModal')">Отмена</button>
+      </div>
+    </div>
+  </div>
 
 </div> <!-- #app -->
 <div id="toast"></div>
@@ -1240,7 +1243,6 @@ let currentGroupId = null;
 let ws = null;
 let wsReconnectTimer = null;
 let wsPingTimer = null;
-
 let chats = {};
 let groups = {};
 let presenceMap = {};
@@ -1248,17 +1250,14 @@ let messageReactions = {};
 let myReactions = {};
 let sentMessages = new Set();
 let pendingMessages = {};
-
 let currentMessages = [];
 let selectedMsgId = null;
 let selectedMsgText = null;
 let selectedMsgSender = null;
 let selectedMsgElement = null;
 let currentReplyTo = null;
-
 let unreadCounts = {};
 let totalUnread = 0;
-
 let walletBalance = 0;
 let walletTransactions = [];
 let pendingImageFile = null;
@@ -1268,7 +1267,7 @@ let typingIndicatorTimeout = null;
 let notifEnabled = true;
 let soundEnabled = true;
 
-// ===== НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ГРУПП/КАНАЛОВ =====
+// ===== НОВЫЕ ПЕРЕМЕННЫЕ =====
 let createRoomType = 'group';
 let groupInfo = null;
 let selectedMemberToAdd = null;
@@ -1285,18 +1284,9 @@ function setTheme(theme) {
 
 function initTheme() { const saved = localStorage.getItem('dicegram_theme') || 'dark'; setTheme(saved); }
 function goTo(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2600);
-}
-
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2600); }
 function openModal(id) { document.getElementById(id).classList.add('active'); playSound('click'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); playSound('click'); }
-
 function escapeHtml(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function genClientMsgId() { return 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10); }
 
@@ -1413,8 +1403,7 @@ function logoutFromBanned() {
 function openPremiumPage() { document.getElementById('premiumPage').classList.add('active'); updatePremiumUI(); playSound('click'); }
 function closePremiumPage() { document.getElementById('premiumPage').classList.remove('active'); playSound('click'); }
 function updatePremiumUI() {
-  const isPremium = session.is_premium || false;
-  const days = session.premium_days || 0;
+  const isPremium = session.is_premium || false; const days = session.premium_days || 0;
   document.getElementById('premiumHeaderStatus').textContent = isPremium ? `⭐ PREMIUM (${days}д)` : '⭐ PREMIUM';
   document.getElementById('premiumStatusText').textContent = isPremium ? `⭐ Активно (${days} дней)` : '✨ Премиум-возможности';
   document.getElementById('premiumBadge').textContent = isPremium ? '⭐' : '👑';
@@ -1803,8 +1792,9 @@ async function submitAddContact() {
 }
 
 // ============================================================
-// ===================== GROUPS =====================
+// ===================== НОВЫЕ ФУНКЦИИ ДЛЯ ГРУПП/КАНАЛОВ =====================
 // ============================================================
+
 function openCreateMenu() {
   openModal('createMenuModal');
   playSound('click');
@@ -1885,7 +1875,7 @@ function onGroupAvatarPreviewSelected(event) {
   reader.readAsDataURL(file);
 }
 
-// ===== НОВЫЙ ГРУППОВОЙ ПРОФИЛЬ =====
+// ===== НОВАЯ ФУНКЦИЯ openGroupProfile (ПЕРЕПИСАНА) =====
 async function openGroupProfile(groupId) {
   try {
     const res = await fetch(`${API_BASE}/api/groups/${groupId}/info`, { headers: { 'Authorization': `Bearer ${session.token}` } });
@@ -1898,21 +1888,39 @@ async function openGroupProfile(groupId) {
     const isAdmin = data.is_admin || false;
     const isMember = data.is_member || false;
     const isChannel = groupInfo.type === 'channel';
+    const isCreator = session.phone === OWNER_PHONE;
     
     document.getElementById('gpTypeLabel').textContent = isChannel ? '📢 Канал' : '👥 Группа';
     document.getElementById('gpEditBtn').style.display = (isOwner || isAdmin) ? 'block' : 'none';
     document.getElementById('gpName').textContent = groupInfo.name;
-    document.getElementById('gpUsername').textContent = groupInfo.username ? `d.me/${groupInfo.username}` : 'без ссылки';
+    
+    // Публичная ссылка (кликабельная для копирования)
+    const usernameEl = document.getElementById('gpUsername');
+    if (groupInfo.username) {
+      const link = `d.me/${groupInfo.username}`;
+      usernameEl.innerHTML = `<span class="group-profile-username" onclick="copyGroupLink('${link}')">${link} 📋</span>`;
+      usernameEl.style.cursor = 'pointer';
+    } else {
+      usernameEl.textContent = 'без ссылки';
+      usernameEl.style.cursor = 'default';
+    }
+    
     document.getElementById('gpDescription').textContent = groupInfo.description || 'Нет описания';
     document.getElementById('gpOwnerLabel').textContent = `Владелец: @${groupInfo.owner_username}`;
     document.getElementById('gpMemberCount').textContent = members.length;
     
+    // Аватар
     const avatarWrap = document.getElementById('gpAvatarWrap');
-    if (groupInfo.avatar_url) { avatarWrap.innerHTML = `<img src="${API_BASE}${groupInfo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:28px;">`; }
-    else { avatarWrap.innerHTML = `<span style="font-size:36px;">${groupInfo.name.charAt(0).toUpperCase()}</span>`; }
+    if (groupInfo.avatar_url) {
+      avatarWrap.innerHTML = `<img src="${API_BASE}${groupInfo.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:28px;">`;
+    } else {
+      avatarWrap.innerHTML = `<span style="font-size:36px;">${groupInfo.name.charAt(0).toUpperCase()}</span>`;
+    }
     
+    // Кнопки
     const joinBtn = document.getElementById('gpJoinBtn');
     const leaveBtn = document.getElementById('gpLeaveBtn');
+    
     if (isMember) {
       joinBtn.style.display = 'none';
       leaveBtn.style.display = 'block';
@@ -1925,22 +1933,74 @@ async function openGroupProfile(groupId) {
       leaveBtn.style.display = 'none';
     }
     
+    // Список участников (без инпута)
     const list = document.getElementById('gpMembersList');
-    list.innerHTML = members.map(m => {
+    let html = `<div style="display:flex;flex-direction:column;gap:8px;">`;
+    members.forEach(m => {
       const roleLabel = m.role === 'owner' ? '👑 Владелец' : (m.role === 'admin' ? '⚡ Админ' : '👤 Участник');
       const roleClass = m.role === 'owner' ? 'owner' : (m.role === 'admin' ? 'admin' : '');
       const isSelf = m.username === session.username;
-      return `<div class="group-member-item"><div class="avatar" style="width:36px;height:36px;border-radius:12px;font-size:14px;background:var(--accent-grad);">${m.username.charAt(0).toUpperCase()}</div><div class="group-member-name">@${m.username} ${isSelf ? '(вы)' : ''}</div><div class="group-member-role ${roleClass}">${roleLabel}</div></div>`;
-    }).join('');
+      html += `<div class="group-member-item" style="border-radius:12px;background:var(--surface);border:1px solid var(--border);"><div class="avatar" style="width:36px;height:36px;border-radius:12px;font-size:14px;background:var(--accent-grad);">${m.username.charAt(0).toUpperCase()}</div><div class="group-member-name">@${m.username} ${isSelf ? '(вы)' : ''}</div><div class="group-member-role ${roleClass}">${roleLabel}</div></div>`;
+    });
+    html += `</div>`;
+    list.innerHTML = html;
     
     document.getElementById('groupProfileView').style.display = 'flex';
     playSound('click');
-  } catch(e) { showToast('Нет связи с сервером'); }
+  } catch(e) {
+    showToast('Нет связи с сервером');
+  }
 }
 
-function closeGroupProfile() { document.getElementById('groupProfileView').style.display = 'none'; }
+function copyGroupLink(link) {
+  const fullLink = `https://${link}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(fullLink).then(() => {
+      showGroupCopyToast('📋 Ссылка скопирована!');
+    }).catch(() => {
+      fallbackCopyGroupLink(fullLink);
+    });
+  } else {
+    fallbackCopyGroupLink(fullLink);
+  }
+}
 
-// ===== ДОБАВЛЕНИЕ УЧАСТНИКА =====
+function copyGroupLinkFromProfile() {
+  const usernameEl = document.getElementById('gpUsername');
+  const text = usernameEl.textContent.trim();
+  if (text && text !== 'без ссылки' && text !== '—') {
+    const link = text.replace(' 📋', '');
+    copyGroupLink(link);
+  }
+}
+
+function fallbackCopyGroupLink(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showGroupCopyToast('📋 Ссылка скопирована!');
+  } catch(e) {
+    showToast('Не удалось скопировать');
+  }
+  document.body.removeChild(ta);
+}
+
+function showGroupCopyToast(msg) {
+  let toast = document.querySelector('.gp-copy-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'gp-copy-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
 function openAddMemberModal() {
   if (!currentGroupId) return;
   document.getElementById('addMemberSearch').value = '';
@@ -1956,7 +2016,7 @@ function openAddMemberModal() {
       if (contacts.length === 0) { document.getElementById('addMemberResults').innerHTML = '<div class="empty-state" style="padding:20px;">Нет контактов для добавления</div>'; return; }
       document.getElementById('addMemberResults').innerHTML = contacts.map(c => {
         const u = c.live_user;
-        return `<div class="chat-list-item" onclick="selectMemberToAdd('${u.username}')" style="padding:10px 12px;">${avatarHtml(u.name.charAt(0).toUpperCase(), u.avatar_url, '', false, u.is_owner, u.is_premium, u.premium_avatar_border, u.is_banned)}<div class="chat-item-body"><div class="chat-item-name">${escapeHtml(u.name)} ${u.is_verified ? '<span class="verified-badge">✓</span>' : ''}</div><div class="chat-item-last">@${u.username}</div></div></div>`;
+        return `<div class="chat-list-item" onclick="selectMemberToAdd('${u.username}')" style="padding:10px 12px;border-radius:12px;border:2px solid transparent;">${avatarHtml(u.name.charAt(0).toUpperCase(), u.avatar_url, '', false, u.is_owner, u.is_premium, u.premium_avatar_border, u.is_banned)}<div class="chat-item-body"><div class="chat-item-name">${escapeHtml(u.name)} ${u.is_verified ? '<span class="verified-badge">✓</span>' : ''}</div><div class="chat-item-last">@${u.username}</div></div></div>`;
       }).join('');
     }
   }).catch(() => {});
@@ -1994,7 +2054,13 @@ async function submitAddMember() {
   } catch(e) { document.getElementById('addMemberHint').textContent = 'Ошибка соединения'; }
 }
 
-// ===== ВЫХОД/УДАЛЕНИЕ =====
+function groupJoinAction() {
+  if (!currentGroupId) return;
+  fetch(`${API_BASE}/api/groups/${currentGroupId}/join`, { method: 'POST', headers: { 'Authorization': `Bearer ${session.token}` } })
+  .then(r => r.json()).then(data => { if (data.ok) { showToast('✅ Вы присоединились'); openGroupProfile(currentGroupId); loadGroupsList(); loadChatsList(); } else { showToast(data.error || 'Ошибка'); } })
+  .catch(() => showToast('Ошибка соединения'));
+}
+
 function groupLeaveAction() {
   if (!currentGroupId || !groupInfo) return;
   const isOwner = groupInfo.owner_username === session.username;
@@ -2012,14 +2078,6 @@ function groupLeaveAction() {
   }
 }
 
-function groupJoinAction() {
-  if (!currentGroupId) return;
-  fetch(`${API_BASE}/api/groups/${currentGroupId}/join`, { method: 'POST', headers: { 'Authorization': `Bearer ${session.token}` } })
-  .then(r => r.json()).then(data => { if (data.ok) { showToast('✅ Вы присоединились'); openGroupProfile(currentGroupId); loadGroupsList(); loadChatsList(); } else { showToast(data.error || 'Ошибка'); } })
-  .catch(() => showToast('Ошибка соединения'));
-}
-
-// ===== РЕДАКТИРОВАНИЕ =====
 function openGroupEdit() {
   if (!groupInfo) return;
   document.getElementById('editGroupName').value = groupInfo.name || '';
@@ -2054,6 +2112,10 @@ async function submitGroupEdit() {
     loadGroupsList(); loadChatsList();
     playSound('click');
   } catch(e) { hint.textContent = 'Ошибка соединения'; }
+}
+
+function closeGroupProfile() {
+  document.getElementById('groupProfileView').style.display = 'none';
 }
 
 // ============================================================
@@ -2261,6 +2323,7 @@ async function editMessage() {
 // ===================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====================
 // ============================================================
 function scrollMessagesToBottom() { const c = document.getElementById('messagesContainer'); c.scrollTop = c.scrollHeight; }
+
 function linkifyMentions(text) {
   const escaped = escapeHtml(text);
   let result = escaped.replace(/https?:\/\/d\.me\/([a-zA-Z0-9_]{3,20})/g, (match, uname) => `<span class="mention-link" onclick="event.stopPropagation(); handleMentionClick('${uname}')">${match}</span>`);
@@ -2270,6 +2333,7 @@ function linkifyMentions(text) {
   });
   return result;
 }
+
 async function handleMentionClick(username) {
   if (username.toLowerCase() === session.username.toLowerCase()) { showToast('Это вы'); return; }
   try { const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, { headers: { 'Authorization': `Bearer ${session.token}` } }); const data = await res.json(); if (data.ok) { openUserProfile(username); } else { showToast('Пользователь @' + username + ' не найден'); } } catch(e) { showToast('Нет связи с сервером'); }
@@ -2288,7 +2352,6 @@ function onChatImageSelected(e) {
 function cancelImagePreview() { pendingImageFile = null; document.getElementById('imagePreviewImg').src = ''; document.getElementById('imagePreviewBar').style.display = 'none'; document.getElementById('chatFileInput').value = ''; }
 function onTypingInput() { if (!currentChatWith || currentChatIsGroup) return; if (ws && ws.readyState === WebSocket.OPEN) { ws.send(JSON.stringify({ type: 'typing', to: currentChatWith })); } }
 
-// ===== ОТПРАВКА СООБЩЕНИЯ =====
 async function sendMessage() {
   const input = document.getElementById('messageInput');
   const text = input.value.trim();

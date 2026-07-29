@@ -2397,6 +2397,7 @@ html, body {
 </div>
 <div id="toast"></div>
 
+
 <script>
 // ===================== CONFIG =====================
 const API_BASE = "https://a48794-5d18.e.jrnm.app";
@@ -2471,7 +2472,7 @@ let devices = [];
 let userGifts = [];
 let giftShopSelected = null;
 let giftRecipient = null;
-let giftFromProfileTarget = null; // для умной отправки подарка из профиля
+let giftFromProfileTarget = null;
 
 // ===================== UTILITY =====================
 function setTheme(theme) {
@@ -2870,18 +2871,7 @@ async function submitGift() {
   }
   
   // ✅ Проверяем баланс с сервера перед отправкой
-  try {
-    const balanceRes = await fetch(`${API_BASE}/api/wallet/balance`, {
-      headers: { 'Authorization': `Bearer ${session.token}` }
-    });
-    const balanceData = await balanceRes.json();
-    if (balanceData.ok) {
-      walletBalance = balanceData.balance;
-      localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-      renderWallet();
-      updateWalletDisplay();
-    }
-  } catch(e) {}
+  await syncWalletFromServer();
   
   if (amount > walletBalance) {
     hint.textContent = 'Недостаточно средств';
@@ -3256,6 +3246,8 @@ async function giftConfirmPurchase() {
   if (!giftRecipient) return;
   
   const price = giftShopSelected.price;
+  await syncWalletFromServer();
+  
   if (price > walletBalance) {
     showToast('❌ Недостаточно средств на кошельке');
     return;
@@ -3291,7 +3283,7 @@ async function giftConfirmPurchase() {
     
     renderWallet();
     renderProfileGifts();
-    document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+    updateWalletDisplay();
     closeModal('giftShopModal');
     showToast(`🎁 Подарок ${giftShopSelected.emoji} отправлен ${giftRecipient.name}!`);
     
@@ -3361,7 +3353,7 @@ async function sellGift(giftId) {
       localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
       renderWallet();
       renderProfileGifts();
-      document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+      updateWalletDisplay();
     } else {
       showToast(data.error || 'Ошибка');
     }
@@ -3449,14 +3441,11 @@ function giftToProfile() {
     return;
   }
   
-  // Сохраняем цель
   giftFromProfileTarget = { username: uname, name: name };
   
-  // Получаем телефон пользователя
   const phoneEl = document.getElementById('upPhone');
   let phone = phoneEl.textContent.trim();
   
-  // Если телефона нет в профиле, получаем через API
   if (!phone || phone === '—') {
     fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(uname)}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -3484,13 +3473,11 @@ function openGiftShopFromProfile() {
     return;
   }
   
-  // Открываем магазин сразу на шаге выбора подарка
   document.getElementById('giftShopStep1').style.display = 'none';
   document.getElementById('giftShopStep2').style.display = 'block';
   document.getElementById('giftShopTitle').textContent = `🎁 Подарок для ${giftFromProfileTarget.name}`;
   document.getElementById('giftRecipientName').textContent = giftFromProfileTarget.name + ' (@' + giftFromProfileTarget.username + ')';
   
-  // Устанавливаем получателя
   giftRecipient = {
     username: giftFromProfileTarget.username,
     name: giftFromProfileTarget.name,
@@ -3503,7 +3490,6 @@ function openGiftShopFromProfile() {
   openModal('giftShopModal');
 }
 
-// ===== ФУНКЦИЯ ДЛЯ КНОПКИ "ПОДАРОК" В ПРОФИЛЕ (АЛЬЯС) =====
 function giftFromProfile() {
   giftToProfile();
 }
@@ -3532,7 +3518,7 @@ function enterApp() {
   updateNavBadges();
   updatePremiumUI();
   
-  // ✅ СИНХРОНИЗИРУЕМ БАЛАНС С СЕРВЕРОМ (вместо локального кэша)
+  // ✅ СИНХРОНИЗИРУЕМ БАЛАНС С СЕРВЕРОМ
   syncWalletFromServer();
 }
 
@@ -4516,7 +4502,6 @@ async function openUserProfile(username) {
       }
     } catch(e) {}
     
-    // Имя с цветами
     let nameHtml = escapeHtml(contactName + (contactSurname ? ' ' + contactSurname : ''));
     if (isBanned) {
       nameHtml = 'Удалённый аккаунт';
@@ -4527,7 +4512,6 @@ async function openUserProfile(username) {
       nameHtml = `<span class="${colorClass}">${nameHtml}</span>`;
     }
     
-    // Заголовок профиля
     document.getElementById('upName').innerHTML = nameHtml + (u.is_verified && !isBanned ? ' <span class="verified-badge">✓</span>' : '');
     document.getElementById('upUsername').textContent = '@' + u.username;
     document.getElementById('upPhone').textContent = isBanned ? '' : (u.phone || '');
@@ -4543,7 +4527,6 @@ async function openUserProfile(username) {
     document.getElementById('upVerifiedLine').style.display = u.is_verified && !isBanned ? 'flex' : 'none';
     document.getElementById('upBannedLine').style.display = isBanned ? 'block' : 'none';
 
-    // Аватар
     const avatarWrap = document.getElementById('upAvatarWrap');
     avatarWrap.className = 'avatar profile-avatar';
     if (isPremium && u.premium_avatar_border && u.premium_avatar_border !== 'none') {
@@ -4559,15 +4542,12 @@ async function openUserProfile(username) {
       avatarWrap.innerHTML = `<span>${u.name.charAt(0).toUpperCase()}</span>`;
     }
 
-    // Информационные карточки
     document.getElementById('upInfoName').textContent = contactName + (contactSurname ? ' ' + contactSurname : '');
     document.getElementById('upInfoUsername').textContent = '@' + u.username;
     document.getElementById('upInfoBio').textContent = isBanned ? 'Аккаунт удалён' : (u.bio || 'Не указано');
 
-    // Бот-нотис
     document.getElementById('upBotNotice').style.display = (u.username === SUPPORT_USERNAME) ? 'flex' : 'none';
     
-    // Кнопка сообщения
     const msgBtn = document.getElementById('upMessageBtn');
     if (isBanned) {
       msgBtn.disabled = true;
@@ -4581,7 +4561,6 @@ async function openUserProfile(username) {
     
     document.getElementById('userProfileView').classList.add('active');
     
-    // Активируем первую вкладку
     document.querySelectorAll('#userProfileView .profile-tab').forEach(t => t.classList.remove('active'));
     document.querySelector('#userProfileView .profile-tab[data-tab="upInfo"]')?.classList.add('active');
     document.querySelectorAll('#userProfileView .profile-tab-content').forEach(c => c.classList.remove('active'));
@@ -4901,11 +4880,10 @@ function connectWebSocket() {
         showToast(`⭐ ${data.message || 'Premium активирован!'}`);
         syncProfileFromServer();
       } else if (data.type === 'wallet_gift') {
-        // ✅ МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА ПРИ ПОЛУЧЕНИИ ПОДАРКА
         if (data.new_balance !== undefined) {
           walletBalance = data.new_balance;
           localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-          updateWalletDisplay(); // ✅ Используем общую функцию
+          updateWalletDisplay();
           if (document.getElementById('walletPage').classList.contains('active')) {
             renderWallet();
           }
@@ -4915,11 +4893,10 @@ function connectWebSocket() {
         showToast(data.message || '🎁 Подарок получен!');
         playSound('click');
       } else if (data.type === 'wallet_update') {
-        // ✅ Мгновенное обновление баланса от бота (/givedc) или других операций
         if (data.balance !== undefined) {
           walletBalance = data.balance;
           localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-          updateWalletDisplay(); // ✅ Используем общую функцию
+          updateWalletDisplay();
           if (document.getElementById('walletPage').classList.contains('active')) {
             renderWallet();
           }
@@ -4927,28 +4904,11 @@ function connectWebSocket() {
           renderProfileGifts();
           showToast(`💰 Баланс обновлён: ${walletBalance} ❤️`);
         } else {
-          // Если пришло без balance, запрашиваем с сервера
           syncWalletFromServer();
         }
-      } else if (data.type === 'device_removed') {
-        showToast('📱 Устройство удалено');
-        loadDevices();
       }
-    } catch(e) {
-      console.warn('WebSocket parse error:', e);
-    }
+    } catch(e) {}
   };
-  
-  ws.onclose = () => {
-    clearInterval(wsPingTimer);
-    document.getElementById('connStatus').textContent = 'Переподключение...';
-    wsReconnectTimer = setTimeout(connectWebSocket, 3000);
-  };
-  
-  ws.onerror = (e) => {
-    console.warn('WebSocket error:', e);
-  };
-}
   
   ws.onclose = () => {
     clearInterval(wsPingTimer);
@@ -5001,7 +4961,6 @@ async function syncWalletFromServer() {
       renderWallet();
     }
   } catch(e) {
-    // Если не удалось синхронизировать, используем локальный кэш
     const saved = localStorage.getItem('dicegram_wallet_' + session.username);
     if (saved !== null) walletBalance = parseInt(saved) || 0;
   }

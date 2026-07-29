@@ -2819,10 +2819,10 @@ function removeDevice(deviceId) {
   }
 }
 
-// ===================== WALLET =====================
+// ===== WALLET =====
 function loadWallet() {
-  walletBalance = parseInt(localStorage.getItem('dicegram_wallet_' + session.username) || '0');
-  walletTransactions = JSON.parse(localStorage.getItem('dicegram_wallet_transactions_' + session.username) || '[]');
+  // ✅ Берём баланс из синхронизированной переменной
+  updateWalletDisplay();
   renderWallet();
 }
 
@@ -2854,7 +2854,7 @@ function openGiftWalletModal() {
   openModal('giftWalletModal');
 }
 
-// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT (С МГНОВЕННЫМ ОБНОВЛЕНИЕМ) =====
+// ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ SUBMIT GIFT =====
 async function submitGift() {
   const phone = document.getElementById('giftPhone').value.trim();
   const amount = parseInt(document.getElementById('giftAmount').value);
@@ -2869,7 +2869,7 @@ async function submitGift() {
     return;
   }
   
-  // Проверяем баланс перед отправкой
+  // ✅ Проверяем баланс с сервера перед отправкой
   try {
     const balanceRes = await fetch(`${API_BASE}/api/wallet/balance`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -2878,6 +2878,8 @@ async function submitGift() {
     if (balanceData.ok) {
       walletBalance = balanceData.balance;
       localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+      renderWallet();
+      updateWalletDisplay();
     }
   } catch(e) {}
   
@@ -2925,7 +2927,7 @@ async function submitGift() {
       return;
     }
     
-    // МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА
+    // ✅ ОБНОВЛЯЕМ БАЛАНС ИЗ ОТВЕТА СЕРВЕРА
     walletBalance = data.new_balance !== undefined ? data.new_balance : walletBalance - amount;
     localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
     
@@ -2939,7 +2941,7 @@ async function submitGift() {
     
     renderWallet();
     renderProfileGifts();
-    document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+    updateWalletDisplay();
     closeModal('giftWalletModal');
     showToast(`✅ Подарок отправлен! -${amount} ❤️`);
     playSound('click');
@@ -3311,6 +3313,9 @@ function renderProfileGifts() {
   const grid = document.getElementById('profileGiftsGrid');
   const empty = document.getElementById('profileGiftsEmpty');
   
+  // ✅ СИНХРОНИЗИРУЕМ БАЛАНС ПРИ ЗАГРУЗКЕ ПОДАРКОВ
+  syncWalletFromServer();
+  
   fetch(`${API_BASE}/api/gifts/user`, {
     headers: { 'Authorization': `Bearer ${session.token}` }
   })
@@ -3527,9 +3532,8 @@ function enterApp() {
   updateNavBadges();
   updatePremiumUI();
   
-  const savedBalance = localStorage.getItem('dicegram_wallet_' + session.username);
-  if (savedBalance) walletBalance = parseInt(savedBalance);
-  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+  // ✅ СИНХРОНИЗИРУЕМ БАЛАНС С СЕРВЕРОМ (вместо локального кэша)
+  syncWalletFromServer();
 }
 
 async function syncProfileFromServer() {
@@ -4897,11 +4901,11 @@ function connectWebSocket() {
         showToast(`⭐ ${data.message || 'Premium активирован!'}`);
         syncProfileFromServer();
       } else if (data.type === 'wallet_gift') {
-        // МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА ПРИ ПОЛУЧЕНИИ ПОДАРКА
+        // ✅ МГНОВЕННОЕ ОБНОВЛЕНИЕ БАЛАНСА ПРИ ПОЛУЧЕНИИ ПОДАРКА
         if (data.new_balance !== undefined) {
           walletBalance = data.new_balance;
           localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-          document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+          updateWalletDisplay(); // ✅ Используем общую функцию
           if (document.getElementById('walletPage').classList.contains('active')) {
             renderWallet();
           }
@@ -4911,19 +4915,40 @@ function connectWebSocket() {
         showToast(data.message || '🎁 Подарок получен!');
         playSound('click');
       } else if (data.type === 'wallet_update') {
-        // Мгновенное обновление баланса от бота (/givedc)
-        walletBalance = data.balance;
-        localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
-        document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
-        if (document.getElementById('walletPage').classList.contains('active')) {
-          renderWallet();
+        // ✅ Мгновенное обновление баланса от бота (/givedc) или других операций
+        if (data.balance !== undefined) {
+          walletBalance = data.balance;
+          localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+          updateWalletDisplay(); // ✅ Используем общую функцию
+          if (document.getElementById('walletPage').classList.contains('active')) {
+            renderWallet();
+          }
+          renderProfileTab();
+          renderProfileGifts();
+          showToast(`💰 Баланс обновлён: ${walletBalance} ❤️`);
+        } else {
+          // Если пришло без balance, запрашиваем с сервера
+          syncWalletFromServer();
         }
-        renderProfileTab();
-        renderProfileGifts();
-        showToast(`💰 Баланс обновлён: ${walletBalance} ❤️`);
+      } else if (data.type === 'device_removed') {
+        showToast('📱 Устройство удалено');
+        loadDevices();
       }
-    } catch(e) {}
+    } catch(e) {
+      console.warn('WebSocket parse error:', e);
+    }
   };
+  
+  ws.onclose = () => {
+    clearInterval(wsPingTimer);
+    document.getElementById('connStatus').textContent = 'Переподключение...';
+    wsReconnectTimer = setTimeout(connectWebSocket, 3000);
+  };
+  
+  ws.onerror = (e) => {
+    console.warn('WebSocket error:', e);
+  };
+}
   
   ws.onclose = () => {
     clearInterval(wsPingTimer);
@@ -4959,6 +4984,32 @@ function onGroupAvatarSelected(event) {
       }
     })
     .catch(() => showToast('Ошибка соединения'));
+}
+
+// ===== СИНХРОНИЗАЦИЯ БАЛАНСА С СЕРВЕРОМ =====
+async function syncWalletFromServer() {
+  if (!session.token) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/wallet/balance`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (data.ok) {
+      walletBalance = data.balance || 0;
+      localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
+      updateWalletDisplay();
+      renderWallet();
+    }
+  } catch(e) {
+    // Если не удалось синхронизировать, используем локальный кэш
+    const saved = localStorage.getItem('dicegram_wallet_' + session.username);
+    if (saved !== null) walletBalance = parseInt(saved) || 0;
+  }
+}
+
+function updateWalletDisplay() {
+  document.getElementById('walletBalanceDisplay').textContent = walletBalance + ' ❤️';
+  document.getElementById('walletBalanceAmount').textContent = walletBalance;
 }
 
 // ===================== INITIALIZATION =====================

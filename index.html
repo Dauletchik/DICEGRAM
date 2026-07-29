@@ -1959,65 +1959,65 @@ input, textarea, [contenteditable] {
       </div>
     </div>
 
-    <!-- PROFILE TAB -->
-    <div class="tab-content" id="tabProfile">
-      <div class="top-bar"><span>Профиль</span></div>
-      <div style="flex:1;overflow-y:auto;">
-        <div class="profile-header" id="profileHeader">
-          <div class="profile-cover" id="profileCover"></div>
-          <div class="avatar profile-avatar" id="profileAvatarWrap" ondblclick="document.getElementById('avatarFileInput').click()">
-            <span id="profileAvatarLetter">?</span>
-          </div>
-          <div class="profile-avatar-hint">Двойной тап по фото — изменить</div>
-          <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileSelected(event)">
-          <div class="profile-name" id="profileNameDisplay">—</div>
-          <div class="profile-phone" id="profilePhoneDisplay">—</div>
-          <div class="profile-bio" id="profileBioDisplay"></div>
-          <div id="profilePremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
-          <div class="verified-line" id="profileVerifiedLine" style="display:none;"><span class="vb">✓</span> <span>Верифицирован DICEGRAM</span></div>
-          <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
-          <div id="profileNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
+<!-- PROFILE TAB -->
+<div class="tab-content" id="tabProfile">
+  <div class="top-bar"><span>Профиль</span></div>
+  <div style="flex:1;overflow-y:auto;">
+    <div class="profile-header" id="profileHeader">
+      <div class="profile-cover" id="profileCover"></div>
+      <div class="avatar profile-avatar" id="profileAvatarWrap" ondblclick="document.getElementById('avatarFileInput').click()">
+        <span id="profileAvatarLetter">?</span>
+      </div>
+      <div class="profile-avatar-hint">Двойной тап по фото — изменить</div>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="onAvatarFileSelected(event)">
+      <div class="profile-name" id="profileNameDisplay">—</div>
+      <div class="profile-phone" id="profilePhoneDisplay">—</div>
+      <div class="profile-bio" id="profileBioDisplay"></div>
+      <div id="profilePremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
+      <div class="verified-line" id="profileVerifiedLine" style="display:none;"><span class="vb">✓</span> <span>Верифицирован DICEGRAM</span></div>
+      <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
+      <div id="profileNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
+    </div>
+    <div class="profile-tabs">
+      <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Инфо</div>
+      <div class="profile-tab" data-tab="profileGifts" onclick="switchProfileTab('profileGifts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Подарки</div>
+      <div class="profile-tab" data-tab="profileMedia" onclick="switchProfileTab('profileMedia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Медиа</div>
+    </div>
+    <div class="profile-tab-content active" id="profileInfo">
+      <div class="profile-glass-card" onclick="openEditNameModal()">
+        <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><span class="label">Имя</span></div>
+        <span class="value" id="profileNameRow">—</span><span class="arrow">›</span>
+      </div>
+      <div class="profile-glass-card" onclick="openEditUsernameModal()">
+        <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg></div><span class="label">Юзернейм</span></div>
+        <span class="value" id="profileUsernameDisplay">—</span><span class="arrow">›</span>
+      </div>
+      <div class="profile-glass-card" onclick="openEditBioModal()">
+        <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><span class="label">О себе</span></div>
+        <span class="value" id="profileBioRow">—</span><span class="arrow">›</span>
+      </div>
+      <div id="premiumProfileSettings" style="display:none;">
+        <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
+        <div class="profile-glass-card" onclick="openPremiumBorderPicker()">
+          <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><span class="label">Рамка аватара</span></div>
+          <span class="value" id="premiumBorderDisplay">Выбрать</span><span class="arrow">›</span>
         </div>
-        <div class="profile-tabs">
-          <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Инфо</div>
-          <div class="profile-tab" data-tab="profileGifts" onclick="switchProfileTab('profileGifts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5" rx="1" ry="1"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Подарки</div>
-          <div class="profile-tab" data-tab="profileMedia" onclick="switchProfileTab('profileMedia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Медиа</div>
-        </div>
-        <div class="profile-tab-content active" id="profileInfo">
-          <div class="profile-glass-card" onclick="openEditNameModal()">
-            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><span class="label">Имя</span></div>
-            <span class="value" id="profileNameRow">—</span><span class="arrow">›</span>
-          </div>
-          <div class="profile-glass-card" onclick="openEditUsernameModal()">
-            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg></div><span class="label">Юзернейм</span></div>
-            <span class="value" id="profileUsernameDisplay">—</span><span class="arrow">›</span>
-          </div>
-          <div class="profile-glass-card" onclick="openEditBioModal()">
-            <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div><span class="label">О себе</span></div>
-            <span class="value" id="profileBioRow">—</span><span class="arrow">›</span>
-          </div>
-          <div id="premiumProfileSettings" style="display:none;">
-            <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
-            <div class="profile-glass-card" onclick="openPremiumBorderPicker()">
-              <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><span class="label">Рамка аватара</span></div>
-              <span class="value" id="premiumBorderDisplay">Выбрать</span><span class="arrow">›</span>
-            </div>
-            <div class="profile-glass-card" onclick="openPremiumColorPicker()">
-              <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg></div><span class="label">Цвет никнейма</span></div>
-              <span class="value" id="premiumColorDisplay">Выбрать</span><span class="arrow">›</span>
-            </div>
-          </div>
-        </div>
-        <div class="profile-tab-content" id="profileGifts">
-          <div id="profileGiftsGrid" class="gifts-grid"></div>
-          <div id="profileGiftsEmpty" class="empty-state">У вас пока нет подарков.<br>Загляните в магазин! 🎁</div>
-        </div>
-        <div class="profile-tab-content" id="profileMedia">
-          <div id="profileMediaGrid" class="media-grid"></div>
-          <div id="profileMediaEmpty" class="empty-state">Нет фото или видео в чатах</div>
+        <div class="profile-glass-card" onclick="openPremiumColorPicker()">
+          <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg></div><span class="label">Цвет никнейма</span></div>
+          <span class="value" id="premiumColorDisplay">Выбрать</span><span class="arrow">›</span>
         </div>
       </div>
     </div>
+    <div class="profile-tab-content" id="profileGifts">
+      <div id="profileGiftsGrid" class="gifts-grid"></div>
+      <div id="profileGiftsEmpty" class="empty-state">У вас пока нет подарков.<br>Загляните в магазин! 🎁</div>
+    </div>
+    <div class="profile-tab-content" id="profileMedia">
+      <div id="profileMediaGrid" class="media-grid"></div>
+      <div id="profileMediaEmpty" class="empty-state">Нет фото или видео в чатах</div>
+    </div>
+  </div>
+</div>
 
     <!-- BOTTOM NAVIGATION -->
     <div class="bottom-nav">

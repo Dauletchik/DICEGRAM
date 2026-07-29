@@ -353,6 +353,100 @@ html, body {
 .check-mark.delivered { opacity: 0.8; }
 .check-mark.read { opacity: 1; color: var(--accent); }
 
+/* ===== КАСТОМНЫЕ СТИКЕРЫ DICEGRAM ===== */
+.dice-sticker {
+  display: inline-block;
+  font-size: 0;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  min-width: 44px;
+  text-align: center;
+}
+.dice-sticker:active {
+  transform: scale(0.88);
+  border-color: var(--accent);
+  background: var(--accent-grad-soft);
+}
+.dice-sticker .sticker-icon {
+  font-size: 28px;
+  display: block;
+  line-height: 1.2;
+}
+.dice-sticker .sticker-label {
+  font-size: 8px;
+  color: var(--text-dim);
+  font-weight: 600;
+  display: block;
+  margin-top: 1px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.dice-sticker.active {
+  border-color: var(--accent);
+  background: var(--accent-grad-soft);
+  box-shadow: var(--shadow-pop);
+}
+.sticker-picker {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.sticker-picker .dice-sticker {
+  min-width: 48px;
+  padding: 6px 8px;
+}
+.sticker-picker .dice-sticker .sticker-icon {
+  font-size: 24px;
+}
+.sticker-picker .dice-sticker .sticker-label {
+  font-size: 7px;
+}
+
+/* ===== РЕАКЦИИ ===== */
+.reactions-row {
+  display: flex;
+  gap: 3px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.reaction-bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.reaction-bubble .reaction-count {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.reaction-bubble .reaction-emoji {
+  font-size: 16px;
+}
+.reaction-bubble.my-reaction {
+  border-color: var(--accent);
+  background: var(--accent-grad-soft);
+}
+.reaction-bubble.my-reaction .reaction-count {
+  color: var(--accent);
+}
+
+/* ===== КОНТЕКСТНОЕ МЕНЮ ===== */
 .context-menu {
   position: fixed;
   background: var(--bg2);
@@ -361,9 +455,10 @@ html, body {
   border: 1px solid var(--border);
   padding: 6px 0;
   z-index: 100;
-  min-width: 180px;
+  min-width: 200px;
   display: none;
 }
+.context-menu.active { display: block; }
 .context-menu-item {
   padding: 10px 16px;
   cursor: pointer;
@@ -375,25 +470,28 @@ html, body {
   color: var(--text);
 }
 .context-menu-item:active { background: var(--surface-hover); }
+.context-menu-item .menu-icon { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+.context-menu-item .menu-shortcut {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+  font-weight: 500;
+}
 .context-menu-item.danger { color: var(--danger); }
+.context-menu-item.danger .menu-shortcut { color: var(--danger); opacity: 0.5; }
 .context-menu-divider {
   height: 1px;
   background: var(--border);
   margin: 4px 12px;
 }
-.reaction-picker {
-  display: flex;
-  gap: 4px;
-  padding: 6px 10px;
-  flex-wrap: wrap;
-}
-.reaction-picker span {
-  font-size: 28px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 8px;
-  transition: transform .15s ease;
-}
+
+/* ===== ОСТАЛЬНЫЕ СТИЛИ ===== */
+.context-menu-item { padding: 10px 16px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 10px; transition: background .15s ease; color: var(--text); }
+.context-menu-item:active { background: var(--surface-hover); }
+.context-menu-item.danger { color: var(--danger); }
+.context-menu-divider { height: 1px; background: var(--border); margin: 4px 12px; }
+.reaction-picker { display: flex; gap: 4px; padding: 6px 10px; flex-wrap: wrap; }
+.reaction-picker span { font-size: 28px; cursor: pointer; padding: 2px 4px; border-radius: 8px; transition: transform .15s ease; }
 .reaction-picker span:active { transform: scale(1.3); }
 
 .reply-preview {
@@ -425,12 +523,8 @@ html, body {
   display: flex; align-items: center; justify-content: center;
   user-select: none; -webkit-user-select: none; touch-action: none;
 }
-.send-btn {
-  background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop);
-}
-.attach-btn { 
-  background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; 
-}
+.send-btn { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
+.attach-btn { background: var(--surface); border: 1.5px solid var(--border); color: var(--accent); box-shadow: none; }
 
 /* ========== BOTTOM NAVIGATION ========== */
 .bottom-nav {
@@ -456,31 +550,14 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 .nav-item:active { transform: scale(0.92); }
-.nav-icon-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-.nav-icon-svg {
-  width: 26px;
-  height: 26px;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+.nav-icon-wrap { position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; }
+.nav-icon-svg { width: 26px; height: 26px; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .nav-item.active .nav-icon-svg { transform: scale(1.08); }
 .nav-item .nav-icon-svg { color: var(--nav-icon-inactive); }
 .nav-item.active .nav-icon-svg { color: var(--nav-icon-active); }
 .nav-item .nav-icon-svg .fill-path { fill: var(--nav-icon-inactive); }
 .nav-item.active .nav-icon-svg .fill-path { fill: var(--nav-icon-active); }
-.nav-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--nav-icon-inactive);
-  transition: color 0.2s ease;
-  letter-spacing: 0.2px;
-}
+.nav-label { font-size: 10px; font-weight: 600; color: var(--nav-icon-inactive); transition: color 0.2s ease; letter-spacing: 0.2px; }
 .nav-item.active .nav-label { color: var(--nav-icon-active); }
 .nav-badge-count {
   position: absolute;
@@ -502,9 +579,7 @@ html, body {
 }
 
 /* ========== PREMIUM AVATAR BORDER ========== */
-.avatar-premium-border {
-  position: relative;
-}
+.avatar-premium-border { position: relative; }
 .avatar-premium-border::after {
   content: '';
   position: absolute;
@@ -536,331 +611,84 @@ html, body {
 .nickname-purple { color: var(--premium-purple) !important; }
 .nickname-red { color: #ef4444 !important; }
 .nickname-white { color: #fff !important; }
-.nickname-gradient { 
-  background: linear-gradient(135deg, var(--premium-gold), #ff6b6b, var(--premium-purple));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 700;
-}
+.nickname-gradient { background: linear-gradient(135deg, var(--premium-gold), #ff6b6b, var(--premium-purple)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
 
-/* ========== ПРОФИЛЬ — НОВЫЙ ДИЗАЙН 2026 (Glassmorphism) ========== */
-.profile-header { 
-  display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; 
-  background: 
-    radial-gradient(circle at 50% 0%, var(--accent-grad-soft), transparent 60%),
-    var(--bg);
-  position: relative;
-  flex-shrink: 0;
-}
-.profile-cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 140px;
-  background: var(--accent-grad-soft);
-  border-radius: 0 0 30px 30px;
-  opacity: 0.3;
-  transition: height 0.3s ease;
-}
-.profile-avatar { 
-  width: 104px; height: 104px; font-size: 38px; margin-bottom: 16px; 
-  position: relative; border-radius: 30px; box-shadow: var(--shadow-soft); 
-  cursor: pointer;
-  z-index: 1;
-}
-.profile-avatar.owner-avatar-profile {
-  border: 4px solid var(--gold);
-  box-shadow: 0 0 30px rgba(255,203,71,0.5), inset 0 0 30px rgba(255,203,71,0.15);
-  animation: ownerGlow 2s ease-in-out infinite;
-}
+/* ========== ПРОФИЛЬ ========== */
+.profile-header { display: flex; flex-direction: column; align-items: center; padding: 36px 16px 28px; background: radial-gradient(circle at 50% 0%, var(--accent-grad-soft), transparent 60%), var(--bg); position: relative; flex-shrink: 0; }
+.profile-cover { position: absolute; top: 0; left: 0; right: 0; height: 140px; background: var(--accent-grad-soft); border-radius: 0 0 30px 30px; opacity: 0.3; transition: height 0.3s ease; }
+.profile-avatar { width: 104px; height: 104px; font-size: 38px; margin-bottom: 16px; position: relative; border-radius: 30px; box-shadow: var(--shadow-soft); cursor: pointer; z-index: 1; }
+.profile-avatar.owner-avatar-profile { border: 4px solid var(--gold); box-shadow: 0 0 30px rgba(255,203,71,0.5), inset 0 0 30px rgba(255,203,71,0.15); animation: ownerGlow 2s ease-in-out infinite; }
 .profile-avatar-hint { font-size: 11.5px; color: var(--muted); margin-top: -8px; margin-bottom: 8px; }
 .profile-name { font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 6px; letter-spacing: -.2px; flex-wrap: wrap; justify-content: center; }
-.rainbow-text {
-  background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: rainbowMove 3s linear infinite;
-}
-@keyframes rainbowMove {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
+.rainbow-text { background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: rainbowMove 3s linear infinite; }
+@keyframes rainbowMove { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
 .profile-phone { color: var(--text-dim); font-size: 14px; margin-top: 4px; font-weight: 500; }
 .profile-bio { color: var(--text-dim); font-size: 13.5px; margin-top: 8px; text-align: center; max-width: 280px; line-height: 1.4; }
-.verified-line {
-  color: var(--accent); font-size: 12.5px; margin-top: 10px; display:flex; align-items:center; gap:6px;
-  background: var(--accent-grad-soft); padding: 6px 14px; border-radius: 20px; font-weight: 700;
-}
+.verified-line { color: var(--accent); font-size: 12.5px; margin-top: 10px; display:flex; align-items:center; gap:6px; background: var(--accent-grad-soft); padding: 6px 14px; border-radius: 20px; font-weight: 700; }
 .verified-line .vb { width:16px;height:16px;border-radius:50%;background:var(--accent-grad); display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff; }
 .banned-line { color: var(--danger); font-size: 13px; margin-top: 10px; font-weight: 700; background: rgba(255,84,112,.1); border-radius: 14px; padding: 8px 16px; }
-.owner-line {
-  color: var(--gold); font-size: 12.5px; margin-top: 8px; font-weight: 800; letter-spacing: .3px;
-  background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05)); padding: 6px 16px; border-radius: 20px;
-  display:flex; align-items:center; gap:6px;
-}
+.owner-line { color: var(--gold); font-size: 12.5px; margin-top: 8px; font-weight: 800; letter-spacing: .3px; background: linear-gradient(135deg, rgba(255,203,71,.15), rgba(255,203,71,.05)); padding: 6px 16px; border-radius: 20px; display:flex; align-items:center; gap:6px; }
 
-/* ========== ПРОФИЛЬ ТАБЫ (НОВЫЙ СТИЛЬ) ========== */
-.profile-tabs {
-  display: flex;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 0 16px;
-  gap: 4px;
-  flex-shrink: 0;
-  position: relative;
-}
-.profile-tab {
-  padding: 14px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-dim);
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.profile-tab svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--text-dim);
-  transition: stroke 0.3s ease;
-}
-.profile-tab.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-.profile-tab.active svg {
-  stroke: var(--accent);
-}
+/* ========== ПРОФИЛЬ ТАБЫ ========== */
+.profile-tabs { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 16px; gap: 4px; flex-shrink: 0; position: relative; }
+.profile-tab { padding: 14px 20px; font-size: 14px; font-weight: 600; color: var(--text-dim); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; display: flex; align-items: center; gap: 6px; }
+.profile-tab svg { width: 18px; height: 18px; stroke: var(--text-dim); transition: stroke 0.3s ease; }
+.profile-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.profile-tab.active svg { stroke: var(--accent); }
 .profile-tab:active { transform: scale(0.95); }
-.profile-tab-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: none;
-  flex-direction: column;
-  gap: 12px;
-  animation: tabFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes tabFadeIn {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
+.profile-tab-content { flex: 1; overflow-y: auto; padding: 16px; display: none; flex-direction: column; gap: 12px; animation: tabFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .profile-tab-content.active { display: flex; }
 
-/* ========== ПРОФИЛЬ КАРТОЧКИ (Glassmorphism) ========== */
-.profile-glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-}
-.profile-glass-card:active {
-  transform: scale(0.97);
-  background: rgba(255, 255, 255, 0.08);
-}
-.profile-glass-card .left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.profile-glass-card .icon-wrap {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--accent-grad-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.profile-glass-card .icon-wrap svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--accent);
-  stroke-width: 1.8;
-}
-.profile-glass-card .label {
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--text);
-}
-.profile-glass-card .value {
-  color: var(--text-dim);
-  font-size: 14px;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.profile-glass-card .arrow {
-  color: var(--muted);
-  font-size: 18px;
-  opacity: 0.3;
-}
+/* ========== ПРОФИЛЬ КАРТОЧКИ ========== */
+.profile-glass-card { background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08); }
+.profile-glass-card:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.08); }
+.profile-glass-card .left { display: flex; align-items: center; gap: 12px; }
+.profile-glass-card .icon-wrap { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-grad-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.profile-glass-card .icon-wrap svg { width: 18px; height: 18px; stroke: var(--accent); stroke-width: 1.8; }
+.profile-glass-card .label { font-weight: 600; font-size: 15px; color: var(--text); }
+.profile-glass-card .value { color: var(--text-dim); font-size: 14px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-glass-card .arrow { color: var(--muted); font-size: 18px; opacity: 0.3; }
 
 /* ========== GIFTS GRID ========== */
-.gifts-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-.gift-item {
-  background: var(--surface);
-  border-radius: 16px;
-  padding: 16px 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid var(--border);
-  position: relative;
-  animation: giftAppear 0.4s ease forwards;
-  opacity: 0;
-  transform: scale(0.9);
-}
-@keyframes giftAppear {
-  to { opacity: 1; transform: scale(1); }
-}
+.gifts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.gift-item { background: var(--surface); border-radius: 16px; padding: 16px 8px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid var(--border); position: relative; animation: giftAppear 0.4s ease forwards; opacity: 0; transform: scale(0.9); }
+@keyframes giftAppear { to { opacity: 1; transform: scale(1); } }
 .gift-item:active { transform: scale(0.92); }
 .gift-item .gift-emoji { font-size: 40px; display: block; margin-bottom: 6px; }
 .gift-item .gift-name { font-size: 12px; font-weight: 600; color: var(--text); }
 .gift-item .gift-price { font-size: 11px; color: var(--gold); font-weight: 700; }
 .gift-item .gift-date { font-size: 10px; color: var(--muted); margin-top: 4px; }
 .gift-item .gift-from { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-.gift-item .gift-sell-btn {
-  margin-top: 8px;
-  padding: 4px 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--danger);
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+.gift-item .gift-sell-btn { margin-top: 8px; padding: 4px 12px; border-radius: 8px; border: none; font-size: 11px; font-weight: 600; background: var(--danger); color: #fff; cursor: pointer; transition: all 0.2s ease; }
 .gift-item .gift-sell-btn:active { transform: scale(0.92); }
-.gift-item .gift-sell-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.gift-item .gift-owner-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: var(--accent-grad);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 10px;
-  box-shadow: var(--shadow-pop);
-}
-.gift-item .gift-sold-badge {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--danger);
-  backdrop-filter: blur(2px);
-}
+.gift-item .gift-sell-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.gift-item .gift-owner-badge { position: absolute; top: -6px; right: -6px; background: var(--accent-grad); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; box-shadow: var(--shadow-pop); }
+.gift-item .gift-sold-badge { position: absolute; inset: 0; background: rgba(0,0,0,0.6); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--danger); backdrop-filter: blur(2px); }
 
 /* ========== GIFT SHOP ========== */
-.gift-shop-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-.gift-shop-item {
-  background: var(--surface);
-  border-radius: 16px;
-  padding: 18px 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 2px solid var(--border);
-  position: relative;
-  animation: giftAppear 0.4s ease forwards;
-  opacity: 0;
-  transform: scale(0.9);
-}
+.gift-shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.gift-shop-item { background: var(--surface); border-radius: 16px; padding: 18px 8px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 2px solid var(--border); position: relative; animation: giftAppear 0.4s ease forwards; opacity: 0; transform: scale(0.9); }
 .gift-shop-item:active { transform: scale(0.92); }
 .gift-shop-item .gift-emoji { font-size: 48px; display: block; margin-bottom: 6px; }
 .gift-shop-item .gift-name { font-size: 12px; font-weight: 600; color: var(--text); }
 .gift-shop-item .gift-price { font-size: 13px; color: var(--gold); font-weight: 700; }
-.gift-shop-item.selected {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-pop);
-}
-.gift-shop-item .gift-check {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--accent-grad);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  opacity: 0;
-  transform: scale(0);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.gift-shop-item.selected .gift-check {
-  opacity: 1;
-  transform: scale(1);
-}
+.gift-shop-item.selected { border-color: var(--accent); box-shadow: var(--shadow-pop); }
+.gift-shop-item .gift-check { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-grad); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; opacity: 0; transform: scale(0); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.gift-shop-item.selected .gift-check { opacity: 1; transform: scale(1); }
 
 /* ========== SECTION LABELS ========== */
-.section-label { 
-  font-size: 12px; font-weight: 700; text-transform: uppercase; 
-  letter-spacing: .6px; color: var(--muted); padding: 18px 20px 8px; 
-}
-.list-row {
-  padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex;
-  justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer;
-  background: var(--bg2); font-weight: 500; transition: background .15s ease;
-}
+.section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); padding: 18px 20px 8px; }
+.list-row { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer; background: var(--bg2); font-weight: 500; transition: background .15s ease; }
 .list-row:active { background: var(--surface-hover); }
 .list-row-left { display: flex; align-items: center; gap: 12px; }
 .list-row-icon { width: 34px; height: 34px; border-radius: 11px; display:flex;align-items:center;justify-content:center; font-size:16px; background: var(--accent-grad-soft); }
 .list-row-value { color: var(--text-dim); font-size: 14px; display:flex; align-items:center; gap:6px; }
 .search-box { padding: 12px 18px; }
-.search-box input {
-  width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 22px;
-  padding: 12px 18px; color: var(--text); outline: none; font-size: 14.5px;
-}
+.search-box input { width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 22px; padding: 12px 18px; color: var(--text); outline: none; font-size: 14.5px; }
 .search-box input:focus { border-color: var(--accent); }
 .empty-state { text-align: center; color: var(--muted); padding: 60px 30px; font-size: 14px; line-height: 1.6; }
-.fab {
-  position: absolute; right: 20px; bottom: max(20px, env(safe-area-inset-bottom));
-  width: 58px; height: 58px; border-radius: 20px; background: var(--accent-grad);
-  color: #fff; font-size: 26px; border: none; box-shadow: var(--shadow-pop);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
+.fab { position: absolute; right: 20px; bottom: max(20px, env(safe-area-inset-bottom)); width: 58px; height: 58px; border-radius: 20px; background: var(--accent-grad); color: #fff; font-size: 26px; border: none; box-shadow: var(--shadow-pop); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
 .toggle { position: relative; width: 48px; height: 28px; border-radius: 16px; background: var(--border); cursor: pointer; transition: background .2s ease; flex-shrink:0; }
 .toggle.on { background: var(--accent-grad); }
@@ -871,10 +699,7 @@ html, body {
 .segmented-option { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; color: var(--text-dim); transition: all .2s ease; }
 .segmented-option.active { background: var(--accent-grad); color: #fff; box-shadow: var(--shadow-pop); }
 
-.tz-option {
-  display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;
-  border-radius: 14px; background: var(--surface); border: 1.5px solid var(--border); margin-bottom: 10px; cursor: pointer;
-}
+.tz-option { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1.5px solid var(--border); margin-bottom: 10px; cursor: pointer; }
 .tz-option.active { border-color: var(--accent); background: var(--accent-grad-soft); }
 .tz-option-label { font-weight: 700; font-size: 15px; }
 .tz-option-time { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
@@ -882,21 +707,10 @@ html, body {
 .tz-option.active .tz-option-check { opacity: 1; }
 
 /* ========== MODALS ========== */
-.modal-overlay {
-  position: absolute; inset: 0; background: rgba(5,8,14,.6); z-index: 50; backdrop-filter: blur(3px);
-  display: none; align-items: flex-end; justify-content: center;
-}
+.modal-overlay { position: absolute; inset: 0; background: rgba(5,8,14,.6); z-index: 50; backdrop-filter: blur(3px); display: none; align-items: flex-end; justify-content: center; }
 .modal-overlay.active { display: flex; }
-.modal-sheet {
-  background: var(--bg2); width: 100%; max-width: 480px; border-radius: 26px 26px 0 0;
-  padding: 12px 20px max(24px, env(safe-area-inset-bottom));
-  max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,.3);
-  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+.modal-sheet { background: var(--bg2); width: 100%; max-width: 480px; border-radius: 26px 26px 0 0; padding: 12px 20px max(24px, env(safe-area-inset-bottom)); max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,.3); animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .modal-handle { width: 40px; height: 4px; border-radius: 3px; background: var(--border); margin: 0 auto 16px; }
 .modal-title { font-size: 19px; font-weight: 800; margin-bottom: 18px; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
 .modal-title svg { width: 24px; height: 24px; flex-shrink: 0; color: var(--accent); }
@@ -904,38 +718,19 @@ html, body {
 .char-counter { font-size: 12px; color: var(--muted); text-align: right; margin-top: -8px; margin-bottom: 14px; }
 
 #avatarCropModal .modal-sheet { text-align: center; }
-.avatar-crop-preview {
-  width: 220px; height: 220px; border-radius: 50%; margin: 12px auto 20px; overflow: hidden;
-  border: 4px solid var(--accent); box-shadow: var(--shadow-pop); background: var(--surface);
-  display: flex; align-items: center; justify-content: center;
-}
+.avatar-crop-preview { width: 220px; height: 220px; border-radius: 50%; margin: 12px auto 20px; overflow: hidden; border: 4px solid var(--accent); box-shadow: var(--shadow-pop); background: var(--surface); display: flex; align-items: center; justify-content: center; }
 .avatar-crop-preview img { width: 100%; height: 100%; object-fit: cover; }
 
-#userProfileView { 
-  position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; 
-}
+#userProfileView { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 20; }
 #userProfileView.active { display: flex; }
 .up-header { display:flex; align-items:center; gap:12px; padding:14px 16px; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink:0; }
-.bot-notice {
-  margin: 18px 20px 0; padding: 14px 16px; border-radius: var(--radius-md);
-  background: var(--accent-grad-soft); border: 1px solid var(--border);
-  font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left;
-  display: flex; gap: 10px; align-items: flex-start;
-}
+.bot-notice { margin: 18px 20px 0; padding: 14px 16px; border-radius: var(--radius-md); background: var(--accent-grad-soft); border: 1px solid var(--border); font-size: 13px; color: var(--text-dim); line-height: 1.5; text-align: left; display: flex; gap: 10px; align-items: flex-start; }
 .bot-notice .bi { font-size: 18px; flex-shrink: 0; }
 
-#toast {
-  position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px);
-  background: var(--surface); color: var(--text); padding: 12px 20px; border-radius: var(--radius-sm);
-  font-size: 14px; font-weight: 600; z-index: 200; opacity: 0; transition: opacity .3s ease, transform .3s ease;
-  pointer-events: none; max-width: 85%; text-align: center; box-shadow: var(--shadow-soft); border: 1px solid var(--border);
-}
+#toast { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--surface); color: var(--text); padding: 12px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; z-index: 200; opacity: 0; transition: opacity .3s ease, transform .3s ease; pointer-events: none; max-width: 85%; text-align: center; box-shadow: var(--shadow-soft); border: 1px solid var(--border); }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.group-member-item {
-  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
+.group-member-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
 .group-member-item .avatar { width: 36px; height: 36px; border-radius: 12px; font-size: 14px; }
 .group-member-name { flex: 1; font-weight: 600; font-size: 14px; }
 .group-member-role { font-size: 11px; color: var(--muted); font-weight: 600; }
@@ -943,77 +738,18 @@ html, body {
 .group-member-role.owner { color: var(--gold); }
 .group-member-action { color: var(--accent); font-size: 13px; cursor: pointer; padding: 4px 10px; border-radius: 8px; background: var(--surface-hover); }
 
-.add-member-input {
-  display: flex; gap: 8px; padding: 12px 16px;
-}
+.add-member-input { display: flex; gap: 8px; padding: 12px 16px; }
 .add-member-input input { flex: 1; }
 
-.context-menu { display: none; }
-.context-menu.active { display: block; }
-
 /* ========== SETTINGS ========== */
-.settings-container {
-  padding: 16px 20px 32px;
-  background: var(--bg);
-  flex: 1;
-  overflow-y: auto;
-}
-.settings-section-title {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--muted);
-  padding: 10px 4px 12px 4px;
-}
-.settings-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.settings-card {
-  background: var(--surface);
-  border-radius: 20px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.2s ease,
-              background 0.2s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
-  border: 1px solid transparent;
-  position: relative;
-  min-height: 60px;
-}
+.settings-container { padding: 16px 20px 32px; background: var(--bg); flex: 1; overflow-y: auto; }
+.settings-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding: 10px 4px 12px 4px; }
+.settings-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.settings-card { background: var(--surface); border-radius: 20px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02); border: 1px solid transparent; position: relative; min-height: 60px; }
 .settings-card:active { transform: scale(0.97); }
-.settings-card.card-ai {
-  border: 1.5px solid rgba(6, 182, 212, 0.25);
-  box-shadow: 0 4px 24px rgba(6, 182, 212, 0.08), 0 0 40px rgba(6, 182, 212, 0.04);
-  background: linear-gradient(135deg, var(--surface), rgba(6, 182, 212, 0.04));
-}
-.settings-card.card-gift {
-  border: 1.5px solid rgba(255, 215, 0, 0.2);
-  box-shadow: var(--gift-shadow);
-  background: linear-gradient(135deg, var(--surface), rgba(255, 215, 0, 0.04));
-}
-.settings-icon {
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 400;
-  color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease;
-}
+.settings-card.card-ai { border: 1.5px solid rgba(6, 182, 212, 0.25); box-shadow: 0 4px 24px rgba(6, 182, 212, 0.08), 0 0 40px rgba(6, 182, 212, 0.04); background: linear-gradient(135deg, var(--surface), rgba(6, 182, 212, 0.04)); }
+.settings-card.card-gift { border: 1.5px solid rgba(255, 215, 0, 0.2); box-shadow: var(--gift-shadow); background: linear-gradient(135deg, var(--surface), rgba(255, 215, 0, 0.04)); }
+.settings-icon { width: 46px; height: 46px; min-width: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 400; color: #fff; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: transform 0.2s ease; }
 .settings-card:active .settings-icon { transform: scale(0.92); }
 .settings-icon svg { width: 24px; height: 24px; }
 .settings-card-content { flex: 1; min-width: 0; }
@@ -1021,446 +757,100 @@ html, body {
 .settings-card-sub { font-size: 12.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
 .settings-card-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto; }
 .settings-chevron { color: var(--muted); font-size: 16px; opacity: 0.5; font-weight: 300; }
-.settings-badge {
-  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
-  background: var(--accent-grad); color: #fff; letter-spacing: 0.3px;
-  box-shadow: 0 2px 8px rgba(47, 128, 237, 0.25);
-}
+.settings-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; background: var(--accent-grad); color: #fff; letter-spacing: 0.3px; box-shadow: 0 2px 8px rgba(47, 128, 237, 0.25); }
 .settings-badge.gold { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
 .settings-badge.green { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25); }
 .settings-balance { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: -0.2px; }
 
 /* ========== SUB SETTINGS PAGES ========== */
-.sub-settings-page {
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-  display: none;
-  flex-direction: column;
-  z-index: 30;
-}
+.sub-settings-page { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; z-index: 30; }
 .sub-settings-page.active { display: flex; }
-.sub-settings-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 20px 32px;
-}
-.sub-settings-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  background: var(--surface);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+.sub-settings-content { flex: 1; overflow-y: auto; padding: 16px 20px 32px; }
+.sub-settings-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease; }
 .sub-settings-item:active { transform: scale(0.97); }
 .sub-settings-item .left { display: flex; align-items: center; gap: 12px; }
 .sub-settings-item .left svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
 .sub-settings-item .label { font-weight: 600; font-size: 15px; }
 .sub-settings-item .value { color: var(--text-dim); font-size: 14px; }
 
-.wallet-balance-card {
-  background: var(--surface);
-  border-radius: 20px;
-  padding: 24px;
-  text-align: center;
-  border: 1px solid var(--border);
-  margin-bottom: 20px;
-}
-.wallet-balance-card .amount {
-  font-size: 42px;
-  font-weight: 800;
-  color: var(--gold);
-  letter-spacing: -1px;
-}
-.wallet-balance-card .currency {
-  font-size: 16px;
-  color: var(--text-dim);
-}
-.wallet-balance-card .sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 4px;
-}
+.wallet-balance-card { background: var(--surface); border-radius: 20px; padding: 24px; text-align: center; border: 1px solid var(--border); margin-bottom: 20px; }
+.wallet-balance-card .amount { font-size: 42px; font-weight: 800; color: var(--gold); letter-spacing: -1px; }
+.wallet-balance-card .currency { font-size: 16px; color: var(--text-dim); }
+.wallet-balance-card .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-.transaction-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-}
+.transaction-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .transaction-item .info { display: flex; flex-direction: column; gap: 2px; }
 .transaction-item .info .name { font-weight: 600; font-size: 14px; }
 .transaction-item .info .date { font-size: 12px; color: var(--muted); }
 .transaction-item .amount.positive { color: var(--success); font-weight: 700; }
 .transaction-item .amount.negative { color: var(--danger); font-weight: 700; }
 
-.ai-chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.ai-chat-message {
-  max-width: 85%;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  font-size: 15px;
-  line-height: 1.5;
-}
-.ai-chat-message.user {
-  align-self: flex-end;
-  background: var(--accent-grad);
-  color: #fff;
-}
-.ai-chat-message.assistant {
-  align-self: flex-start;
-  background: var(--bubble-in);
-  color: var(--text);
-}
+.ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.ai-chat-message { max-width: 85%; padding: 10px 14px; border-radius: var(--radius-md); font-size: 15px; line-height: 1.5; }
+.ai-chat-message.user { align-self: flex-end; background: var(--accent-grad); color: #fff; }
+.ai-chat-message.assistant { align-self: flex-start; background: var(--bubble-in); color: var(--text); }
 .ai-chat-message .time { font-size: 10px; opacity: 0.5; margin-top: 4px; display: block; }
 
-.ai-chat-input-bar {
-  display: flex;
-  gap: 8px;
-  padding: 10px 12px;
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.ai-chat-input-bar input {
-  flex: 1;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 24px;
-  padding: 12px 18px;
-  color: var(--text);
-  font-size: 15px;
-  outline: none;
-}
+.ai-chat-input-bar { display: flex; gap: 8px; padding: 10px 12px; background: var(--bg2); border-top: 1px solid var(--border); flex-shrink: 0; }
+.ai-chat-input-bar input { flex: 1; background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px; padding: 12px 18px; color: var(--text); font-size: 15px; outline: none; }
 .ai-chat-input-bar input:focus { border-color: var(--accent); }
-.ai-chat-input-bar .send-btn {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--accent-grad);
-  color: #fff;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+.ai-chat-input-bar .send-btn { width: 46px; height: 46px; border-radius: 50%; background: var(--accent-grad); color: #fff; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
 /* ========== PREMIUM PAGE ========== */
-.premium-page {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(145deg, #0a0e17 0%, #1a0a2e 50%, #0a0e17 100%);
-  display: none;
-  flex-direction: column;
-  z-index: 40;
-  overflow-y: auto;
-}
+.premium-page { position: absolute; inset: 0; background: linear-gradient(145deg, #0a0e17 0%, #1a0a2e 50%, #0a0e17 100%); display: none; flex-direction: column; z-index: 40; overflow-y: auto; }
 .premium-page.active { display: flex; }
-.premium-backdrop {
-  position: absolute;
-  inset: 0;
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(139,92,246,0.15), transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(6,182,212,0.1), transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(236,72,153,0.05), transparent 70%);
-  pointer-events: none;
-}
-.premium-header {
-  padding: 24px 20px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 1;
-}
-.premium-header .back-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #fff;
-}
+.premium-backdrop { position: absolute; inset: 0; background: radial-gradient(circle at 20% 20%, rgba(139,92,246,0.15), transparent 50%), radial-gradient(circle at 80% 80%, rgba(6,182,212,0.1), transparent 50%), radial-gradient(circle at 50% 50%, rgba(236,72,153,0.05), transparent 70%); pointer-events: none; }
+.premium-header { padding: 24px 20px 16px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+.premium-header .back-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #fff; }
 .premium-header .back-btn svg { stroke: #fff; }
-.premium-hero {
-  text-align: center;
-  padding: 20px 20px 30px;
-  position: relative;
-  z-index: 1;
-}
-.premium-hero .crown {
-  font-size: 72px;
-  display: block;
-  animation: premiumFloat 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 30px rgba(255,215,0,0.3));
-}
-@keyframes premiumFloat {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-10px) scale(1.05); }
-}
-.premium-hero .title {
-  font-size: 32px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 40%, #8b5cf6 70%, #06b6d4 100%);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: premiumShine 4s linear infinite;
-  margin-top: 8px;
-}
-@keyframes premiumShine {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
-}
-.premium-hero .subtitle {
-  color: rgba(255,255,255,0.6);
-  font-size: 14px;
-  margin-top: 4px;
-}
-.premium-features {
-  padding: 0 20px 20px;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.premium-feature {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-.premium-feature:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.15);
-  transform: translateX(4px);
-}
+.premium-hero { text-align: center; padding: 20px 20px 30px; position: relative; z-index: 1; }
+.premium-hero .crown { font-size: 72px; display: block; animation: premiumFloat 3s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(255,215,0,0.3)); }
+@keyframes premiumFloat { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
+.premium-hero .title { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #ffd700 0%, #ff6b6b 40%, #8b5cf6 70%, #06b6d4 100%); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: premiumShine 4s linear infinite; margin-top: 8px; }
+@keyframes premiumShine { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+.premium-hero .subtitle { color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; }
+.premium-features { padding: 0 20px 20px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 12px; }
+.premium-feature { background: rgba(255,255,255,0.06); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease; cursor: default; }
+.premium-feature:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); transform: translateX(4px); }
 .premium-feature .icon { font-size: 28px; flex-shrink: 0; }
 .premium-feature .info { flex: 1; }
 .premium-feature .info .name { font-weight: 700; font-size: 15px; color: #fff; }
 .premium-feature .info .desc { font-size: 12.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 .premium-feature .check { color: var(--premium-gold); font-size: 18px; }
-.premium-price {
-  padding: 20px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-.premium-price .price {
-  font-size: 42px;
-  font-weight: 800;
-  color: #fff;
-}
-.premium-price .price span {
-  font-size: 18px;
-  font-weight: 400;
-  color: rgba(255,255,255,0.5);
-}
-.premium-price .period {
-  color: rgba(255,255,255,0.4);
-  font-size: 13px;
-  margin-top: 4px;
-}
-.btn-premium {
-  width: 100%;
-  padding: 18px;
-  border-radius: 16px;
-  border: none;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  background: linear-gradient(135deg, #ffd700, #f59e0b, #ff6b6b);
-  background-size: 200% 100%;
-  color: #1a1a2e;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 30px rgba(255,215,0,0.25);
-  animation: premiumBtnShine 3s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
-}
-@keyframes premiumBtnShine {
-  0%,100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
+.premium-price { padding: 20px; text-align: center; position: relative; z-index: 1; }
+.premium-price .price { font-size: 42px; font-weight: 800; color: #fff; }
+.premium-price .price span { font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.5); }
+.premium-price .period { color: rgba(255,255,255,0.4); font-size: 13px; margin-top: 4px; }
+.btn-premium { width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, #ffd700, #f59e0b, #ff6b6b); background-size: 200% 100%; color: #1a1a2e; transition: all 0.3s ease; box-shadow: 0 4px 30px rgba(255,215,0,0.25); animation: premiumBtnShine 3s ease-in-out infinite; position: relative; overflow: hidden; }
+@keyframes premiumBtnShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 .btn-premium:active { transform: scale(0.96); }
-.btn-premium.active {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  box-shadow: none;
-  animation: none;
-}
-.premium-color-picker {
-  display: flex;
-  gap: 12px;
-  padding: 12px 0;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.premium-color-picker .color-option {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid transparent;
-  transition: all 0.3s ease;
-  position: relative;
-}
+.btn-premium.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: none; animation: none; }
+.premium-color-picker { display: flex; gap: 12px; padding: 12px 0; flex-wrap: wrap; justify-content: center; }
+.premium-color-picker .color-option { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.3s ease; position: relative; }
 .premium-color-picker .color-option:hover { transform: scale(1.1); }
-.premium-color-picker .color-option.active {
-  border-color: #fff;
-  box-shadow: 0 0 20px rgba(255,255,255,0.2);
-  transform: scale(1.1);
-}
-.premium-color-picker .color-option .check {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 16px;
-  opacity: 0;
-  text-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
+.premium-color-picker .color-option.active { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); transform: scale(1.1); }
+.premium-color-picker .color-option .check { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; opacity: 0; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 .premium-color-picker .color-option.active .check { opacity: 1; }
 
 /* ========== MEDIA GRID ========== */
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-}
-.media-grid .media-item {
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-.media-grid .media-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
+.media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.media-grid .media-item { aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--surface); border: 1px solid var(--border); }
+.media-grid .media-item img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.3s ease; }
 .media-grid .media-item img:active { transform: scale(1.05); }
 
-/* ========== BANNED SCREEN (UI/UX 2026) ========== */
-.banned-screen {
-  position: absolute;
-  inset: 0;
-  background: #0a0e17;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 32px;
-  text-align: center;
-}
-.banned-screen.active {
-  display: flex;
-}
-.banned-icon-wrap {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: rgba(255,84,112,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 28px;
-  border: 2px solid rgba(255,84,112,0.15);
-  animation: bannedPulse 2.5s ease-in-out infinite;
-}
-@keyframes bannedPulse {
-  0%,100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,84,112,0.05); }
-  50% { transform: scale(1.04); box-shadow: 0 0 50px rgba(255,84,112,0.12); }
-}
-.banned-icon-wrap svg {
-  width: 44px;
-  height: 44px;
-  stroke: #ff5470;
-  stroke-width: 1.5;
-}
-.banned-title {
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #ff5470 0%, #ff2d55 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 12px;
-}
-.banned-text {
-  color: rgba(255,255,255,0.6);
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 320px;
-  font-weight: 400;
-}
-.banned-reason {
-  color: rgba(255,255,255,0.9);
-  font-size: 14px;
-  font-weight: 600;
-  background: rgba(255,84,112,0.06);
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,84,112,0.1);
-  margin: 16px 0 8px;
-  max-width: 320px;
-}
-.banned-duration {
-  color: #ff5470;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.3px;
-  margin-bottom: 32px;
-}
-.banned-btn {
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.8);
-  border: 1.5px solid rgba(255,255,255,0.08);
-  padding: 16px 40px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  min-width: 200px;
-  letter-spacing: 0.3px;
-}
-.banned-btn:active {
-  transform: scale(0.96);
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.15);
-}
-.banned-btn:hover {
-  background: rgba(255,255,255,0.06);
-}
+/* ========== BANNED SCREEN ========== */
+.banned-screen { position: absolute; inset: 0; background: #0a0e17; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 32px; text-align: center; }
+.banned-screen.active { display: flex; }
+.banned-icon-wrap { width: 96px; height: 96px; border-radius: 50%; background: rgba(255,84,112,0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 28px; border: 2px solid rgba(255,84,112,0.15); animation: bannedPulse 2.5s ease-in-out infinite; }
+@keyframes bannedPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,84,112,0.05); } 50% { transform: scale(1.04); box-shadow: 0 0 50px rgba(255,84,112,0.12); } }
+.banned-icon-wrap svg { width: 44px; height: 44px; stroke: #ff5470; stroke-width: 1.5; }
+.banned-title { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #ff5470 0%, #ff2d55 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 12px; }
+.banned-text { color: rgba(255,255,255,0.6); font-size: 15px; line-height: 1.7; max-width: 320px; font-weight: 400; }
+.banned-reason { color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 600; background: rgba(255,84,112,0.06); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,84,112,0.1); margin: 16px 0 8px; max-width: 320px; }
+.banned-duration { color: #ff5470; font-weight: 700; font-size: 14px; letter-spacing: 0.3px; margin-bottom: 32px; }
+.banned-btn { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.08); padding: 16px 40px; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; min-width: 200px; letter-spacing: 0.3px; }
+.banned-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+.banned-btn:hover { background: rgba(255,255,255,0.06); }
 
 @media (max-width: 380px) {
   .wallet-balance-card .amount { font-size: 32px; }
@@ -1558,7 +948,7 @@ html, body {
     <button class="btn btn-primary" onclick="doLogin()">Войти</button>
   </div>
 
-  <!-- BANNED SCREEN (UI/UX 2026) -->
+  <!-- BANNED SCREEN -->
   <div class="banned-screen" id="bannedScreen">
     <div class="banned-icon-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -1568,9 +958,7 @@ html, body {
       </svg>
     </div>
     <div class="banned-title">ДОСТУП ОГРАНИЧЕН</div>
-    <div class="banned-text">
-      Ваш аккаунт в DICEGRAM был заблокирован Создателем мессенджера за нарушение правил платформы.
-    </div>
+    <div class="banned-text">Ваш аккаунт в DICEGRAM был заблокирован Создателем мессенджера за нарушение правил платформы.</div>
     <div class="banned-reason">Причина: Нарушение условий пользовательского соглашения</div>
     <div class="banned-duration">Срок блокировки: Навсегда</div>
     <button class="banned-btn" onclick="logoutFromBanned()">Выйти из аккаунта</button>
@@ -1597,7 +985,6 @@ html, body {
     <div class="tab-content" id="tabSettings">
       <div class="top-bar"><span>Настройки</span></div>
       <div class="settings-container">
-        
         <div class="settings-section-title">Аккаунт и безопасность</div>
         <div class="settings-grid">
           <div class="settings-card" onclick="openAccountSecurityPage()">
@@ -1743,7 +1130,7 @@ html, body {
       </div>
     </div>
 
-    <!-- PROFILE TAB (НОВЫЙ ДИЗАЙН) -->
+    <!-- PROFILE TAB -->
     <div class="tab-content" id="tabProfile">
       <div class="top-bar"><span>Профиль</span></div>
       <div style="flex:1;overflow-y:auto;">
@@ -1757,17 +1144,12 @@ html, body {
           <div class="profile-name" id="profileNameDisplay">—</div>
           <div class="profile-phone" id="profilePhoneDisplay">—</div>
           <div class="profile-bio" id="profileBioDisplay"></div>
-          <div id="profilePremiumBadge" style="display:none;margin-top:6px;">
-            <span class="premium-badge">⭐ PREMIUM</span>
-          </div>
+          <div id="profilePremiumBadge" style="display:none;margin-top:6px;"><span class="premium-badge">⭐ PREMIUM</span></div>
           <div class="verified-line" id="profileVerifiedLine" style="display:none;"><span class="vb">✓</span> <span>Верифицирован DICEGRAM</span></div>
           <div class="owner-line" id="profileOwnerLine" style="display:none;">★ Создатель DICEGRAM</div>
-          <div id="profileNftBadge" style="display:none;margin-top:6px;">
-            <span class="nft-badge">🏆 NFT</span>
-          </div>
+          <div id="profileNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
         </div>
-        
-        <!-- НОВЫЕ ТАБЫ С SVG-ИКОНКАМИ -->
+
         <div class="profile-tabs">
           <div class="profile-tab active" data-tab="profileInfo" onclick="switchProfileTab('profileInfo')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1782,72 +1164,48 @@ html, body {
             Медиа
           </div>
         </div>
-        
-        <!-- ИНФО (НОВЫЕ КАРТОЧКИ) -->
+
         <div class="profile-tab-content active" id="profileInfo">
           <div class="profile-glass-card" onclick="openEditNameModal()">
             <div class="left">
-              <div class="icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </div>
+              <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
               <span class="label">Имя</span>
             </div>
             <span class="value" id="profileNameRow">—</span>
             <span class="arrow">›</span>
           </div>
-          
           <div class="profile-glass-card" onclick="openEditUsernameModal()">
             <div class="left">
-              <div class="icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>
-              </div>
+              <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg></div>
               <span class="label">Юзернейм</span>
             </div>
             <span class="value" id="profileUsernameDisplay">—</span>
             <span class="arrow">›</span>
           </div>
-          
           <div class="profile-glass-card" onclick="openEditBioModal()">
             <div class="left">
-              <div class="icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              </div>
+              <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
               <span class="label">О себе</span>
             </div>
             <span class="value" id="profileBioRow">—</span>
             <span class="arrow">›</span>
           </div>
-          
           <div id="premiumProfileSettings" style="display:none;">
             <div class="section-label" style="margin-top:8px;">✨ Premium настройки</div>
             <div class="profile-glass-card" onclick="openPremiumBorderPicker()">
-              <div class="left">
-                <div class="icon-wrap">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-                </div>
-                <span class="label">Рамка аватара</span>
-              </div>
-              <span class="value" id="premiumBorderDisplay">Выбрать</span>
-              <span class="arrow">›</span>
+              <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><span class="label">Рамка аватара</span></div>
+              <span class="value" id="premiumBorderDisplay">Выбрать</span><span class="arrow">›</span>
             </div>
             <div class="profile-glass-card" onclick="openPremiumColorPicker()">
-              <div class="left">
-                <div class="icon-wrap">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
-                </div>
-                <span class="label">Цвет никнейма</span>
-              </div>
-              <span class="value" id="premiumColorDisplay">Выбрать</span>
-              <span class="arrow">›</span>
+              <div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg></div><span class="label">Цвет никнейма</span></div>
+              <span class="value" id="premiumColorDisplay">Выбрать</span><span class="arrow">›</span>
             </div>
           </div>
         </div>
-        
         <div class="profile-tab-content" id="profileGifts">
           <div id="profileGiftsGrid" class="gifts-grid"></div>
           <div id="profileGiftsEmpty" class="empty-state">У вас пока нет подарков.<br>Загляните в магазин! 🎁</div>
         </div>
-        
         <div class="profile-tab-content" id="profileMedia">
           <div id="profileMediaGrid" class="media-grid"></div>
           <div id="profileMediaEmpty" class="empty-state">Нет фото или видео в чатах</div>
@@ -1910,7 +1268,6 @@ html, body {
   </div>
 
   <!-- ========== SUB SETTINGS PAGES ========== -->
-  
   <div class="sub-settings-page" id="accountSecurityPage">
     <div class="top-bar">
       <button class="back-btn" onclick="closeSubSettings('accountSecurityPage')">
@@ -1922,17 +1279,11 @@ html, body {
     </div>
     <div class="sub-settings-content">
       <div class="sub-settings-item" onclick="openChangePasswordModal()">
-        <div class="left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <span class="label">Смена пароля</span>
-        </div>
+        <div class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="label">Смена пароля</span></div>
         <span class="value">›</span>
       </div>
       <div class="sub-settings-item" onclick="openDevicesPage()">
-        <div class="left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg>
-          <span class="label">Устройства</span>
-        </div>
+        <div class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><line x1="16" y1="21" x2="16" y2="21"/></svg><span class="label">Устройства</span></div>
         <span class="value" id="devicesCount">0 сессий ›</span>
       </div>
     </div>
@@ -1981,10 +1332,7 @@ html, body {
       <span style="width:60px;"></span>
     </div>
     <div class="ai-chat-messages" id="aiChatMessages">
-      <div class="ai-chat-message assistant">
-        Привет! Я Dice AI Ассистент. Чем могу помочь? 🤖
-        <span class="time">сейчас</span>
-      </div>
+      <div class="ai-chat-message assistant">Привет! Я Dice AI Ассистент. Чем могу помочь? 🤖<span class="time">сейчас</span></div>
     </div>
     <div class="ai-chat-input-bar">
       <input id="aiChatInput" placeholder="Спросите что-нибудь..." onkeydown="if(event.key==='Enter') sendAIMessage()">
@@ -2005,23 +1353,18 @@ html, body {
       <div style="font-size:64px;margin-bottom:16px;">👥</div>
       <div class="auth-title" style="font-size:24px;">Поделитесь DICEGRAM</div>
       <div class="auth-sub" style="margin-bottom:30px;">Приглашайте друзей в мессенджер нового поколения</div>
-      
       <div style="background:var(--surface);border-radius:16px;padding:20px;border:1px solid var(--border);margin-bottom:24px;">
         <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Ваша реферальная ссылка</div>
         <div style="font-size:14px;font-weight:600;color:var(--accent);word-break:break-all;background:var(--bg);padding:12px;border-radius:10px;font-family:monospace;" id="inviteLink">https://dicegram.com/ref/loading...</div>
         <button class="btn btn-primary" onclick="copyInviteLink()" style="margin-top:12px;padding:12px;">📋 Скопировать ссылку</button>
       </div>
-      
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;">
         <button class="btn btn-secondary" onclick="shareVia('telegram')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">📱 Telegram</button>
         <button class="btn btn-secondary" onclick="shareVia('whatsapp')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">💬 WhatsApp</button>
         <button class="btn btn-secondary" onclick="shareVia('vk')" style="padding:12px 20px;width:auto;flex:1;min-width:70px;">🌐 VK</button>
       </div>
-      
       <div class="section-label" style="padding:8px 0;">Приглашённые друзья</div>
-      <div id="invitedFriendsList">
-        <div class="empty-state">Пока никто не пришёл по вашей ссылке</div>
-      </div>
+      <div id="invitedFriendsList"><div class="empty-state">Пока никто не пришёл по вашей ссылке</div></div>
     </div>
   </div>
 
@@ -2041,64 +1384,18 @@ html, body {
       <div class="subtitle">Расширьте возможности мессенджера</div>
     </div>
     <div class="premium-features">
-      <div class="premium-feature">
-        <span class="icon">🖼️</span>
-        <div class="info">
-          <div class="name">Кастомная рамка аватара</div>
-          <div class="desc">Выберите цветящуюся рамку для своего профиля</div>
-        </div>
-        <span class="check">✓</span>
-      </div>
-      <div class="premium-feature">
-        <span class="icon">⭐</span>
-        <div class="info">
-          <div class="name">Эксклюзивный бейдж</div>
-          <div class="desc">Анимированный значок премиум в профиле</div>
-        </div>
-        <span class="check">✓</span>
-      </div>
-      <div class="premium-feature">
-        <span class="icon">🎨</span>
-        <div class="info">
-          <div class="name">Цветной никнейм</div>
-          <div class="desc">Изменяйте цвет имени в чатах и группах</div>
-        </div>
-        <span class="check">✓</span>
-      </div>
-      <div class="premium-feature">
-        <span class="icon">😎</span>
-        <div class="info">
-          <div class="name">Уникальные реакции</div>
-          <div class="desc">Анимированные эмодзи-реакции и статусы</div>
-        </div>
-        <span class="check">✓</span>
-      </div>
-      <div class="premium-feature">
-        <span class="icon">🌌</span>
-        <div class="info">
-          <div class="name">Эксклюзивные темы</div>
-          <div class="desc">Космическая, неоновая, киберпанк и другие</div>
-        </div>
-        <span class="check">✓</span>
-      </div>
-      <div class="premium-feature">
-        <span class="icon">🚀</span>
-        <div class="info">
-          <div class="name">Удвоенные лимиты</div>
-          <div class="desc">Больше чатов, групп и файлов без сжатия</div>
-        </div>
-        <span class="check">✓</span>
-      </div>
+      <div class="premium-feature"><span class="icon">🖼️</span><div class="info"><div class="name">Кастомная рамка аватара</div><div class="desc">Выберите цветящуюся рамку для своего профиля</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">⭐</span><div class="info"><div class="name">Эксклюзивный бейдж</div><div class="desc">Анимированный значок премиум в профиле</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">🎨</span><div class="info"><div class="name">Цветной никнейм</div><div class="desc">Изменяйте цвет имени в чатах и группах</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">😎</span><div class="info"><div class="name">Уникальные реакции</div><div class="desc">Анимированные эмодзи-реакции и статусы</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">🌌</span><div class="info"><div class="name">Эксклюзивные темы</div><div class="desc">Космическая, неоновая, киберпанк и другие</div></div><span class="check">✓</span></div>
+      <div class="premium-feature"><span class="icon">🚀</span><div class="info"><div class="name">Удвоенные лимиты</div><div class="desc">Больше чатов, групп и файлов без сжатия</div></div><span class="check">✓</span></div>
     </div>
     <div class="premium-price">
       <div class="price">$4.99 <span>/ месяц</span></div>
       <div class="period">Отмена в любой момент</div>
-      <button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()">
-        <span id="premiumBtnText">✨ Купить подписку</span>
-      </button>
-      <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3);">
-        <span id="premiumDaysDisplay">30 дней бесплатно</span>
-      </div>
+      <button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()"><span id="premiumBtnText">✨ Купить подписку</span></button>
+      <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3);"><span id="premiumDaysDisplay">30 дней бесплатно</span></div>
     </div>
   </div>
 
@@ -2164,19 +1461,16 @@ html, body {
     </div>
   </div>
 
-  <!-- USER PROFILE VIEW (АПГРЕЙД) -->
+  <!-- USER PROFILE VIEW -->
   <div id="userProfileView">
     <div class="up-header">
       <button class="back-btn" style="margin:0;" onclick="closeUserProfile()">←</button>
       <span style="font-weight:700;font-size:16px;">Профиль</span>
     </div>
     <div style="flex:1;overflow-y:auto;">
-      <!-- Шапка профиля (крупный юзернейм и номер) -->
       <div class="profile-header" id="upProfileHeader">
         <div class="profile-cover" id="upCover"></div>
-        <div class="avatar profile-avatar" id="upAvatarWrap" style="cursor:default;">
-          <span id="upAvatarLetter">?</span>
-        </div>
+        <div class="avatar profile-avatar" id="upAvatarWrap" style="cursor:default;"><span id="upAvatarLetter">?</span></div>
         <div class="profile-name" id="upName" style="font-size:26px;">—</div>
         <div class="profile-phone" id="upUsername" style="font-size:18px;font-weight:700;color:var(--text);">@—</div>
         <div class="profile-phone" id="upPhone" style="font-size:15px;font-weight:500;">—</div>
@@ -2186,66 +1480,25 @@ html, body {
         <div id="upNftBadge" style="display:none;margin-top:6px;"><span class="nft-badge">🏆 NFT</span></div>
         <div class="verified-line" id="upVerifiedLine" style="display:none;"><span class="vb">✓</span> <span id="upVerifiedText">Верифицирован DICEGRAM</span></div>
         <div class="banned-line" id="upBannedLine" style="display:none;">Этот аккаунт заблокирован</div>
-        
-        <!-- КНОПКИ В СТИЛЕ GLASSMORPHISM -->
         <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:340px;">
-          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:var(--accent-grad);border:none;color:#fff;font-weight:700;cursor:pointer;transition:transform .15s ease;">
-            💬 Сообщение
-          </button>
-          <button class="btn btn-gold" onclick="giftFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:linear-gradient(135deg,#ffd700,#f59e0b);border:none;color:#1a1a2e;font-weight:700;cursor:pointer;transition:transform .15s ease;">
-            🎁 Подарок
-          </button>
-          <button class="btn btn-danger" onclick="blockUser()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);font-weight:700;cursor:pointer;transition:transform .15s ease;">
-            🚫 Блок
-          </button>
+          <button class="btn btn-primary" id="upMessageBtn" onclick="messageFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:var(--accent-grad);border:none;color:#fff;font-weight:700;cursor:pointer;transition:transform .15s ease;">💬 Сообщение</button>
+          <button class="btn btn-gold" onclick="giftFromProfile()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:linear-gradient(135deg,#ffd700,#f59e0b);border:none;color:#1a1a2e;font-weight:700;cursor:pointer;transition:transform .15s ease;">🎁 Подарок</button>
+          <button class="btn btn-danger" onclick="blockUser()" style="flex:1;padding:14px 12px;border-radius:14px;font-size:14px;background:rgba(255,84,112,.12);border:1px solid rgba(255,84,112,.3);color:var(--danger);font-weight:700;cursor:pointer;transition:transform .15s ease;">🚫 Блок</button>
         </div>
       </div>
-      
-      <!-- ТАБЫ -->
       <div class="profile-tabs" id="upTabs">
         <div class="profile-tab active" data-tab="upInfo" onclick="switchUpTab('upInfo')">Инфо</div>
         <div class="profile-tab" data-tab="upGifts" onclick="switchUpTab('upGifts')">🎁 Подарки</div>
         <div class="profile-tab" data-tab="upMedia" onclick="switchUpTab('upMedia')">📸 Медиа</div>
       </div>
-      
       <div class="profile-tab-content active" id="upInfo">
-        <div class="bot-notice" id="upBotNotice" style="display:none;">
-          <span class="bi">🤖</span>
-          <span>Это официальный бот поддержки DICEGRAM.</span>
-        </div>
-        <!-- Информационные карточки -->
-        <div class="profile-glass-card" style="cursor:default;">
-          <div class="left">
-            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-            <span class="label">Имя</span>
-          </div>
-          <span class="value" id="upInfoName">—</span>
-        </div>
-        <div class="profile-glass-card" style="cursor:default;">
-          <div class="left">
-            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></div>
-            <span class="label">Юзернейм</span>
-          </div>
-          <span class="value" id="upInfoUsername">—</span>
-        </div>
-        <div class="profile-glass-card" style="cursor:default;">
-          <div class="left">
-            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-            <span class="label">О себе</span>
-          </div>
-          <span class="value" id="upInfoBio">—</span>
-        </div>
+        <div class="bot-notice" id="upBotNotice" style="display:none;"><span class="bi">🤖</span><span>Это официальный бот поддержки DICEGRAM.</span></div>
+        <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><span class="label">Имя</span></div><span class="value" id="upInfoName">—</span></div>
+        <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></div><span class="label">Юзернейм</span></div><span class="value" id="upInfoUsername">—</span></div>
+        <div class="profile-glass-card" style="cursor:default;"><div class="left"><div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><span class="label">О себе</span></div><span class="value" id="upInfoBio">—</span></div>
       </div>
-      
-      <div class="profile-tab-content" id="upGifts">
-        <div id="upGiftsGrid" class="gifts-grid"></div>
-        <div id="upGiftsEmpty" class="empty-state">У пользователя пока нет подарков 🎁</div>
-      </div>
-      
-      <div class="profile-tab-content" id="upMedia">
-        <div id="upMediaGrid" class="media-grid"></div>
-        <div id="upMediaEmpty" class="empty-state">Нет медиа в общих чатах</div>
-      </div>
+      <div class="profile-tab-content" id="upGifts"><div id="upGiftsGrid" class="gifts-grid"></div><div id="upGiftsEmpty" class="empty-state">У пользователя пока нет подарков 🎁</div></div>
+      <div class="profile-tab-content" id="upMedia"><div id="upMediaGrid" class="media-grid"></div><div id="upMediaEmpty" class="empty-state">Нет медиа в общих чатах</div></div>
     </div>
   </div>
 
@@ -2256,9 +1509,7 @@ html, body {
       <span style="font-weight:700;font-size:16px;">Информация о группе</span>
     </div>
     <div class="profile-header">
-      <div class="avatar profile-avatar group" id="gpAvatarWrap" style="cursor:pointer;" onclick="document.getElementById('gpAvatarInput').click()">
-        <span id="gpAvatarLetter">Г</span>
-      </div>
+      <div class="avatar profile-avatar group" id="gpAvatarWrap" style="cursor:pointer;" onclick="document.getElementById('gpAvatarInput').click()"><span id="gpAvatarLetter">Г</span></div>
       <input type="file" id="gpAvatarInput" accept="image/*" style="display:none" onchange="onGroupAvatarSelected(event)">
       <div class="profile-name" id="gpName">—</div>
       <div class="profile-phone" id="gpId">—</div>
@@ -2267,20 +1518,21 @@ html, body {
     <div id="gpMembersList" style="flex:1;overflow-y:auto;padding-bottom:20px;"></div>
   </div>
 
-  <!-- CONTEXT MENU -->
+  <!-- CONTEXT MENU (ОБНОВЛЕННЫЙ С КАСТОМНЫМИ СТИКЕРАМИ) -->
   <div class="context-menu" id="contextMenu">
-    <div class="reaction-picker" id="reactionPicker">
-      <span onclick="addReaction('😂')">😂</span>
-      <span onclick="addReaction('⚡')">⚡</span>
-      <span onclick="addReaction('🖕🏿')">🖕🏿</span>
-      <span onclick="addReaction('🌏')">🌏</span>
-      <span onclick="addReaction('😍')">😍</span>
-      <span onclick="addReaction('😎')">😎</span>
+    <div class="sticker-picker" id="reactionPicker">
+      <div class="dice-sticker" data-emoji="🔥" onclick="addReaction('🔥')"><span class="sticker-icon">🔥</span><span class="sticker-label">Огонь</span></div>
+      <div class="dice-sticker" data-emoji="⚡" onclick="addReaction('⚡')"><span class="sticker-icon">⚡</span><span class="sticker-label">Мощь</span></div>
+      <div class="dice-sticker" data-emoji="👑" onclick="addReaction('👑')"><span class="sticker-icon">👑</span><span class="sticker-label">Король</span></div>
+      <div class="dice-sticker" data-emoji="💎" onclick="addReaction('💎')"><span class="sticker-icon">💎</span><span class="sticker-label">Алмаз</span></div>
+      <div class="dice-sticker" data-emoji="🎯" onclick="addReaction('🎯')"><span class="sticker-icon">🎯</span><span class="sticker-label">Точно</span></div>
+      <div class="dice-sticker" data-emoji="🤝" onclick="addReaction('🤝')"><span class="sticker-icon">🤝</span><span class="sticker-label">Договор</span></div>
     </div>
     <div class="context-menu-divider"></div>
-    <div class="context-menu-item" onclick="replyToMessage()">↩️ Ответить</div>
-    <div class="context-menu-item" id="editMsgBtn" onclick="editMessage()">✏️ Редактировать</div>
-    <div class="context-menu-item danger" id="deleteMsgBtn" onclick="deleteMessage()">🗑️ Удалить</div>
+    <div class="context-menu-item" onclick="copyMessageText()"><span class="menu-icon">📋</span>Копировать текст<span class="menu-shortcut">Ctrl+C</span></div>
+    <div class="context-menu-item" onclick="replyToMessage()"><span class="menu-icon">↩️</span>Ответить<span class="menu-shortcut">Ctrl+R</span></div>
+    <div class="context-menu-item" id="editMsgBtn" onclick="editMessage()"><span class="menu-icon">✏️</span>Изменить<span class="menu-shortcut">Ctrl+E</span></div>
+    <div class="context-menu-item danger" id="deleteMsgBtn" onclick="deleteMessage()"><span class="menu-icon">🗑️</span><span id="deleteMsgText">Удалить у всех</span><span class="menu-shortcut">Del</span></div>
   </div>
 
   <!-- MODALS -->
@@ -2397,7 +1649,6 @@ html, body {
 </div>
 <div id="toast"></div>
 
-
 <script>
 // ===================== CONFIG =====================
 const API_BASE = "https://a48794-5d18.e.jrnm.app";
@@ -2473,6 +1724,10 @@ let userGifts = [];
 let giftShopSelected = null;
 let giftRecipient = null;
 let giftFromProfileTarget = null;
+
+// ==== РЕАКЦИИ ====
+let messageReactions = {};
+let myReactions = {};
 
 // ===================== UTILITY =====================
 function setTheme(theme) {
@@ -2822,7 +2077,6 @@ function removeDevice(deviceId) {
 
 // ===== WALLET =====
 function loadWallet() {
-  // ✅ Берём баланс из синхронизированной переменной
   updateWalletDisplay();
   renderWallet();
 }
@@ -2870,7 +2124,6 @@ async function submitGift() {
     return;
   }
   
-  // ✅ Проверяем баланс с сервера перед отправкой
   await syncWalletFromServer();
   
   if (amount > walletBalance) {
@@ -2878,7 +2131,6 @@ async function submitGift() {
     return;
   }
   
-  // Проверяем существует ли пользователь с таким номером
   try {
     const checkRes = await fetch(`${API_BASE}/api/user/profile/by_phone?phone=${encodeURIComponent(phone)}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
@@ -2901,7 +2153,6 @@ async function submitGift() {
     return;
   }
   
-  // Отправляем подарок через сервер
   try {
     const res = await fetch(`${API_BASE}/api/wallet/gift`, {
       method: 'POST',
@@ -2917,11 +2168,9 @@ async function submitGift() {
       return;
     }
     
-    // ✅ ОБНОВЛЯЕМ БАЛАНС ИЗ ОТВЕТА СЕРВЕРА
     walletBalance = data.new_balance !== undefined ? data.new_balance : walletBalance - amount;
     localStorage.setItem('dicegram_wallet_' + session.username, String(walletBalance));
     
-    // Добавляем транзакцию
     walletTransactions.unshift({
       name: `Подарок пользователю ${phone}`,
       amount: -amount,
@@ -3305,7 +2554,6 @@ function renderProfileGifts() {
   const grid = document.getElementById('profileGiftsGrid');
   const empty = document.getElementById('profileGiftsEmpty');
   
-  // ✅ СИНХРОНИЗИРУЕМ БАЛАНС ПРИ ЗАГРУЗКЕ ПОДАРКОВ
   syncWalletFromServer();
   
   fetch(`${API_BASE}/api/gifts/user`, {
@@ -3517,8 +2765,6 @@ function enterApp() {
   syncProfileFromServer();
   updateNavBadges();
   updatePremiumUI();
-  
-  // ✅ СИНХРОНИЗИРУЕМ БАЛАНС С СЕРВЕРОМ
   syncWalletFromServer();
 }
 
@@ -4199,6 +3445,19 @@ function appendBubble(dir, text, time, attachmentUrl, msgId, replyTo, isSystem) 
   wrap.appendChild(div);
   row.appendChild(wrap);
   
+  // Добавляем контейнер для реакций
+  const reactionsRow = document.createElement('div');
+  reactionsRow.className = 'reactions-row';
+  reactionsRow.dataset.msgId = msgId;
+  row.appendChild(reactionsRow);
+  
+  // Загружаем реакции
+  if (msgId && currentChatWith) {
+    setTimeout(() => {
+      fetchReactions(msgId, currentChatWith, currentChatIsGroup);
+    }, 100);
+  }
+  
   let pressTimer = null;
   let isPressed = false;
   
@@ -4224,6 +3483,293 @@ function appendBubble(dir, text, time, attachmentUrl, msgId, replyTo, isSystem) 
   row.addEventListener('mouseleave', endPress);
   
   container.appendChild(row);
+}
+
+// ===== РЕАКЦИИ =====
+async function sendReaction(messageId, emoji, chatId, isGroup) {
+  if (!messageId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/reaction`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.token}`
+      },
+      body: JSON.stringify({
+        message_id: messageId,
+        chat_id: chatId,
+        emoji: emoji,
+        is_group: isGroup || false
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (data.reactions) {
+        messageReactions[messageId] = data.reactions;
+        myReactions[messageId] = emoji;
+        updateReactionsDisplay(messageId);
+      }
+      return true;
+    }
+    return false;
+  } catch(e) {
+    console.warn('Reaction error:', e);
+    return false;
+  }
+}
+
+async function fetchReactions(messageId, chatId, isGroup) {
+  if (!messageId) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/reaction?message_id=${messageId}&chat_id=${chatId}&is_group=${isGroup || false}`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (data.ok && data.reactions) {
+      messageReactions[messageId] = data.reactions;
+      updateReactionsDisplay(messageId);
+    }
+  } catch(e) {
+    console.warn('Fetch reactions error:', e);
+  }
+}
+
+function updateReactionsDisplay(messageId) {
+  const row = document.querySelector(`[data-msg-id="${messageId}"] .reactions-row`);
+  if (!row) return;
+  
+  const reactions = messageReactions[messageId] || {};
+  const myEmoji = myReactions[messageId] || null;
+  
+  if (Object.keys(reactions).length === 0) {
+    row.innerHTML = '';
+    return;
+  }
+  
+  let html = '';
+  for (const [emoji, users] of Object.entries(reactions)) {
+    const count = users.length;
+    const isMy = myEmoji === emoji;
+    html += `
+      <div class="reaction-bubble ${isMy ? 'my-reaction' : ''}" onclick="handleReactionClick('${messageId}', '${emoji}')">
+        <span class="reaction-emoji">${emoji}</span>
+        <span class="reaction-count">${count}</span>
+      </div>
+    `;
+  }
+  row.innerHTML = html;
+}
+
+async function handleReactionClick(messageId, emoji) {
+  if (!messageId) return;
+  const msgElement = document.querySelector(`[data-msg-id="${messageId}"]`);
+  if (!msgElement) return;
+  
+  const chatId = currentChatWith;
+  const isGroup = currentChatIsGroup;
+  
+  if (myReactions[messageId] === emoji) {
+    await sendReaction(messageId, null, chatId, isGroup);
+    delete myReactions[messageId];
+  } else {
+    await sendReaction(messageId, emoji, chatId, isGroup);
+    myReactions[messageId] = emoji;
+  }
+  
+  await fetchReactions(messageId, chatId, isGroup);
+  playSound('click');
+}
+
+function addReaction(emoji) {
+  if (!selectedMsgId) return;
+  const msgElement = document.querySelector(`[data-msg-id="${selectedMsgId}"]`);
+  if (!msgElement) {
+    closeContextMenu();
+    return;
+  }
+  
+  const chatId = currentChatWith;
+  const isGroup = currentChatIsGroup;
+  
+  if (myReactions[selectedMsgId] === emoji) {
+    sendReaction(selectedMsgId, null, chatId, isGroup);
+    delete myReactions[selectedMsgId];
+    showToast(`Реакция ${emoji} убрана`);
+  } else {
+    sendReaction(selectedMsgId, emoji, chatId, isGroup);
+    myReactions[selectedMsgId] = emoji;
+    showToast(`Реакция ${emoji} добавлена`);
+  }
+  
+  setTimeout(() => {
+    fetchReactions(selectedMsgId, chatId, isGroup);
+  }, 300);
+  
+  closeContextMenu();
+  playSound('click');
+}
+
+// ===== УДАЛЕНИЕ СООБЩЕНИЙ =====
+async function deleteMessage() {
+  if (!selectedMsgId) return;
+  
+  const isOwn = selectedMsgSender === session.username;
+  const isGroup = currentChatIsGroup;
+  const chatId = currentChatWith;
+  
+  if (!isOwn) {
+    showToast('⚠️ Можно удалять только свои сообщения');
+    closeContextMenu();
+    return;
+  }
+  
+  if (!confirm('Удалить сообщение у всех?')) {
+    closeContextMenu();
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/message/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.token}`
+      },
+      body: JSON.stringify({
+        message_id: selectedMsgId,
+        chat_id: chatId,
+        is_group: isGroup || false
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (selectedMsgElement) {
+        selectedMsgElement.remove();
+      }
+      showToast('🗑️ Сообщение удалено у всех');
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'message_deleted',
+          message_id: selectedMsgId,
+          chat_id: chatId,
+          is_group: isGroup || false
+        }));
+      }
+    } else {
+      showToast(data.error || 'Ошибка удаления');
+    }
+  } catch(e) {
+    showToast('Нет связи с сервером');
+  }
+  
+  closeContextMenu();
+  playSound('click');
+}
+
+// ===== КОПИРОВАНИЕ =====
+function copyMessageText() {
+  if (!selectedMsgText) {
+    showToast('Нет текста для копирования');
+    closeContextMenu();
+    return;
+  }
+  
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(selectedMsgText).then(() => {
+      showToast('📋 Текст скопирован');
+    }).catch(() => {
+      fallbackCopy(selectedMsgText);
+    });
+  } else {
+    fallbackCopy(selectedMsgText);
+  }
+  closeContextMenu();
+  playSound('click');
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('📋 Текст скопирован');
+  } catch(e) {
+    showToast('Не удалось скопировать');
+  }
+  document.body.removeChild(ta);
+}
+
+// ===== РЕДАКТИРОВАНИЕ =====
+async function editMessage() {
+  if (!selectedMsgId || selectedMsgSender !== session.username) {
+    showToast('Можно редактировать только свои сообщения');
+    closeContextMenu();
+    return;
+  }
+  
+  const newText = prompt('Редактировать сообщение:', selectedMsgText);
+  if (newText === null || newText.trim() === '') {
+    closeContextMenu();
+    return;
+  }
+  
+  const chatId = currentChatWith;
+  const isGroup = currentChatIsGroup;
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/message/edit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.token}`
+      },
+      body: JSON.stringify({
+        message_id: selectedMsgId,
+        text: newText.trim(),
+        chat_id: chatId,
+        is_group: isGroup || false
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (selectedMsgElement) {
+        const bubble = selectedMsgElement.querySelector('.bubble');
+        if (bubble) {
+          const timeEl = bubble.querySelector('.bubble-time');
+          const timeHtml = timeEl ? timeEl.outerHTML : '';
+          bubble.innerHTML = linkifyMentions(newText.trim()) + timeHtml;
+          if (!bubble.querySelector('.edited-mark')) {
+            const mark = document.createElement('span');
+            mark.className = 'edited-mark';
+            mark.textContent = ' (изм.)';
+            mark.style.fontSize = '10px';
+            mark.style.opacity = '0.5';
+            bubble.appendChild(mark);
+          }
+        }
+        selectedMsgText = newText.trim();
+      }
+      showToast('✏️ Сообщение изменено');
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'message_edited',
+          message_id: selectedMsgId,
+          text: newText.trim(),
+          chat_id: chatId,
+          is_group: isGroup || false
+        }));
+      }
+    } else {
+      showToast(data.error || 'Ошибка редактирования');
+    }
+  } catch(e) {
+    showToast('Нет связи с сервером');
+  }
+  
+  closeContextMenu();
+  playSound('click');
 }
 
 function scrollMessagesToBottom() {
@@ -4273,7 +3819,7 @@ function showContextMenu(e, msgId, sender, text) {
   
   document.getElementById('editMsgBtn').style.display = isOwn ? 'flex' : 'none';
   document.getElementById('deleteMsgBtn').style.display = isOwn ? 'flex' : 'none';
-  document.getElementById('deleteMsgBtn').textContent = isOwn ? '🗑️ Удалить у всех' : '🗑️ Удалить у себя';
+  document.getElementById('deleteMsgText').textContent = isOwn ? '🗑️ Удалить у всех' : '🗑️ Удалить у себя';
   
   menu.style.left = Math.min(rect.clientX, window.innerWidth - 200) + 'px';
   menu.style.top = Math.min(rect.clientY, window.innerHeight - 200) + 'px';
@@ -4307,57 +3853,6 @@ function replyToMessage() {
   showToast(`Ответ на сообщение от ${selectedMsgSender}`);
   closeContextMenu();
   document.getElementById('messageInput').focus();
-  playSound('click');
-}
-
-function editMessage() {
-  if (!selectedMsgId || selectedMsgSender !== session.username) return;
-  const newText = prompt('Редактировать сообщение:', selectedMsgText);
-  if (newText !== null && newText.trim() !== '') {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: 'edit_message',
-        message_id: selectedMsgId,
-        text: newText.trim(),
-        to: currentChatWith,
-        is_group: currentChatIsGroup
-      }));
-    }
-    if (selectedMsgElement) {
-      const bubble = selectedMsgElement.querySelector('.bubble');
-      if (bubble) {
-        const timeEl = bubble.querySelector('.bubble-time');
-        const timeHtml = timeEl ? timeEl.outerHTML : '';
-        bubble.innerHTML = linkifyMentions(newText.trim()) + timeHtml;
-      }
-    }
-    playSound('click');
-  }
-  closeContextMenu();
-}
-
-function deleteMessage() {
-  if (!selectedMsgId) return;
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({
-      type: 'delete_message',
-      message_id: selectedMsgId,
-      to: currentChatWith,
-      is_group: currentChatIsGroup
-    }));
-  }
-  if (selectedMsgElement) {
-    selectedMsgElement.remove();
-  }
-  closeContextMenu();
-  showToast('Сообщение удалено');
-  playSound('click');
-}
-
-function addReaction(emoji) {
-  if (!selectedMsgId) return;
-  closeContextMenu();
-  showToast(`Реакция ${emoji} добавлена`);
   playSound('click');
 }
 
@@ -4470,7 +3965,7 @@ async function sendMessage() {
   playSound('click');
 }
 
-// ===================== USER PROFILE VIEW (АПГРЕЙД) =====================
+// ===================== USER PROFILE VIEW =====================
 async function openUserProfile(username) {
   try {
     const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
@@ -4879,6 +4374,31 @@ function connectWebSocket() {
       } else if (data.type === 'premium_activated') {
         showToast(`⭐ ${data.message || 'Premium активирован!'}`);
         syncProfileFromServer();
+      } else if (data.type === 'message_deleted') {
+        if (data.message_id) {
+          const el = document.querySelector(`[data-msg-id="${data.message_id}"]`);
+          if (el) el.remove();
+        }
+      } else if (data.type === 'message_edited') {
+        if (data.message_id && data.text) {
+          const el = document.querySelector(`[data-msg-id="${data.message_id}"]`);
+          if (el) {
+            const bubble = el.querySelector('.bubble');
+            if (bubble) {
+              const timeEl = bubble.querySelector('.bubble-time');
+              const timeHtml = timeEl ? timeEl.outerHTML : '';
+              bubble.innerHTML = linkifyMentions(data.text) + timeHtml;
+              if (!bubble.querySelector('.edited-mark')) {
+                const mark = document.createElement('span');
+                mark.className = 'edited-mark';
+                mark.textContent = ' (изм.)';
+                mark.style.fontSize = '10px';
+                mark.style.opacity = '0.5';
+                bubble.appendChild(mark);
+              }
+            }
+          }
+        }
       } else if (data.type === 'wallet_gift') {
         if (data.new_balance !== undefined) {
           walletBalance = data.new_balance;
@@ -4946,7 +4466,7 @@ function onGroupAvatarSelected(event) {
     .catch(() => showToast('Ошибка соединения'));
 }
 
-// ===== СИНХРОНИЗАЦИЯ БАЛАНСА С СЕРВЕРОМ =====
+// ===== СИНХРОНИЗАЦИЯ БАЛАНСА =====
 async function syncWalletFromServer() {
   if (!session.token) return;
   try {

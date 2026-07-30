@@ -2353,7 +2353,6 @@ input, textarea, [contenteditable] {
 </div>
 <div id="toast"></div>
 
-<script>
 // ============================================================
 // ===================== КОНФИГУРАЦИЯ =====================
 // ============================================================
@@ -2412,6 +2411,7 @@ let selectedMsgText = null;
 let selectedMsgSender = null;
 let selectedMsgElement = null;
 let currentReplyTo = null;
+let replyToData = null; // { id, sender, text }
 
 // Unread
 let unreadCounts = {};
@@ -4265,10 +4265,29 @@ function appendBubble(dir, text, time, attachmentUrl, msgId, replyTo, isSystem) 
   const wrap = document.createElement('div');
   wrap.className = 'bubble-wrap';
   
+  // ✅ ОТОБРАЖАЕМ REPLY (ОТВЕТ НА СООБЩЕНИЕ)
   if (replyTo) {
     const replyDiv = document.createElement('div');
     replyDiv.className = 'reply-preview';
-    replyDiv.innerHTML = `<span class="rp-name">${escapeHtml(replyTo.sender)}:</span> <span class="rp-text">${escapeHtml(replyTo.text)}</span>`;
+    // Если replyTo - это объект с полями sender и text
+    if (replyTo.sender && replyTo.text) {
+      replyDiv.innerHTML = `<span class="rp-name">${escapeHtml(replyTo.sender)}:</span> <span class="rp-text">${escapeHtml(replyTo.text)}</span>`;
+    } else if (typeof replyTo === 'number' || typeof replyTo === 'string') {
+      // Если replyTo - это ID, пытаемся найти сообщение в DOM
+      const replyEl = document.querySelector(`[data-msg-id="${replyTo}"]`);
+      if (replyEl) {
+        const bubble = replyEl.querySelector('.bubble');
+        const sender = replyEl.dataset.sender || 'пользователь';
+        const text = bubble ? bubble.textContent.replace(/\(изм\.\)/g, '').trim() : 'сообщение';
+        replyDiv.innerHTML = `<span class="rp-name">${escapeHtml(sender)}:</span> <span class="rp-text">${escapeHtml(text.substring(0, 50))}${text.length > 50 ? '...' : ''}</span>`;
+      } else {
+        // Ищем в кэше сообщений
+        const cached = currentMessages.find(m => m.id == replyTo);
+        if (cached) {
+          replyDiv.innerHTML = `<span class="rp-name">${escapeHtml(cached.sender)}:</span> <span class="rp-text">${escapeHtml(cached.text.substring(0, 50))}${cached.text.length > 50 ? '...' : ''}</span>`;
+        }
+      }
+    }
     wrap.appendChild(replyDiv);
   }
   
@@ -4302,7 +4321,8 @@ function appendBubble(dir, text, time, attachmentUrl, msgId, replyTo, isSystem) 
     }, 100);
   }
   
-  // Обработчики для контекстного меню  let pressTimer = null;
+  // Обработчики для контекстного меню
+  let pressTimer = null;
   let isPressed = false;
   
   const startPress = (e) => {
@@ -4443,9 +4463,11 @@ async function handleReactionClick(messageId, emoji) {
   if (myReactions[messageId] === emoji) {
     await sendReaction(messageId, null, chatId, isGroup);
     delete myReactions[messageId];
+    showToast('Реакция убрана');
   } else {
     await sendReaction(messageId, emoji, chatId, isGroup);
     myReactions[messageId] = emoji;
+    showToast(`Реакция ${emoji} добавлена`);
   }
   
   await fetchReactions(messageId, chatId, isGroup);
@@ -4516,16 +4538,49 @@ function closeContextMenu() {
 // ============================================================
 function replyToMessage() {
   if (!selectedMsgId) return;
-  currentReplyTo = {
+  
+  // Получаем информацию о сообщении из DOM
+  const el = document.querySelector(`[data-msg-id="${selectedMsgId}"]`);
+  let sender = selectedMsgSender;
+  let text = selectedMsgText;
+  
+  if (el) {
+    const bubble = el.querySelector('.bubble');
+    if (bubble) {
+      // Убираем время из текста
+      const timeEl = bubble.querySelector('.bubble-time');
+      let fullText = bubble.textContent;
+      if (timeEl) {
+        fullText = fullText.replace(timeEl.textContent, '').trim();
+      }
+      text = fullText;
+    }
+  }
+  
+  replyToData = {
     id: selectedMsgId,
-    sender: selectedMsgSender,
-    text: selectedMsgText
+    sender: sender,
+    text: text
   };
-  showToast(`Ответ на сообщение от ${selectedMsgSender}`);
+  
+  // Показываем в инпуте
+  const input = document.getElementById('messageInput');
+  input.placeholder = `Ответ @${sender}: ${text.substring(0, 30)}${text.length > 30 ? '...' : ''}`;
+  input.focus();
+  
+  showToast(`Ответ на сообщение от ${sender}`);
   closeContextMenu();
-  document.getElementById('messageInput').focus();
   playSound('click');
 }
+
+// Отмена reply
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && replyToData) {
+    replyToData = null;
+    document.getElementById('messageInput').placeholder = 'Сообщение';
+    showToast('Ответ отменён');
+  }
+});
 
 function copyMessageText() {
   if (!selectedMsgText) {
@@ -4793,6 +4848,10 @@ async function sendMessage() {
 
   let attachmentUrl = null;
   let tempId = genClientMsgId();
+  
+  // ✅ Сохраняем replyTo перед отправкой
+  const replyData = replyToData;
+  const replyId = replyData ? replyData.id : null;
 
   // Если есть фото — сначала загружаем
   if (pendingImageFile) {
@@ -4812,7 +4871,7 @@ async function sendMessage() {
         const realId = data.msg_id || data.id || tempId;
         const realTime = data.created_at || timeStr;
         
-        appendBubble('out', text, realTime, attachmentUrl, tempId, currentReplyTo);
+        appendBubble('out', text, realTime, attachmentUrl, tempId, replyData);
         
         if (realId !== tempId) {
           updateMessageId(tempId, realId, realTime);
@@ -4824,7 +4883,8 @@ async function sendMessage() {
           renderChatList();
         }
         input.value = '';
-        currentReplyTo = null;
+        input.placeholder = 'Сообщение';
+        replyToData = null;
         cancelImagePreview();
         scrollMessagesToBottom();
         playSound('click');
@@ -4845,7 +4905,8 @@ async function sendMessage() {
     type: currentChatIsGroup ? 'group_message' : 'message',
     to: currentChatWith,
     text: text,
-    client_msg_id: clientId
+    client_msg_id: clientId,
+    reply_to_id: replyId // ✅ Добавляем reply_to_id
   };
 
   if (currentChatIsGroup) {
@@ -4854,7 +4915,8 @@ async function sendMessage() {
 
   sentMessages.add(clientId);
 
-  appendBubble('out', text, timeStr, null, clientId, currentReplyTo);
+  // ✅ Показываем сообщение с reply
+  appendBubble('out', text, timeStr, null, clientId, replyData);
 
   if (chats[currentChatWith]) {
     chats[currentChatWith].lastText = text || 'Фотография';
@@ -4863,7 +4925,8 @@ async function sendMessage() {
   }
 
   input.value = '';
-  currentReplyTo = null;
+  input.placeholder = 'Сообщение';
+  replyToData = null;
   cancelImagePreview();
   scrollMessagesToBottom();
 
@@ -4882,7 +4945,8 @@ async function sendMessage() {
           to: currentChatWith,
           text: text,
           client_msg_id: clientId,
-          is_group: currentChatIsGroup
+          is_group: currentChatIsGroup,
+          reply_to_id: replyId // ✅ Добавляем reply_to_id в HTTP запрос
         })
       });
       const data = await res.json();
@@ -5237,7 +5301,7 @@ function connectWebSocket() {
         return;
       }
       
-      // ===== ACK СООБЩЕНИЙ (НОВОЕ!) =====
+      // ===== ACK СООБЩЕНИЙ =====
       if (data.type === 'message_ack') {
         const tempId = data.client_msg_id;
         const realId = data.id;
@@ -5247,7 +5311,6 @@ function connectWebSocket() {
           updateMessageId(tempId, realId, created);
           sentMessages.delete(tempId);
           
-          // Обновляем время в сообщении
           if (created) {
             const el = document.querySelector(`[data-msg-id="${realId}"]`);
             if (el) {
@@ -5453,7 +5516,7 @@ function connectWebSocket() {
         }
       }
       
-      // ==== УДАЛЕНИЕ СООБЩЕНИЯ ====
+      // ==== УДАЛЕНИЕ СООБЩЕНИЯ =====
       else if (data.type === 'message_deleted') {
         if (data.message_id) {
           const el = document.querySelector(`[data-msg-id="${data.message_id}"]`);
@@ -5461,7 +5524,7 @@ function connectWebSocket() {
         }
       }
       
-      // ==== РЕДАКТИРОВАНИЕ СООБЩЕНИЯ ====
+      // ==== РЕДАКТИРОВАНИЕ СООБЩЕНИЯ =====
       else if (data.type === 'message_edited') {
         if (data.message_id && data.text) {
           const el = document.querySelector(`[data-msg-id="${data.message_id}"]`);
@@ -5484,7 +5547,7 @@ function connectWebSocket() {
         }
       }
       
-      // ==== ОБНОВЛЕНИЕ РЕАКЦИЙ ====
+      // ==== ОБНОВЛЕНИЕ РЕАКЦИЙ =====
       else if (data.type === 'reaction_updated') {
         if (data.message_id && data.reactions) {
           messageReactions[data.message_id] = data.reactions;
@@ -5601,6 +5664,3 @@ window.addEventListener('DOMContentLoaded', () => {
   goTo('welcome');
   document.getElementById('loadingScreen').classList.remove('active');
 });
-</script>
-</body>
-</html>

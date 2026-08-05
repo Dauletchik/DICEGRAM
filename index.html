@@ -2,1425 +2,612 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dark Luxury Casino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Dark Luxury Casino Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1c1c1e;
+            --card-border: #2c2c2e;
+            --gold: #ffd700;
+            --gold-gradient: linear-gradient(135deg, #d4af37, #fff2a3, #aa7c11);
+            --text-main: #ffffff;
+            --text-sub: #8e8e93;
+            --danger: #ff453a;
+            --success: #30d158;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #141414;
-            --bg-card: #1a1a1a;
-            --bg-input: #222222;
-            --gold: #ffd700;
-            --gold-dark: #b8860b;
-            --gold-light: #ffed4a;
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --text-muted: #555555;
-            --border-color: #2a2a2a;
-            --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.1);
-            --gradient-gold: linear-gradient(135deg, #ffd700, #ff6b00, #ffd700);
-            --gradient-dark: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            --radius: 16px;
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
             overflow: hidden;
-            user-select: none;
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--gold);
-            border-radius: 10px;
-        }
-
-        .app {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            height: 100dvh;
-            max-width: 500px;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
         }
 
-        .header {
-            padding: 12px 16px;
+        /* Заглушка для входа не из Telegram */
+        #access-denied {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            flex-shrink: 0;
-            z-index: 10;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid var(--gold);
-            overflow: hidden;
-            background: var(--bg-card);
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            height: 100vh;
+            padding: 30px;
+            text-align: center;
+            background: #000;
         }
 
-        .header-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .chip-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            display: inline-block;
         }
 
-        .header-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-name {
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .header-level {
-            font-size: 10px;
-            color: var(--gold);
-            font-weight: 500;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-balance {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--bg-card);
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .header-balance .chip-icon {
-            font-size: 14px;
-        }
-
-        .header-stars {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 13px;
-            color: var(--gold);
-        }
-
-        .main-content {
+        .content {
             flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
-            padding: 12px 16px;
-            padding-bottom: 80px;
+            padding: 16px;
+            padding-bottom: 90px;
         }
 
-        .page {
+        .screen {
             display: none;
-            animation: slideUp 0.3s ease;
         }
 
-        .page.active {
+        .screen.active {
             display: block;
         }
 
+        /* Карточки */
         .card {
-            background: var(--bg-card);
-            border-radius: var(--radius);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
             padding: 16px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            width: 100%;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        .btn-primary {
-            background: var(--gradient-gold);
-            color: #000;
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
-        }
-
-        .btn-secondary {
-            background: var(--bg-input);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-success {
-            background: #00b894;
-            color: #fff;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 12px;
-            width: auto;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .slot-machine {
-            background: var(--bg-primary);
-            border-radius: var(--radius);
-            padding: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .slot-display {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            margin-bottom: 16px;
-            border: 2px solid var(--border-color);
-            min-height: 80px;
-        }
-
-        .slot-reel {
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            background: var(--bg-card);
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-        }
-
-        .slot-reel.win {
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-            animation: pulse 0.5s ease 3;
-        }
-
-        .slot-reel.spinning {
-            animation: spin 0.05s linear infinite;
-        }
-
-        .bet-control {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .bet-control input {
-            flex: 1;
-            padding: 10px 14px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 16px;
-            font-weight: 500;
-            outline: none;
-            min-width: 100px;
-        }
-
-        .bet-control input:focus {
-            border-color: var(--gold);
-        }
-
-        .bet-presets {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .bet-preset {
-            padding: 6px 12px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .bet-preset:active {
-            transform: scale(0.95);
-        }
-
-        .bet-preset.active {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
-        .result-message {
-            text-align: center;
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 12px;
-            font-weight: 600;
-            font-size: 14px;
-            min-height: 44px;
-        }
-
-        .result-message.win {
-            color: var(--gold);
-            background: rgba(255, 215, 0, 0.1);
-        }
-
-        .result-message.lose {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-        }
-
-        .shop-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-
-        .shop-tab {
-            padding: 8px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: var(--text-secondary);
-            font-size: 12px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .shop-tab.active {
-            background: var(--gradient-gold);
-            color: #000;
-            border-color: var(--gold);
-        }
-
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .shop-item {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .shop-item:active {
-            transform: scale(0.96);
-        }
-
-        .shop-item.owned {
-            border-color: #00b894;
-        }
-
-        .shop-item .item-icon {
-            font-size: 28px;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .shop-item .item-name {
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .shop-item .item-price {
-            font-size: 11px;
-            color: var(--gold);
-        }
-
-        .shop-item .item-status {
-            font-size: 10px;
-            color: #00b894;
-            margin-top: 4px;
-        }
-
+        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 14px;
         }
 
-        .profile-avatar {
-            width: 56px;
-            height: 56px;
+        .avatar {
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            border: 3px solid var(--gold);
-            overflow: hidden;
-            background: var(--bg-input);
+            border: 2px solid var(--gold);
+            object-fit: cover;
+            background: #2a2a2a;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 28px;
-            flex-shrink: 0;
         }
 
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-avatar.frame-sapphire {
-            border-color: #00d2ff;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
-        }
-
-        .profile-avatar.frame-obsidian {
-            border-color: #8b00ff;
-            box-shadow: 0 0 20px rgba(139, 0, 255, 0.3);
-        }
-
-        .profile-avatar.frame-rainbow {
-            border-image: linear-gradient(135deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff) 1;
-            border-width: 3px;
-            border-style: solid;
-        }
-
-        .profile-info {
-            flex: 1;
-        }
-
-        .profile-name {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .profile-rank {
-            font-size: 11px;
+        .badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid var(--gold);
             color: var(--gold);
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 4px;
         }
 
-        .xp-container {
-            margin-top: 12px;
-        }
-
-        .xp-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .xp-bar {
-            height: 6px;
-            background: var(--bg-input);
+        /* Прогресс бар */
+        .progress-container {
+            background: #2c2c2e;
+            height: 8px;
             border-radius: 4px;
             overflow: hidden;
+            margin: 10px 0 6px 0;
         }
 
-        .xp-fill {
+        .progress-bar {
+            background: var(--gold-gradient);
             height: 100%;
-            background: var(--gradient-gold);
-            border-radius: 4px;
-            transition: width 0.5s ease;
             width: 0%;
+            transition: width 0.4s ease;
         }
 
-        .profile-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .profile-stat {
-            text-align: center;
-            padding: 8px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-        }
-
-        .profile-stat .value {
-            font-size: 16px;
+        /* Кнопки */
+        .btn {
+            background: var(--gold-gradient);
+            color: #000;
             font-weight: 700;
-            color: var(--gold);
-        }
-
-        .profile-stat .label {
-            font-size: 9px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        .profile-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .task-item:last-child {
-            border-bottom: none;
-        }
-
-        .task-icon {
-            font-size: 24px;
-        }
-
-        .task-info {
-            flex: 1;
-        }
-
-        .task-name {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .task-desc {
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .task-reward {
-            font-size: 12px;
-            color: var(--gold);
-        }
-
-        .task-status {
-            font-size: 12px;
-            padding: 4px 12px;
+            border: none;
             border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
         }
 
-        .task-status.done {
-            background: rgba(0, 184, 148, 0.2);
-            color: #00b894;
+        .btn-secondary {
+            background: #2c2c2e;
+            color: #fff;
+            box-shadow: none;
         }
 
-        .task-status.pending {
-            background: rgba(255, 215, 0, 0.1);
-            color: var(--text-secondary);
+        .btn-green {
+            background: var(--success);
+            color: #fff;
+            box-shadow: none;
         }
 
-        .stats-grid {
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
 
-        .stat-card {
-            background: var(--bg-secondary);
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+        /* Табы профиля */
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid var(--card-border);
+            margin-bottom: 14px;
+        }
+
+        .tab-item {
+            flex: 1;
             text-align: center;
-        }
-
-        .stat-card .number {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        .stat-card .label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-            text-transform: uppercase;
-        }
-
-        .stat-card .number.negative {
-            color: #ff6b6b;
-        }
-
-        .stat-card .number.positive {
-            color: #00b894;
-        }
-
-        .invite-box {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .invite-box .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .invite-box .title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .invite-box .desc {
+            padding: 10px 0;
             font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
+            color: var(--text-sub);
+            cursor: pointer;
         }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
+        .tab-item.active {
+            color: var(--gold);
+            border-bottom: 2px solid var(--gold);
+            font-weight: 600;
+        }
+
+        /* Статистика */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: #141414;
+            padding: 12px;
             border-radius: 12px;
-            font-weight: 500;
-            font-size: 14px;
-            z-index: 9999;
-            max-width: 90%;
-            text-align: center;
-            animation: slideUp 0.3s ease;
+            border: 1px solid #262626;
         }
 
-        .notification.success {
-            background: #00b894;
-            color: #fff;
+        .stat-title {
+            font-size: 11px;
+            color: var(--text-sub);
         }
 
-        .notification.error {
-            background: #e74c3c;
-            color: #fff;
+        .stat-val {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 4px;
         }
 
-        .notification.info {
-            background: #2d3436;
-            color: #fff;
-        }
-
-        .notification.level-up {
-            background: var(--gradient-gold);
-            color: #000;
-            font-weight: 700;
-            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
-        }
-
-        .bottom-nav {
+        /* Навигация */
+        .tabbar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            max-width: 500px;
-            margin: 0 auto;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
+            height: 70px;
+            background: #161618;
+            border-top: 1px solid #262628;
             display: flex;
             justify-content: space-around;
-            padding: 6px 0 calc(6px + var(--safe-bottom));
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            align-items: center;
         }
 
-        .nav-item {
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 11px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            padding: 4px 12px;
-            border: none;
-            background: none;
-            color: var(--text-muted);
-            font-size: 10px;
+            gap: 4px;
             cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
         }
 
-        .nav-item .icon {
-            font-size: 22px;
-            line-height: 1;
-        }
-
-        .nav-item.active {
+        .nav-btn.active {
             color: var(--gold);
         }
 
-        .loading-screen {
+        .nav-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        /* Игровые Слоты */
+        .slots-display {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
-            background: var(--bg-primary);
-            gap: 16px;
+            gap: 12px;
+            font-size: 42px;
+            background: #101010;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--gold);
+            margin: 16px 0;
         }
 
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #282828;
         }
 
-        @media (max-width: 400px) {
-            .slot-reel {
-                width: 45px;
-                height: 45px;
-                font-size: 24px;
-            }
-            .shop-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            .profile-stats {
-                grid-template-columns: 1fr 1fr 1fr;
-            }
-            .header-balance {
-                font-size: 11px;
-                padding: 2px 8px;
-            }
-        }
-
-        @media (min-width: 500px) {
-            .bottom-nav {
-                border-radius: 20px 20px 0 0;
-            }
+        .history-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <div style="color:var(--text-secondary);">Загрузка...</div>
+
+    <!-- Заглушка доступа -->
+    <div id="access-denied" style="display: none;">
+        <h2 style="color: var(--gold); margin-bottom: 10px;">Доступ ограничен</h2>
+        <p style="color: var(--text-sub); font-size: 14px;">Приложение доступно только внутри Telegram бота.</p>
     </div>
 
-    <div class="app" id="app" style="display:none;">
-        <header class="header">
-            <div class="header-left">
-                <div class="header-avatar" id="headerAvatar">
-                    <span>👤</span>
-                </div>
-                <div class="header-info">
-                    <span class="header-name" id="headerName">Игрок</span>
-                    <span class="header-level" id="headerLevel">⭐ Уровень 1</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="header-stars">
-                    ⭐ <span id="headerStars">0</span>
-                </div>
-                <div class="header-balance">
-                    <span class="chip-icon">🪙</span>
-                    <span id="headerBalance">0</span>
-                </div>
-            </div>
-        </header>
+    <!-- Основное приложение -->
+    <div id="app" style="display: none;" class="content">
 
-        <div class="main-content" id="mainContent">
-            <div class="page active" id="pageGame">
-                <div class="slot-machine">
-                    <div class="slot-display" id="slotDisplay">
-                        <div class="slot-reel" id="reel1">🍒</div>
-                        <div class="slot-reel" id="reel2">🍒</div>
-                        <div class="slot-reel" id="reel3">🍒</div>
-                    </div>
-
-                    <div class="bet-control">
-                        <input type="number" id="betInput" value="10" min="1" step="1">
-                        <div class="bet-presets">
-                            <button class="bet-preset" data-amount="10">10</button>
-                            <button class="bet-preset" data-amount="50">50</button>
-                            <button class="bet-preset" data-amount="100">100</button>
-                            <button class="bet-preset" data-amount="500">500</button>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" id="spinBtn">🎰 КРУТИТЬ</button>
-
-                    <div class="result-message" id="resultMessage">Начни игру!</div>
-                </div>
-            </div>
-
-            <div class="page" id="pageShop">
-                <div class="shop-tabs" id="shopTabs">
-                    <button class="shop-tab active" data-category="frames">🖼 Рамки</button>
-                    <button class="shop-tab" data-category="tables">🎲 Столы</button>
-                    <button class="shop-tab" data-category="chips">🪙 Фишки</button>
-                </div>
-                <div class="shop-grid" id="shopGrid"></div>
-            </div>
-
-            <div class="page" id="pageProfile">
-                <div class="card">
-                    <div class="profile-header">
-                        <div class="profile-avatar" id="profileAvatar">
-                            <span>👤</span>
-                        </div>
-                        <div class="profile-info">
-                            <div class="profile-name" id="profileName">Игрок</div>
-                            <div class="profile-rank" id="profileRank">⭐ Уровень 1</div>
-                            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">
-                                🪙 <span id="profileBalance">0</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="xp-container">
-                        <div class="xp-header">
-                            <span>Опыт</span>
-                            <span id="xpText">0 / 100</span>
-                        </div>
-                        <div class="xp-bar">
-                            <div class="xp-fill" id="xpFill" style="width:0%"></div>
-                        </div>
-                        <div style="font-size:10px;color:var(--text-secondary);margin-top:4px;" id="xpBonusText">
-                            Бонус за уровень: 1000 фишек
-                        </div>
-                    </div>
-
-                    <div class="profile-stats">
-                        <div class="profile-stat">
-                            <div class="value" id="pGames">0</div>
-                            <div class="label">Игры</div>
-                        </div>
-                        <div class="profile-stat">
-                            <div class="value" id="pWon">0</div>
-                            <div class="label">Выиграно</div>
-                        </div>
-                        <div class="profile-stat">
-                            <div class="value" id="pMaxWin">0</div>
-                            <div class="label">Макс</div>
-                        </div>
-                    </div>
-
-                    <div class="profile-actions">
-                        <button class="btn btn-secondary btn-sm" onclick="claimDaily()">📅 Ежедневно</button>
-                        <button class="btn btn-secondary btn-sm" onclick="claimHourly()">⏰ Ежечасно</button>
-                    </div>
-
-                    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-                        <button class="btn btn-primary btn-sm" onclick="buyStars(1)">⭐ 1 = 50🪙</button>
-                        <button class="btn btn-primary btn-sm" onclick="buyStars(5)">⭐ 5 = 250🪙</button>
-                        <button class="btn btn-primary btn-sm" onclick="buyStars(10)">⭐ 10 = 500🪙</button>
-                    </div>
+        <!-- Экран ИГРЫ -->
+        <div id="screen-games" class="screen">
+            <h2 style="margin-bottom: 12px;">Игровой Зал</h2>
+            <div class="card">
+                <h3>🎰 Слоты 777</h3>
+                <p style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">Крутите слоты и поднимайте уровень!</p>
+                
+                <div class="slots-display">
+                    <div id="r1">❓</div>
+                    <div id="r2">❓</div>
+                    <div id="r3">❓</div>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">🏆 Достижения</div>
-                    <div id="achievementsList">
-                        <div style="color:var(--text-secondary);font-size:13px;text-align:center;padding:12px;">
-                            Загрузка...
-                        </div>
-                    </div>
+                <div style="margin-bottom: 14px;">
+                    <label style="font-size: 12px; color: var(--text-sub);">Ваша ставка:</label>
+                    <input type="number" id="bet-input" value="50" min="10" style="width: 100%; padding: 12px; background: #101010; border: 1px solid #2c2c2e; color: #fff; border-radius: 10px; margin-top: 6px; font-size: 16px;">
                 </div>
-            </div>
 
-            <div class="page" id="pageTasks">
-                <div class="card">
-                    <div class="card-title">🎯 Задания</div>
-                    <div id="tasksList"></div>
-                </div>
-            </div>
-
-            <div class="page" id="pageFriends">
-                <div class="card">
-                    <div class="invite-box">
-                        <div class="icon">👥</div>
-                        <div class="title">Пригласи друга</div>
-                        <div class="desc">
-                            Приглашай друзей и получай бонусы!<br>
-                            За каждого друга +100 фишек
-                        </div>
-                        <button class="btn btn-primary" onclick="inviteFriend()">📤 Пригласить</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page" id="pageStats">
-                <div class="card">
-                    <div class="card-title">📊 Итоговая статистика</div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="number" id="statGames">0</div>
-                            <div class="label">Всего игр</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="number" id="statWon">0</div>
-                            <div class="label">Всего выиграно</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="number" id="statWagered">0</div>
-                            <div class="label">Всего поставлено</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="number" id="statMaxWin">0</div>
-                            <div class="label">Макс. выигрыш</div>
-                        </div>
-                        <div class="stat-card" style="grid-column: span 2;">
-                            <div class="number" id="statNet">0</div>
-                            <div class="label">Чистый результат</div>
-                        </div>
-                    </div>
-                </div>
+                <button class="btn" onclick="spinSlots()">Вращать</button>
             </div>
         </div>
 
-        <nav class="bottom-nav">
-            <button class="nav-item active" data-page="Game">
-                <span class="icon">🎰</span>
-                <span>Игры</span>
-            </button>
-            <button class="nav-item" data-page="Tasks">
-                <span class="icon">📋</span>
-                <span>Задания</span>
-            </button>
-            <button class="nav-item" data-page="Shop">
-                <span class="icon">🛒</span>
-                <span>Магазин</span>
-            </button>
-            <button class="nav-item" data-page="Stats">
-                <span class="icon">📊</span>
-                <span>Статистика</span>
-            </button>
-            <button class="nav-item" data-page="Profile">
-                <span class="icon">👤</span>
-                <span>Профиль</span>
-            </button>
-        </nav>
+        <!-- Экран ДРУЗЬЯ -->
+        <div id="screen-friends" class="screen">
+            <h2>Друзья</h2>
+            <div class="card" style="margin-top: 14px; text-align: center;">
+                <p style="margin-bottom: 14px; font-size: 14px; color: var(--text-sub);">Приглашайте друзей и играйте вместе!</p>
+                <button class="btn" onclick="shareInvite()">Пригласить друга</button>
+            </div>
+        </div>
+
+        <!-- Экран ЗАДАНИЯ -->
+        <div id="screen-tasks" class="screen">
+            <h2>Задания</h2>
+            <div class="card" style="margin-top: 14px;" id="tasks-list">
+                <!-- Динамически заполнится -->
+            </div>
+        </div>
+
+        <!-- Экран МАГАЗИН -->
+        <div id="screen-shop" class="screen">
+            <h2>Магазин</h2>
+            <div class="card" style="margin-top: 14px;">
+                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Эксклюзивные рамки профиля и стили.</p>
+                <button class="btn btn-secondary">Скоро в продаже</button>
+            </div>
+        </div>
+
+        <!-- Экран ПРОФИЛЬ -->
+        <div id="screen-profile" class="screen active">
+            <div class="card">
+                <div class="profile-header">
+                    <div id="user-avatar-box" class="avatar">👤</div>
+                    <div>
+                        <div id="user-name" style="font-weight: bold; font-size: 18px;">Игрок</div>
+                        <div class="badge" id="user-rank">1 УРОВЕНЬ</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                        <span id="lvl-title">УРОВЕНЬ 1</span>
+                        <span id="lvl-needed" style="color: var(--text-sub);">Осталось 2000 фишек</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="lvl-bar"></div>
+                    </div>
+                </div>
+
+                <div style="margin: 16px 0;">
+                    <div style="font-size: 11px; color: var(--text-sub);">БАЛАНС ФИШЕК</div>
+                    <div style="font-size: 26px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 6px;" id="user-balance">
+                        0 <svg class="chip-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700"/><circle cx="12" cy="12" r="7" fill="none" stroke="#000" stroke-width="2"/></svg>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <button class="btn" onclick="openDepositModal()">+ Пополнить</button>
+                    <button class="btn btn-secondary" onclick="shareInvite()">Позвать</button>
+                </div>
+            </div>
+
+            <!-- Табы внутри профиля -->
+            <div class="tabs-header">
+                <div class="tab-item active" onclick="switchProfileTab('stats', this)">Статистика</div>
+                <div class="tab-item" onclick="switchProfileTab('rewards', this)">Награды</div>
+                <div class="tab-item" onclick="switchProfileTab('history', this)">Операции</div>
+                <div class="tab-item" onclick="switchProfileTab('more', this)">Ещё</div>
+            </div>
+
+            <!-- Вкладка 1: Статистика -->
+            <div id="ptab-stats" class="card ptab">
+                <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 6px;">ИТОГ ЗА ВСЁ ВРЕМЯ</div>
+                <div id="stat-net" style="font-size: 24px; font-weight: bold; margin-bottom: 14px;">0</div>
+
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <div class="stat-title">Сыграно игр</div>
+                        <div class="stat-val" id="stat-games">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">Всего выиграно</div>
+                        <div class="stat-val" id="stat-won">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">Поставлено</div>
+                        <div class="stat-val" id="stat-wagered">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">Крупный куш</div>
+                        <div class="stat-val" id="stat-max">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка 2: Награды -->
+            <div id="ptab-rewards" class="card ptab" style="display: none;">
+                <div id="achievements-list"></div>
+            </div>
+
+            <!-- Вкладка 3: Операции -->
+            <div id="ptab-history" class="card ptab" style="display: none;">
+                <div id="history-list"></div>
+            </div>
+
+            <!-- Вкладка 4: Ещё -->
+            <div id="ptab-more" class="card ptab" style="display: none;">
+                <h4 style="color: var(--gold); margin-bottom: 8px;">О приложении</h4>
+                <p style="font-size: 13px; color: var(--text-sub); line-height: 1.5;">
+                    Это развлекательное симуляционное Mini App приложение. Игра ведется исключительно на виртуальные фантики (фишки). 
+                    Вывод или ввод реальных денежных средств не предусмотрен.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таббар -->
+    <div id="tabbar" class="tabbar" style="display: none;">
+        <button class="nav-btn" onclick="switchNav('games', this)">
+            <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            Игры
+        </button>
+        <button class="nav-btn" onclick="switchNav('friends', this)">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            Друзья
+        </button>
+        <button class="nav-btn" onclick="switchNav('tasks', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            Задания
+        </button>
+        <button class="nav-btn" onclick="switchNav('shop', this)">
+            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            Магазин
+        </button>
+        <button class="nav-btn active" onclick="switchNav('profile', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Профиль
+        </button>
     </div>
 
     <script>
-        const tg = window.Telegram?.WebApp;
-        if (tg) tg.expand();
+        const API_URL = "https://a48794-5d18.e.jrnm.app/api";
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
 
-        // Используем относительный путь для API
-        const API_URL = window.location.origin + '/api';
-        let userData = null;
-        let isSpinning = false;
+        const chipSVG = `<svg class="chip-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700"/><circle cx="12" cy="12" r="7" fill="none" stroke="#000" stroke-width="2"/></svg>`;
 
-        async function init() {
-            const user = tg?.initDataUnsafe?.user;
-            if (!user) {
-                showNotification('❌ Запустите через Telegram бота!', 'error');
-                document.getElementById('loadingScreen').innerHTML = `
-                    <div style="color:#ff6b6b;font-size:20px;">❌</div>
-                    <div style="color:var(--text-secondary);">Запустите через Telegram бота</div>
-                `;
-                return;
-            }
+        // Проверка запуска строго из Telegram
+        if (!tg || !tg.initData || tg.initData === "") {
+            document.getElementById('access-denied').style.display = 'flex';
+        } else {
+            tg.expand();
+            document.getElementById('app').style.display = 'block';
+            document.getElementById('tabbar').style.display = 'flex';
+            initUser();
+        }
 
+        const userTg = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {
+            id: 100000,
+            username: "Daulet",
+            photo_url: ""
+        };
+
+        async function initUser() {
             try {
                 const res = await fetch(`${API_URL}/user_data`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        user_id: user.id,
-                        username: user.username || 'Игрок',
-                        first_name: user.first_name || 'Игрок'
+                        user_id: userTg.id,
+                        username: userTg.username || userTg.first_name,
+                        photo_url: userTg.photo_url || ""
                     })
                 });
-
-                if (!res.ok) throw new Error('Auth failed');
-                userData = await res.json();
-
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-
-                updateUI();
-                loadShop();
-                loadAchievements();
-                loadStats();
-                setupEventListeners();
-
+                const user = await res.json();
+                renderProfile(user);
             } catch (e) {
-                document.getElementById('loadingScreen').innerHTML = `
-                    <div style="color:#ff6b6b;font-size:20px;">❌</div>
-                    <div style="color:var(--text-secondary);">Ошибка загрузки</div>
-                    <button class="btn btn-primary btn-sm" onclick="location.reload()" style="width:auto;padding:8px 24px;">↻ Обновить</button>
-                `;
-                console.error('Init error:', e);
+                console.error("User init error", e);
             }
         }
 
-        function updateUI() {
-            if (!userData) return;
+        function renderProfile(user) {
+            document.getElementById('user-name').innerText = `@${user.username}`;
+            document.getElementById('user-rank').innerText = `${user.level} УРОВЕНЬ`;
+            document.getElementById('user-balance').innerHTML = `${user.balance.toLocaleString()} ${chipSVG}`;
 
-            document.getElementById('headerName').textContent = userData.first_name || 'Игрок';
-            document.getElementById('headerLevel').textContent = `⭐ Уровень ${userData.level}`;
-            document.getElementById('headerBalance').textContent = userData.balance;
-            document.getElementById('headerStars').textContent = userData.stars || 0;
-
-            const avatarUrl = `https://t.me/i/userpic/320/${userData.user_id}.jpg`;
-            const avatarEl = document.getElementById('headerAvatar');
-            avatarEl.innerHTML = `<img src="${avatarUrl}" onerror="this.style.display='none'">`;
-            if (userData.active_frame && userData.active_frame !== 'frame_default') {
-                avatarEl.className = `header-avatar ${userData.active_frame}`;
+            // Аватарка
+            const avatarBox = document.getElementById('user-avatar-box');
+            if (user.photo_url) {
+                avatarBox.innerHTML = `<img src="${user.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            } else {
+                avatarBox.innerText = user.username.charAt(0).toUpperCase();
             }
 
-            document.getElementById('profileName').textContent = userData.first_name || 'Игрок';
-            document.getElementById('profileRank').textContent = `⭐ Уровень ${userData.level}`;
-            document.getElementById('profileBalance').textContent = userData.balance;
+            // Шкала прогресса
+            document.getElementById('lvl-title').innerText = `УРОВЕНЬ ${user.level}`;
+            document.getElementById('lvl-needed').innerText = `Осталось ${user.needed_for_next.toLocaleString()} фишек`;
+            const pct = Math.min(100, Math.floor((user.xp / user.next_level_req) * 100));
+            document.getElementById('lvl-bar').style.width = `${pct}%`;
 
-            const profileAvatar = document.getElementById('profileAvatar');
-            profileAvatar.innerHTML = `<img src="${avatarUrl}" onerror="this.style.display='none'">`;
-            if (userData.active_frame && userData.active_frame !== 'frame_default') {
-                profileAvatar.className = `profile-avatar ${userData.active_frame}`;
-            }
+            // Статистика
+            document.getElementById('stat-games').innerText = user.total_games;
+            document.getElementById('stat-won').innerHTML = `${user.total_won.toLocaleString()} ${chipSVG}`;
+            document.getElementById('stat-wagered').innerHTML = `${user.total_wagered.toLocaleString()} ${chipSVG}`;
+            document.getElementById('stat-max').innerHTML = `${user.max_win.toLocaleString()} ${chipSVG}`;
 
-            const xp = userData.xp || 0;
-            const xpToNext = userData.xp_to_next || 100;
-            const pct = Math.min((xp / xpToNext) * 100, 100);
-            document.getElementById('xpFill').style.width = pct + '%';
-            document.getElementById('xpText').textContent = `${xp} / ${xpToNext}`;
-            document.getElementById('xpBonusText').textContent = `Бонус за уровень ${userData.level + 1}: ${userData.next_level_bonus || 1000} фишек`;
+            const net = user.total_won - user.total_wagered;
+            const netEl = document.getElementById('stat-net');
+            netEl.innerHTML = `${net >= 0 ? '+' : ''}${net.toLocaleString()} ${chipSVG}`;
+            netEl.style.color = net < 0 ? 'var(--danger)' : 'var(--success)';
 
-            document.getElementById('pGames').textContent = userData.total_games || 0;
-            document.getElementById('pWon').textContent = userData.total_won || 0;
-            document.getElementById('pMaxWin').textContent = userData.max_win || 0;
-        }
-
-        async function playSlots() {
-            if (isSpinning) return;
-            if (!userData) return;
-
-            const bet = parseInt(document.getElementById('betInput').value);
-            if (!bet || bet < 1) {
-                showNotification('❌ Введите корректную ставку', 'error');
-                return;
-            }
-            if (bet > userData.balance) {
-                showNotification('❌ Недостаточно фишек', 'error');
-                return;
-            }
-
-            isSpinning = true;
-            const spinBtn = document.getElementById('spinBtn');
-            spinBtn.disabled = true;
-            spinBtn.textContent = '🌀 КРУТИТСЯ...';
-
-            const symbols = ['7️⃣', '💎', '🔔', '🍋', '🍒', '⭐️', '🎰', '🔥'];
-            const reels = ['reel1', 'reel2', 'reel3'];
-            let interval = setInterval(() => {
-                reels.forEach(id => {
-                    document.getElementById(id).textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                    document.getElementById(id).classList.add('spinning');
-                });
-            }, 80);
-
-            try {
-                const res = await fetch(`${API_URL}/play_game`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: userData.user_id,
-                        bet: bet
-                    })
-                });
-
-                const data = await res.json();
-                clearInterval(interval);
-                reels.forEach(id => document.getElementById(id).classList.remove('spinning'));
-
-                if (!data.success) {
-                    showNotification('❌ ' + (data.message || 'Ошибка'), 'error');
-                    return;
-                }
-
-                reels.forEach((id, i) => {
-                    const el = document.getElementById(id);
-                    el.textContent = data.reels[i];
-                    if (data.win > 0) el.classList.add('win');
-                    setTimeout(() => el.classList.remove('win'), 3000);
-                });
-
-                const msg = document.getElementById('resultMessage');
-                if (data.win > 0) {
-                    msg.className = 'result-message win';
-                    let text = `🎉 ВЫИГРЫШ: +${data.win}🪙`;
-                    if (data.leveled_up) {
-                        text += ` 🎊 УРОВЕНЬ ${data.new_level}! Бонус +${data.level_bonus}🪙`;
-                        showNotification(`🎊 Поздравляем! Вы достигли ${data.new_level} уровня! +${data.level_bonus}🪙`, 'level-up');
-                    }
-                    if (data.new_achievements && data.new_achievements.length > 0) {
-                        const achNames = data.new_achievements.map(a => a.name).join(', ');
-                        showNotification(`🏆 Новое достижение: ${achNames}`, 'success');
-                    }
-                    msg.textContent = text;
-                } else {
-                    msg.className = 'result-message lose';
-                    msg.textContent = `😔 Проигрыш: -${bet}🪙`;
-                }
-
-                userData = data.user;
-                updateUI();
-                loadStats();
-
-            } catch (e) {
-                clearInterval(interval);
-                reels.forEach(id => document.getElementById(id).classList.remove('spinning'));
-                showNotification('❌ Ошибка сервера', 'error');
-            }
-
-            isSpinning = false;
-            spinBtn.disabled = false;
-            spinBtn.textContent = '🎰 КРУТИТЬ';
-        }
-
-        const shopItems = {
-            frames: [
-                { id: 'frame_sapphire', name: 'Сапфировая', price: 2000, icon: '💎' },
-                { id: 'frame_obsidian', name: 'Обсидиановая', price: 5000, icon: '🖤' },
-                { id: 'frame_rainbow', name: 'Радужная', price: 10000, icon: '🌈' },
-                { id: 'frame_gold', name: 'Золотая', price: 15000, icon: '✨' }
-            ],
-            tables: [
-                { id: 'table_gold', name: 'Золотой стол', price: 3000, icon: '🎲' },
-                { id: 'table_red', name: 'Красный стол', price: 2000, icon: '♥️' },
-                { id: 'table_black', name: 'Черный стол', price: 1500, icon: '♠️' }
-            ],
-            chips: [
-                { id: 'chip_gold', name: 'Золотая', price: 500, icon: '🪙' },
-                { id: 'chip_platinum', name: 'Платиновая', price: 1000, icon: '💠' },
-                { id: 'chip_diamond', name: 'Бриллиантовая', price: 2000, icon: '💎' }
-            ]
-        };
-
-        function loadShop(category = 'frames') {
-            const grid = document.getElementById('shopGrid');
-            const items = shopItems[category] || shopItems.frames;
-            const inv = userData?.inventory || [];
-
-            grid.innerHTML = items.map(item => {
-                const owned = inv.includes(item.id);
-                return `
-                    <div class="shop-item ${owned ? 'owned' : ''}">
-                        <span class="item-icon">${item.icon}</span>
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-price">${owned ? '✅' : `${item.price}🪙`}</div>
-                        ${owned ? '<div class="item-status">Владелец</div>' : ''}
+            // Операции
+            const historyBox = document.getElementById('history-list');
+            historyBox.innerHTML = user.history.map(item => `
+                <div class="history-item">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600;">${item.title}</div>
+                        <div style="font-size: 10px; color: var(--text-sub);">${new Date(item.timestamp * 1000).toLocaleTimeString()}</div>
                     </div>
+                    <div style="font-weight: bold; font-size: 14px; color: ${item.type === 'plus' ? 'var(--success)' : 'var(--danger)'};">
+                        ${item.amount > 0 ? '+' : ''}${item.amount} ${chipSVG}
+                    </div>
+                </div>
+            `).join('');
+
+            // Награды
+            const achBox = document.getElementById('achievements-list');
+            const achs = [
+                {id: 1, title: 'Сыграть 10 игр', reward: 500, cond: user.total_games >= 10},
+                {id: 2, title: 'Сыграть 100 игр', reward: 2000, cond: user.total_games >= 100},
+                {id: 3, title: 'Выиграть куш > 500', reward: 1500, cond: user.max_win >= 500}
+            ];
+
+            achBox.innerHTML = achs.map(a => {
+                const isDone = user.completed_achievements.includes(a.id);
+                return `
+                <div class="history-item">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600;">${a.title}</div>
+                        <div style="font-size: 11px; color: var(--gold);">+${a.reward} фишек</div>
+                    </div>
+                    ${isDone ? '<span style="color:var(--text-sub); font-size:12px;">Completed</span>' : 
+                      `<button class="btn btn-green" style="width:auto; padding: 6px 12px; font-size: 12px;" ${!a.cond ? 'disabled style="opacity:0.5;"' : ''} onclick="claimAch(${a.id}, ${a.reward})">Забрать</button>`}
+                </div>
                 `;
             }).join('');
+        }
 
-            grid.querySelectorAll('.shop-item:not(.owned)').forEach((el, i) => {
-                const item = items[i];
-                el.addEventListener('click', () => buyItem(item.id, item.price, category.slice(0, -1)));
+        async function spinSlots() {
+            const bet = parseInt(document.getElementById('bet-input').value);
+            if (!bet || bet <= 0) return alert("Введите правильную ставку");
+
+            const res = await fetch(`${API_URL}/play_game`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userTg.id, bet: bet})
             });
+            const data = await res.json();
+            if (!data.success) return alert(data.message);
+
+            document.getElementById('r1').innerText = data.reels[0];
+            document.getElementById('r2').innerText = data.reels[1];
+            document.getElementById('r3').innerText = data.reels[2];
+
+            renderProfile(data.user);
         }
 
-        async function buyItem(itemId, price, type) {
-            if (!userData) return;
-            if (userData.balance < price) {
-                showNotification('❌ Недостаточно фишек', 'error');
-                return;
-            }
+        async function openDepositModal() {
+            const stars = prompt("Введите количество Telegram Stars для обмена (1 ⭐️ = 50 фишек):", "1");
+            if (!stars || isNaN(stars) || stars <= 0) return;
 
-            try {
-                const res = await fetch(`${API_URL}/buy_item`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: userData.user_id,
-                        item_id: itemId,
-                        price: price,
-                        type: type
-                    })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification('✅ Предмет куплен!', 'success');
-                    const userRes = await fetch(`${API_URL}/user_data`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ user_id: userData.user_id })
-                    });
-                    userData = await userRes.json();
-                    updateUI();
-                    loadShop(document.querySelector('.shop-tab.active')?.dataset?.category || 'frames');
-                } else {
-                    showNotification('❌ ' + (data.message || 'Ошибка'), 'error');
-                }
-            } catch (e) {
-                showNotification('❌ Ошибка сервера', 'error');
-            }
-        }
-
-        async function loadAchievements() {
-            try {
-                const res = await fetch(`${API_URL}/achievements`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userData?.user_id })
-                });
-                const data = await res.json();
-                const list = document.getElementById('achievementsList');
-
-                if (!data.achievements || data.achievements.length === 0) {
-                    list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:12px;">Нет достижений</div>';
-                    return;
-                }
-
-                list.innerHTML = data.achievements.map(a => `
-                    <div class="task-item">
-                        <div class="task-icon">${a.name.split(' ')[0] || '🏅'}</div>
-                        <div class="task-info">
-                            <div class="task-name">${a.name}</div>
-                            <div class="task-desc">${a.desc || ''}</div>
-                        </div>
-                        <div class="task-reward">+${a.reward}🪙</div>
-                        <span class="task-status ${a.completed ? 'done' : 'pending'}">
-                            ${a.completed ? '✅' : '⏳'}
-                        </span>
-                    </div>
-                `).join('');
-
-                document.getElementById('tasksList').innerHTML = list.innerHTML;
-            } catch (e) {
-                console.error('Achievements error:', e);
-            }
-        }
-
-        async function loadStats() {
-            try {
-                const res = await fetch(`${API_URL}/get_stats`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userData?.user_id })
-                });
-                const data = await res.json();
-
-                document.getElementById('statGames').textContent = data.total_games || 0;
-                document.getElementById('statWon').textContent = (data.total_won || 0) + '🪙';
-                document.getElementById('statWagered').textContent = (data.total_wagered || 0) + '🪙';
-                document.getElementById('statMaxWin').textContent = (data.max_win || 0) + '🪙';
-
-                const net = (data.total_won || 0) - (data.total_wagered || 0);
-                const netEl = document.getElementById('statNet');
-                netEl.textContent = (net >= 0 ? '+' : '') + net + '🪙';
-                netEl.className = net >= 0 ? 'positive' : 'negative';
-            } catch (e) {
-                console.error('Stats error:', e);
-            }
-        }
-
-        async function claimDaily() {
-            if (!userData) return;
-            try {
-                const res = await fetch(`${API_URL}/claim_daily`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userData.user_id })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification(`✅ +${data.reward}🪙 ежедневный бонус!`, 'success');
-                    userData.balance += data.reward;
-                    updateUI();
-                } else {
-                    showNotification('⏳ ' + (data.message || 'Уже получено'), 'info');
-                }
-            } catch (e) {
-                showNotification('❌ Ошибка', 'error');
-            }
-        }
-
-        async function claimHourly() {
-            if (!userData) return;
-            try {
-                const res = await fetch(`${API_URL}/claim_hourly`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userData.user_id })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification(`✅ +${data.reward}🪙 ежечасный бонус!`, 'success');
-                    userData.balance += data.reward;
-                    updateUI();
-                } else {
-                    showNotification('⏳ ' + (data.message || 'Уже получено'), 'info');
-                }
-            } catch (e) {
-                showNotification('❌ Ошибка', 'error');
-            }
-        }
-
-        async function buyStars(stars) {
-            if (!userData) return;
-            try {
-                const res = await fetch(`${API_URL}/buy_stars`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: userData.user_id,
-                        stars: stars
-                    })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification(`✅ +${data.chips}🪙 за ${data.stars}⭐`, 'success');
-                    userData.balance += data.chips;
-                    userData.stars = (userData.stars || 0) + data.stars;
-                    updateUI();
-                } else {
-                    showNotification('❌ ' + (data.message || 'Ошибка'), 'error');
-                }
-            } catch (e) {
-                showNotification('❌ Ошибка', 'error');
-            }
-        }
-
-        function inviteFriend() {
-            const url = 'https://t.me/share/url?url=https://t.me/DarkLuxuryBot&text=🎰 Присоединяйся к Dark Luxury Casino! Получи бонус 1000 фишек!';
-            if (tg) {
-                tg.openTelegramLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            const existing = document.querySelector('.notification');
-            if (existing) existing.remove();
-
-            const el = document.createElement('div');
-            el.className = `notification ${type}`;
-            el.textContent = message;
-            document.body.appendChild(el);
-
-            setTimeout(() => el.remove(), 4000);
-        }
-
-        function setupEventListeners() {
-            document.getElementById('spinBtn').addEventListener('click', playSlots);
-
-            document.querySelectorAll('.bet-preset').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.getElementById('betInput').value = this.dataset.amount;
-                    document.querySelectorAll('.bet-preset').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
+            const res = await fetch(`${API_URL}/create_invoice`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userTg.id, stars: parseInt(stars)})
             });
-
-            document.getElementById('betInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') playSlots();
-            });
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                    this.classList.add('active');
-                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                    document.getElementById('page' + this.dataset.page).classList.add('active');
-                });
-            });
-
-            document.querySelectorAll('.shop-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    loadShop(this.dataset.category);
-                });
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && document.activeElement?.id === 'betInput') {
-                    playSlots();
-                }
-                if (e.key === ' ') {
-                    e.preventDefault();
-                    playSlots();
-                }
-            });
+            const data = await res.json();
+            if (data.success && tg) {
+                tg.openInvoice(data.invoice_url);
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', init);
+        async function claimAch(achId, reward) {
+            const res = await fetch(`${API_URL}/claim_achievement`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_id: userTg.id, ach_id: achId, reward: reward})
+            });
+            const data = await res.json();
+            if (data.success) {
+                initUser();
+            }
+        }
+
+        function switchNav(screenName, btn) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`screen-${screenName}`).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function switchProfileTab(tabName, btn) {
+            document.querySelectorAll('.ptab').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(`ptab-${tabName}`).style.display = 'block';
+            btn.classList.add('active');
+        }
+
+        function shareInvite() {
+            if (tg) tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/DICEGRAM_BOT&text=Присоединяйся%20к%20игре!`);
+        }
     </script>
 </body>
 </html>

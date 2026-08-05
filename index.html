@@ -28,19 +28,16 @@
         .screen { display: none; }
         .screen.active { display: block; }
 
-        /* Шапка Loxssy Lounge */
         .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .brand-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: #fff; }
         .header-balance { background: #1a1a1e; border: 1px solid #2d2d34; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
 
-        /* Переключатели категории */
         .category-tabs { display: flex; background: #141417; padding: 4px; border-radius: 14px; border: 1px solid #222228; margin-bottom: 18px; }
         .cat-tab { flex: 1; text-align: center; padding: 10px 0; font-size: 13px; font-weight: 600; color: var(--text-sub); border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .cat-tab.active { background: var(--gold-gradient); color: #000; font-weight: 700; }
 
         .section-header { font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 
-        /* Сетка игр */
         .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .game-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 14px; height: 130px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; overflow: hidden; background-size: cover; background-position: center; }
         .game-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%); }
@@ -49,30 +46,38 @@
         .game-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 2px; }
         .game-desc { font-size: 10px; color: var(--text-sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* Карточки и модалки */
         .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 16px; margin-bottom: 14px; }
-        .btn { background: var(--gold-gradient); color: #000; font-weight: 700; border: none; border-radius: 12px; padding: 12px; width: 100%; font-size: 14px; cursor: pointer; }
+        .btn { background: var(--gold-gradient); color: #000; font-weight: 700; border: none; border-radius: 12px; padding: 12px; width: 100%; font-size: 14px; cursor: pointer; text-align: center; }
         .btn-secondary { background: #2c2c2e; color: #fff; }
 
-        /* Нижний Таббар */
         .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0d0d0f; border-top: 1px solid #1c1c20; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
         .nav-btn { background: none; border: none; color: var(--text-sub); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 20%; }
         .nav-btn.active { color: var(--gold); }
         .nav-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* Поле Мины 5x5 */
         .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 16px 0; }
-        .mine-cell { aspect-ratio: 1; background: #1c1c20; border: 1px solid #2a2a30; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+        .mine-cell { aspect-ratio: 1; background: #1c1c20; border: 1px solid #2a2a30; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; user-select: none; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal.active { display: flex; }
         .modal-content { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; width: 100%; max-width: 360px; max-height: 90vh; overflow-y: auto; position: relative; }
         .modal-close { position: absolute; top: 14px; right: 14px; background: #2a2a30; border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
 
-        .avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 28px; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .badge { display: inline-block; background: rgba(223, 178, 87, 0.15); border: 1px solid var(--gold); color: var(--gold); font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: bold; margin-top: 4px; }
         .progress-container { background: #2c2c2e; height: 8px; border-radius: 4px; overflow: hidden; margin: 10px 0 6px 0; }
         .progress-bar { background: var(--gold-gradient); height: 100%; width: 0%; transition: width 0.4s ease; }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+        .stat-item { background: #1a1a1e; border: 1px solid #282830; padding: 12px; border-radius: 12px; }
+        .stat-val { font-size: 16px; font-weight: bold; color: var(--gold); margin-top: 4px; }
+        .stat-lbl { font-size: 11px; color: var(--text-sub); }
+
+        .history-list { margin-top: 10px; max-height: 180px; overflow-y: auto; }
+        .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222226; font-size: 12px; }
+        .history-plus { color: var(--success); font-weight: bold; }
+        .history-minus { color: var(--danger); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -84,7 +89,6 @@
 
     <div id="app" style="display: none;" class="content">
 
-        <!-- Шапка -->
         <div class="app-header">
             <div class="brand-title">⚙️ Loxssy Lounge</div>
             <div class="header-balance" id="header-balance-val">
@@ -92,16 +96,14 @@
             </div>
         </div>
 
-        <!-- Экран ИГРЫ -->
+        <!-- ИГРЫ -->
         <div id="screen-games" class="screen active">
-            
             <div class="category-tabs">
                 <div class="cat-tab active" onclick="switchCategory('live', this)">Live-игры</div>
                 <div class="cat-tab" onclick="switchCategory('fast', this)">Быстрые игры</div>
                 <div class="cat-tab" onclick="switchCategory('duels', this)">Дуэли</div>
             </div>
 
-            <!-- LIVE ИГРЫ -->
             <div id="cat-live" class="cat-section">
                 <div class="section-header">◆ LIVE-ИГРЫ <span style="font-size: 9px; opacity: 0.6;">ОБЩИЕ ДЛЯ ВСЕХ ИГРОКОВ</span></div>
                 <div class="games-grid">
@@ -126,8 +128,7 @@
                 </div>
             </div>
 
-            <!-- БЫСТРЫЕ ИГРЫ -->
-            <div id="cat-fast" class="cat-section">
+            <div id="cat-fast" class="cat-section" style="display:none;">
                 <div class="section-header">◆ БЫСТРЫЕ ИГРЫ</div>
                 <div class="games-grid">
                     <div class="game-card" onclick="openGameModal('plinko')" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400');">
@@ -171,35 +172,42 @@
 
             <div id="cat-duels" class="cat-section" style="display: none;">
                 <div class="section-header">◆ ДУЭЛИ</div>
-                <p style="color: var(--text-sub); font-size: 13px;">Ищите оппонента в Live Арене!</p>
+                <p style="color: var(--text-sub); font-size: 13px;">Сражайтесь с реальными игроками на Live Арене!</p>
             </div>
-
         </div>
 
-        <!-- Экран ДРУЗЬЯ -->
+        <!-- ДРУЗЬЯ -->
         <div id="screen-friends" class="screen">
             <h2>Друзья</h2>
             <div class="card" style="margin-top: 14px; text-align: center;">
-                <p style="margin-bottom: 14px; font-size: 14px; color: var(--text-sub);">Приглашайте друзей и играйте вместе!</p>
+                <p style="margin-bottom: 14px; font-size: 14px; color: var(--text-sub);">Приглашайте друзей и получайте фишки!</p>
                 <button class="btn" onclick="shareInvite()">Пригласить друга</button>
             </div>
         </div>
 
-        <!-- Экран ЗАДАНИЯ -->
+        <!-- ЗАДАНИЯ -->
         <div id="screen-tasks" class="screen">
             <h2>Задания</h2>
-            <div class="card" style="margin-top: 14px;" id="tasks-list"></div>
-        </div>
-
-        <!-- Экран МАГАЗИН -->
-        <div id="screen-shop" class="screen">
-            <h2>Магазин</h2>
             <div class="card" style="margin-top: 14px;">
-                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 12px;">Скоро в продаже скины и оформления.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:bold; font-size:14px;">Ежедневный вход</div>
+                        <div style="font-size:11px; color:var(--text-sub);">Заходите каждый день</div>
+                    </div>
+                    <button class="btn" style="width:auto; padding:6px 12px; font-size:12px;" onclick="claimDaily()">+500 🪙</button>
+                </div>
             </div>
         </div>
 
-        <!-- Экран ПРОФИЛЬ -->
+        <!-- МАГАЗИН -->
+        <div id="screen-shop" class="screen">
+            <h2>Магазин</h2>
+            <div class="card" style="margin-top: 14px;">
+                <p style="font-size: 13px; color: var(--text-sub);">Скоро в продаже скины и рамки профиля!</p>
+            </div>
+        </div>
+
+        <!-- ПОЛНЫЙ ПРОФИЛЬ -->
         <div id="screen-profile" class="screen">
             <div class="card">
                 <div style="display: flex; align-items: center; gap: 14px;">
@@ -220,16 +228,45 @@
                     </div>
                 </div>
 
-                <!-- КНОПКА РАЗРАБОТЧИКА ДЛЯ @dauletbr -->
+                <!-- КНОПКА СОЗДАТЕЛЯ -->
                 <div id="admin-panel" style="display: none; margin-top: 14px;">
                     <button class="btn" style="background: linear-gradient(135deg, #ff0055, #ff5500); color: #fff;" onclick="claimAdminBonus()">👑 Забрать +1 000 000 фишек</button>
                 </div>
+            </div>
+
+            <!-- СТАТИСТИКА -->
+            <div class="card">
+                <div style="font-size: 14px; font-weight: bold;">📊 Статистика игрока</div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-lbl">Всего игр</div>
+                        <div class="stat-val" id="stat-games">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-lbl">Выиграно фишек</div>
+                        <div class="stat-val" id="stat-won">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-lbl">Сделано ставок</div>
+                        <div class="stat-val" id="stat-wagered">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-lbl">Рекордный куш</div>
+                        <div class="stat-val" id="stat-max">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ИСТОРИЯ ИГР -->
+            <div class="card">
+                <div style="font-size: 14px; font-weight: bold;">📜 История транзакций</div>
+                <div class="history-list" id="history-box"></div>
             </div>
         </div>
     </div>
 
     <!-- МОДАЛЬНЫЕ ОКНА ИГР -->
-    
+
     <!-- 1. РУЛЕТКА -->
     <div id="modal-roulette" class="modal">
         <div class="modal-content">
@@ -245,18 +282,18 @@
         </div>
     </div>
 
-    <!-- 2. МИНЫ -->
+    <!-- 2. МИНЫ 5x5 -->
     <div id="modal-mines" class="modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('mines')">✕</button>
             <h3>💣 Мины (5x5)</h3>
-            <div style="margin: 10px 0;">
+            <div style="margin: 10px 0;" id="mines-config">
                 <label style="font-size:12px; color:var(--text-sub);">Количество мин:</label>
                 <select id="mines-count" style="width:100%; padding:8px; background:#101012; color:#fff; border-radius:8px; border:1px solid #2a2a30;">
-                    <option value="3">3 Мин (Высокий шанс)</option>
+                    <option value="3">3 Мин (Низкий риск)</option>
                     <option value="5">5 Мин</option>
                     <option value="10">10 Мин</option>
-                    <option value="24">24 Мины (Экстрим)</option>
+                    <option value="24">24 Мины (Максимум)</option>
                 </select>
             </div>
             <input type="number" id="mines-bet" value="50" style="width:100%; padding:10px; background:#101012; border:1px solid #2a2a30; color:#fff; border-radius:8px; margin-bottom:10px;">
@@ -310,13 +347,13 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('arena')">✕</button>
             <h3>⚔️ Live Арена PVP</h3>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">Битва 1v1 за общий банк.</p>
+            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">Поиск соперника 1v1 за общий банк.</p>
             <input type="number" id="arena-bet" value="100" style="width:100%; padding:10px; background:#101012; border:1px solid #2a2a30; color:#fff; border-radius:8px; margin-bottom:10px;">
-            <button class="btn" onclick="playArena()">Найти соперника</button>
+            <button class="btn" onclick="playArena()">Вступить в бой</button>
         </div>
     </div>
 
-    <!-- Навигация -->
+    <!-- НАВИГАЦИЯ -->
     <div id="tabbar" class="tabbar" style="display: none;">
         <button class="nav-btn active" onclick="switchNav('games', this)">
             <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
@@ -378,6 +415,32 @@
             const pct = Math.min(100, Math.floor((user.xp / user.next_level_req) * 100));
             document.getElementById('lvl-bar').style.width = `${pct}%`;
 
+            if (user.photo_url) {
+                document.getElementById('user-avatar-box').innerHTML = `<img src="${user.photo_url}">`;
+            }
+
+            document.getElementById('stat-games').innerText = user.total_games;
+            document.getElementById('stat-won').innerText = user.total_won.toLocaleString();
+            document.getElementById('stat-wagered').innerText = user.total_wagered.toLocaleString();
+            document.getElementById('stat-max').innerText = user.max_win.toLocaleString();
+
+            const histBox = document.getElementById('history-box');
+            histBox.innerHTML = '';
+            if (user.history && user.history.length > 0) {
+                user.history.forEach(item => {
+                    const cls = item.type === 'plus' ? 'history-plus' : 'history-minus';
+                    const sign = item.type === 'plus' ? '+' : '';
+                    histBox.innerHTML += `
+                        <div class="history-item">
+                            <span>${item.title}</span>
+                            <span class="${cls}">${sign}${item.amount.toLocaleString()} 🪙</span>
+                        </div>
+                    `;
+                });
+            } else {
+                histBox.innerHTML = `<div style="color:var(--text-sub); font-size:12px;">История пуста</div>`;
+            }
+
             if (String(user.user_id) === "8771009385" || String(user.username).toLowerCase() === "dauletbr") {
                 document.getElementById('admin-panel').style.display = 'block';
             }
@@ -390,14 +453,18 @@
                 body: JSON.stringify({ user_id: userTg.id, amount: amount, title: title })
             });
             const data = await res.json();
-            if (data.success) renderProfile(data.user);
+            if (data.success) {
+                renderProfile(data.user);
+            } else {
+                alert(data.message || "Ошибка соединения");
+            }
             return data;
         }
 
         // РУЛЕТКА
         async function playRoulette(type) {
             const bet = parseInt(document.getElementById('roulette-bet').value);
-            if (!bet || bet <= 0) return alert("Ставка введена неверно!");
+            if (!bet || bet <= 0) return alert("Введите корректную ставку!");
 
             const options = ['red', 'black', 'zero'];
             const res = options[Math.floor(Math.random() * options.length)];
@@ -407,20 +474,23 @@
                 win = type === 'zero' ? bet * 36 : bet * 2;
             }
 
-            const net = win - bet;
-            await updateBalance(net, `Рулетка (${type})`);
+            const net = win > 0 ? (win - bet) : -bet;
+            const resApi = await updateBalance(net, `Рулетка (${type})`);
+            if (!resApi.success) return;
+
             alert(win > 0 ? `🎉 Выпало ${res.toUpperCase()}! Вы выиграли ${win} фишек!` : `❌ Выпало ${res.toUpperCase()}. Вы проиграли ${bet} фишек.`);
         }
 
-        // МИНЫ
+        // МИНЫ 5x5
         let activeMines = [];
         let minesBet = 0;
         let safeOpened = 0;
+        let isMinesActive = false;
 
         function startMinesGame() {
             minesBet = parseInt(document.getElementById('mines-bet').value);
             const count = parseInt(document.getElementById('mines-count').value);
-            if (!minesBet || minesBet <= 0) return alert("Ставка неверна!");
+            if (!minesBet || minesBet <= 0) return alert("Введите правильную ставку!");
 
             activeMines = [];
             while(activeMines.length < count) {
@@ -429,25 +499,30 @@
             }
 
             safeOpened = 0;
+            isMinesActive = true;
             const board = document.getElementById('mines-board');
             board.innerHTML = '';
             for(let i=0; i<25; i++) {
                 board.innerHTML += `<div class="mine-cell" id="cell-${i}" onclick="clickMineCell(${i})">❓</div>`;
             }
             board.style.display = 'grid';
+            document.getElementById('mines-config').style.display = 'none';
+            document.getElementById('mines-bet').style.display = 'none';
             document.getElementById('mines-cashout-btn').style.display = 'block';
             document.getElementById('mines-start-btn').style.display = 'none';
         }
 
         async function clickMineCell(idx) {
+            if(!isMinesActive) return;
             const cell = document.getElementById(`cell-${idx}`);
             if(cell.innerText !== '❓') return;
 
             if(activeMines.includes(idx)) {
                 cell.innerText = '💣';
                 cell.style.background = '#ff453a';
+                isMinesActive = false;
                 await updateBalance(-minesBet, "Мины (Взрыв)");
-                alert("💥 БОМБА! Вы проиграли!");
+                alert("💥 БОМБА! Вы проиграли ставку!");
                 resetMines();
             } else {
                 cell.innerText = '💎';
@@ -457,16 +532,21 @@
         }
 
         async function cashoutMines() {
-            if(safeOpened === 0) return alert("Откройте хотя бы 1 ячейку!");
+            if(!isMinesActive || safeOpened === 0) return alert("Откройте хотя бы 1 безопасную клетку!");
+            isMinesActive = false;
             const win = Math.floor(minesBet * (1 + safeOpened * 0.4));
-            await updateBalance(win - minesBet, "Мины (Забрал)");
+            const net = win - minesBet;
+            await updateBalance(net, "Мины (Забрал)");
             alert(`🎉 Вы забрали ${win} фишек!`);
             resetMines();
         }
 
         function resetMines() {
+            isMinesActive = false;
             document.getElementById('mines-board').style.display = 'none';
             document.getElementById('mines-cashout-btn').style.display = 'none';
+            document.getElementById('mines-config').style.display = 'block';
+            document.getElementById('mines-bet').style.display = 'block';
             document.getElementById('mines-start-btn').style.display = 'block';
         }
 
@@ -477,8 +557,9 @@
             const multis = [2.0, 0.8, 0.4, 0.2, 0.4, 0.8, 2.0];
             const chosen = multis[Math.floor(Math.random() * multis.length)];
             const win = Math.floor(bet * chosen);
-            await updateBalance(win - bet, "Плинко");
-            alert(`🔴 Шарик приземлился на ${chosen}x! Вы получаете ${win} фишек.`);
+            const net = win - bet;
+            await updateBalance(net, "Плинко");
+            alert(`🔴 Шарик попал в ${chosen}x! Вы получаете ${win} фишек.`);
         }
 
         // СЛОТЫ
@@ -498,7 +579,8 @@
             if(r1===r2 && r2===r3) win = bet * 5;
             else if(r1===r2 || r2===r3 || r1===r3) win = Math.floor(bet * 1.5);
 
-            await updateBalance(win - bet, "Слоты 777");
+            const net = win > 0 ? (win - bet) : -bet;
+            await updateBalance(net, "Слоты 777");
         }
 
         // КЕЙСЫ
@@ -508,8 +590,9 @@
             const multis = [0.1, 0.5, 1.2, 2.0, 5.0];
             const res = multis[Math.floor(Math.random()*multis.length)];
             const win = Math.floor(bet * res);
-            await updateBalance(win - bet, "Кейсы");
-            alert(`📦 Выпал мультипликатор ${res}x! Выигрыш: ${win} фишек.`);
+            const net = win - bet;
+            await updateBalance(net, "Кейсы");
+            alert(`📦 Мультипликатор: ${res}x! Получено: ${win} фишек.`);
         }
 
         // АРЕНА
@@ -520,6 +603,11 @@
             const net = win ? bet : -bet;
             await updateBalance(net, "PVP Арена");
             alert(win ? `⚔️ Вы победили соперника и забрали ${bet * 2} фишек!` : `⚔️ Вы проиграли дуэль!`);
+        }
+
+        async function claimDaily() {
+            await updateBalance(500, "Ежедневная награда");
+            alert("🎉 Вы получили 500 фишек!");
         }
 
         async function claimAdminBonus() {

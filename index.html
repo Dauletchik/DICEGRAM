@@ -179,6 +179,38 @@
             font-weight: 700;
         }
 
+        /* Премиальная Реферальная Статистика */
+        .ref-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .ref-stat-card {
+            background: linear-gradient(145deg, #1e1e2a, #14141d);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .ref-stat-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .ref-stat-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffe066;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -219,7 +251,6 @@
             filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
         }
 
-        /* Модальные окна Dark Luxury */
         .modal {
             display: none;
             position: fixed;
@@ -461,7 +492,6 @@
             align-items: center;
         }
 
-        /* Рейтинг ТОП */
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
@@ -513,7 +543,6 @@
             border: 1px solid #f59e0b;
         }
 
-        /* Кастомные алерты */
         .custom-alert-overlay {
             display: none;
             position: fixed;
@@ -554,7 +583,6 @@
 </head>
 <body>
 
-    <!-- Кастомный анимированный алерт -->
     <div class="custom-alert-overlay" id="customAlert">
         <div class="custom-alert-box">
             <div class="custom-alert-title" id="alertTitle">УВЕДОМЛЕНИЕ</div>
@@ -628,10 +656,25 @@
         </div>
 
         <div id="subViewFriends">
-            <div class="section-title">Пригласить друзей</div>
+            <div class="section-title">Партнерская программа</div>
+            
+            <div class="ref-stats-grid">
+                <div class="ref-stat-card">
+                    <div class="ref-stat-title">Приглашено друзей</div>
+                    <div class="ref-stat-val" id="refCount">0 чел.</div>
+                </div>
+                <div class="ref-stat-card">
+                    <div class="ref-stat-title">Всего заработано</div>
+                    <div class="ref-stat-val" id="refEarnings">0 💰</div>
+                </div>
+            </div>
+
             <div class="profile-card" style="text-align: center;">
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Приглашай друзей и получай эксклюзивные бонусы!</p>
-                <button class="btn-gold" onclick="shareRef()">Позвать друга</button>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5;">
+                    Получайте <b>+1000 фишек</b> за каждого приглашенного друга!<br>
+                    Ваш друг также получит <b>+1000 бонусных фишек</b> при старте.
+                </p>
+                <button class="btn-gold" onclick="shareRef()">🤝 Пригласить друга</button>
             </div>
         </div>
 
@@ -647,7 +690,6 @@
                         </tr>
                     </thead>
                     <tbody id="leaderboardRows">
-                        <!-- Динамические строки -->
                     </tbody>
                 </table>
             </div>
@@ -658,7 +700,6 @@
     <div id="tab-quests" class="tab-content">
         <div class="section-title">Ежедневные квесты</div>
         <div id="questsContainer">
-            <!-- Динамически -->
         </div>
     </div>
 
@@ -717,7 +758,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: СЛОТЫ -->
+    <!-- МОДАЛКИ -->
     <div class="modal" id="modalSlots">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('modalSlots')">&times;</span>
@@ -736,7 +777,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: МИНЫ -->
     <div class="modal" id="modalMines">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('modalMines')">&times;</span>
@@ -770,7 +810,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: ПРОМОКОД -->
     <div class="modal" id="modalPromo">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('modalPromo')">&times;</span>
@@ -781,7 +820,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: ДОНАТ -->
     <div class="modal" id="modalDonate">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('modalDonate')">&times;</span>
@@ -794,7 +832,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: АДМИН-ПАНЕЛЬ -->
     <div class="modal" id="modalAdmin">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('modalAdmin')">&times;</span>
@@ -855,6 +892,7 @@
         let userName = user.username || user.first_name || "Daulet";
         let userFirstName = user.first_name || "Daulet";
         let userPhoto = user.photo_url || "";
+        let botUsername = "spnx_play_bot";
 
         if (userPhoto) {
             let img = document.getElementById('headerAvatarImg');
@@ -870,7 +908,6 @@
 
         let selectedMinesCount = 3;
 
-        // Кастомные алерты
         function showCustomAlert(title, message) {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
@@ -903,11 +940,17 @@
                 let res = await fetch(`${API_BASE}/user_data?user_id=${userId}&username=${userName}&first_name=${encodeURIComponent(userFirstName)}&photo_url=${encodeURIComponent(userPhoto)}`);
                 let data = await res.json();
                 
+                if(data.bot_username) botUsername = data.bot_username;
+
                 document.getElementById('headerBalance').innerText = data.balance.toLocaleString();
                 document.getElementById('profBalance').innerText = data.balance.toLocaleString();
                 document.getElementById('headerRank').innerText = `Уровень ${data.level}`;
                 document.getElementById('profRank').innerText = `Уровень ${data.level}`;
                 
+                // Статистика рефералов
+                document.getElementById('refCount').innerText = `${data.referred_count || 0} чел.`;
+                document.getElementById('refEarnings').innerText = `${(data.referral_earnings || 0).toLocaleString()} 💰`;
+
                 let reqXp = data.required_xp || 1500;
                 let pct = Math.min(100, Math.floor((data.xp / reqXp) * 100));
                 document.getElementById('xpFill').style.width = pct + '%';
@@ -1058,6 +1101,12 @@
 
         function strEq(a, b) { return String(a) === String(b); }
 
+        function shareRef() {
+            let refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+            let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Играй со мной в Loxssy Lounge! Получи +1000 бонусных фишек при старте 🎁")}`;
+            tg.openTelegramLink(shareUrl);
+        }
+
         // --- ПРОМОКОДЫ ---
         function openPromoModal() {
             document.getElementById('modalPromo').style.display = 'block';
@@ -1148,6 +1197,8 @@
                     🆔 ID: <code>${u.user_id}</code><br>
                     💰 Баланс: ${u.balance.toLocaleString()} фишек<br>
                     ⭐ Уровень: ${u.level} (${u.xp} XP)<br>
+                    👥 Приглашено: ${u.referred_count || 0} чел.<br>
+                    💵 Заработано на рефералах: ${(u.referral_earnings || 0).toLocaleString()} 💰<br>
                     🎮 Сыграно игр: ${u.total_games}<br>
                     🏆 Всего выиграно: ${u.total_won.toLocaleString()} 💰<br>
                     💸 Поставлено: ${u.total_wagered.toLocaleString()} 💰<br>
@@ -1156,7 +1207,7 @@
             }
         }
 
-        // --- ДАТ СТАРС ---
+        // --- ДОНАТ STARS ---
         function openDonateModal() {
             document.getElementById('modalDonate').style.display = 'block';
         }
@@ -1365,7 +1416,7 @@
             }
         }
 
-        // КВЕСТЫ И МАГАЗИН
+        // --- КВЕСТЫ И МАГАЗИН ---
         async function claimDaily() {
             let res = await fetch(`${API_BASE}/claim_daily`, {
                 method: 'POST',
@@ -1398,10 +1449,6 @@
             let data = await res.json();
             showCustomAlert("МАГАЗИН", data.message);
             refreshUserData();
-        }
-
-        function shareRef() {
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/LoxssyLoungeBot&text=Играй со мной в Loxssy Lounge!`);
         }
 
         refreshUserData();

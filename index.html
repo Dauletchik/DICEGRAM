@@ -47,11 +47,6 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes shimmer {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-primary);
@@ -61,7 +56,6 @@
             user-select: none;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 3px;
         }
@@ -73,7 +67,6 @@
             border-radius: 10px;
         }
 
-        /* App Container */
         .app {
             display: flex;
             flex-direction: column;
@@ -85,7 +78,6 @@
             overflow: hidden;
         }
 
-        /* Header */
         .header {
             padding: 12px 16px;
             display: flex;
@@ -169,7 +161,6 @@
             color: var(--gold);
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             overflow-y: auto;
@@ -178,7 +169,6 @@
             padding-bottom: 80px;
         }
 
-        /* Pages */
         .page {
             display: none;
             animation: slideUp 0.3s ease;
@@ -188,7 +178,6 @@
             display: block;
         }
 
-        /* Cards */
         .card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -206,7 +195,6 @@
             gap: 8px;
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -244,11 +232,6 @@
             color: #fff;
         }
 
-        .btn-danger {
-            background: #e74c3c;
-            color: #fff;
-        }
-
         .btn-sm {
             padding: 8px 16px;
             font-size: 12px;
@@ -260,7 +243,6 @@
             cursor: not-allowed;
         }
 
-        /* ========== PAGE: GAME ========== */
         .slot-machine {
             background: var(--bg-primary);
             border-radius: var(--radius);
@@ -307,6 +289,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
         }
 
         .bet-control input {
@@ -319,6 +302,7 @@
             font-size: 16px;
             font-weight: 500;
             outline: none;
+            min-width: 100px;
         }
 
         .bet-control input:focus {
@@ -328,6 +312,7 @@
         .bet-presets {
             display: flex;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
         .bet-preset {
@@ -370,7 +355,6 @@
             background: rgba(255, 107, 107, 0.1);
         }
 
-        /* ========== PAGE: SHOP ========== */
         .shop-tabs {
             display: flex;
             gap: 6px;
@@ -444,7 +428,6 @@
             margin-top: 4px;
         }
 
-        /* ========== PAGE: PROFILE ========== */
         .profile-header {
             display: flex;
             align-items: center;
@@ -561,7 +544,6 @@
             margin-top: 12px;
         }
 
-        /* ========== PAGE: TASKS ========== */
         .task-item {
             display: flex;
             align-items: center;
@@ -613,7 +595,6 @@
             color: var(--text-secondary);
         }
 
-        /* ========== PAGE: STATS ========== */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -649,7 +630,6 @@
             color: #00b894;
         }
 
-        /* ========== PAGE: FRIENDS ========== */
         .invite-box {
             text-align: center;
             padding: 20px 0;
@@ -672,7 +652,6 @@
             margin-bottom: 16px;
         }
 
-        /* ========== NOTIFICATION ========== */
         .notification {
             position: fixed;
             top: 20px;
@@ -710,7 +689,6 @@
             box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
         }
 
-        /* ========== BOTTOM NAV ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -751,22 +729,6 @@
             color: var(--gold);
         }
 
-        .nav-item .badge {
-            position: absolute;
-            top: 0;
-            right: 4px;
-            width: 16px;
-            height: 16px;
-            background: #e74c3c;
-            border-radius: 50%;
-            font-size: 9px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* ========== LOADING ========== */
         .loading-screen {
             display: flex;
             flex-direction: column;
@@ -786,7 +748,6 @@
             animation: spin 0.6s linear infinite;
         }
 
-        /* ========== RESPONSIVE ========== */
         @media (max-width: 400px) {
             .slot-reel {
                 width: 45px;
@@ -814,15 +775,12 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
         <div style="color:var(--text-secondary);">Загрузка...</div>
     </div>
 
-    <!-- App -->
     <div class="app" id="app" style="display:none;">
-        <!-- Header -->
         <header class="header">
             <div class="header-left">
                 <div class="header-avatar" id="headerAvatar">
@@ -844,9 +802,7 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <div class="main-content" id="mainContent">
-            <!-- PAGE: GAME -->
             <div class="page active" id="pageGame">
                 <div class="slot-machine">
                     <div class="slot-display" id="slotDisplay">
@@ -871,19 +827,15 @@
                 </div>
             </div>
 
-            <!-- PAGE: SHOP -->
             <div class="page" id="pageShop">
                 <div class="shop-tabs" id="shopTabs">
                     <button class="shop-tab active" data-category="frames">🖼 Рамки</button>
                     <button class="shop-tab" data-category="tables">🎲 Столы</button>
                     <button class="shop-tab" data-category="chips">🪙 Фишки</button>
                 </div>
-                <div class="shop-grid" id="shopGrid">
-                    <!-- Динамически -->
-                </div>
+                <div class="shop-grid" id="shopGrid"></div>
             </div>
 
-            <!-- PAGE: PROFILE -->
             <div class="page" id="pageProfile">
                 <div class="card">
                     <div class="profile-header">
@@ -932,7 +884,7 @@
                         <button class="btn btn-secondary btn-sm" onclick="claimHourly()">⏰ Ежечасно</button>
                     </div>
 
-                    <div style="margin-top:12px;display:flex;gap:8px;">
+                    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
                         <button class="btn btn-primary btn-sm" onclick="buyStars(1)">⭐ 1 = 50🪙</button>
                         <button class="btn btn-primary btn-sm" onclick="buyStars(5)">⭐ 5 = 250🪙</button>
                         <button class="btn btn-primary btn-sm" onclick="buyStars(10)">⭐ 10 = 500🪙</button>
@@ -949,61 +901,13 @@
                 </div>
             </div>
 
-            <!-- PAGE: TASKS -->
             <div class="page" id="pageTasks">
                 <div class="card">
                     <div class="card-title">🎯 Задания</div>
-                    <div id="tasksList">
-                        <div class="task-item">
-                            <div class="task-icon">🎯</div>
-                            <div class="task-info">
-                                <div class="task-name">Новичок</div>
-                                <div class="task-desc">Сыграйте 10 игр</div>
-                            </div>
-                            <div class="task-reward">+100🪙</div>
-                            <span class="task-status pending">⏳</span>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">🎯</div>
-                            <div class="task-info">
-                                <div class="task-name">Игрок</div>
-                                <div class="task-desc">Сыграйте 50 игр</div>
-                            </div>
-                            <div class="task-reward">+300🪙</div>
-                            <span class="task-status pending">⏳</span>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">🎯</div>
-                            <div class="task-info">
-                                <div class="task-name">Профи</div>
-                                <div class="task-desc">Сыграйте 100 игр</div>
-                            </div>
-                            <div class="task-reward">+500🪙</div>
-                            <span class="task-status pending">⏳</span>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">💎</div>
-                            <div class="task-info">
-                                <div class="task-name">Крупный выигрыш</div>
-                                <div class="task-desc">Выиграйте 1000 фишек за раз</div>
-                            </div>
-                            <div class="task-reward">+500🪙</div>
-                            <span class="task-status pending">⏳</span>
-                        </div>
-                        <div class="task-item">
-                            <div class="task-icon">💰</div>
-                            <div class="task-info">
-                                <div class="task-name">Богач</div>
-                                <div class="task-desc">Накопите 10000 фишек</div>
-                            </div>
-                            <div class="task-reward">+1000🪙</div>
-                            <span class="task-status pending">⏳</span>
-                        </div>
-                    </div>
+                    <div id="tasksList"></div>
                 </div>
             </div>
 
-            <!-- PAGE: FRIENDS -->
             <div class="page" id="pageFriends">
                 <div class="card">
                     <div class="invite-box">
@@ -1018,7 +922,6 @@
                 </div>
             </div>
 
-            <!-- PAGE: STATS -->
             <div class="page" id="pageStats">
                 <div class="card">
                     <div class="card-title">📊 Итоговая статистика</div>
@@ -1048,7 +951,6 @@
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="Game">
                 <span class="icon">🎰</span>
@@ -1077,15 +979,19 @@
         const tg = window.Telegram?.WebApp;
         if (tg) tg.expand();
 
-        const API_URL = "https://a48794-5d18.e.jrnm.app/api";
+        // Используем относительный путь для API
+        const API_URL = window.location.origin + '/api';
         let userData = null;
         let isSpinning = false;
 
-        // ========== INIT ==========
         async function init() {
             const user = tg?.initDataUnsafe?.user;
             if (!user) {
                 showNotification('❌ Запустите через Telegram бота!', 'error');
+                document.getElementById('loadingScreen').innerHTML = `
+                    <div style="color:#ff6b6b;font-size:20px;">❌</div>
+                    <div style="color:var(--text-secondary);">Запустите через Telegram бота</div>
+                `;
                 return;
             }
 
@@ -1116,23 +1022,20 @@
                 document.getElementById('loadingScreen').innerHTML = `
                     <div style="color:#ff6b6b;font-size:20px;">❌</div>
                     <div style="color:var(--text-secondary);">Ошибка загрузки</div>
-                    <button class="btn btn-primary btn-sm" onclick="location.reload()">↻ Обновить</button>
+                    <button class="btn btn-primary btn-sm" onclick="location.reload()" style="width:auto;padding:8px 24px;">↻ Обновить</button>
                 `;
                 console.error('Init error:', e);
             }
         }
 
-        // ========== UI UPDATE ==========
         function updateUI() {
             if (!userData) return;
 
-            // Header
             document.getElementById('headerName').textContent = userData.first_name || 'Игрок';
             document.getElementById('headerLevel').textContent = `⭐ Уровень ${userData.level}`;
             document.getElementById('headerBalance').textContent = userData.balance;
             document.getElementById('headerStars').textContent = userData.stars || 0;
 
-            // Avatar
             const avatarUrl = `https://t.me/i/userpic/320/${userData.user_id}.jpg`;
             const avatarEl = document.getElementById('headerAvatar');
             avatarEl.innerHTML = `<img src="${avatarUrl}" onerror="this.style.display='none'">`;
@@ -1140,7 +1043,6 @@
                 avatarEl.className = `header-avatar ${userData.active_frame}`;
             }
 
-            // Profile
             document.getElementById('profileName').textContent = userData.first_name || 'Игрок';
             document.getElementById('profileRank').textContent = `⭐ Уровень ${userData.level}`;
             document.getElementById('profileBalance').textContent = userData.balance;
@@ -1151,7 +1053,6 @@
                 profileAvatar.className = `profile-avatar ${userData.active_frame}`;
             }
 
-            // XP
             const xp = userData.xp || 0;
             const xpToNext = userData.xp_to_next || 100;
             const pct = Math.min((xp / xpToNext) * 100, 100);
@@ -1159,13 +1060,11 @@
             document.getElementById('xpText').textContent = `${xp} / ${xpToNext}`;
             document.getElementById('xpBonusText').textContent = `Бонус за уровень ${userData.level + 1}: ${userData.next_level_bonus || 1000} фишек`;
 
-            // Profile stats
             document.getElementById('pGames').textContent = userData.total_games || 0;
             document.getElementById('pWon').textContent = userData.total_won || 0;
             document.getElementById('pMaxWin').textContent = userData.max_win || 0;
         }
 
-        // ========== SLOTS ==========
         async function playSlots() {
             if (isSpinning) return;
             if (!userData) return;
@@ -1185,7 +1084,6 @@
             spinBtn.disabled = true;
             spinBtn.textContent = '🌀 КРУТИТСЯ...';
 
-            // Анимация
             const symbols = ['7️⃣', '💎', '🔔', '🍋', '🍒', '⭐️', '🎰', '🔥'];
             const reels = ['reel1', 'reel2', 'reel3'];
             let interval = setInterval(() => {
@@ -1214,7 +1112,6 @@
                     return;
                 }
 
-                // Обновляем рельсы
                 reels.forEach((id, i) => {
                     const el = document.getElementById(id);
                     el.textContent = data.reels[i];
@@ -1222,7 +1119,6 @@
                     setTimeout(() => el.classList.remove('win'), 3000);
                 });
 
-                // Результат
                 const msg = document.getElementById('resultMessage');
                 if (data.win > 0) {
                     msg.className = 'result-message win';
@@ -1256,7 +1152,6 @@
             spinBtn.textContent = '🎰 КРУТИТЬ';
         }
 
-        // ========== SHOP ==========
         const shopItems = {
             frames: [
                 { id: 'frame_sapphire', name: 'Сапфировая', price: 2000, icon: '💎' },
@@ -1336,7 +1231,6 @@
             }
         }
 
-        // ========== ACHIEVEMENTS ==========
         async function loadAchievements() {
             try {
                 const res = await fetch(`${API_URL}/achievements`, {
@@ -1366,28 +1260,12 @@
                     </div>
                 `).join('');
 
-                // Обновляем задания
-                const tasksList = document.getElementById('tasksList');
-                tasksList.innerHTML = data.achievements.map(a => `
-                    <div class="task-item">
-                        <div class="task-icon">${a.name.split(' ')[0] || '🏅'}</div>
-                        <div class="task-info">
-                            <div class="task-name">${a.name}</div>
-                            <div class="task-desc">${a.desc || ''}</div>
-                        </div>
-                        <div class="task-reward">+${a.reward}🪙</div>
-                        <span class="task-status ${a.completed ? 'done' : 'pending'}">
-                            ${a.completed ? '✅' : '⏳'}
-                        </span>
-                    </div>
-                `).join('');
-
+                document.getElementById('tasksList').innerHTML = list.innerHTML;
             } catch (e) {
                 console.error('Achievements error:', e);
             }
         }
 
-        // ========== STATS ==========
         async function loadStats() {
             try {
                 const res = await fetch(`${API_URL}/get_stats`, {
@@ -1411,7 +1289,6 @@
             }
         }
 
-        // ========== CLAIMS ==========
         async function claimDaily() {
             if (!userData) return;
             try {
@@ -1479,7 +1356,6 @@
             }
         }
 
-        // ========== FRIENDS ==========
         function inviteFriend() {
             const url = 'https://t.me/share/url?url=https://t.me/DarkLuxuryBot&text=🎰 Присоединяйся к Dark Luxury Casino! Получи бонус 1000 фишек!';
             if (tg) {
@@ -1489,7 +1365,6 @@
             }
         }
 
-        // ========== NOTIFICATION ==========
         function showNotification(message, type = 'info') {
             const existing = document.querySelector('.notification');
             if (existing) existing.remove();
@@ -1502,12 +1377,9 @@
             setTimeout(() => el.remove(), 4000);
         }
 
-        // ========== EVENT LISTENERS ==========
         function setupEventListeners() {
-            // Spin
             document.getElementById('spinBtn').addEventListener('click', playSlots);
 
-            // Bet presets
             document.querySelectorAll('.bet-preset').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.getElementById('betInput').value = this.dataset.amount;
@@ -1516,12 +1388,10 @@
                 });
             });
 
-            // Bet input
             document.getElementById('betInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') playSlots();
             });
 
-            // Navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', function() {
                     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1531,7 +1401,6 @@
                 });
             });
 
-            // Shop tabs
             document.querySelectorAll('.shop-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
@@ -1540,7 +1409,6 @@
                 });
             });
 
-            // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && document.activeElement?.id === 'betInput') {
                     playSlots();
@@ -1552,7 +1420,6 @@
             });
         }
 
-        // ========== START ==========
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

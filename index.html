@@ -90,7 +90,7 @@
         .tab-content {
             display: none;
             padding: 20px;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s ease;
         }
 
         .tab-content.active {
@@ -98,7 +98,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -119,6 +119,7 @@
             white-space: nowrap;
             font-size: 13px;
             font-weight: 600;
+            cursor: pointer;
         }
 
         .filter-btn.active {
@@ -147,7 +148,7 @@
             border: 1px solid rgba(255,255,255,0.05);
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.1s, border-color 0.1s;
             cursor: pointer;
         }
 
@@ -178,7 +179,6 @@
             font-weight: 700;
         }
 
-        /* Премиум Таббар */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -200,7 +200,7 @@
             font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: color 0.1s;
         }
 
         .nav-item.active {
@@ -211,7 +211,7 @@
             width: 24px;
             height: 24px;
             fill: currentColor;
-            transition: transform 0.2s;
+            transition: transform 0.1s;
         }
 
         .nav-item.active svg {
@@ -219,7 +219,7 @@
             filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
         }
 
-        /* Модальные окна */
+        /* Модальные окна Dark Luxury */
         .modal {
             display: none;
             position: fixed;
@@ -238,7 +238,7 @@
             border: 1px solid #f59e0b;
             margin-top: 20px;
             position: relative;
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
         }
 
         .close-btn {
@@ -260,11 +260,24 @@
             margin-top: 10px;
             cursor: pointer;
             box-shadow: var(--gold-glow);
-            transition: opacity 0.2s;
+            transition: opacity 0.1s;
         }
 
         .btn-gold:active {
             opacity: 0.9;
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
 
         .input-box {
@@ -280,7 +293,6 @@
             font-weight: 700;
         }
 
-        /* Быстрые кнопки ставок */
         .quick-bets {
             display: flex;
             gap: 8px;
@@ -299,7 +311,6 @@
             cursor: pointer;
         }
 
-        /* Режимы Бомб */
         .bomb-modes {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -325,7 +336,6 @@
             color: #ffe066;
         }
 
-        /* Поле Мин */
         .mines-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -343,7 +353,7 @@
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             cursor: pointer;
-            transition: transform 0.15s ease, background 0.3s ease;
+            transition: transform 0.05s ease, background 0.1s ease;
         }
 
         .mine-cell:active {
@@ -353,13 +363,13 @@
         .mine-cell.revealed-safe {
             background: linear-gradient(145deg, #10b981, #059669);
             border-color: #34d399;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .mine-cell.revealed-bomb {
             background: linear-gradient(145deg, #ef4444, #dc2626);
             border-color: #f87171;
-            animation: shake 0.4s ease-in-out;
+            animation: shake 0.3s ease-in-out;
         }
 
         @keyframes popIn {
@@ -373,7 +383,6 @@
             40%, 80% { transform: translateX(4px); }
         }
 
-        /* Слоты */
         .slots-window {
             overflow: hidden;
             height: 90px;
@@ -401,30 +410,13 @@
         }
 
         .slot-reel.spinning {
-            animation: reelSpin 0.1s linear infinite;
+            animation: reelSpin 0.08s linear infinite;
         }
 
         @keyframes reelSpin {
             0% { transform: translateY(-5px); }
             50% { transform: translateY(5px); }
             100% { transform: translateY(-5px); }
-        }
-
-        .slot-notice {
-            display: none;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.95);
-            border: 2px solid #f59e0b;
-            padding: 15px 25px;
-            border-radius: 15px;
-            text-align: center;
-            font-weight: 800;
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(245,158,11,0.5);
-            width: 80%;
-            animation: popIn 0.3s ease;
         }
 
         .profile-card {
@@ -468,9 +460,108 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        /* Рейтинг ТОП */
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .leaderboard-table th {
+            color: var(--text-muted);
+            border-bottom: 1px solid #333;
+        }
+
+        .leaderboard-table tr {
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .leaderboard-table tr.my-rank-row {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid #f59e0b;
+        }
+
+        .rank-num {
+            font-weight: 800;
+            width: 30px;
+            text-align: center;
+        }
+
+        .rank-1 { color: #ffe066; font-size: 16px; }
+        .rank-2 { color: #d1d5db; font-size: 15px; }
+        .rank-3 { color: #b45309; font-size: 15px; }
+
+        .player-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #252530;
+            object-fit: cover;
+            border: 1px solid #f59e0b;
+        }
+
+        /* Кастомные алерты */
+        .custom-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-alert-box {
+            background: var(--card-bg);
+            border: 2px solid #f59e0b;
+            border-radius: 20px;
+            padding: 25px;
+            width: 85%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 0 35px rgba(245, 158, 11, 0.3);
+            animation: popIn 0.2s ease;
+        }
+
+        .custom-alert-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffe066;
+            margin-bottom: 10px;
+        }
+
+        .custom-alert-msg {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Кастомный анимированный алерт -->
+    <div class="custom-alert-overlay" id="customAlert">
+        <div class="custom-alert-box">
+            <div class="custom-alert-title" id="alertTitle">УВЕДОМЛЕНИЕ</div>
+            <div class="custom-alert-msg" id="alertMessage">Текст сообщения</div>
+            <button class="btn-gold" onclick="closeCustomAlert()">ОК</button>
+        </div>
+    </div>
 
     <!-- Шапка -->
     <div class="header-bar">
@@ -481,7 +572,7 @@
             </div>
             <div>
                 <div id="headerName" style="font-weight: 700; font-size: 14px;">Игрок</div>
-                <div id="headerRank" style="font-size: 11px; color: #f59e0b; font-weight: 600;">Уровень 0</div>
+                <div id="headerRank" style="font-size: 11px; color: #f59e0b; font-weight: 600;">Уровень 1</div>
             </div>
         </div>
         <div class="balance-pill">
@@ -494,7 +585,6 @@
         <div class="nav-filter">
             <button class="filter-btn active" onclick="scrollToSection('sec-quick')">Быстрые игры</button>
             <button class="filter-btn" onclick="scrollToSection('sec-live')">Live-игры</button>
-            <button class="filter-btn" onclick="scrollToSection('sec-duels')">Дуэли</button>
         </div>
 
         <div class="section-title" id="sec-quick">Быстрые игры</div>
@@ -530,12 +620,37 @@
         </div>
     </div>
 
-    <!-- ТАБ: ДРУЗЬЯ -->
+    <!-- ТАБ: ДРУЗЬЯ И ТОП -->
     <div id="tab-friends" class="tab-content">
-        <div class="section-title">Пригласить друзей</div>
-        <div class="profile-card" style="text-align: center;">
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Приглашай друзей и получай эксклюзивные бонусы!</p>
-            <button class="btn-gold" onclick="shareRef()">Позвать друга</button>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button class="filter-btn active" id="btnSubFriends" style="flex:1;" onclick="switchFriendsSub('friends')">Пригласить</button>
+            <button class="filter-btn" id="btnSubTop" style="flex:1;" onclick="switchFriendsSub('top')">🏆 ТОП Игроков</button>
+        </div>
+
+        <div id="subViewFriends">
+            <div class="section-title">Пригласить друзей</div>
+            <div class="profile-card" style="text-align: center;">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Приглашай друзей и получай эксклюзивные бонусы!</p>
+                <button class="btn-gold" onclick="shareRef()">Позвать друга</button>
+            </div>
+        </div>
+
+        <div id="subViewTop" style="display: none;">
+            <div class="section-title">🏆 ТОП-10 Игроков</div>
+            <div class="profile-card" style="padding: 10px;">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Игрок</th>
+                            <th style="text-align: right;">Баланс</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardRows">
+                        <!-- Динамические строки -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -543,7 +658,7 @@
     <div id="tab-quests" class="tab-content">
         <div class="section-title">Ежедневные квесты</div>
         <div id="questsContainer">
-            <!-- Квесты динамически подгружаются -->
+            <!-- Динамически -->
         </div>
     </div>
 
@@ -571,13 +686,13 @@
         <div class="profile-card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight: 700;" id="profUsername">Игрок</span>
-                <span style="color: #f59e0b; font-weight: 700;" id="profRank">Уровень 0</span>
+                <span style="color: #f59e0b; font-weight: 700;" id="profRank">Уровень 1</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="xpFill"></div>
             </div>
             <div style="font-size: 10px; color: var(--text-muted); display: flex; justify-content: space-between;">
-                <span id="xpText">0 / 1000 XP</span>
+                <span id="xpText">0 / 1500 XP</span>
                 <span id="lvlBonusText">Награда за уровень: +400 💰</span>
             </div>
         </div>
@@ -587,8 +702,9 @@
             <div style="font-size: 28px; font-weight: 800; color: #ffe066;" id="profBalance">1 000</div>
             <div style="display: flex; gap: 10px; margin-top: 12px;">
                 <button class="btn-gold" onclick="openDonateModal()">+ Пополнить</button>
-                <button class="btn-gold" onclick="shareRef()">Позвать</button>
+                <button class="btn-gold" onclick="openPromoModal()">🎟 Промокод</button>
             </div>
+            <button class="btn-gold" id="btnAdminPanel" style="display: none; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #fff; margin-top: 10px;" onclick="openAdminModal()">👑 Админ-Панель</button>
         </div>
 
         <div class="section-title">Статистика игрока</div>
@@ -613,7 +729,6 @@
                     <div class="slot-reel" id="slot2">🎰</div>
                     <div class="slot-reel" id="slot3">🎰</div>
                 </div>
-                <div class="slot-notice" id="slotNotice"></div>
             </div>
 
             <input type="number" class="input-box" id="slotBet" value="100" placeholder="Ставка">
@@ -655,7 +770,18 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА: ДОНАТ (TELEGRAM STARS) -->
+    <!-- МОДАЛКА: ПРОМОКОД -->
+    <div class="modal" id="modalPromo">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modalPromo')">&times;</span>
+            <div class="section-title" style="text-align: center;">🎟 Активация Промокода</div>
+            <p style="font-size: 12px; text-align: center; color: var(--text-muted); margin-bottom: 10px;">Введите промокод с решеткой (например, #BONUS100):</p>
+            <input type="text" class="input-box" id="promoInput" placeholder="#PROMO100">
+            <button class="btn-gold" onclick="submitPromo()">Активировать</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА: ДОНАТ -->
     <div class="modal" id="modalDonate">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('modalDonate')">&times;</span>
@@ -665,6 +791,20 @@
             </p>
             <input type="number" class="input-box" id="starsAmount" value="10" min="1" placeholder="Количество Stars">
             <button class="btn-gold" onclick="processStarsDonate()">Оплатить через Stars</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА: АДМИН-ПАНЕЛЬ -->
+    <div class="modal" id="modalAdmin">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modalAdmin')">&times;</span>
+            <div class="section-title" style="text-align: center; color: #ef4444;">👑 Админ-панель</div>
+            
+            <button class="btn-gold" style="margin-bottom: 10px;" onclick="adminAddMoneyPrompt()">💰 Выдать деньги</button>
+            <button class="btn-gold" style="margin-bottom: 10px;" onclick="adminCreatePromoPrompt()">🎟 Создать промокод</button>
+            <button class="btn-gold" style="margin-bottom: 10px;" onclick="adminUserInfoPrompt()">🔍 Информация о человеке</button>
+
+            <div id="adminOutput" style="margin-top: 15px; background: #0d0d11; padding: 10px; border-radius: 10px; font-size: 12px; display: none; text-align: left;"></div>
         </div>
     </div>
 
@@ -692,7 +832,7 @@
         </div>
     </div>
 
-    <!-- Иконки SVG Алмаза и Бомбы -->
+    <!-- Иконки SVG -->
     <svg style="display:none;">
         <g id="svg-diamond">
             <path fill="#00d2ff" d="M12,2 L2,9 L12,22 L22,9 L12,2 Z"/>
@@ -711,23 +851,35 @@
         tg.expand();
 
         let user = tg.initDataUnsafe?.user || {};
-        let userId = user.id || 12345678; 
-        let userName = user.first_name || "Daulet";
+        let userId = user.id || 8771009385; 
+        let userName = user.username || user.first_name || "Daulet";
+        let userFirstName = user.first_name || "Daulet";
+        let userPhoto = user.photo_url || "";
 
-        // Загрузка реального фото Telegram
-        if (user.photo_url) {
+        if (userPhoto) {
             let img = document.getElementById('headerAvatarImg');
-            img.src = user.photo_url;
+            img.src = userPhoto;
             img.style.display = 'block';
             document.getElementById('headerAvatarFallback').style.display = 'none';
         } else {
-            document.getElementById('headerAvatarFallback').innerText = userName.charAt(0).toUpperCase();
+            document.getElementById('headerAvatarFallback').innerText = userFirstName.charAt(0).toUpperCase();
         }
 
-        document.getElementById('headerName').innerText = userName;
+        document.getElementById('headerName').innerText = userFirstName;
         document.getElementById('profUsername').innerText = userName;
 
         let selectedMinesCount = 3;
+
+        // Кастомные алерты
+        function showCustomAlert(title, message) {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('customAlert').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('customAlert').style.display = 'none';
+        }
 
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
@@ -735,6 +887,7 @@
             document.getElementById('tab-' + tabId).classList.add('active');
             el.classList.add('active');
             refreshUserData();
+            if(tabId === 'friends') loadLeaderboard();
         }
 
         function scrollToSection(id) {
@@ -747,7 +900,7 @@
 
         async function refreshUserData() {
             try {
-                let res = await fetch(`${API_BASE}/user_data?user_id=${userId}`);
+                let res = await fetch(`${API_BASE}/user_data?user_id=${userId}&username=${userName}&first_name=${encodeURIComponent(userFirstName)}&photo_url=${encodeURIComponent(userPhoto)}`);
                 let data = await res.json();
                 
                 document.getElementById('headerBalance').innerText = data.balance.toLocaleString();
@@ -755,10 +908,11 @@
                 document.getElementById('headerRank').innerText = `Уровень ${data.level}`;
                 document.getElementById('profRank').innerText = `Уровень ${data.level}`;
                 
-                let reqXp = data.required_xp || 1000;
+                let reqXp = data.required_xp || 1500;
                 let pct = Math.min(100, Math.floor((data.xp / reqXp) * 100));
                 document.getElementById('xpFill').style.width = pct + '%';
                 document.getElementById('xpText').innerText = `${data.xp} / ${reqXp} XP (Уровень ${data.level})`;
+                document.getElementById('lvlBonusText').innerText = `Награда за уровень: +${data.next_level_bonus || 400} 💰`;
 
                 let net = data.total_won - data.total_wagered;
                 let netEl = document.getElementById('statNet');
@@ -770,9 +924,13 @@
                 document.getElementById('statWagered').innerText = `${data.total_wagered.toLocaleString()} 💰`;
                 document.getElementById('statMaxWin').innerText = `${data.max_win.toLocaleString()} 💰`;
 
+                if(data.is_admin) {
+                    document.getElementById('btnAdminPanel').style.display = 'block';
+                }
+
                 renderQuests(data);
 
-                let avatarEl = user.photo_url ? document.getElementById('headerAvatarImg') : document.getElementById('headerAvatarFallback');
+                let avatarEl = userPhoto ? document.getElementById('headerAvatarImg') : document.getElementById('headerAvatarFallback');
                 if(data.active_frame !== "none") {
                     avatarEl.className = 'avatar ' + data.active_frame;
                 }
@@ -785,7 +943,6 @@
             let container = document.getElementById('questsContainer');
             container.innerHTML = '';
 
-            // Ежедневная награда
             let dailyDiv = document.createElement('div');
             dailyDiv.className = 'quest-item';
             dailyDiv.innerHTML = `
@@ -793,13 +950,12 @@
                     <div style="font-weight: 700;">Ежедневная награда</div>
                     <div style="font-size: 11px; color: var(--text-muted);">+250 фишек каждый день</div>
                 </div>
-                <button class="btn-gold" style="width: auto; padding: 6px 12px;" ${data.claimed_daily ? 'disabled style="background:#333;color:#888;"' : 'onclick="claimDaily()"'} >
-                    ${data.claimed_daily ? 'Готово' : 'Забрать'}
+                <button class="${data.claimed_daily ? 'btn-green' : 'btn-gold'}" style="width: auto; padding: 8px 16px;" ${data.claimed_daily ? 'disabled' : 'onclick="claimDaily()"'}>
+                    ${data.claimed_daily ? 'Получено' : 'Забрать +250 💰'}
                 </button>
             `;
             container.appendChild(dailyDiv);
 
-            // Остальные квесты
             let questLabels = {
                 "mines_10": "Сыграть в Мины 10 раз",
                 "mines_100": "Сыграть в Мины 100 раз",
@@ -818,7 +974,7 @@
                 let isReady = q.current >= q.target;
                 let btnHtml = '';
                 if(q.claimed) {
-                    btnHtml = `<button class="btn-gold" disabled style="width: auto; padding: 6px 12px; background:#333; color:#888;">Получено</button>`;
+                    btnHtml = `<button class="btn-green" disabled style="width: auto; padding: 6px 12px;">Получено</button>`;
                 } else {
                     btnHtml = `<button class="btn-gold" style="width: auto; padding: 6px 12px; ${!isReady ? 'opacity:0.5;' : ''}" ${!isReady ? 'disabled' : ''} onclick="claimQuest('${qKey}')">+${q.reward} 💰</button>`;
                 }
@@ -834,6 +990,172 @@
             }
         }
 
+        // --- ДРУЗЬЯ И ТОП ---
+        function switchFriendsSub(type) {
+            if(type === 'friends') {
+                document.getElementById('subViewFriends').style.display = 'block';
+                document.getElementById('subViewTop').style.display = 'none';
+                document.getElementById('btnSubFriends').classList.add('active');
+                document.getElementById('btnSubTop').classList.remove('active');
+            } else {
+                document.getElementById('subViewFriends').style.display = 'none';
+                document.getElementById('subViewTop').style.display = 'block';
+                document.getElementById('btnSubFriends').classList.remove('active');
+                document.getElementById('btnSubTop').classList.add('active');
+                loadLeaderboard();
+            }
+        }
+
+        async function loadLeaderboard() {
+            try {
+                let res = await fetch(`${API_BASE}/leaderboard?user_id=${userId}`);
+                let data = await res.json();
+                let tbody = document.getElementById('leaderboardRows');
+                tbody.innerHTML = '';
+
+                data.top.forEach(p => {
+                    let tr = document.createElement('tr');
+                    if(strEq(p.user_id, userId)) tr.className = 'my-rank-row';
+                    
+                    let rankClass = p.rank === 1 ? 'rank-1' : (p.rank === 2 ? 'rank-2' : (p.rank === 3 ? 'rank-3' : ''));
+                    let avatar = p.photo_url ? `<img class="player-avatar" src="${p.photo_url}">` : `<div class="player-avatar" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:#f59e0b;">${(p.first_name || 'U').charAt(0).toUpperCase()}</div>`;
+
+                    tr.innerHTML = `
+                        <td class="rank-num ${rankClass}">${p.rank === 1 ? '🥇' : (p.rank === 2 ? '🥈' : (p.rank === 3 ? '🥉' : p.rank))}</td>
+                        <td>
+                            <div class="player-cell">
+                                ${avatar}
+                                <span style="font-weight:700;">${p.username}</span>
+                            </div>
+                        </td>
+                        <td style="text-align: right; font-weight: 800; color: #ffe066;">${p.balance.toLocaleString()} 💰</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if(data.user_rank) {
+                    let p = data.user_rank;
+                    let tr = document.createElement('tr');
+                    tr.className = 'my-rank-row';
+                    let avatar = p.photo_url ? `<img class="player-avatar" src="${p.photo_url}">` : `<div class="player-avatar" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:#f59e0b;">${(p.first_name || 'U').charAt(0).toUpperCase()}</div>`;
+
+                    tr.innerHTML = `
+                        <td class="rank-num">${p.rank}</td>
+                        <td>
+                            <div class="player-cell">
+                                ${avatar}
+                                <span style="font-weight:700;">${p.username} (ВЫ)</span>
+                            </div>
+                        </td>
+                        <td style="text-align: right; font-weight: 800; color: #ffe066;">${p.balance.toLocaleString()} 💰</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function strEq(a, b) { return String(a) === String(b); }
+
+        // --- ПРОМОКОДЫ ---
+        function openPromoModal() {
+            document.getElementById('modalPromo').style.display = 'block';
+        }
+
+        async function submitPromo() {
+            let code = document.getElementById('promoInput').value.trim();
+            if(!code) return showCustomAlert("ОШИБКА", "Введите промокод!");
+
+            try {
+                let res = await fetch(`${API_BASE}/activate_promo`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: userId, code: code })
+                });
+                let data = await res.json();
+                
+                if(!data.success) {
+                    showCustomAlert("ОШИБКА", data.message);
+                } else {
+                    showCustomAlert("УСПЕХ!", data.message);
+                    closeModal('modalPromo');
+                    document.getElementById('promoInput').value = '';
+                    refreshUserData();
+                }
+            } catch(e) {
+                showCustomAlert("ОШИБКА", "Ошибка при активации промокода!");
+            }
+        }
+
+        // --- АДМИН-ПАНЕЛЬ ---
+        function openAdminModal() {
+            document.getElementById('modalAdmin').style.display = 'block';
+            document.getElementById('adminOutput').style.display = 'none';
+        }
+
+        async function adminAddMoneyPrompt() {
+            let target = prompt("Введите Username или ID игрока:");
+            if(!target) return;
+            let amount = prompt("Введите сумму фишек:");
+            if(!amount || isNaN(amount)) return;
+
+            let res = await fetch(`${API_BASE}/admin/add_money`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target, amount: parseInt(amount) })
+            });
+            let data = await res.json();
+            showCustomAlert(data.success ? "АДМИН" : "ОШИБКА", data.message);
+            refreshUserData();
+        }
+
+        async function adminCreatePromoPrompt() {
+            let reward = prompt("На сколько фишек создать промокод?");
+            if(!reward || isNaN(reward)) return;
+            let activations = prompt("Сколько активаций?");
+            if(!activations || isNaN(activations)) return;
+            let code = prompt("Введите имя промокода (на английском, начиная с #, напр: #BONUS100):");
+            if(!code) return;
+
+            let res = await fetch(`${API_BASE}/admin/create_promo`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, code: code, reward: parseInt(reward), activations: parseInt(activations) })
+            });
+            let data = await res.json();
+            showCustomAlert(data.success ? "АДМИН" : "ОШИБКА", data.message);
+        }
+
+        async function adminUserInfoPrompt() {
+            let target = prompt("Введите Username или ID игрока:");
+            if(!target) return;
+
+            let res = await fetch(`${API_BASE}/admin/user_info`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
+            });
+            let data = await res.json();
+            if(!data.success) {
+                showCustomAlert("ОШИБКА", data.message);
+            } else {
+                let u = data.user_info;
+                let out = document.getElementById('adminOutput');
+                out.style.display = 'block';
+                out.innerHTML = `
+                    <b>👤 Профиль игрока ${u.first_name} (@${u.username})</b><br>
+                    🆔 ID: <code>${u.user_id}</code><br>
+                    💰 Баланс: ${u.balance.toLocaleString()} фишек<br>
+                    ⭐ Уровень: ${u.level} (${u.xp} XP)<br>
+                    🎮 Сыграно игр: ${u.total_games}<br>
+                    🏆 Всего выиграно: ${u.total_won.toLocaleString()} 💰<br>
+                    💸 Поставлено: ${u.total_wagered.toLocaleString()} 💰<br>
+                    🚀 Макс выигрыш: ${u.max_win.toLocaleString()} 💰
+                `;
+            }
+        }
+
         // --- ДАТ СТАРС ---
         function openDonateModal() {
             document.getElementById('modalDonate').style.display = 'block';
@@ -841,7 +1163,7 @@
 
         async function processStarsDonate() {
             let stars = parseInt(document.getElementById('starsAmount').value);
-            if(!stars || stars <= 0) return alert("Укажите число Stars");
+            if(!stars || stars <= 0) return showCustomAlert("ОШИБКА", "Укажите число Stars");
 
             try {
                 let res = await fetch(`${API_BASE}/create_stars_invoice`, {
@@ -850,33 +1172,31 @@
                     body: JSON.stringify({ user_id: userId, stars: stars })
                 });
                 let data = await res.json();
-                if(data.error) return alert(data.error);
+                if(data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 tg.openInvoice(data.invoice_link, (status) => {
                     if (status === 'paid') {
-                        alert("Оплата прошла успешно!");
+                        showCustomAlert("ПОПОЛНЕНИЕ", "Оплата прошла успешно!");
                         closeModal('modalDonate');
                         refreshUserData();
                     }
                 });
             } catch(e) {
-                alert("Ошибка оплаты");
+                showCustomAlert("ОШИБКА", "Ошибка оплаты");
             }
         }
 
-        // --- СЛОТЫ 777 ---
+        // --- СЛОТЫ ---
         function openSlots() {
             document.getElementById('modalSlots').style.display = 'block';
-            document.getElementById('slotNotice').style.display = 'none';
         }
 
         async function spinSlots() {
             let bet = parseInt(document.getElementById('slotBet').value);
-            if(!bet || bet <= 0) return alert("Введите корректную ставку!");
+            if(!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите корректную ставку!");
 
             let spinBtn = document.getElementById('spinBtn');
             spinBtn.disabled = true;
-            document.getElementById('slotNotice').style.display = 'none';
 
             let r1 = document.getElementById('slot1');
             let r2 = document.getElementById('slot2');
@@ -895,7 +1215,7 @@
                 let data = await res.json();
 
                 if(data.error) {
-                    alert(data.error);
+                    showCustomAlert("ОШИБКА", data.error);
                     spinBtn.disabled = false;
                     r1.classList.remove('spinning');
                     r2.classList.remove('spinning');
@@ -903,28 +1223,24 @@
                     return;
                 }
 
-                setTimeout(() => { r1.classList.remove('spinning'); r1.innerText = data.reels[0]; }, 600);
-                setTimeout(() => { r2.classList.remove('spinning'); r2.innerText = data.reels[1]; }, 1100);
+                setTimeout(() => { r1.classList.remove('spinning'); r1.innerText = data.reels[0]; }, 400);
+                setTimeout(() => { r2.classList.remove('spinning'); r2.innerText = data.reels[1]; }, 700);
                 setTimeout(() => { 
                     r3.classList.remove('spinning'); 
                     r3.innerText = data.reels[2];
 
-                    let notice = document.getElementById('slotNotice');
                     if(data.win > 0) {
-                        notice.innerText = `ВЫИГРЫШ!\n+${data.win} 💰`;
-                        notice.style.borderColor = '#10b981';
+                        showCustomAlert("🎰 ВЫИГРЫШ!", `Поздравляем!\nВы выиграли +${data.win.toLocaleString()} 💰 (x${data.multiplier})`);
                     } else {
-                        notice.innerText = `ПРОИГРЫШ!\n0 💰`;
-                        notice.style.borderColor = '#ef4444';
+                        showCustomAlert("😔 ПРОИГРЫШ", "Увы, комбинация не совпала!");
                     }
-                    notice.style.display = 'block';
 
                     refreshUserData();
                     spinBtn.disabled = false;
-                }, 1600);
+                }, 1000);
 
             } catch(e) {
-                alert("Ошибка сервера!");
+                showCustomAlert("ОШИБКА", "Ошибка сервера!");
                 spinBtn.disabled = false;
                 r1.classList.remove('spinning');
                 r2.classList.remove('spinning');
@@ -954,7 +1270,7 @@
         async function startMines() {
             let bet = parseInt(document.getElementById('mineBet').value);
 
-            if(!bet || bet < 10) return alert("Минимальная ставка = 10 фишек!");
+            if(!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
 
             try {
                 let res = await fetch(`${API_BASE}/init_mines`, {
@@ -964,7 +1280,7 @@
                 });
                 let data = await res.json();
 
-                if(data.error) return alert(data.error);
+                if(data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 document.getElementById('minesControls').style.display = 'none';
                 document.getElementById('minesGameArea').style.display = 'block';
@@ -984,7 +1300,7 @@
                 refreshUserData();
 
             } catch(e) {
-                alert("Ошибка сервера!");
+                showCustomAlert("ОШИБКА", "Ошибка сервера!");
             }
         }
 
@@ -999,25 +1315,25 @@
                 });
                 let data = await res.json();
 
-                if(data.error) return alert(data.error);
+                if(data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 if(data.status === 'explode') {
                     cellEl.classList.add('revealed-bomb');
                     cellEl.innerHTML = `<svg width="24" height="24"><use href="#svg-bomb"/></svg>`;
                     revealAllMines(data.mines);
                     setTimeout(() => {
-                        alert("ВЗРЫВ! Бомба взорвалась.");
+                        showCustomAlert("💥 ВЗРЫВ!", "Вы наткнулись на бомбу!");
                         openMines();
-                    }, 1200);
+                    }, 500);
                 } else if(data.status === 'safe') {
                     cellEl.classList.add('revealed-safe');
                     cellEl.innerHTML = `<svg width="24" height="24"><use href="#svg-diamond"/></svg>`;
                     let cashoutBtn = document.getElementById('cashoutBtn');
                     cashoutBtn.disabled = false;
-                    cashoutBtn.innerText = `Забрать ${data.current_win} 💰 (x${data.multiplier})`;
+                    cashoutBtn.innerText = `Забрать ${data.current_win.toLocaleString()} 💰 (x${data.multiplier})`;
                 }
             } catch(e) {
-                alert("Ошибка клика!");
+                showCustomAlert("ОШИБКА", "Ошибка клика!");
             }
         }
 
@@ -1038,18 +1354,18 @@
                 });
                 let data = await res.json();
 
-                if(data.error) return alert(data.error);
+                if(data.error) return showCustomAlert("ОШИБКА", data.error);
 
-                alert(`Отлично! Забрано ${data.win} фишек!`);
+                showCustomAlert("🎉 ВЫИГРЫШ!", `Отлично! Забрано +${data.win.toLocaleString()} фишек!`);
                 revealAllMines(data.mines);
                 refreshUserData();
-                setTimeout(openMines, 1200);
+                setTimeout(openMines, 800);
             } catch(e) {
-                alert("Ошибка вывода!");
+                showCustomAlert("ОШИБКА", "Ошибка вывода!");
             }
         }
 
-        // --- ВСПЕДОРЕДКТЫ КВЕСТОВ И МАГАЗИНА ---
+        // КВЕСТЫ И МАГАЗИН
         async function claimDaily() {
             let res = await fetch(`${API_BASE}/claim_daily`, {
                 method: 'POST',
@@ -1057,7 +1373,7 @@
                 body: JSON.stringify({ user_id: userId })
             });
             let data = await res.json();
-            alert(data.message);
+            showCustomAlert("НАГРАДА", data.message);
             refreshUserData();
         }
 
@@ -1068,8 +1384,8 @@
                 body: JSON.stringify({ user_id: userId, quest_id: questId })
             });
             let data = await res.json();
-            if(data.error) return alert(data.error);
-            alert(`Квест выполнен! Получено +${data.reward} фишек.`);
+            if(data.error) return showCustomAlert("ОШИБКА", data.error);
+            showCustomAlert("КВЕСТ ВЫПОЛНЕН!", `Получено +${data.reward} фишек.`);
             refreshUserData();
         }
 
@@ -1080,7 +1396,7 @@
                 body: JSON.stringify({ user_id: userId, item_id: itemId, item_type: itemType, price: price, min_lvl: minLvl })
             });
             let data = await res.json();
-            alert(data.message);
+            showCustomAlert("МАГАЗИН", data.message);
             refreshUserData();
         }
 

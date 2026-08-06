@@ -1489,12 +1489,15 @@
     </svg>
 
     <script>
-        // ==============================
-        // 1. CONFIG & GLOBALS
-        // ==============================
+        // ============================================================
+        // 1. КОНФИГУРАЦИЯ
+        // ============================================================
         const API_BASE = "https://a48794-5d18.e.jrnm.app/api";
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // ПОЛУЧАЕМ initData ДЛЯ ПЕРЕДАЧИ НА СЕРВЕР
+        const INIT_DATA = window.Telegram.WebApp.initData;
 
         let user = tg.initDataUnsafe?.user || {};
         let userId = user.id || 8771009385;
@@ -1505,13 +1508,51 @@
         let selectedMinesCount = 3;
         let chatOpen = false;
 
-        // ==============================
-        // 2. ACCESS VERIFICATION
-        // ==============================
-        async function verifyAccess() {
+        // ============================================================
+        // 2. API ЗАПРОСЫ С ЗАЩИТОЙ
+        // ============================================================
+        async function apiRequest(url, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-Telegram-Init-Data': INIT_DATA,
+                ...options.headers
+            };
+
             try {
-                let res = await fetch(`${API_BASE}/verify?user_id=${userId}`);
-                let data = await res.json();
+                const response = await fetch(url, {
+                    ...options,
+                    headers: headers
+                });
+
+                if (response.status === 403) {
+                    const data = await response.json();
+                    showCustomAlert("ДОСТУП ЗАПРЕЩЁН", data.message || "Вход только через официальный бот Telegram!");
+                    document.getElementById('accessDenied').style.display = 'flex';
+                    return null;
+                }
+
+                return response;
+            } catch(e) {
+                console.error('API Error:', e);
+                showCustomAlert("ОШИБКА", "Сервер недоступен");
+                return null;
+            }
+        }
+
+        // ============================================================
+        // 3. ПРОВЕРКА ДОСТУПА
+        // ============================================================
+        async function verifyAccess() {
+            if (!INIT_DATA) {
+                document.getElementById('accessDenied').style.display = 'flex';
+                document.getElementById('accessDenied').querySelector('p').innerText = 'Вход доступен только через официальный бот Telegram';
+                return false;
+            }
+
+            try {
+                const res = await apiRequest(`${API_BASE}/verify?user_id=${userId}`);
+                if (!res) return false;
+                const data = await res.json();
                 if (!data.valid) {
                     document.getElementById('accessDenied').style.display = 'flex';
                     document.getElementById('accessDenied').querySelector('p').innerText = data.message || 'Вход доступен только через официальный бот Telegram';
@@ -1524,9 +1565,9 @@
             }
         }
 
-        // ==============================
-        // 3. INIT
-        // ==============================
+        // ============================================================
+        // 4. ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
         (async function init() {
             const ok = await verifyAccess();
             if (!ok) return;
@@ -1549,9 +1590,9 @@
             setInterval(loadChatMessages, 5000);
         })();
 
-        // ==============================
-        // 4. UI HELPERS
-        // ==============================
+        // ============================================================
+        // 5. UI ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        // ============================================================
         function showCustomAlert(title, message) {
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
@@ -1612,13 +1653,14 @@
             }
         }
 
-        // ==============================
-        // 5. USER DATA
-        // ==============================
+        // ============================================================
+        // 6. ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
+        // ============================================================
         async function refreshUserData() {
             try {
-                let res = await fetch(`${API_BASE}/user_data?user_id=${userId}&username=${userName}&first_name=${encodeURIComponent(userFirstName)}&photo_url=${encodeURIComponent(userPhoto)}`);
-                let data = await res.json();
+                const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}&username=${userName}&first_name=${encodeURIComponent(userFirstName)}&photo_url=${encodeURIComponent(userPhoto)}`);
+                if (!res) return;
+                const data = await res.json();
 
                 if (data.bot_username) botUsername = data.bot_username;
 
@@ -1657,7 +1699,6 @@
                     avatarEl.className = 'avatar ' + data.active_frame;
                 }
 
-                // Update slot balance if modal open
                 let slotBalance = document.getElementById('slotBalanceDisplay');
                 if (slotBalance) slotBalance.innerText = data.balance.toLocaleString();
 
@@ -1715,13 +1756,14 @@
             }
         }
 
-        // ==============================
-        // 6. LEADERBOARD
-        // ==============================
+        // ============================================================
+        // 7. ТОП ИГРОКОВ
+        // ============================================================
         async function loadLeaderboard() {
             try {
-                let res = await fetch(`${API_BASE}/leaderboard?user_id=${userId}`);
-                let data = await res.json();
+                const res = await apiRequest(`${API_BASE}/leaderboard?user_id=${userId}`);
+                if (!res) return;
+                const data = await res.json();
                 let tbody = document.getElementById('leaderboardRows');
                 tbody.innerHTML = '';
 
@@ -1757,18 +1799,18 @@
             }
         }
 
-        // ==============================
-        // 7. REFERRAL
-        // ==============================
+        // ============================================================
+        // 8. РЕФЕРАЛКА
+        // ============================================================
         function shareRef() {
             let refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
             let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Играй со мной в spnxplay! Получи +1000 бонусных фишек 🎁")}`;
             tg.openTelegramLink(shareUrl);
         }
 
-        // ==============================
-        // 8. PROMO
-        // ==============================
+        // ============================================================
+        // 9. ПРОМОКОДЫ
+        // ============================================================
         function openPromoModal() {
             document.getElementById('modalPromo').style.display = 'block';
         }
@@ -1777,12 +1819,12 @@
             let code = document.getElementById('promoInput').value.trim();
             if (!code) return showCustomAlert("ОШИБКА", "Введите промокод!");
             try {
-                let res = await fetch(`${API_BASE}/activate_promo`, {
+                const res = await apiRequest(`${API_BASE}/activate_promo`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, code: code })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (!data.success) {
                     showCustomAlert("ОШИБКА", data.message);
                 } else {
@@ -1796,9 +1838,9 @@
             }
         }
 
-        // ==============================
-        // 9. ADMIN
-        // ==============================
+        // ============================================================
+        // 10. АДМИН
+        // ============================================================
         function openAdminModal() {
             document.getElementById('modalAdmin').style.display = 'block';
             document.getElementById('adminOutput').style.display = 'none';
@@ -1809,12 +1851,12 @@
             if (!target) return;
             let amount = prompt("Сумма фишек:");
             if (!amount || isNaN(amount)) return;
-            let res = await fetch(`${API_BASE}/admin/add_money`, {
+            const res = await apiRequest(`${API_BASE}/admin/add_money`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ admin_id: userId, admin_username: userName, target, amount: parseInt(amount) })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             showCustomAlert(data.success ? "АДМИН" : "ОШИБКА", data.message);
             refreshUserData();
         }
@@ -1826,24 +1868,24 @@
             if (!activations || isNaN(activations)) return;
             let code = prompt("Имя промокода (#BONUS100):");
             if (!code) return;
-            let res = await fetch(`${API_BASE}/admin/create_promo`, {
+            const res = await apiRequest(`${API_BASE}/admin/create_promo`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ admin_id: userId, admin_username: userName, code, reward: parseInt(reward), activations: parseInt(activations) })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             showCustomAlert(data.success ? "АДМИН" : "ОШИБКА", data.message);
         }
 
         async function adminUserInfoPrompt() {
             let target = prompt("Введите Username или ID:");
             if (!target) return;
-            let res = await fetch(`${API_BASE}/admin/user_info`, {
+            const res = await apiRequest(`${API_BASE}/admin/user_info`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ admin_id: userId, admin_username: userName, target })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             if (!data.success) {
                 showCustomAlert("ОШИБКА", data.message);
             } else {
@@ -1868,18 +1910,18 @@
         async function adminUnmutePrompt() {
             let target = prompt("Введите Username или ID для размута:");
             if (!target) return;
-            let res = await fetch(`${API_BASE}/chat/unmute`, {
+            const res = await apiRequest(`${API_BASE}/chat/unmute`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ admin_id: userId, admin_username: userName, target })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
         }
 
-        // ==============================
-        // 10. DONATE (STARS)
-        // ==============================
+        // ============================================================
+        // 11. ОПЛАТА STARS
+        // ============================================================
         function openDonateModal() {
             document.getElementById('modalDonate').style.display = 'block';
         }
@@ -1888,12 +1930,12 @@
             let stars = parseInt(document.getElementById('starsAmount').value);
             if (!stars || stars <= 0) return showCustomAlert("ОШИБКА", "Укажите число Stars");
             try {
-                let res = await fetch(`${API_BASE}/create_stars_invoice`, {
+                const res = await apiRequest(`${API_BASE}/create_stars_invoice`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, stars: stars })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
                 tg.openInvoice(data.invoice_link, (status) => {
                     if (status === 'paid') {
@@ -1907,9 +1949,9 @@
             }
         }
 
-        // ==============================
-        // 11. SLOTS (NEW)
-        // ==============================
+        // ============================================================
+        // 12. СЛОТЫ
+        // ============================================================
         function openSlots() {
             document.getElementById('modalSlots').style.display = 'block';
             refreshUserData();
@@ -1963,23 +2005,27 @@
             let r2 = document.getElementById('slot2');
             let r3 = document.getElementById('slot3');
 
-            // Reset
             r1.classList.remove('win-pulse', 'bounce');
             r2.classList.remove('win-pulse', 'bounce');
             r3.classList.remove('win-pulse', 'bounce');
 
-            // Start spinning with blur
             r1.classList.add('spinning');
             r2.classList.add('spinning');
             r3.classList.add('spinning');
 
             try {
-                let res = await fetch(`${API_BASE}/play_slots`, {
+                const res = await apiRequest(`${API_BASE}/play_slots`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, bet: bet })
                 });
-                let data = await res.json();
+                if (!res) {
+                    spinBtn.disabled = false;
+                    r1.classList.remove('spinning');
+                    r2.classList.remove('spinning');
+                    r3.classList.remove('spinning');
+                    return;
+                }
+                const data = await res.json();
 
                 if (data.error) {
                     showCustomAlert("ОШИБКА", data.error);
@@ -1990,7 +2036,6 @@
                     return;
                 }
 
-                // Stop reels with delay + bounce
                 setTimeout(() => {
                     r1.classList.remove('spinning');
                     r1.innerText = data.reels[0];
@@ -2012,7 +2057,6 @@
                     setTimeout(() => r3.classList.remove('bounce'), 400);
 
                     if (data.win > 0) {
-                        // Win animation
                         r1.classList.add('win-pulse');
                         r2.classList.add('win-pulse');
                         r3.classList.add('win-pulse');
@@ -2040,9 +2084,9 @@
             }
         }
 
-        // ==============================
-        // 12. MINES
-        // ==============================
+        // ============================================================
+        // 13. МИНЫ
+        // ============================================================
         function openMines() {
             document.getElementById('modalMines').style.display = 'block';
             document.getElementById('minesControls').style.display = 'block';
@@ -2065,12 +2109,12 @@
             let bet = parseInt(document.getElementById('mineBet').value);
             if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
             try {
-                let res = await fetch(`${API_BASE}/init_mines`, {
+                const res = await apiRequest(`${API_BASE}/init_mines`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, bet, mines_count: selectedMinesCount })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 document.getElementById('minesControls').style.display = 'none';
@@ -2097,12 +2141,12 @@
         async function clickMine(index, cellEl) {
             if (cellEl.classList.contains('revealed-safe') || cellEl.classList.contains('revealed-bomb')) return;
             try {
-                let res = await fetch(`${API_BASE}/click_mine`, {
+                const res = await apiRequest(`${API_BASE}/click_mine`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, cell_index: index })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 if (data.status === 'explode') {
@@ -2135,12 +2179,12 @@
 
         async function cashoutMines() {
             try {
-                let res = await fetch(`${API_BASE}/cashout_mines`, {
+                const res = await apiRequest(`${API_BASE}/cashout_mines`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
                 showCustomAlert("🎉 ВЫИГРЫШ!", `Отлично! Забрано +${data.win.toLocaleString()} фишек!`);
                 revealAllMines(data.mines);
@@ -2151,9 +2195,9 @@
             }
         }
 
-        // ==============================
-        // 13. PLINKO
-        // ==============================
+        // ============================================================
+        // 14. ПЛИНКО
+        // ============================================================
         function openPlinko() {
             document.getElementById('modalPlinko').style.display = 'block';
             initPlinkoPins();
@@ -2183,12 +2227,15 @@
             let startBtn = document.getElementById('plinkoStartBtn');
             startBtn.disabled = true;
             try {
-                let res = await fetch(`${API_BASE}/play_plinko`, {
+                const res = await apiRequest(`${API_BASE}/play_plinko`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, bet })
                 });
-                let data = await res.json();
+                if (!res) {
+                    startBtn.disabled = false;
+                    return;
+                }
+                const data = await res.json();
                 if (data.error) {
                     showCustomAlert("ОШИБКА", data.error);
                     startBtn.disabled = false;
@@ -2232,9 +2279,9 @@
             }, 120);
         }
 
-        // ==============================
-        // 14. BLACKJACK
-        // ==============================
+        // ============================================================
+        // 15. БЛЭКДЖЕК
+        // ============================================================
         function openBlackjack() {
             document.getElementById('modalBlackjack').style.display = 'block';
             document.getElementById('bjControlsInit').style.display = 'block';
@@ -2261,12 +2308,12 @@
             let bet = parseInt(document.getElementById('bjBet').value);
             if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
             try {
-                let res = await fetch(`${API_BASE}/blackjack/start`, {
+                const res = await apiRequest(`${API_BASE}/blackjack/start`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, bet })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 document.getElementById('bjControlsInit').style.display = 'none';
@@ -2291,12 +2338,12 @@
 
         async function bjHit() {
             try {
-                let res = await fetch(`${API_BASE}/blackjack/hit`, {
+                const res = await apiRequest(`${API_BASE}/blackjack/hit`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 let pContainer = document.getElementById('playerCards');
@@ -2316,12 +2363,12 @@
 
         async function bjStand() {
             try {
-                let res = await fetch(`${API_BASE}/blackjack/stand`, {
+                const res = await apiRequest(`${API_BASE}/blackjack/stand`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 let dContainer = document.getElementById('dealerCards');
@@ -2344,12 +2391,12 @@
 
         async function bjDouble() {
             try {
-                let res = await fetch(`${API_BASE}/blackjack/double`, {
+                const res = await apiRequest(`${API_BASE}/blackjack/double`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
                 let pContainer = document.getElementById('playerCards');
@@ -2375,9 +2422,9 @@
             }
         }
 
-        // ==============================
-        // 15. ARENA
-        // ==============================
+        // ============================================================
+        // 16. АРЕНА
+        // ============================================================
         function openArena() {
             document.getElementById('modalArena').style.display = 'block';
             updateArenaState();
@@ -2385,8 +2432,9 @@
 
         async function updateArenaState() {
             try {
-                let res = await fetch(`${API_BASE}/arena/state`);
-                let data = await res.json();
+                const res = await apiRequest(`${API_BASE}/arena/state`);
+                if (!res) return;
+                const data = await res.json();
                 document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
 
                 let list = document.getElementById('arenaPlayersList');
@@ -2425,12 +2473,12 @@
             let bet = parseInt(document.getElementById('arenaBet').value);
             if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
             try {
-                let res = await fetch(`${API_BASE}/arena/join`, {
+                const res = await apiRequest(`${API_BASE}/arena/join`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId, bet })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.error) return showCustomAlert("ОШИБКА", data.error);
                 showCustomAlert("PvP АРЕНА", "Вы успешно вступили в стол!");
                 updateArenaState();
@@ -2444,8 +2492,12 @@
             let spinBtn = document.getElementById('arenaSpinBtn');
             spinBtn.disabled = true;
             try {
-                let res = await fetch(`${API_BASE}/arena/spin`, { method: 'POST' });
-                let data = await res.json();
+                const res = await apiRequest(`${API_BASE}/arena/spin`, { method: 'POST' });
+                if (!res) {
+                    spinBtn.disabled = false;
+                    return;
+                }
+                const data = await res.json();
                 if (data.error) {
                     showCustomAlert("ОШИБКА", data.error);
                     spinBtn.disabled = false;
@@ -2471,49 +2523,49 @@
             }
         }
 
-        // ==============================
-        // 16. QUESTS
-        // ==============================
+        // ============================================================
+        // 17. КВЕСТЫ
+        // ============================================================
         async function claimDaily() {
-            let res = await fetch(`${API_BASE}/claim_daily`, {
+            const res = await apiRequest(`${API_BASE}/claim_daily`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             showCustomAlert("НАГРАДА", data.message);
             refreshUserData();
         }
 
         async function claimQuest(questId) {
-            let res = await fetch(`${API_BASE}/claim_quest`, {
+            const res = await apiRequest(`${API_BASE}/claim_quest`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId, quest_id: questId })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             if (data.error) return showCustomAlert("ОШИБКА", data.error);
             showCustomAlert("КВЕСТ ВЫПОЛНЕН!", `Получено +${data.reward} фишек.`);
             refreshUserData();
         }
 
-        // ==============================
-        // 17. SHOP
-        // ==============================
+        // ============================================================
+        // 18. МАГАЗИН
+        // ============================================================
         async function buyItem(itemId, itemType, price, minLvl) {
-            let res = await fetch(`${API_BASE}/buy_item`, {
+            const res = await apiRequest(`${API_BASE}/buy_item`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId, item_id: itemId, item_type: itemType, price, min_lvl: minLvl })
             });
-            let data = await res.json();
+            if (!res) return;
+            const data = await res.json();
             showCustomAlert("МАГАЗИН", data.message);
             refreshUserData();
         }
 
-        // ==============================
-        // 18. CHAT
-        // ==============================
+        // ============================================================
+        // 19. ЧАТ
+        // ============================================================
         function toggleChat() {
             if (chatOpen) {
                 closeChat();
@@ -2543,12 +2595,12 @@
 
         async function loadChatMessages() {
             try {
-                let res = await fetch(`${API_BASE}/chat/messages`);
-                let data = await res.json();
+                const res = await apiRequest(`${API_BASE}/chat/messages`);
+                if (!res) return;
+                const data = await res.json();
                 let container = document.getElementById('chatMessages');
                 container.innerHTML = '';
 
-                // Update title
                 let title = document.getElementById('chatTitle');
                 title.innerText = data.settings?.name || 'Общий чат';
                 document.getElementById('chatOnline').innerText = `(${data.messages?.length || 0} онлайн)`;
@@ -2587,16 +2639,16 @@
             if (!text) return;
 
             try {
-                let res = await fetch(`${API_BASE}/chat/send`, {
+                const res = await apiRequest(`${API_BASE}/chat/send`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: userId,
                         text: text,
                         type: 'text'
                     })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.success) {
                     input.value = '';
                     loadChatMessages();
@@ -2624,12 +2676,12 @@
         async function shareBalance() {
             document.getElementById('chatPlusMenu').classList.remove('open');
             try {
-                let res = await fetch(`${API_BASE}/share_balance`, {
+                const res = await apiRequest(`${API_BASE}/share_balance`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
                 });
-                let data = await res.json();
+                if (!res) return;
+                const data = await res.json();
                 if (data.success) {
                     showCustomAlert("✅ УСПЕХ", "Картинка профиля отправлена в чат!");
                     loadChatMessages();
@@ -2641,9 +2693,9 @@
             }
         }
 
-        // ==============================
-        // 19. CHAT DRAG TO CLOSE
-        // ==============================
+        // ============================================================
+        // 20. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
+        // ============================================================
         (function initChatDrag() {
             const sheet = document.getElementById('chatSheet');
             const header = document.getElementById('chatHeader');
@@ -2678,9 +2730,9 @@
             }, { passive: true });
         })();
 
-        // ==============================
-        // 20. KEYBOARD SHORTCUTS
-        // ==============================
+        // ============================================================
+        // 21. КЛАВИШИ
+        // ============================================================
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (document.getElementById('chatSheet').classList.contains('open')) {
@@ -2693,6 +2745,7 @@
         });
 
         console.log('🚀 spnxplay Mini App loaded successfully!');
+        console.log('🔒 Защита включена: initData передаётся на сервер');
     </script>
 </body>
 </html>

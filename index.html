@@ -20,6 +20,7 @@
             --chat-bg: #121214;
             --chat-own: #f59e0b;
             --chat-other: #1e1e2a;
+            --guest-color: #6b7280;
         }
 
         * {
@@ -56,6 +57,18 @@
         #accessDenied p { color: var(--text-muted); font-size: 16px; line-height: 1.6; max-width: 320px; }
         #accessDenied .btn-gold { margin-top: 25px; max-width: 250px; }
 
+        /* ===== GUEST BADGE ===== */
+        .guest-badge {
+            background: rgba(107, 114, 128, 0.3);
+            border: 1px solid var(--guest-color);
+            color: var(--guest-color);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
         .header-bar {
             display: flex;
             justify-content: space-between;
@@ -75,6 +88,7 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: 800; color: #f59e0b;
         }
+        .avatar.guest { border-color: var(--guest-color); color: var(--guest-color); }
         .avatar.frame-sapphire { border-color: #00d2ff; box-shadow: 0 0 10px #00d2ff; }
         .avatar.frame-obsidian { border-color: #a100ff; box-shadow: 0 0 10px #a100ff; }
 
@@ -92,6 +106,7 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+        .balance-pill.guest { border-color: var(--guest-color); color: var(--guest-color); background: rgba(107,114,128,0.1); }
         .balance-pill:active { transform: scale(0.95); }
 
         .tab-content { display: none; padding: 20px; animation: fadeIn 0.25s ease; }
@@ -120,6 +135,15 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         .game-card:active { transform: scale(0.96); }
+        .game-card.guest-card { opacity: 0.6; cursor: not-allowed; }
+        .game-card.guest-card:active { transform: none; }
+        .game-card .guest-lock {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 14px;
+            color: var(--guest-color);
+        }
         .card-slots { background: linear-gradient(135deg, #2a085c 0%, #4c1d95 100%); box-shadow: 0 6px 20px rgba(76, 29, 149, 0.4); }
         .card-mines { background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%); box-shadow: 0 6px 20px rgba(185, 28, 28, 0.4); }
         .card-plinko { background: linear-gradient(135deg, #064e3b 0%, #047857 100%); box-shadow: 0 6px 20px rgba(4, 120, 87, 0.4); }
@@ -152,6 +176,17 @@
         .nav-item.active { color: #f59e0b; }
         .nav-item svg { width: 24px; height: 24px; fill: currentColor; transition: transform 0.15s; }
         .nav-item.active svg { transform: translateY(-2px); filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6)); }
+        .nav-item .badge {
+            position: absolute;
+            top: -4px;
+            right: -8px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 8px;
+            padding: 1px 5px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
 
         /* ===== CHAT ===== */
         #chatFab {
@@ -211,8 +246,11 @@
         }
         .chat-input-area input { flex: 1; background: #1a1a24; border: none; border-radius: 20px; padding: 10px 16px; color: #fff; font-size: 14px; outline: none; }
         .chat-input-area input::placeholder { color: var(--text-muted); }
+        .chat-input-area input:disabled { opacity: 0.5; cursor: not-allowed; }
         .chat-input-area .chat-send-btn { background: var(--gold-gradient); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; color: #000; flex-shrink: 0; }
+        .chat-input-area .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .chat-input-area .chat-plus-btn { background: transparent; border: 1px solid #333; border-radius: 50%; width: 40px; height: 40px; font-size: 22px; cursor: pointer; color: var(--text-muted); flex-shrink: 0; }
+        .chat-input-area .chat-plus-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         #chatPlusMenu {
             display: none; position: absolute; bottom: 70px; left: 10px; right: 10px;
@@ -223,6 +261,7 @@
         #chatPlusMenu .plus-item { flex: 1; min-width: 60px; padding: 10px; background: var(--card-bg); border-radius: 12px; text-align: center; font-size: 12px; color: #fff; cursor: pointer; border: none; transition: background 0.2s; }
         #chatPlusMenu .plus-item:active { background: #2a2a3a; }
         #chatPlusMenu .plus-item .icon { font-size: 24px; display: block; margin-bottom: 4px; }
+        #chatPlusMenu .plus-item.disabled { opacity: 0.4; cursor: not-allowed; }
 
         /* ===== MODALS ===== */
         .modal {
@@ -249,8 +288,10 @@
         .btn-green { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: #000; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
         .btn-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
         .btn-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; }
+        .btn-gray { background: #374151; color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: not-allowed; opacity: 0.6; }
 
         .input-box { width: 100%; padding: 14px; border-radius: 12px; background: #0b0c10; border: 1px solid #333; color: #fff; margin: 10px 0; text-align: center; font-size: 16px; font-weight: 700; }
+        .input-box:disabled { opacity: 0.5; }
 
         /* ===== SLOTS ===== */
         .slots-window {
@@ -345,7 +386,7 @@
         .slot-balance { text-align: center; font-size: 14px; color: var(--text-muted); margin: 5px 0 10px 0; }
         .slot-balance span { color: #ffe066; font-weight: 800; }
 
-        /* ===== CLANS ===== */
+        /* ===== CLANS CUSTOM ===== */
         .clan-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -420,6 +461,14 @@
             width: 100%; height: 6px; background: #0b0c10; border-radius: 3px; overflow: hidden; margin: 8px 0;
         }
         .xp-bar .xp-fill { height: 100%; background: var(--gold-gradient); border-radius: 3px; transition: width 0.5s; }
+
+        .clan-guest-msg {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+        }
+        .clan-guest-msg .icon { font-size: 48px; display: block; margin-bottom: 12px; }
+        .clan-guest-msg h3 { color: #fff; margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -449,9 +498,10 @@
             <div>
                 <div id="headerName" style="font-weight: 800; font-size: 14px;">Игрок</div>
                 <div id="headerRank" style="font-size: 11px; color: #f59e0b; font-weight: 700;">Уровень 1</div>
+                <span id="guestBadge" class="guest-badge" style="display:none;">ГОСТЬ</span>
             </div>
         </div>
-        <div class="balance-pill" onclick="refreshUserData()">
+        <div class="balance-pill" id="balancePill" onclick="refreshUserData()">
             💰 <span id="headerBalance">1 000</span>
         </div>
     </div>
@@ -468,15 +518,15 @@
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-area" style="position:relative;">
-            <button class="chat-plus-btn" onclick="toggleChatPlus()">+</button>
+            <button class="chat-plus-btn" id="chatPlusBtn" onclick="toggleChatPlus()">+</button>
             <input type="text" id="chatInput" placeholder="Напишите сообщение..." maxlength="500" onkeydown="if(event.key==='Enter') sendChatMessage()">
-            <button class="chat-send-btn" onclick="sendChatMessage()">➤</button>
+            <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">➤</button>
             <div id="chatPlusMenu">
                 <button class="plus-item" onclick="chatPlusAction('photo')"><span class="icon">🖼</span>Фото</button>
                 <button class="plus-item" onclick="chatPlusAction('voice')"><span class="icon">🎤</span>Голос</button>
                 <button class="plus-item" onclick="chatPlusAction('file')"><span class="icon">📁</span>Файл</button>
                 <button class="plus-item" onclick="chatPlusAction('text')"><span class="icon">✍️</span>Текст</button>
-                <button class="plus-item" onclick="shareBalance()"><span class="icon">💰</span>Баланс</button>
+                <button class="plus-item" id="shareBalanceBtn" onclick="shareBalance()"><span class="icon">💰</span>Баланс</button>
             </div>
         </div>
     </div>
@@ -490,19 +540,19 @@
         <div id="sec-quick-games">
             <div class="section-title">Быстрые игры</div>
             <div class="games-grid">
-                <div class="game-card card-slots" onclick="openSlots()">
+                <div class="game-card card-slots" id="gameSlots" onclick="openSlots()">
                     <svg class="svg-icon" viewBox="0 0 24 24"><path fill="#ffe066" d="M19,8H5C3.34,8 2,9.34 2,11V18C2,19.66 3.34,21 5,21H19C20.66,21 22,19.66 22,18V11C22,9.34 20.66,8 19,8M11,17H7V13H11V17M17,17H13V13H17V17M13,5H11V3H13V5Z"/></svg>
                     <div class="title">Слоты</div>
                 </div>
-                <div class="game-card card-mines" onclick="openMines()">
+                <div class="game-card card-mines" id="gameMines" onclick="openMines()">
                     <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="14" r="7" fill="#ffe066"/><path d="M15,9 L18,6" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="5" r="2" fill="#ef4444"/></svg>
                     <div class="title">Мины</div>
                 </div>
-                <div class="game-card card-plinko" onclick="openPlinko()">
+                <div class="game-card card-plinko" id="gamePlinko" onclick="openPlinko()">
                     <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12,3 2,21 22,21" fill="none" stroke="#ffe066" stroke-width="2"/><circle cx="12" cy="8" r="2" fill="#ffe066"/><circle cx="9" cy="13" r="2" fill="#ffe066"/><circle cx="15" cy="13" r="2" fill="#ffe066"/><circle cx="12" cy="18" r="2.5" fill="#34d399"/></svg>
                     <div class="title">Плинко</div>
                 </div>
-                <div class="game-card card-blackjack" onclick="openBlackjack()">
+                <div class="game-card card-blackjack" id="gameBlackjack" onclick="openBlackjack()">
                     <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="2" fill="#ffffff"/><text x="6" y="14" fill="#000" font-weight="bold" font-size="10">A♠</text><rect x="9" y="4" width="12" height="16" rx="2" fill="#f87171"/><text x="12" y="14" fill="#fff" font-weight="bold" font-size="10">K♥</text></svg>
                     <div class="title">Блэкджек</div>
                 </div>
@@ -511,7 +561,7 @@
         <div id="sec-live-games" style="display: none;">
             <div class="section-title">Live-игры</div>
             <div class="games-grid">
-                <div class="game-card card-arena" onclick="openArena()" style="grid-column: span 2;">
+                <div class="game-card card-arena" id="gameArena" onclick="openArena()" style="grid-column: span 2;">
                     <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#ffe066" stroke-width="2"/><path d="M12,3 L12,12 L19,15" stroke="#ffe066" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#ef4444"/></svg>
                     <div class="title">PvP Арена</div>
                 </div>
@@ -555,7 +605,7 @@
         <div class="section-title">🏰 Кланы</div>
         <div id="clanContent">
             <div class="nav-filter" style="margin-bottom:15px;">
-                <button class="filter-btn active" id="clanTabList" onclick="switchClanTab('list')">📋 Список кланов</button>
+                <button class="filter-btn active" id="clanTabList" onclick="switchClanTab('list')">📋 Список</button>
                 <button class="filter-btn" id="clanTabMy" onclick="switchClanTab('my')">👥 Мой клан</button>
                 <button class="filter-btn" id="clanTabRequests" onclick="switchClanTab('requests')">📩 Заявки</button>
                 <button class="filter-btn" id="clanTabArena" onclick="switchClanTab('arena')">⚔️ Арена</button>
@@ -565,7 +615,7 @@
                     <input type="text" class="input-box" id="clanSearch" placeholder="Поиск по ID или названию..." style="margin:0;flex:1;">
                     <button class="btn-gold" style="width:auto;padding:10px 16px;margin:0;" onclick="searchClans()">🔍</button>
                 </div>
-                <button class="btn-gold" onclick="openCreateClanModal()">➕ Создать клан (50,000 💰)</button>
+                <button class="btn-gold" id="createClanBtn" onclick="openCreateClanModal()">➕ Создать клан (50,000 💰)</button>
                 <div id="clanListContainer" style="margin-top:15px;"></div>
             </div>
             <div id="clanTabMyContent" style="display:none;">
@@ -597,8 +647,8 @@
             <div style="font-size:12px;color:var(--text-muted);">Баланс</div>
             <div style="font-size:28px;font-weight:800;color:#ffe066;" id="profBalance">1 000</div>
             <div style="display:flex;gap:10px;margin-top:12px;">
-                <button class="btn-gold" onclick="openDonateModal()">+ Пополнить</button>
-                <button class="btn-gold" onclick="openPromoModal()">🎟 Промокод</button>
+                <button class="btn-gold" id="donateBtn" onclick="openDonateModal()">+ Пополнить</button>
+                <button class="btn-gold" id="promoBtn" onclick="openPromoModal()">🎟 Промокод</button>
             </div>
             <button class="btn-gold" id="btnAdminPanel" style="display:none;background:linear-gradient(135deg,#ef4444 0%,#b91c1c 100%);color:#fff;margin-top:10px;" onclick="openAdminModal()">👑 Админ</button>
         </div>
@@ -803,6 +853,7 @@
     let chatOpen = false;
     let currentClanTab = 'list';
     let arenaTimer = null;
+    let isGuest = false;
 
     // ============================================================
     // 2. API ЗАПРОСЫ
@@ -817,14 +868,17 @@
             const response = await fetch(url, { ...options, headers });
             if (response.status === 403) {
                 const data = await response.json();
-                showCustomAlert("ДОСТУП ЗАПРЕЩЁН", data.message || "Вход только через официальный бот Telegram!");
-                document.getElementById('accessDenied').style.display = 'flex';
+                // Если 403 - показываем доступ запрещён, но если гость - просто блокируем
+                if (!isGuest) {
+                    showCustomAlert("ДОСТУП ЗАПРЕЩЁН", data.message || "Вход только через официальный бот Telegram!");
+                    document.getElementById('accessDenied').style.display = 'flex';
+                }
                 return null;
             }
             return response;
         } catch(e) {
             console.error('API Error:', e);
-            showCustomAlert("ОШИБКА", "Сервер недоступен");
+            if (!isGuest) showCustomAlert("ОШИБКА", "Сервер недоступен");
             return null;
         }
     }
@@ -834,24 +888,96 @@
     // ============================================================
     async function verifyAccess() {
         if (!INIT_DATA) {
-            document.getElementById('accessDenied').style.display = 'flex';
-            document.getElementById('accessDenied').querySelector('p').innerText = 'Вход доступен только через официальный бот Telegram';
-            return false;
+            isGuest = true;
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('guestBadge').style.display = 'inline';
+            document.getElementById('balancePill').classList.add('guest');
+            document.getElementById('headerAvatarFallback').classList.add('guest');
+            document.getElementById('headerRank').style.color = '#6b7280';
+            applyGuestMode();
+            return true;
         }
         try {
             const res = await apiRequest(`${API_BASE}/verify?user_id=${userId}`);
-            if (!res) return false;
+            if (!res) {
+                isGuest = true;
+                document.getElementById('accessDenied').style.display = 'none';
+                document.getElementById('guestBadge').style.display = 'inline';
+                document.getElementById('balancePill').classList.add('guest');
+                document.getElementById('headerAvatarFallback').classList.add('guest');
+                document.getElementById('headerRank').style.color = '#6b7280';
+                applyGuestMode();
+                return true;
+            }
             const data = await res.json();
             if (!data.valid) {
-                document.getElementById('accessDenied').style.display = 'flex';
-                document.getElementById('accessDenied').querySelector('p').innerText = data.message || 'Вход доступен только через официальный бот Telegram';
-                return false;
+                isGuest = true;
+                document.getElementById('accessDenied').style.display = 'none';
+                document.getElementById('guestBadge').style.display = 'inline';
+                document.getElementById('balancePill').classList.add('guest');
+                document.getElementById('headerAvatarFallback').classList.add('guest');
+                document.getElementById('headerRank').style.color = '#6b7280';
+                applyGuestMode();
+                return true;
+            }
+            isGuest = data.is_guest || false;
+            if (isGuest) {
+                document.getElementById('guestBadge').style.display = 'inline';
+                document.getElementById('balancePill').classList.add('guest');
+                document.getElementById('headerAvatarFallback').classList.add('guest');
+                document.getElementById('headerRank').style.color = '#6b7280';
+                applyGuestMode();
             }
             return true;
         } catch(e) {
-            document.getElementById('accessDenied').style.display = 'flex';
-            return false;
+            isGuest = true;
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('guestBadge').style.display = 'inline';
+            document.getElementById('balancePill').classList.add('guest');
+            document.getElementById('headerAvatarFallback').classList.add('guest');
+            document.getElementById('headerRank').style.color = '#6b7280';
+            applyGuestMode();
+            return true;
         }
+    }
+
+    function applyGuestMode() {
+        // Блокируем игры
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.classList.add('guest-card');
+        });
+        // Блокируем чат
+        document.getElementById('chatInput').disabled = true;
+        document.getElementById('chatSendBtn').disabled = true;
+        document.getElementById('chatPlusBtn').disabled = true;
+        document.getElementById('chatInput').placeholder = 'Гости не могут писать в чат';
+        document.getElementById('shareBalanceBtn').classList.add('disabled');
+        // Блокируем кланы
+        document.getElementById('createClanBtn').disabled = true;
+        document.getElementById('createClanBtn').textContent = '⛔ Создать клан (гостям недоступно)';
+        // Блокируем донат
+        document.getElementById('donateBtn').disabled = true;
+        document.getElementById('promoBtn').disabled = true;
+        document.getElementById('donateBtn').textContent = '⛔ Пополнить (гостям недоступно)';
+        document.getElementById('promoBtn').textContent = '⛔ Промокод (гостям недоступно)';
+        // Блокируем ставки в слотах
+        document.getElementById('slotBet').disabled = true;
+        document.getElementById('spinBtn').disabled = true;
+        document.getElementById('spinBtn').textContent = '⛔ Только для игроков';
+        // Блокируем мины
+        document.getElementById('mineBet').disabled = true;
+        // Блокируем плинко
+        document.getElementById('plinkoBet').disabled = true;
+        document.getElementById('plinkoStartBtn').disabled = true;
+        // Блокируем блэкджек
+        document.getElementById('bjBet').disabled = true;
+        // Блокируем арену
+        document.getElementById('arenaBet').disabled = true;
+        document.getElementById('arenaJoinBtn').disabled = true;
+        document.getElementById('arenaJoinBtn').textContent = '⛔ Только для игроков';
+        // Меняем баланс на 0
+        document.getElementById('headerBalance').innerText = '0';
+        document.getElementById('profBalance').innerText = '0';
     }
 
     // ============================================================
@@ -861,22 +987,37 @@
         const ok = await verifyAccess();
         if (!ok) return;
 
-        if (userPhoto) {
+        if (userPhoto && !isGuest) {
             let img = document.getElementById('headerAvatarImg');
             img.src = userPhoto;
             img.style.display = 'block';
             document.getElementById('headerAvatarFallback').style.display = 'none';
         } else {
-            document.getElementById('headerAvatarFallback').innerText = userFirstName.charAt(0).toUpperCase();
+            document.getElementById('headerAvatarFallback').innerText = isGuest ? 'G' : userFirstName.charAt(0).toUpperCase();
         }
 
-        document.getElementById('headerName').innerText = userFirstName;
-        document.getElementById('profUsername').innerText = userName;
+        document.getElementById('headerName').innerText = isGuest ? 'Гость' : userFirstName;
+        document.getElementById('profUsername').innerText = isGuest ? 'Гость' : userName;
 
-        refreshUserData();
-        loadChatMessages();
-        setInterval(loadChatMessages, 5000);
-        loadClans();
+        if (!isGuest) {
+            refreshUserData();
+            loadChatMessages();
+            setInterval(loadChatMessages, 5000);
+            loadClans();
+        } else {
+            document.getElementById('headerRank').innerText = 'Гость';
+            document.getElementById('profRank').innerText = 'Гость';
+            document.getElementById('xpFill').style.width = '0%';
+            document.getElementById('xpText').innerText = 'Гостевой режим';
+            document.getElementById('lvlBonusText').innerText = 'Войдите для доступа';
+            document.getElementById('statNet').innerText = '0 💰';
+            document.getElementById('statGames').innerText = '0';
+            document.getElementById('statWon').innerText = '0 💰';
+            document.getElementById('statWagered').innerText = '0 💰';
+            document.getElementById('statMaxWin').innerText = '0 💰';
+            // Загружаем чат для гостей (только чтение)
+            loadChatMessages();
+        }
     })();
 
     // ============================================================
@@ -897,13 +1038,18 @@
     }
 
     function switchTab(tabId, el) {
+        if (isGuest && tabId === 'profile') {
+            // Для гостей профиль всё равно доступен
+        }
         document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(ni => ni.classList.remove('active'));
         document.getElementById('tab-' + tabId).classList.add('active');
         if (el) el.classList.add('active');
-        refreshUserData();
-        if (tabId === 'friends') loadLeaderboard();
-        if (tabId === 'development') { loadClans(); loadClanRequests(); loadClanArena(); }
+        if (!isGuest) {
+            refreshUserData();
+            if (tabId === 'friends') loadLeaderboard();
+            if (tabId === 'development') { loadClans(); loadClanRequests(); loadClanArena(); }
+        }
     }
 
     function switchGameFilter(type) {
@@ -921,10 +1067,19 @@
         const bf = document.getElementById('btnSubFriends');
         const bt = document.getElementById('btnSubTop');
         if (type === 'friends') { f.style.display = 'block'; t.style.display = 'none'; bf.classList.add('active'); bt.classList.remove('active'); }
-        else { f.style.display = 'none'; t.style.display = 'block'; bf.classList.remove('active'); bt.classList.add('active'); loadLeaderboard(); }
+        else { f.style.display = 'none'; t.style.display = 'block'; bf.classList.remove('active'); bt.classList.add('active'); if (!isGuest) loadLeaderboard(); }
     }
 
     function switchClanTab(tab) {
+        if (isGuest) {
+            document.getElementById('clanTabListContent').style.display = 'block';
+            document.getElementById('clanTabMyContent').style.display = 'none';
+            document.getElementById('clanTabRequestsContent').style.display = 'none';
+            document.getElementById('clanTabArenaContent').style.display = 'none';
+            document.querySelectorAll('#clanContent .filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('clanTabList').classList.add('active');
+            return;
+        }
         currentClanTab = tab;
         document.querySelectorAll('#clanContent .filter-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('clanTabListContent').style.display = 'none';
@@ -942,6 +1097,7 @@
     // 6. ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
     // ============================================================
     async function refreshUserData() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}&username=${userName}&first_name=${encodeURIComponent(userFirstName)}&photo_url=${encodeURIComponent(userPhoto)}`);
             if (!res) return;
@@ -1011,6 +1167,7 @@
     // 7. ТОП ИГРОКОВ
     // ============================================================
     async function loadLeaderboard() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/leaderboard?user_id=${userId}`);
             if (!res) return;
@@ -1042,6 +1199,7 @@
     // 8. РЕФЕРАЛКА
     // ============================================================
     function shareRef() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут приглашать!"); return; }
         let refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
         let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent("Играй со мной в spnxplay! Получи +1000 бонусных фишек 🎁")}`;
         tg.openTelegramLink(shareUrl);
@@ -1050,9 +1208,13 @@
     // ============================================================
     // 9. ПРОМОКОДЫ
     // ============================================================
-    function openPromoModal() { document.getElementById('modalPromo').style.display = 'block'; }
+    function openPromoModal() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут активировать промокоды!"); return; }
+        document.getElementById('modalPromo').style.display = 'block'; 
+    }
 
     async function submitPromo() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут активировать промокоды!"); return; }
         let code = document.getElementById('promoInput').value.trim();
         if (!code) return showCustomAlert("ОШИБКА", "Введите промокод!");
         try {
@@ -1067,9 +1229,14 @@
     // ============================================================
     // 10. АДМИН
     // ============================================================
-    function openAdminModal() { document.getElementById('modalAdmin').style.display = 'block'; document.getElementById('adminOutput').style.display = 'none'; }
+    function openAdminModal() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Доступ запрещён!"); return; }
+        document.getElementById('modalAdmin').style.display = 'block'; 
+        document.getElementById('adminOutput').style.display = 'none'; 
+    }
 
     async function adminAddMoneyPrompt() {
+        if (isGuest) return;
         let target = prompt("Введите Username или ID:"); if (!target) return;
         let amount = prompt("Сумма фишек:"); if (!amount || isNaN(amount)) return;
         const res = await apiRequest(`${API_BASE}/admin/add_money`, { method: 'POST', body: JSON.stringify({ admin_id: userId, admin_username: userName, target, amount: parseInt(amount) }) });
@@ -1080,6 +1247,7 @@
     }
 
     async function adminCreatePromoPrompt() {
+        if (isGuest) return;
         let reward = prompt("На сколько фишек?"); if (!reward || isNaN(reward)) return;
         let activations = prompt("Сколько активаций?"); if (!activations || isNaN(activations)) return;
         let code = prompt("Имя промокода (#BONUS100):"); if (!code) return;
@@ -1090,6 +1258,7 @@
     }
 
     async function adminUserInfoPrompt() {
+        if (isGuest) return;
         let target = prompt("Введите Username или ID:"); if (!target) return;
         const res = await apiRequest(`${API_BASE}/admin/user_info`, { method: 'POST', body: JSON.stringify({ admin_id: userId, admin_username: userName, target }) });
         if (!res) return;
@@ -1104,6 +1273,7 @@
     }
 
     async function adminUnmutePrompt() {
+        if (isGuest) return;
         let target = prompt("Введите Username или ID для размута:"); if (!target) return;
         const res = await apiRequest(`${API_BASE}/chat/unmute`, { method: 'POST', body: JSON.stringify({ admin_id: userId, admin_username: userName, target }) });
         if (!res) return;
@@ -1114,9 +1284,13 @@
     // ============================================================
     // 11. ОПЛАТА STARS
     // ============================================================
-    function openDonateModal() { document.getElementById('modalDonate').style.display = 'block'; }
+    function openDonateModal() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут пополнять баланс!"); return; }
+        document.getElementById('modalDonate').style.display = 'block'; 
+    }
 
     async function processStarsDonate() {
+        if (isGuest) return;
         let stars = parseInt(document.getElementById('starsAmount').value);
         if (!stars || stars <= 0) return showCustomAlert("ОШИБКА", "Укажите число Stars");
         try {
@@ -1133,7 +1307,12 @@
     // ============================================================
     // 12. СЛОТЫ
     // ============================================================
-    function openSlots() { document.getElementById('modalSlots').style.display = 'block'; refreshUserData(); document.getElementById('betMenuSlots').classList.remove('open'); }
+    function openSlots() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalSlots').style.display = 'block'; 
+        refreshUserData(); 
+        document.getElementById('betMenuSlots').classList.remove('open'); 
+    }
     function toggleBetMenu(game) { document.getElementById('betMenuSlots').classList.toggle('open'); }
     function setBet(game, amount) { document.getElementById('slotBet').value = amount; document.getElementById('betMenuSlots').classList.remove('open'); }
     function setBetAllIn(game) { let bal = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, '')); if (bal > 0) document.getElementById('slotBet').value = bal; document.getElementById('betMenuSlots').classList.remove('open'); }
@@ -1157,6 +1336,7 @@
     }
 
     async function spinSlots() {
+        if (isGuest) return;
         let bet = parseInt(document.getElementById('slotBet').value);
         if (!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите ставку!");
         let spinBtn = document.getElementById('spinBtn');
@@ -1186,11 +1366,17 @@
     // ============================================================
     // 13. МИНЫ
     // ============================================================
-    function openMines() { document.getElementById('modalMines').style.display = 'block'; document.getElementById('minesControls').style.display = 'block'; document.getElementById('minesGameArea').style.display = 'none'; }
+    function openMines() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalMines').style.display = 'block'; 
+        document.getElementById('minesControls').style.display = 'block'; 
+        document.getElementById('minesGameArea').style.display = 'none'; 
+    }
     function addMineBet(amount) { let input = document.getElementById('mineBet'); let curr = parseInt(input.value) || 0; input.value = curr + amount; }
     function selectBombMode(count) { selectedMinesCount = count; document.querySelectorAll('.bomb-btn').forEach(b => b.classList.remove('active')); document.getElementById(`bomb-${count}`).classList.add('active'); }
 
     async function startMines() {
+        if (isGuest) return;
         let bet = parseInt(document.getElementById('mineBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         try {
@@ -1211,6 +1397,7 @@
     }
 
     async function clickMine(index, cellEl) {
+        if (isGuest) return;
         if (cellEl.classList.contains('revealed-safe') || cellEl.classList.contains('revealed-bomb')) return;
         try {
             const res = await apiRequest(`${API_BASE}/click_mine`, { method: 'POST', body: JSON.stringify({ user_id: userId, cell_index: index }) });
@@ -1235,6 +1422,7 @@
     function revealAllMines(mines) { let cells = document.querySelectorAll('.mine-cell'); mines.forEach(idx => { cells[idx].classList.add('revealed-bomb'); cells[idx].innerHTML = `<svg width="24" height="24"><use href="#svg-bomb"/></svg>`; }); }
 
     async function cashoutMines() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/cashout_mines`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
             if (!res) return;
@@ -1250,7 +1438,11 @@
     // ============================================================
     // 14. ПЛИНКО
     // ============================================================
-    function openPlinko() { document.getElementById('modalPlinko').style.display = 'block'; initPlinkoPins(); }
+    function openPlinko() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalPlinko').style.display = 'block'; 
+        initPlinkoPins(); 
+    }
 
     function initPlinkoPins() {
         let board = document.getElementById('plinkoBoard');
@@ -1270,6 +1462,7 @@
     }
 
     async function startPlinko() {
+        if (isGuest) return;
         let bet = parseInt(document.getElementById('plinkoBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         let startBtn = document.getElementById('plinkoStartBtn');
@@ -1308,6 +1501,7 @@
     // 15. БЛЭКДЖЕК
     // ============================================================
     function openBlackjack() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
         document.getElementById('modalBlackjack').style.display = 'block';
         document.getElementById('bjControlsInit').style.display = 'block';
         document.getElementById('bjControlsAction').style.display = 'none';
@@ -1327,6 +1521,7 @@
     }
 
     async function startBlackjack() {
+        if (isGuest) return;
         let bet = parseInt(document.getElementById('bjBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         try {
@@ -1348,6 +1543,7 @@
     }
 
     async function bjHit() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/blackjack/hit`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
             if (!res) return;
@@ -1362,6 +1558,7 @@
     }
 
     async function bjStand() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/blackjack/stand`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
             if (!res) return;
@@ -1382,6 +1579,7 @@
     }
 
     async function bjDouble() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/blackjack/double`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
             if (!res) return;
@@ -1406,9 +1604,10 @@
     }
 
     // ============================================================
-    // 16. PVP АРЕНА (ИСПРАВЛЕНА)
+    // 16. PVP АРЕНА
     // ============================================================
     function openArena() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
         document.getElementById('modalArena').style.display = 'block';
         updateArenaState();
         if (arenaTimer) clearInterval(arenaTimer);
@@ -1416,6 +1615,7 @@
     }
 
     async function updateArenaState() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/arena/state`);
             if (!res) return;
@@ -1460,7 +1660,6 @@
                 spinBtn.style.display = 'none';
             }
 
-            // Если статус spinning - рисуем колесо
             if (data.status === 'spinning' && data.players.length > 0) {
                 drawArenaWheel(data.players);
             }
@@ -1485,6 +1684,7 @@
     }
 
     async function joinArena() {
+        if (isGuest) return;
         let bet = parseInt(document.getElementById('arenaBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         try {
@@ -1499,6 +1699,7 @@
     }
 
     async function spinArena() {
+        if (isGuest) return;
         let spinBtn = document.getElementById('arenaSpinBtn');
         spinBtn.disabled = true;
         try {
@@ -1507,12 +1708,10 @@
             const data = await res.json();
             if (data.error) { showCustomAlert("ОШИБКА", data.error); spinBtn.disabled = false; return; }
 
-            // Анимация колеса
             const wheel = document.getElementById('arenaWheel');
             let degrees = 1440 + Math.floor(Math.random() * 360);
             wheel.style.transform = `rotate(${degrees}deg)`;
 
-            // Останавливаем на победителе
             setTimeout(() => {
                 wheel.style.transform = 'rotate(0deg)';
                 let isWinner = String(data.winner.user_id) === String(userId);
@@ -1532,6 +1731,7 @@
     // 17. КВЕСТЫ
     // ============================================================
     async function claimDaily() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут получать награды!"); return; }
         const res = await apiRequest(`${API_BASE}/claim_daily`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
         if (!res) return;
         const data = await res.json();
@@ -1540,6 +1740,7 @@
     }
 
     async function claimQuest(questId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут выполнять квесты!"); return; }
         const res = await apiRequest(`${API_BASE}/claim_quest`, { method: 'POST', body: JSON.stringify({ user_id: userId, quest_id: questId }) });
         if (!res) return;
         const data = await res.json();
@@ -1552,6 +1753,7 @@
     // 18. МАГАЗИН
     // ============================================================
     async function buyItem(itemId, itemType, price, minLvl) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут покупать предметы!"); return; }
         const res = await apiRequest(`${API_BASE}/buy_item`, { method: 'POST', body: JSON.stringify({ user_id: userId, item_id: itemId, item_type: itemType, price, min_lvl: minLvl }) });
         if (!res) return;
         const data = await res.json();
@@ -1563,9 +1765,9 @@
     // 19. ЧАТ
     // ============================================================
     function toggleChat() { if (chatOpen) closeChat(); else openChat(); }
-    function openChat() { chatOpen = true; document.getElementById('chatSheet').classList.add('open'); document.getElementById('chatFab').style.display = 'none'; loadChatMessages(); document.getElementById('chatInput').focus(); }
+    function openChat() { chatOpen = true; document.getElementById('chatSheet').classList.add('open'); document.getElementById('chatFab').style.display = 'none'; loadChatMessages(); if (!isGuest) document.getElementById('chatInput').focus(); }
     function closeChat() { chatOpen = false; document.getElementById('chatSheet').classList.remove('open'); document.getElementById('chatFab').style.display = 'flex'; document.getElementById('chatPlusMenu').classList.remove('open'); }
-    function toggleChatPlus() { document.getElementById('chatPlusMenu').classList.toggle('open'); }
+    function toggleChatPlus() { if (isGuest) return; document.getElementById('chatPlusMenu').classList.toggle('open'); }
 
     async function loadChatMessages() {
         try {
@@ -1580,7 +1782,7 @@
             let msgs = data.messages || [];
             msgs.forEach(msg => {
                 let div = document.createElement('div');
-                let isOwn = String(msg.user_id) === String(userId);
+                let isOwn = String(msg.user_id) === String(userId) && !isGuest;
                 if (msg.type === 'system') { div.className = 'chat-message system'; div.innerText = msg.text; }
                 else {
                     div.className = `chat-message ${isOwn ? 'own' : 'other'}`;
@@ -1599,6 +1801,7 @@
     }
 
     async function sendChatMessage() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут писать в чат!"); return; }
         let input = document.getElementById('chatInput');
         let text = input.value.trim();
         if (!text) return;
@@ -1612,6 +1815,7 @@
     }
 
     function chatPlusAction(type) {
+        if (isGuest) return;
         document.getElementById('chatPlusMenu').classList.remove('open');
         if (type === 'text') document.getElementById('chatInput').focus();
         else if (type === 'photo') showCustomAlert("ФОТО", "Функция загрузки фото в разработке");
@@ -1620,6 +1824,7 @@
     }
 
     async function shareBalance() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут делиться балансом!"); return; }
         document.getElementById('chatPlusMenu').classList.remove('open');
         try {
             const res = await apiRequest(`${API_BASE}/share_balance`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
@@ -1668,6 +1873,11 @@
     // 22. КЛАНЫ
     // ============================================================
     async function loadClans() {
+        if (isGuest) {
+            let container = document.getElementById('clanListContainer');
+            container.innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3><p>Войдите через официальный бот Telegram, чтобы создавать и вступать в кланы</p></div>`;
+            return;
+        }
         try {
             const res = await apiRequest(`${API_BASE}/clans/list`);
             if (!res) return;
@@ -1693,7 +1903,7 @@
                 card.innerHTML = `
                     <div class="clan-info">
                         <div class="clan-name">${clan.name} <span class="clan-id">${clan.id}</span></div>
-                        <div class="clan-stats">👥 ${clan.members_count} участников | 🏆 Уровень ${clan.level} | 💰 ${clan.treasury.toLocaleString()} в казне</div>
+                        <div class="clan-stats">👥 ${clan.members_count} уч. | 🏆 Ур. ${clan.level} | 💰 ${clan.treasury.toLocaleString()} в казне</div>
                         <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
                         <div class="clan-stats" style="font-size:10px;">Лидер: ${clan.leader_name}</div>
                     </div>
@@ -1712,11 +1922,13 @@
     }
 
     function openCreateClanModal() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут создавать кланы!"); return; }
         document.getElementById('modalCreateClan').style.display = 'block';
         document.getElementById('clanNameInput').value = '';
     }
 
     async function createClan() {
+        if (isGuest) return;
         let name = document.getElementById('clanNameInput').value.trim();
         if (!name || name.length < 3) return showCustomAlert("ОШИБКА", "Название должно быть минимум 3 символа!");
         if (name.length > 30) return showCustomAlert("ОШИБКА", "Название не должно превышать 30 символов!");
@@ -1734,6 +1946,7 @@
     }
 
     async function viewClan(clanId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать кланы!"); return; }
         try {
             const res = await apiRequest(`${API_BASE}/clans/info?clan_id=${clanId}`);
             if (!res) return;
@@ -1792,6 +2005,7 @@
     }
 
     async function sendClanRequest(clanId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут вступать в кланы!"); return; }
         try {
             const res = await apiRequest(`${API_BASE}/clans/send_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, clan_id: clanId }) });
             if (!res) return;
@@ -1801,6 +2015,10 @@
     }
 
     async function loadMyClan() {
+        if (isGuest) {
+            document.getElementById('myClanContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3><p>Войдите через официальный бот Telegram</p></div>`;
+            return;
+        }
         let container = document.getElementById('myClanContainer');
         try {
             const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
@@ -1815,6 +2033,10 @@
     }
 
     async function loadClanRequests() {
+        if (isGuest) {
+            document.getElementById('clanRequestsContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к заявкам только для игроков</h3></div>`;
+            return;
+        }
         let container = document.getElementById('clanRequestsContainer');
         try {
             const res = await apiRequest(`${API_BASE}/clans/requests?user_id=${userId}`);
@@ -1848,6 +2070,7 @@
     }
 
     async function acceptRequest(requesterId) {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/clans/accept_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, requester_id: requesterId }) });
             if (!res) return;
@@ -1858,6 +2081,7 @@
     }
 
     async function declineRequest(requesterId) {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/clans/decline_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, requester_id: requesterId }) });
             if (!res) return;
@@ -1868,6 +2092,7 @@
     }
 
     async function donateToClan(clanId) {
+        if (isGuest) return;
         let amount = prompt("Введите сумму для пополнения казны (мин 1):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
@@ -1880,6 +2105,7 @@
     }
 
     async function withdrawFromClan(clanId) {
+        if (isGuest) return;
         let amount = prompt("Введите сумму для вывода (комиссия 5%):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
@@ -1892,6 +2118,7 @@
     }
 
     async function leaveClan(clanId) {
+        if (isGuest) return;
         let confirmed = confirm("Вы уверены, что хотите покинуть клан?");
         if (!confirmed) return;
 
@@ -1907,9 +2134,8 @@
     let clanChatOpen = false;
 
     function openClanChat(clanId) {
+        if (isGuest) return;
         clanChatOpen = true;
-        // Открываем общий чат и показываем только сообщения клана
-        // Для простоты показываем алерт
         showCustomAlert("💬 Чат клана", "Функция клан-чата в разработке. Используйте общий чат для общения с кланом!");
     }
 
@@ -1917,6 +2143,10 @@
     // 23. КЛАНОВАЯ АРЕНА
     // ============================================================
     async function loadClanArena() {
+        if (isGuest) {
+            document.getElementById('clanArenaContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к арене только для игроков</h3></div>`;
+            return;
+        }
         let container = document.getElementById('clanArenaContainer');
         try {
             const res = await apiRequest(`${API_BASE}/clan_arena/state`);
@@ -1956,7 +2186,6 @@
                 </div>
             `;
 
-            // Проверяем, участвует ли игрок
             const userRes = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
             if (userRes) {
                 const userData = await userRes.json();
@@ -1978,7 +2207,6 @@
                 }
             }
 
-            // Топ игроки
             let topPlayers = Object.entries(data.player_damage || {}).sort((a,b) => b[1] - a[1]).slice(0,5);
             if (topPlayers.length > 0) {
                 html += `<div class="section-title" style="font-size:14px;">🏆 Топ-5 игроков</div>`;
@@ -1992,6 +2220,7 @@
     }
 
     async function clanArenaAttack() {
+        if (isGuest) return;
         let bet = parseInt(document.getElementById('arenaAttackBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка 10 фишек!");
         try {
@@ -2004,6 +2233,7 @@
     }
 
     async function clanArenaBuff() {
+        if (isGuest) return;
         let amount = prompt("Сколько фишек потратить на улучшение атаки? (мин 100):");
         if (!amount || isNaN(amount) || parseInt(amount) < 100) return;
         try {
@@ -2021,6 +2251,7 @@
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log('🔒 Защита включена: initData передаётся на сервер');
     console.log('🏰 Кланы и клановая арена активированы!');
+    console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);
     </script>
 </body>
 </html>

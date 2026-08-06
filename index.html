@@ -23,70 +23,20 @@
             --guest-color: #6b7280;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 85px; overflow-x: hidden; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: 85px;
-            overflow-x: hidden;
-        }
+        .guest-badge { background: rgba(107,114,128,0.3); border: 1px solid var(--guest-color); color: var(--guest-color); font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-left: 6px; }
 
-        .guest-badge {
-            background: rgba(107, 114, 128, 0.3);
-            border: 1px solid var(--guest-color);
-            color: var(--guest-color);
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 700;
-            margin-left: 6px;
-        }
-
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: #10121a;
-            border-bottom: 1px solid rgba(245, 158, 11, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #10121a; border-bottom: 1px solid rgba(245,158,11,0.2); position: sticky; top: 0; z-index: 100; }
         .user-badge { display: flex; align-items: center; gap: 12px; }
         .avatar-container { position: relative; width: 44px; height: 44px; }
-        .avatar {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            border: 2px solid #f59e0b; background: #252530;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; color: #f59e0b;
-        }
+        .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #f59e0b; background: #252530; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #f59e0b; }
         .avatar.guest { border-color: var(--guest-color); color: var(--guest-color); }
         .avatar.frame-sapphire { border-color: #00d2ff; box-shadow: 0 0 10px #00d2ff; }
         .avatar.frame-obsidian { border-color: #a100ff; box-shadow: 0 0 10px #a100ff; }
 
-        .balance-pill {
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px solid #f59e0b;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 800;
-            color: #ffe066;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .balance-pill { background: rgba(245,158,11,0.12); border: 1px solid #f59e0b; padding: 6px 14px; border-radius: 20px; font-weight: 800; color: #ffe066; display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
         .balance-pill.guest { border-color: var(--guest-color); color: var(--guest-color); background: rgba(107,114,128,0.1); }
         .balance-pill:active { transform: scale(0.95); }
 
@@ -95,96 +45,46 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
         .nav-filter { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .filter-btn {
-            background: var(--card-bg); color: var(--text-muted);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 18px; border-radius: 14px;
-            font-size: 13px; font-weight: 700; cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        .filter-btn { background: var(--card-bg); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.05); padding: 10px 18px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
         .filter-btn.active { background: var(--gold-gradient); color: #000; box-shadow: var(--gold-glow); }
 
         .section-title { font-size: 18px; font-weight: 800; margin: 15px 0 12px 0; color: #fff; letter-spacing: 0.5px; }
 
         .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .game-card {
-            border-radius: 20px; padding: 22px 15px; text-align: center;
-            position: relative; overflow: hidden;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            cursor: pointer; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .game-card { border-radius: 20px; padding: 22px 15px; text-align: center; position: relative; overflow: hidden; transition: transform 0.15s ease, box-shadow 0.15s ease; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); }
         .game-card:active { transform: scale(0.96); }
         .game-card.guest-card { opacity: 0.6; cursor: not-allowed; }
         .game-card.guest-card:active { transform: none; }
-        .card-slots { background: linear-gradient(135deg, #2a085c 0%, #4c1d95 100%); box-shadow: 0 6px 20px rgba(76, 29, 149, 0.4); }
-        .card-mines { background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%); box-shadow: 0 6px 20px rgba(185, 28, 28, 0.4); }
-        .card-plinko { background: linear-gradient(135deg, #064e3b 0%, #047857 100%); box-shadow: 0 6px 20px rgba(4, 120, 87, 0.4); }
-        .card-blackjack { background: linear-gradient(135deg, #14532d 0%, #15803d 100%); box-shadow: 0 6px 20px rgba(21, 128, 61, 0.4); }
-        .card-arena { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4); }
+        .card-slots { background: linear-gradient(135deg, #2a085c 0%, #4c1d95 100%); box-shadow: 0 6px 20px rgba(76,29,149,0.4); }
+        .card-mines { background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%); box-shadow: 0 6px 20px rgba(185,28,28,0.4); }
+        .card-plinko { background: linear-gradient(135deg, #064e3b 0%, #047857 100%); box-shadow: 0 6px 20px rgba(4,120,87,0.4); }
+        .card-blackjack { background: linear-gradient(135deg, #14532d 0%, #15803d 100%); box-shadow: 0 6px 20px rgba(21,128,61,0.4); }
+        .card-arena { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); box-shadow: 0 6px 20px rgba(217,119,6,0.4); }
         .game-card .svg-icon { width: 48px; height: 48px; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         .game-card .title { font-weight: 800; font-size: 16px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
         .ref-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .ref-stat-card {
-            background: linear-gradient(145deg, #1e1e2a, #14141d);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-            border-radius: 16px; padding: 16px 12px; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+        .ref-stat-card { background: linear-gradient(145deg, #1e1e2a, #14141d); border: 1px solid rgba(245,158,11,0.25); border-radius: 16px; padding: 16px 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .ref-stat-title { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
-        .ref-stat-val { font-size: 20px; font-weight: 800; color: #ffe066; text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+        .ref-stat-val { font-size: 20px; font-weight: 800; color: #ffe066; text-shadow: 0 0 10px rgba(245,158,11,0.3); }
 
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-            background: #10121a; display: flex; justify-content: space-around;
-            align-items: center; border-top: 1px solid rgba(245, 158, 11, 0.2);
-            z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--text-muted); font-size: 11px; font-weight: 700;
-            cursor: pointer; transition: color 0.15s; position: relative;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #10121a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(245,158,11,0.2); z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer; transition: color 0.15s; position: relative; }
         .nav-item.active { color: #f59e0b; }
         .nav-item svg { width: 24px; height: 24px; fill: currentColor; transition: transform 0.15s; }
-        .nav-item.active svg { transform: translateY(-2px); filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6)); }
+        .nav-item.active svg { transform: translateY(-2px); filter: drop-shadow(0 0 6px rgba(245,158,11,0.6)); }
 
         /* ===== CHAT ===== */
-        #chatFab {
-            position: fixed; bottom: 85px; right: 20px;
-            width: 56px; height: 56px; border-radius: 50%;
-            background: var(--gold-gradient); border: none; font-size: 28px;
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.5);
-            cursor: pointer; z-index: 900;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex; align-items: center; justify-content: center; color: #000;
-        }
+        #chatFab { position: fixed; bottom: 85px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: var(--gold-gradient); border: none; font-size: 28px; box-shadow: 0 4px 20px rgba(245,158,11,0.5); cursor: pointer; z-index: 900; transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; color: #000; }
         #chatFab:active { transform: scale(0.9); }
 
-        #chatSheet {
-            display: none; position: fixed; bottom: 0; left: 0; right: 0;
-            height: 80vh; background: var(--chat-bg);
-            border-radius: 24px 24px 0 0; z-index: 2000;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
-            flex-direction: column; animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-            touch-action: none;
-        }
+        #chatSheet { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 80vh; background: var(--chat-bg); border-radius: 24px 24px 0 0; z-index: 2000; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); flex-direction: column; animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1); touch-action: none; }
         #chatSheet.open { display: flex; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .chat-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0; background: var(--chat-bg); border-radius: 24px 24px 0 0;
-            cursor: grab; position: relative;
-        }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; background: var(--chat-bg); border-radius: 24px 24px 0 0; cursor: grab; position: relative; }
         .chat-header:active { cursor: grabbing; }
-        .chat-header .drag-handle {
-            width: 40px; height: 4px; background: #333; border-radius: 2px;
-            position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-        }
+        .chat-header .drag-handle { width: 40px; height: 4px; background: #333; border-radius: 2px; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); }
         .chat-header-title { font-weight: 700; font-size: 16px; color: #fff; }
         .chat-header-title span { color: var(--text-muted); font-weight: 400; }
         .chat-close { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; padding: 4px 8px; }
@@ -202,11 +102,7 @@
         .chat-message.own .msg-time { color: rgba(0,0,0,0.4); }
         .chat-message .share-image { max-width: 100%; border-radius: 12px; margin-top: 5px; }
 
-        .chat-input-area {
-            display: flex; gap: 10px; padding: 12px 16px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            flex-shrink: 0; background: var(--chat-bg); align-items: center; position: relative;
-        }
+        .chat-input-area { display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; background: var(--chat-bg); align-items: center; position: relative; }
         .chat-input-area input { flex: 1; background: #1a1a24; border: none; border-radius: 20px; padding: 10px 16px; color: #fff; font-size: 14px; outline: none; }
         .chat-input-area input::placeholder { color: var(--text-muted); }
         .chat-input-area input:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -215,65 +111,37 @@
         .chat-input-area .chat-plus-btn { background: transparent; border: 1px solid #333; border-radius: 50%; width: 40px; height: 40px; font-size: 22px; cursor: pointer; color: var(--text-muted); flex-shrink: 0; }
         .chat-input-area .chat-plus-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        #chatPlusMenu {
-            display: none; position: absolute; bottom: 70px; left: 10px; right: 10px;
-            background: #1a1a24; border-radius: 16px; padding: 12px;
-            gap: 8px; flex-wrap: wrap; z-index: 10; border: 1px solid #333;
-        }
+        #chatPlusMenu { display: none; position: absolute; bottom: 70px; left: 10px; right: 10px; background: #1a1a24; border-radius: 16px; padding: 12px; gap: 8px; flex-wrap: wrap; z-index: 10; border: 1px solid #333; }
         #chatPlusMenu.open { display: flex; }
         #chatPlusMenu .plus-item { flex: 1; min-width: 60px; padding: 10px; background: var(--card-bg); border-radius: 12px; text-align: center; font-size: 12px; color: #fff; cursor: pointer; border: none; transition: background 0.2s; }
         #chatPlusMenu .plus-item:active { background: #2a2a3a; }
         #chatPlusMenu .plus-item .icon { font-size: 24px; display: block; margin-bottom: 4px; }
         #chatPlusMenu .plus-item.disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.88); backdrop-filter: blur(8px);
-            z-index: 2000; padding: 20px; overflow-y: auto;
-        }
-        .modal-content {
-            background: var(--card-bg); border-radius: 24px; padding: 24px;
-            border: 1px solid #f59e0b; margin-top: 10px; position: relative;
-            box-shadow: 0 0 35px rgba(245, 158, 11, 0.25);
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); z-index: 2000; padding: 20px; overflow-y: auto; }
+        .modal-content { background: var(--card-bg); border-radius: 24px; padding: 24px; border: 1px solid #f59e0b; margin-top: 10px; position: relative; box-shadow: 0 0 35px rgba(245,158,11,0.25); }
         .close-btn { position: absolute; top: 15px; right: 18px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; }
 
-        .btn-gold {
-            background: var(--gold-gradient); color: #000; border: none;
-            padding: 14px 20px; border-radius: 14px; font-weight: 800;
-            width: 100%; margin-top: 12px; cursor: pointer;
-            box-shadow: var(--gold-glow); transition: opacity 0.1s;
-        }
+        .btn-gold { background: var(--gold-gradient); color: #000; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: var(--gold-glow); transition: opacity 0.1s; }
         .btn-gold:active { opacity: 0.9; }
         .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn-green { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: #000; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-        .btn-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .btn-green { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: #000; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+        .btn-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(59,130,246,0.4); }
         .btn-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; }
 
         .input-box { width: 100%; padding: 14px; border-radius: 12px; background: #0b0c10; border: 1px solid #333; color: #fff; margin: 10px 0; text-align: center; font-size: 16px; font-weight: 700; }
         .input-box:disabled { opacity: 0.5; }
 
         /* ===== SLOTS ===== */
-        .slots-window {
-            overflow: hidden; height: 120px; background: #0b0c10;
-            border-radius: 16px; border: 2px solid #f59e0b;
-            display: flex; justify-content: center; gap: 15px;
-            padding: 10px; margin: 20px 0;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.9); position: relative;
-        }
-        .slot-reel {
-            width: 80px; height: 100px; background: #1c1c28; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center; font-size: 50px;
-            position: relative; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            will-change: transform;
-        }
+        .slots-window { overflow: hidden; height: 120px; background: #0b0c10; border-radius: 16px; border: 2px solid #f59e0b; display: flex; justify-content: center; gap: 15px; padding: 10px; margin: 20px 0; box-shadow: inset 0 0 12px rgba(0,0,0,0.9); position: relative; }
+        .slot-reel { width: 80px; height: 100px; background: #1c1c28; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 50px; position: relative; transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1); will-change: transform; }
         .slot-reel.spinning { animation: slotSpin 0.06s linear infinite; filter: blur(4px); }
         @keyframes slotSpin { 0% { transform: translateY(-8px) scaleY(1.2); } 50% { transform: translateY(8px) scaleY(0.8); } 100% { transform: translateY(-8px) scaleY(1.2); } }
-        .slot-reel.bounce { animation: slotBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .slot-reel.bounce { animation: slotBounce 0.4s cubic-bezier(0.34,1.56,0.64,1); }
         @keyframes slotBounce { 0% { transform: translateY(0); } 30% { transform: translateY(25px); } 60% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
-        .slot-reel.win-pulse { animation: winPulse 0.5s ease-in-out 3; box-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
-        @keyframes winPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .slot-reel.win-pulse { animation: winPulse 0.5s ease-in-out 3; box-shadow: 0 0 30px rgba(245,158,11,0.8); }
+        @keyframes winPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
 
         .confetti-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
         .confetti-piece { position: absolute; width: 10px; height: 10px; top: -10px; animation: confettiFall linear forwards; }
@@ -282,24 +150,24 @@
         .bet-menu { display: none; background: #1a1a24; border-radius: 12px; padding: 8px; margin: 8px 0; gap: 6px; flex-wrap: wrap; border: 1px solid #333; }
         .bet-menu.open { display: flex; }
         .bet-menu .bet-option { flex: 1; min-width: 50px; padding: 8px 12px; background: var(--card-bg); border: 1px solid #333; border-radius: 8px; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
-        .bet-menu .bet-option:active, .bet-menu .bet-option.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); color: #ffe066; }
+        .bet-menu .bet-option:active, .bet-menu .bet-option.active { border-color: #f59e0b; background: rgba(245,158,11,0.15); color: #ffe066; }
         .bet-menu .bet-option.allin { border-color: #ef4444; color: #ef4444; }
-        .bet-menu .bet-option.allin:active { background: rgba(239, 68, 68, 0.15); }
+        .bet-menu .bet-option.allin:active { background: rgba(239,68,68,0.15); }
 
         .quick-bets { display: flex; gap: 8px; margin-bottom: 12px; }
-        .quick-bet-btn { flex: 1; background: #1e202d; border: 1px solid rgba(245, 158, 11, 0.3); color: #ffe066; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .quick-bet-btn { flex: 1; background: #1e202d; border: 1px solid rgba(245,158,11,0.3); color: #ffe066; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
         .bomb-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
         .bomb-btn { background: #1e202d; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; }
-        .bomb-btn.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); color: #ffe066; }
+        .bomb-btn.active { border-color: #f59e0b; background: rgba(245,158,11,0.15); color: #ffe066; }
 
         .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
         .mine-cell { aspect-ratio: 1; background: linear-gradient(145deg, #252533, #1e1e2b); border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.05s ease, background 0.1s ease; font-size: 28px; }
         .mine-cell:active { transform: scale(0.92); }
-        .mine-cell.revealed-safe { background: linear-gradient(145deg, #10b981, #059669); border-color: #34d399; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .mine-cell.revealed-safe { background: linear-gradient(145deg, #10b981, #059669); border-color: #34d399; animation: popIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275); }
         .mine-cell.revealed-bomb { background: linear-gradient(145deg, #ef4444, #dc2626); border-color: #f87171; animation: shake 0.3s ease-in-out; }
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-4px); } 40%,80% { transform: translateX(4px); } }
 
         .plinko-board { position: relative; width: 100%; height: 280px; background: #0b0c10; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); margin: 15px 0; overflow: hidden; }
         .plinko-ball { position: absolute; width: 14px; height: 14px; background: radial-gradient(circle, #ffe066 0%, #f59e0b 100%); border-radius: 50%; box-shadow: 0 0 10px #ffe066; top: 10px; left: 50%; transform: translateX(-50%); transition: all 0.05s linear; }
@@ -314,7 +182,7 @@
         .card-item.back { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: transparent; border: 2px solid #fff; }
 
         .arena-wheel-container { position: relative; width: 180px; height: 180px; margin: 15px auto; }
-        .arena-wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #f59e0b; transition: transform 4s cubic-bezier(0.15, 0.99, 0.18, 0.99); box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); position: relative; overflow: hidden; }
+        .arena-wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #f59e0b; transition: transform 4s cubic-bezier(0.15,0.99,0.18,0.99); box-shadow: 0 0 20px rgba(245,158,11,0.4); position: relative; overflow: hidden; }
         .arena-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 18px solid #ef4444; z-index: 10; }
 
         .profile-card { background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
@@ -327,7 +195,7 @@
         .leaderboard-table th, .leaderboard-table td { padding: 10px 8px; text-align: left; font-size: 13px; }
         .leaderboard-table th { color: var(--text-muted); border-bottom: 1px solid #333; }
         .leaderboard-table tr { border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .leaderboard-table tr.my-rank-row { background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; }
+        .leaderboard-table tr.my-rank-row { background: rgba(245,158,11,0.15); border: 1px solid #f59e0b; }
         .rank-num { font-weight: 800; width: 30px; text-align: center; }
         .rank-1 { color: #ffe066; font-size: 16px; }
         .rank-2 { color: #d1d5db; font-size: 15px; }
@@ -336,7 +204,7 @@
         .player-avatar { width: 32px; height: 32px; border-radius: 50%; background: #252530; object-fit: cover; border: 1px solid #f59e0b; }
 
         .custom-alert-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 3000; align-items: center; justify-content: center; }
-        .custom-alert-box { background: var(--card-bg); border: 2px solid #f59e0b; border-radius: 20px; padding: 25px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 35px rgba(245, 158, 11, 0.3); animation: popIn 0.2s ease; }
+        .custom-alert-box { background: var(--card-bg); border: 2px solid #f59e0b; border-radius: 20px; padding: 25px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 35px rgba(245,158,11,0.3); animation: popIn 0.2s ease; }
         .custom-alert-title { font-size: 20px; font-weight: 800; color: #ffe066; margin-bottom: 10px; }
         .custom-alert-msg { font-size: 14px; color: #fff; margin-bottom: 20px; line-height: 1.4; }
 
@@ -347,18 +215,8 @@
         .slot-balance { text-align: center; font-size: 14px; color: var(--text-muted); margin: 5px 0 10px 0; }
         .slot-balance span { color: #ffe066; font-weight: 800; }
 
-        /* ===== CLANS CUSTOM ===== */
-        .clan-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(245, 158, 11, 0.15);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-        }
+        /* ===== CLANS ===== */
+        .clan-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(245,158,11,0.15); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
         .clan-card:active { transform: scale(0.98); }
         .clan-card .clan-info { flex: 1; }
         .clan-card .clan-name { font-weight: 700; font-size: 16px; color: #fff; }
@@ -368,36 +226,18 @@
         .clan-card .clan-actions { display: flex; gap: 8px; }
         .clan-card .clan-actions .btn-small { padding: 6px 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; }
 
-        .clan-detail-header {
-            display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
-            padding: 16px; background: rgba(255,255,255,0.03); border-radius: 16px;
-        }
-        .clan-detail-header .clan-avatar {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: linear-gradient(135deg, #f59e0b, #ffe066);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; font-weight: 800; color: #000;
-        }
+        .clan-detail-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 16px; }
+        .clan-detail-header .clan-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ffe066); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: #000; }
         .clan-detail-header .clan-info { flex: 1; }
         .clan-detail-header .clan-info .name { font-size: 20px; font-weight: 800; }
         .clan-detail-header .clan-info .level { color: #ffe066; font-weight: 700; }
 
-        .clan-member-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .clan-member-item .member-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: #252530; display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 14px; color: #f59e0b;
-        }
+        .clan-member-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .clan-member-item .member-avatar { width: 32px; height: 32px; border-radius: 50%; background: #252530; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #f59e0b; }
         .clan-member-item .member-name { flex: 1; font-weight: 600; }
         .clan-member-item .member-role { font-size: 11px; color: #ffe066; font-weight: 700; }
 
-        .request-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        .request-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .request-item .req-info { flex: 1; }
         .request-item .req-info .req-name { font-weight: 600; }
         .request-item .req-info .req-level { font-size: 12px; color: var(--text-muted); }
@@ -405,85 +245,24 @@
         .request-item .req-actions .btn-accept { background: #10b981; color: #fff; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; }
         .request-item .req-actions .btn-decline { background: #ef4444; color: #fff; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; }
 
-        .treasury-display {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 12px;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-        }
+        .treasury-display { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
         .treasury-display .label { color: var(--text-muted); font-size: 13px; }
         .treasury-display .amount { color: #ffe066; font-weight: 800; font-size: 18px; }
 
-        .xp-bar {
-            width: 100%; height: 6px; background: #0b0c10; border-radius: 3px; overflow: hidden; margin: 8px 0;
-        }
+        .xp-bar { width: 100%; height: 6px; background: #0b0c10; border-radius: 3px; overflow: hidden; margin: 8px 0; }
         .xp-bar .xp-fill { height: 100%; background: var(--gold-gradient); border-radius: 3px; transition: width 0.5s; }
 
-        .clan-guest-msg {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--text-muted);
-        }
+        .clan-guest-msg { text-align: center; padding: 30px 20px; color: var(--text-muted); }
         .clan-guest-msg .icon { font-size: 48px; display: block; margin-bottom: 12px; }
         .clan-guest-msg h3 { color: #fff; margin-bottom: 8px; }
 
-        /* ===== ARENA WHEEL PLAYERS ===== */
-        .arena-players-on-wheel {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
-            padding: 8px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-        }
-        .arena-player-chip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.06);
-            padding: 4px 10px 4px 4px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid rgba(245,158,11,0.2);
-        }
-        .arena-player-chip .chip-avatar {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #252530;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 700;
-            color: #f59e0b;
-            overflow: hidden;
-        }
-        .arena-player-chip .chip-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .arena-player-chip .chip-chance {
-            color: #ffe066;
-            font-weight: 800;
-        }
-        .arena-player-chip .chip-bet {
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-        .arena-player-chip.winner-chip {
-            border-color: #ffe066;
-            background: rgba(245,158,11,0.15);
-            animation: winPulse 0.5s ease-in-out 2;
-        }
+        .arena-players-on-wheel { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 12px; }
+        .arena-player-chip { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); padding: 4px 10px 4px 4px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(245,158,11,0.2); }
+        .arena-player-chip .chip-avatar { width: 22px; height: 22px; border-radius: 50%; background: #252530; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #f59e0b; overflow: hidden; }
+        .arena-player-chip .chip-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .arena-player-chip .chip-chance { color: #ffe066; font-weight: 800; }
+        .arena-player-chip .chip-bet { color: var(--text-muted); font-weight: 400; }
+        .arena-player-chip.winner-chip { border-color: #ffe066; background: rgba(245,158,11,0.15); animation: winPulse 0.5s ease-in-out 2; }
     </style>
 </head>
 <body>
@@ -739,15 +518,11 @@
         </div>
     </div>
 
-    <!-- ===== PVP ARENA MODAL (ИСПРАВЛЕНА) ===== -->
     <div class="modal" id="modalArena">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalArena')">&times;</button>
             <div class="section-title" style="text-align:center;">🎡 PvP Арена</div>
-            
-            <!-- Игроки на колесе (чипы) -->
             <div class="arena-players-on-wheel" id="arenaPlayersChips"></div>
-            
             <div class="arena-wheel-container">
                 <div class="arena-pointer"></div>
                 <div class="arena-wheel" id="arenaWheel"></div>
@@ -796,7 +571,6 @@
         </div>
     </div>
 
-    <!-- ===== CREATE CLAN MODAL ===== -->
     <div class="modal" id="modalCreateClan">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalCreateClan')">&times;</button>
@@ -807,7 +581,6 @@
         </div>
     </div>
 
-    <!-- ===== CLAN DETAIL MODAL ===== -->
     <div class="modal" id="modalClanDetail">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalClanDetail')">&times;</button>
@@ -815,7 +588,6 @@
         </div>
     </div>
 
-    <!-- ===== BOTTOM NAV ===== -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('games', this)">
             <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H9v2H7v-2H5v-2h2V9h2v2h2v2zm4.5 1c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
@@ -886,10 +658,9 @@
     }
 
     // ============================================================
-    // 3. ПРОВЕРКА ДОСТУПА (убрана жесткая защита)
+    // 3. ПРОВЕРКА ДОСТУПА
     // ============================================================
     async function verifyAccess() {
-        // Всегда пропускаем, без проверки
         if (!INIT_DATA) {
             isGuest = true;
             document.getElementById('guestBadge').style.display = 'inline';
@@ -1587,7 +1358,7 @@
     }
 
     // ============================================================
-    // 16. PVP АРЕНА (ИСПРАВЛЕНА - С ОТОБРАЖЕНИЕМ ИГРОКОВ)
+    // 16. PVP АРЕНА
     // ============================================================
     function openArena() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -1605,8 +1376,6 @@
             const data = await res.json();
 
             document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
-
-            // Обновляем чипы игроков на колесе
             updateArenaPlayerChips(data.players);
 
             let list = document.getElementById('arenaPlayersList');
@@ -1736,7 +1505,6 @@
                 wheel.style.transform = 'rotate(0deg)';
                 let isWinner = String(data.winner.user_id) === String(userId);
                 
-                // Подсветка победителя на чипах
                 document.querySelectorAll('.arena-player-chip').forEach(chip => {
                     chip.classList.remove('winner-chip');
                 });
@@ -1747,7 +1515,6 @@
                     }
                 });
                 
-                // Рисуем колесо с победителем
                 drawArenaWheel(data.players);
                 
                 let msg = isWinner ?
@@ -1763,15 +1530,522 @@
     }
 
     // ============================================================
-    // 17-24. ОСТАЛЬНЫЕ ФУНКЦИИ (КВЕСТЫ, ЧАТ, КЛАНЫ и т.д.)
-    // Сохраняем все остальные функции без изменений
+    // 17. КВЕСТЫ
     // ============================================================
-    
-    // ... (остальные функции такие же как в твоём коде)
-    // Я оставляю их чтобы не перегружать ответ, но они все есть
-    
+    async function claimDaily() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут получать награды!"); return; }
+        const res = await apiRequest(`${API_BASE}/claim_daily`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+        if (!res) return;
+        const data = await res.json();
+        showCustomAlert("НАГРАДА", data.message);
+        refreshUserData();
+    }
+
+    async function claimQuest(questId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут выполнять квесты!"); return; }
+        const res = await apiRequest(`${API_BASE}/claim_quest`, { method: 'POST', body: JSON.stringify({ user_id: userId, quest_id: questId }) });
+        if (!res) return;
+        const data = await res.json();
+        if (data.error) return showCustomAlert("ОШИБКА", data.error);
+        showCustomAlert("КВЕСТ ВЫПОЛНЕН!", `Получено +${data.reward} фишек.`);
+        refreshUserData();
+    }
+
     // ============================================================
-    // ФИНАЛ
+    // 18. МАГАЗИН
+    // ============================================================
+    async function buyItem(itemId, itemType, price, minLvl) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут покупать предметы!"); return; }
+        const res = await apiRequest(`${API_BASE}/buy_item`, { method: 'POST', body: JSON.stringify({ user_id: userId, item_id: itemId, item_type: itemType, price, min_lvl: minLvl }) });
+        if (!res) return;
+        const data = await res.json();
+        showCustomAlert("МАГАЗИН", data.message);
+        refreshUserData();
+    }
+
+    // ============================================================
+    // 19. ЧАТ
+    // ============================================================
+    function toggleChat() { if (chatOpen) closeChat(); else openChat(); }
+    function openChat() { chatOpen = true; document.getElementById('chatSheet').classList.add('open'); document.getElementById('chatFab').style.display = 'none'; loadChatMessages(); if (!isGuest) document.getElementById('chatInput').focus(); }
+    function closeChat() { chatOpen = false; document.getElementById('chatSheet').classList.remove('open'); document.getElementById('chatFab').style.display = 'flex'; document.getElementById('chatPlusMenu').classList.remove('open'); }
+    function toggleChatPlus() { if (isGuest) return; document.getElementById('chatPlusMenu').classList.toggle('open'); }
+
+    async function loadChatMessages() {
+        try {
+            const res = await apiRequest(`${API_BASE}/chat/messages`);
+            if (!res) return;
+            const data = await res.json();
+            let container = document.getElementById('chatMessages');
+            container.innerHTML = '';
+            let title = document.getElementById('chatTitle');
+            title.innerText = data.settings?.name || 'Общий чат';
+            document.getElementById('chatOnline').innerText = `(${data.online || 0} онлайн)`;
+            let msgs = data.messages || [];
+            msgs.forEach(msg => {
+                let div = document.createElement('div');
+                let isOwn = String(msg.user_id) === String(userId) && !isGuest;
+                if (msg.type === 'system') { div.className = 'chat-message system'; div.innerText = msg.text; }
+                else {
+                    div.className = `chat-message ${isOwn ? 'own' : 'other'}`;
+                    let userClass = msg.is_owner ? 'owner' : '';
+                    let levelText = msg.level ? `[LVL ${msg.level}]` : '';
+                    let ownerBadge = msg.is_owner ? ' 👑' : '';
+                    div.innerHTML = `<div class="msg-user ${userClass}">${msg.username || 'Игрок'} ${levelText} ${ownerBadge}</div>
+                        <div class="msg-text">${msg.text}</div>
+                        ${msg.image_data ? `<img class="share-image" src="data:image/png;base64,${msg.image_data}">` : ''}
+                        <div class="msg-time">${new Date(msg.timestamp * 1000).toLocaleTimeString()}</div>`;
+                }
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        } catch(e) { console.error('Chat load error:', e); }
+    }
+
+    async function sendChatMessage() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут писать в чат!"); return; }
+        let input = document.getElementById('chatInput');
+        let text = input.value.trim();
+        if (!text) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/chat/send`, { method: 'POST', body: JSON.stringify({ user_id: userId, text: text, type: 'text' }) });
+            if (!res) return;
+            const data = await res.json();
+            if (data.success) { input.value = ''; loadChatMessages(); }
+            else showCustomAlert("ЧАТ", data.message || 'Ошибка отправки');
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка отправки сообщения!"); }
+    }
+
+    function chatPlusAction(type) {
+        if (isGuest) return;
+        document.getElementById('chatPlusMenu').classList.remove('open');
+        if (type === 'text') document.getElementById('chatInput').focus();
+        else if (type === 'photo') showCustomAlert("ФОТО", "Функция загрузки фото в разработке");
+        else if (type === 'voice') showCustomAlert("ГОЛОС", "Функция голосовых сообщений в разработке");
+        else if (type === 'file') showCustomAlert("ФАЙЛ", "Функция загрузки файлов в разработке");
+    }
+
+    async function shareBalance() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут делиться балансом!"); return; }
+        document.getElementById('chatPlusMenu').classList.remove('open');
+        try {
+            const res = await apiRequest(`${API_BASE}/share_balance`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+            if (!res) return;
+            const data = await res.json();
+            if (data.success) { showCustomAlert("✅ УСПЕХ", "Картинка профиля отправлена в чат!"); loadChatMessages(); }
+            else showCustomAlert("ОШИБКА", data.message || 'Не удалось поделиться балансом');
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка при отправке!"); }
+    }
+
+    // ============================================================
+    // 20. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
+    // ============================================================
+    (function initChatDrag() {
+        const sheet = document.getElementById('chatSheet');
+        const header = document.getElementById('chatHeader');
+        let startY = 0, currentY = 0, isDragging = false;
+        header.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; isDragging = true; }, { passive: true });
+        header.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentY = e.touches[0].clientY;
+            let diff = currentY - startY;
+            if (diff > 0) sheet.style.transform = `translateY(${diff}px)`;
+        }, { passive: true });
+        header.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            let diff = currentY - startY;
+            sheet.style.transform = '';
+            if (diff > 100) closeChat();
+            startY = 0; currentY = 0;
+        }, { passive: true });
+    })();
+
+    // ============================================================
+    // 21. КЛАВИШИ
+    // ============================================================
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (document.getElementById('chatSheet').classList.contains('open')) closeChat();
+            document.querySelectorAll('.modal').forEach(m => { if (m.style.display === 'block') m.style.display = 'none'; });
+        }
+    });
+
+    // ============================================================
+    // 22. КЛАНЫ
+    // ============================================================
+    async function loadClans() {
+        if (isGuest) {
+            let container = document.getElementById('clanListContainer');
+            container.innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3><p>Войдите через официальный бот Telegram, чтобы создавать и вступать в кланы</p></div>`;
+            return;
+        }
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/list`);
+            if (!res) return;
+            const data = await res.json();
+            let container = document.getElementById('clanListContainer');
+            container.innerHTML = '';
+
+            if (!data.clans || data.clans.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных кланов. Будьте первым! 🏰</p>';
+                return;
+            }
+
+            data.clans.forEach(clan => {
+                let card = document.createElement('div');
+                card.className = 'clan-card';
+                let expPercent = 0;
+                if (clan.next_level_exp) {
+                    const prevExp = clan.exp;
+                    const nextExp = clan.next_level_exp;
+                    const levelExp = nextExp;
+                    expPercent = Math.min(100, Math.floor((prevExp / levelExp) * 100));
+                }
+                card.innerHTML = `
+                    <div class="clan-info">
+                        <div class="clan-name">${clan.name} <span class="clan-id">${clan.id}</span></div>
+                        <div class="clan-stats">👥 ${clan.members_count} уч. | 🏆 Ур. ${clan.level} | 💰 ${clan.treasury.toLocaleString()} в казне</div>
+                        <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
+                        <div class="clan-stats" style="font-size:10px;">Лидер: ${clan.leader_name}</div>
+                    </div>
+                    <div class="clan-actions">
+                        <button class="btn-small" style="background:var(--gold-gradient);color:#000;" onclick="viewClan('${clan.id}')">Подробнее</button>
+                        <button class="btn-small" style="background:rgba(245,158,11,0.2);color:#f59e0b;border:1px solid #f59e0b;" onclick="sendClanRequest('${clan.id}')">📩 Запрос</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } catch(e) { console.error(e); }
+    }
+
+    function searchClans() {
+        loadClans();
+    }
+
+    function openCreateClanModal() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут создавать кланы!"); return; }
+        document.getElementById('modalCreateClan').style.display = 'block';
+        document.getElementById('clanNameInput').value = '';
+    }
+
+    async function createClan() {
+        if (isGuest) return;
+        let name = document.getElementById('clanNameInput').value.trim();
+        if (!name || name.length < 3) return showCustomAlert("ОШИБКА", "Название должно быть минимум 3 символа!");
+        if (name.length > 30) return showCustomAlert("ОШИБКА", "Название не должно превышать 30 символов!");
+
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/create`, { method: 'POST', body: JSON.stringify({ user_id: userId, name: name }) });
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) return showCustomAlert("ОШИБКА", data.message);
+            showCustomAlert("УСПЕХ!", data.message);
+            closeModal('modalCreateClan');
+            loadClans();
+            refreshUserData();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка создания клана!"); }
+    }
+
+    async function viewClan(clanId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать кланы!"); return; }
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/info?clan_id=${clanId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+
+            let container = document.getElementById('clanDetailContent');
+            let isMember = data.members.some(m => String(m.user_id) === String(userId));
+            let isLeader = String(data.leader_id) === String(userId);
+
+            let expPercent = 0;
+            if (data.next_level_exp) {
+                const prevExp = data.exp;
+                const nextExp = data.next_level_exp;
+                const levelExp = nextExp;
+                expPercent = Math.min(100, Math.floor((prevExp / levelExp) * 100));
+            }
+
+            let html = `
+                <div class="clan-detail-header">
+                    <div class="clan-avatar">${data.name.charAt(0).toUpperCase()}</div>
+                    <div class="clan-info">
+                        <div class="name">${data.name} <span style="font-size:14px;color:var(--text-muted);">${data.id}</span></div>
+                        <div class="level">🏆 Уровень ${data.level}</div>
+                        <div style="font-size:12px;color:var(--text-muted);">👥 ${data.members.length} участников</div>
+                        <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
+                    </div>
+                </div>
+                <div class="treasury-display">
+                    <span class="label">💰 Казна клана</span>
+                    <span class="amount">${data.treasury.toLocaleString()} фишек</span>
+                </div>
+                <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;">
+                    ${isMember ? `<button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;" onclick="donateToClan('${clanId}')">💰 Пополнить казну</button>` : ''}
+                    ${isLeader ? `<button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;" onclick="withdrawFromClan('${clanId}')">💸 Вывести из казны</button>` : ''}
+                    ${isMember ? `<button class="btn-red" style="width:auto;padding:8px 16px;margin:0;" onclick="leaveClan('${clanId}')">🚪 Покинуть клан</button>` : ''}
+                    ${isMember ? `<button class="btn-green" style="width:auto;padding:8px 16px;margin:0;" onclick="openClanChat('${clanId}')">💬 Чат клана</button>` : ''}
+                </div>
+                <div class="section-title" style="font-size:14px;">Участники</div>
+            `;
+
+            data.members.forEach(m => {
+                let roleLabel = m.role === 'leader' ? '👑 Лидер' : '👤 Участник';
+                html += `
+                    <div class="clan-member-item">
+                        <div class="member-avatar">${m.username.charAt(0).toUpperCase()}</div>
+                        <div class="member-name">${m.username}</div>
+                        <div class="member-role">${roleLabel} | LVL ${m.level}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('modalClanDetail').style.display = 'block';
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки клана!"); }
+    }
+
+    async function sendClanRequest(clanId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут вступать в кланы!"); return; }
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/send_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, clan_id: clanId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка отправки запроса!"); }
+    }
+
+    async function loadMyClan() {
+        if (isGuest) {
+            document.getElementById('myClanContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3><p>Войдите через официальный бот Telegram</p></div>`;
+            return;
+        }
+        let container = document.getElementById('myClanContainer');
+        try {
+            const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (!data.clan_id) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Вы не состоите в клане. Перейдите в "Список кланов" чтобы найти свой! 🏰</p>';
+                return;
+            }
+            viewClan(data.clan_id);
+        } catch(e) { console.error(e); }
+    }
+
+    async function loadClanRequests() {
+        if (isGuest) {
+            document.getElementById('clanRequestsContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к заявкам только для игроков</h3></div>`;
+            return;
+        }
+        let container = document.getElementById('clanRequestsContainer');
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/requests?user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) {
+                container.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:20px;">${data.error}</p>`;
+                return;
+            }
+            if (!data.requests || data.requests.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет новых заявок 📭</p>';
+                return;
+            }
+            container.innerHTML = '';
+            data.requests.forEach(req => {
+                let div = document.createElement('div');
+                div.className = 'request-item';
+                div.innerHTML = `
+                    <div class="req-info">
+                        <div class="req-name">${req.username}</div>
+                        <div class="req-level">LVL ${req.level} | Запрос от ${new Date(req.time * 1000).toLocaleDateString()}</div>
+                    </div>
+                    <div class="req-actions">
+                        <button class="btn-accept" onclick="acceptRequest('${req.user_id}')">✅ Принять</button>
+                        <button class="btn-decline" onclick="declineRequest('${req.user_id}')">❌ Отклонить</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } catch(e) { console.error(e); }
+    }
+
+    async function acceptRequest(requesterId) {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/accept_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, requester_id: requesterId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+            if (data.success) { loadClanRequests(); loadClans(); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function declineRequest(requesterId) {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/decline_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, requester_id: requesterId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+            if (data.success) loadClanRequests();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function donateToClan(clanId) {
+        if (isGuest) return;
+        let amount = prompt("Введите сумму для пополнения казны (мин 1):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/donate`, { method: 'POST', body: JSON.stringify({ user_id: userId, amount: parseInt(amount) }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); viewClan(clanId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function withdrawFromClan(clanId) {
+        if (isGuest) return;
+        let amount = prompt("Введите сумму для вывода (комиссия 5%):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/withdraw`, { method: 'POST', body: JSON.stringify({ user_id: userId, amount: parseInt(amount) }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); viewClan(clanId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function leaveClan(clanId) {
+        if (isGuest) return;
+        let confirmed = confirm("Вы уверены, что хотите покинуть клан?");
+        if (!confirmed) return;
+
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/leave`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+            if (data.success) { closeModal('modalClanDetail'); loadClans(); refreshUserData(); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    function openClanChat(clanId) {
+        if (isGuest) return;
+        showCustomAlert("💬 Чат клана", "Функция клан-чата в разработке. Используйте общий чат для общения с кланом!");
+    }
+
+    // ============================================================
+    // 23. КЛАНОВАЯ АРЕНА
+    // ============================================================
+    async function loadClanArena() {
+        if (isGuest) {
+            document.getElementById('clanArenaContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к арене только для игроков</h3></div>`;
+            return;
+        }
+        let container = document.getElementById('clanArenaContainer');
+        try {
+            const res = await apiRequest(`${API_BASE}/clan_arena/state`);
+            if (!res) return;
+            const data = await res.json();
+
+            if (!data.active) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:20px;">
+                        <div style="font-size:48px;margin-bottom:10px;">⚔️</div>
+                        <h3 style="color:#ffe066;">Клановая арена не активна</h3>
+                        <p style="color:var(--text-muted);">Арена открывается раз в сутки. Следите за объявлениями!</p>
+                        <button class="btn-gold" onclick="loadClanArena()">🔄 Обновить</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const clans = Object.keys(data.clans);
+            let html = `
+                <div style="text-align:center;padding:10px;background:rgba(245,158,11,0.1);border-radius:12px;margin-bottom:15px;">
+                    <div style="font-size:20px;font-weight:800;color:#ffe066;">⚔️ КЛАНОВАЯ АРЕНА</div>
+                    <div style="font-size:14px;color:var(--text-muted);">${data.clans[clans[0]] || 'Клан 1'} vs ${data.clans[clans[1]] || 'Клан 2'}</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Осталось: ${Math.max(0, Math.floor((data.end_time - Date.now()/1000)/60))} мин</div>
+                </div>
+                <div style="display:flex;gap:15px;margin-bottom:15px;">
+                    <div style="flex:1;background:rgba(245,158,11,0.05);border-radius:12px;padding:12px;text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);">${data.clans[clans[0]] || 'Клан 1'}</div>
+                        <div style="font-size:24px;font-weight:800;color:#ffe066;">${data.damage[clans[0]] || 0}</div>
+                        <div style="font-size:10px;color:var(--text-muted);">урона</div>
+                    </div>
+                    <div style="flex:1;background:rgba(245,158,11,0.05);border-radius:12px;padding:12px;text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);">${data.clans[clans[1]] || 'Клан 2'}</div>
+                        <div style="font-size:24px;font-weight:800;color:#ffe066;">${data.damage[clans[1]] || 0}</div>
+                        <div style="font-size:10px;color:var(--text-muted);">урона</div>
+                    </div>
+                </div>
+            `;
+
+            const userRes = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
+            if (userRes) {
+                const userData = await userRes.json();
+                if (userData.clan_id && data.clans[userData.clan_id]) {
+                    const buff = data.buffs[userId] || 1.0;
+                    html += `
+                        <div style="background:rgba(245,158,11,0.1);border-radius:12px;padding:12px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span style="color:var(--text-muted);">⚡ Ваш бафф:</span>
+                                <span style="color:#ffe066;font-weight:800;">+${Math.round((buff-1)*100)}%</span>
+                            </div>
+                            <div style="display:flex;gap:8px;margin-top:8px;">
+                                <input type="number" class="input-box" id="arenaAttackBet" value="100" style="flex:1;margin:0;padding:8px;">
+                                <button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;" onclick="clanArenaAttack()">⚔️ Атака</button>
+                            </div>
+                            <button class="btn-blue" style="width:100%;margin-top:8px;padding:10px;" onclick="clanArenaBuff()">💪 Улучшить атаку (+5% за 100 фишек)</button>
+                        </div>
+                    `;
+                }
+            }
+
+            let topPlayers = Object.entries(data.player_damage || {}).sort((a,b) => b[1] - a[1]).slice(0,5);
+            if (topPlayers.length > 0) {
+                html += `<div class="section-title" style="font-size:14px;">🏆 Топ-5 игроков</div>`;
+                topPlayers.forEach(([pid, dmg], idx) => {
+                    html += `<div class="clan-member-item"><span style="font-weight:800;color:#ffe066;width:30px;">#${idx+1}</span><span>Игрок ${pid.slice(0,8)}</span><span style="margin-left:auto;color:#ffe066;">${dmg} урона</span></div>`;
+                });
+            }
+
+            container.innerHTML = html;
+        } catch(e) { console.error(e); }
+    }
+
+    async function clanArenaAttack() {
+        if (isGuest) return;
+        let bet = parseInt(document.getElementById('arenaAttackBet').value);
+        if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка 10 фишек!");
+        try {
+            const res = await apiRequest(`${API_BASE}/clan_arena/attack`, { method: 'POST', body: JSON.stringify({ user_id: userId, bet: bet }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "⚔️ АТАКА" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); loadClanArena(); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function clanArenaBuff() {
+        if (isGuest) return;
+        let amount = prompt("Сколько фишек потратить на улучшение атаки? (мин 100):");
+        if (!amount || isNaN(amount) || parseInt(amount) < 100) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/clan_arena/buff`, { method: 'POST', body: JSON.stringify({ user_id: userId, amount: parseInt(amount) }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "💪 УЛУЧШЕНИЕ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); loadClanArena(); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    // ============================================================
+    // 24. ФИНАЛ
     // ============================================================
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);

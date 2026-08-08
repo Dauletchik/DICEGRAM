@@ -333,6 +333,175 @@
         .mines-restore-box .btn-row { display: flex; gap: 10px; }
         .mines-restore-box .btn-row .btn-gold { flex: 1; margin: 0; }
         .mines-restore-box .btn-row .btn-red { flex: 1; margin: 0; }
+
+        /* ===== НОВЫЕ СТИЛИ ДЛЯ КЛАНОВ ===== */
+        .clan-main-btn {
+            background: var(--gold-gradient);
+            color: #000;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 0 40px rgba(245,158,11,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            max-width: 320px;
+            margin: 20px auto;
+            display: block;
+        }
+        .clan-main-btn:active { transform: scale(0.95); box-shadow: 0 0 60px rgba(245,158,11,0.6); }
+
+        .clan-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .clan-view-btn {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 20px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .clan-view-btn.active {
+            background: var(--gold-gradient);
+            color: #000;
+            box-shadow: var(--gold-glow);
+        }
+
+        /* Battle 4x4 */
+        .battle-field {
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0b0c10 100%);
+            border-radius: 20px;
+            padding: 16px;
+            border: 2px solid #f59e0b;
+            position: relative;
+            min-height: 350px;
+            margin: 10px 0;
+        }
+        .battle-field .vs-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            font-weight: 900;
+            color: #ef4444;
+            text-shadow: 0 0 30px rgba(239,68,68,0.5);
+            z-index: 5;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 2px solid #ef4444;
+        }
+        .battle-teams {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+        }
+        .battle-team {
+            flex: 1;
+            text-align: center;
+        }
+        .battle-team .team-name {
+            font-weight: 800;
+            font-size: 13px;
+            color: #ffe066;
+            margin-bottom: 8px;
+        }
+        .battle-team .team-score {
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            margin: 6px 0;
+        }
+        .battle-players {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .battle-player {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 8px 4px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .battle-player.online {
+            border-color: #10b981;
+            box-shadow: 0 0 12px rgba(16,185,129,0.15);
+        }
+        .battle-player.offline {
+            border-color: #ef4444;
+            opacity: 0.5;
+        }
+        .battle-player .bp-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #252530;
+            margin: 0 auto 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #f59e0b;
+            border: 2px solid transparent;
+        }
+        .battle-player.online .bp-avatar {
+            border-color: #10b981;
+        }
+        .battle-player .bp-name {
+            font-size: 9px;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .battle-player .bp-status {
+            font-size: 8px;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+        .battle-player .bp-status.online { color: #10b981; }
+        .battle-player .bp-status.offline { color: #ef4444; }
+
+        .battle-controls { margin-top: 12px; text-align: center; }
+        .battle-status {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+        .battle-status .highlight { color: #ffe066; font-weight: 700; }
+
+        .clan-header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .clan-header-actions .btn-small {
+            padding: 6px 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .clan-header-actions .btn-small:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -456,32 +625,53 @@
         <div id="questsContainer"></div>
     </div>
 
-    <!-- ===== DEVELOPMENT TAB (CLANS) ===== -->
+    <!-- ===== DEVELOPMENT TAB (CLANS) - НОВАЯ ВЕРСИЯ ===== -->
     <div id="tab-development" class="tab-content">
-        <div class="section-title">🏰 Кланы</div>
-        <div id="clanContent">
-            <div class="nav-filter" style="margin-bottom:15px;">
-                <button class="filter-btn active" id="clanTabList" onclick="switchClanTab('list')">📋 Список</button>
-                <button class="filter-btn" id="clanTabMy" onclick="switchClanTab('my')">👥 Мой клан</button>
-                <button class="filter-btn" id="clanTabRequests" onclick="switchClanTab('requests')">📩 Заявки</button>
-                <button class="filter-btn" id="clanTabArena" onclick="switchClanTab('arena')">⚔️ Арена</button>
+        <!-- Главный экран с одной кнопкой -->
+        <div id="clanMainScreen">
+            <div style="text-align:center;padding:30px 20px;">
+                <div style="font-size:72px;margin-bottom:16px;">🏰</div>
+                <h2 style="color:#fff;font-size:22px;font-weight:800;margin-bottom:8px;">Кланы spnxplay</h2>
+                <p style="color:var(--text-muted);font-size:14px;margin-bottom:25px;line-height:1.5;">
+                    Объединяйся с друзьями,<br>сражайся и забирай банк!<br>
+                    <span style="color:#ffe066;">Максимальный уровень клана — 7 🔥</span>
+                </p>
+                <button class="clan-main-btn" onclick="enterClans()">🚪 Войти в кланы</button>
             </div>
-            <div id="clanTabListContent">
-                <div style="display:flex;gap:10px;margin-bottom:15px;">
-                    <input type="text" class="input-box" id="clanSearch" placeholder="Поиск по ID или названию..." style="margin:0;flex:1;">
-                    <button class="btn-gold" style="width:auto;padding:10px 16px;margin:0;" onclick="searchClans()">🔍</button>
+        </div>
+
+        <!-- Панель управления кланами -->
+        <div id="clanPanel" class="clan-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <div class="section-title" style="margin:0;font-size:16px;">🏰 Управление кланами</div>
+                <button class="btn-gold" style="width:auto;padding:6px 14px;font-size:11px;margin:0;" onclick="exitClans()">✕ Выйти</button>
+            </div>
+
+            <!-- Вкладки -->
+            <div class="nav-filter" style="margin-bottom:12px;">
+                <button class="clan-view-btn active" id="clanViewSearchBtn" onclick="switchClanView('search')">🔍 Поиск</button>
+                <button class="clan-view-btn" id="clanViewMyBtn" onclick="switchClanView('my')">👥 Мой клан</button>
+                <button class="clan-view-btn" id="clanViewBattleBtn" onclick="switchClanView('battle')">⚔️ Битва 4x4</button>
+            </div>
+
+            <!-- Вкладка: Поиск клана -->
+            <div id="clanViewSearch">
+                <div style="display:flex;gap:10px;margin-bottom:12px;">
+                    <input type="text" class="input-box" id="clanSearchInput" placeholder="Поиск по ID или названию..." style="margin:0;flex:1;padding:10px;">
+                    <button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;font-size:13px;" onclick="searchClans()">🔍</button>
                 </div>
-                <button class="btn-gold" id="createClanBtn" onclick="openCreateClanModal()">➕ Создать клан (50,000 💰)</button>
-                <div id="clanListContainer" style="margin-top:15px;"></div>
+                <button class="btn-gold" onclick="openCreateClanModal()" style="font-size:14px;padding:12px;">➕ Создать клан (50,000 💰)</button>
+                <div id="clanListContainer" style="margin-top:12px;"></div>
             </div>
-            <div id="clanTabMyContent" style="display:none;">
+
+            <!-- Вкладка: Мой клан -->
+            <div id="clanViewMy" style="display:none;">
                 <div id="myClanContainer"></div>
             </div>
-            <div id="clanTabRequestsContent" style="display:none;">
-                <div id="clanRequestsContainer"></div>
-            </div>
-            <div id="clanTabArenaContent" style="display:none;">
-                <div id="clanArenaContainer"></div>
+
+            <!-- Вкладка: Битва 4x4 -->
+            <div id="clanViewBattle" style="display:none;">
+                <div id="clanBattleContainer"></div>
             </div>
         </div>
     </div>
@@ -739,10 +929,11 @@
     let botUsername = "spnx_play_bot";
     let selectedMinesCount = 3;
     let chatOpen = false;
-    let currentClanTab = 'list';
     let arenaTimer = null;
     let isGuest = false;
     let arenaInterval = null;
+    let battleInterval = null;
+    let currentClanView = 'search';
 
     // ============================================================
     // 2. API ЗАПРОСЫ
@@ -823,8 +1014,6 @@
         document.getElementById('chatPlusBtn').disabled = true;
         document.getElementById('chatInput').placeholder = 'Гости не могут писать в чат';
         document.getElementById('shareBalanceBtn').classList.add('disabled');
-        document.getElementById('createClanBtn').disabled = true;
-        document.getElementById('createClanBtn').textContent = '⛔ Создать клан (гостям недоступно)';
         document.getElementById('donateBtn').disabled = true;
         document.getElementById('promoBtn').disabled = true;
         document.getElementById('donateBtn').textContent = '⛔ Пополнить (гостям недоступно)';
@@ -866,7 +1055,6 @@
             refreshUserData();
             loadChatMessages();
             setInterval(loadChatMessages, 5000);
-            loadClans();
         } else {
             document.getElementById('headerRank').innerText = 'Гость';
             document.getElementById('profRank').innerText = 'Гость';
@@ -907,7 +1095,11 @@
         if (!isGuest) {
             refreshUserData();
             if (tabId === 'friends') loadLeaderboard();
-            if (tabId === 'development') { loadClans(); loadClanRequests(); loadClanArena(); }
+            if (tabId === 'development') {
+                // При заходе в развитие показываем главный экран
+                document.getElementById('clanMainScreen').style.display = 'block';
+                document.getElementById('clanPanel').style.display = 'none';
+            }
         }
     }
 
@@ -927,29 +1119,6 @@
         const bt = document.getElementById('btnSubTop');
         if (type === 'friends') { f.style.display = 'block'; t.style.display = 'none'; bf.classList.add('active'); bt.classList.remove('active'); }
         else { f.style.display = 'none'; t.style.display = 'block'; bf.classList.remove('active'); bt.classList.add('active'); if (!isGuest) loadLeaderboard(); }
-    }
-
-    function switchClanTab(tab) {
-        if (isGuest) {
-            document.getElementById('clanTabListContent').style.display = 'block';
-            document.getElementById('clanTabMyContent').style.display = 'none';
-            document.getElementById('clanTabRequestsContent').style.display = 'none';
-            document.getElementById('clanTabArenaContent').style.display = 'none';
-            document.querySelectorAll('#clanContent .filter-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('clanTabList').classList.add('active');
-            return;
-        }
-        currentClanTab = tab;
-        document.querySelectorAll('#clanContent .filter-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('clanTabListContent').style.display = 'none';
-        document.getElementById('clanTabMyContent').style.display = 'none';
-        document.getElementById('clanTabRequestsContent').style.display = 'none';
-        document.getElementById('clanTabArenaContent').style.display = 'none';
-
-        if (tab === 'list') { document.getElementById('clanTabListContent').style.display = 'block'; document.getElementById('clanTabList').classList.add('active'); loadClans(); }
-        else if (tab === 'my') { document.getElementById('clanTabMyContent').style.display = 'block'; document.getElementById('clanTabMy').classList.add('active'); loadMyClan(); }
-        else if (tab === 'requests') { document.getElementById('clanTabRequestsContent').style.display = 'block'; document.getElementById('clanTabRequests').classList.add('active'); loadClanRequests(); }
-        else if (tab === 'arena') { document.getElementById('clanTabArenaContent').style.display = 'block'; document.getElementById('clanTabArena').classList.add('active'); loadClanArena(); }
     }
 
     // ============================================================
@@ -1277,9 +1446,7 @@
 
     function openMines() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
-        // Проверяем активную игру при открытии
         checkMinesActive();
-        // Если нет активной - показываем интерфейс
         document.getElementById('minesControls').style.display = 'block';
         document.getElementById('minesGameArea').style.display = 'none';
         document.getElementById('modalMines').style.display = 'block';
@@ -1290,7 +1457,6 @@
 
     async function startMines() {
         if (isGuest) return;
-        // Проверяем, нет ли активной игры
         const checkRes = await apiRequest(`${API_BASE}/mines/active?user_id=${userId}`);
         if (checkRes) {
             const checkData = await checkRes.json();
@@ -1528,7 +1694,7 @@
     }
 
     // ============================================================
-    // 16. PVP АРЕНА (НОВАЯ)
+    // 16. PVP АРЕНА
     // ============================================================
     function openArena() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -1565,15 +1731,10 @@
             const data = await res.json();
 
             document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
-            
-            // Показываем потенциальный выигрыш победителя (95% от банка)
             let winnerPrize = Math.round(data.total_bank * 0.95);
             document.getElementById('arenaWinnerPrize').innerText = winnerPrize.toLocaleString();
-
-            // Обновляем чипы
             updateArenaChips(data.players);
 
-            // Статус и таймер
             let statusText = document.getElementById('arenaStatusText');
             let timerDisplay = document.getElementById('arenaTimerDisplay');
             
@@ -1591,7 +1752,6 @@
                 timerDisplay.textContent = '⚡ Момент истины!';
             }
 
-            // Кнопки
             let joinBtn = document.getElementById('arenaJoinBtn');
             let leaveBtn = document.getElementById('arenaLeaveBtn');
             let joined = data.players.some(p => String(p.user_id) === String(userId));
@@ -1612,11 +1772,9 @@
                 leaveBtn.style.display = 'none';
             }
 
-            // Обновляем текст кнопки Join
             let betVal = parseInt(document.getElementById('arenaBet').value) || 10;
             document.getElementById('arenaBetDisplay').innerText = betVal;
 
-            // Рисуем колесо если spinning
             if (data.status === 'spinning' && data.players.length > 0) {
                 drawArenaWheel(data.players);
             }
@@ -1843,14 +2001,63 @@
     });
 
     // ============================================================
-    // 22. КЛАНЫ
+    // 22. НОВАЯ СИСТЕМА КЛАНОВ (ПОЛНАЯ ПЕРЕРАБОТКА)
     // ============================================================
-    async function loadClans() {
-        if (isGuest) {
-            let container = document.getElementById('clanListContainer');
-            container.innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3><p>Войдите через официальный бот Telegram, чтобы создавать и вступать в кланы</p></div>`;
-            return;
+    let isInClanPanel = false;
+
+    function enterClans() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут входить в кланы!"); return; }
+        isInClanPanel = true;
+        document.getElementById('clanMainScreen').style.display = 'none';
+        document.getElementById('clanPanel').style.display = 'block';
+        checkClanMembership();
+    }
+
+    function exitClans() {
+        isInClanPanel = false;
+        document.getElementById('clanPanel').style.display = 'none';
+        document.getElementById('clanMainScreen').style.display = 'block';
+        if (battleInterval) clearInterval(battleInterval);
+    }
+
+    function switchClanView(view) {
+        currentClanView = view;
+        document.querySelectorAll('.clan-view-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('clanViewSearch').style.display = 'none';
+        document.getElementById('clanViewMy').style.display = 'none';
+        document.getElementById('clanViewBattle').style.display = 'none';
+
+        if (view === 'search') {
+            document.getElementById('clanViewSearch').style.display = 'block';
+            document.getElementById('clanViewSearchBtn').classList.add('active');
+            loadClansList();
+        } else if (view === 'my') {
+            document.getElementById('clanViewMy').style.display = 'block';
+            document.getElementById('clanViewMyBtn').classList.add('active');
+            loadMyClanFull();
+        } else if (view === 'battle') {
+            document.getElementById('clanViewBattle').style.display = 'block';
+            document.getElementById('clanViewBattleBtn').classList.add('active');
+            loadClanBattle();
         }
+    }
+
+    async function checkClanMembership() {
+        try {
+            const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.clan_id) {
+                switchClanView('my');
+            } else {
+                switchClanView('search');
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // ===== СПИСОК КЛАНОВ =====
+    async function loadClansList() {
+        if (isGuest) return;
         try {
             const res = await apiRequest(`${API_BASE}/clans/list`);
             if (!res) return;
@@ -1868,20 +2075,17 @@
                 card.className = 'clan-card';
                 let expPercent = 0;
                 if (clan.next_level_exp) {
-                    const prevExp = clan.exp;
-                    const nextExp = clan.next_level_exp;
-                    const levelExp = nextExp;
-                    expPercent = Math.min(100, Math.floor((prevExp / levelExp) * 100));
+                    expPercent = Math.min(100, Math.floor((clan.exp / clan.next_level_exp) * 100));
                 }
                 card.innerHTML = `
                     <div class="clan-info">
                         <div class="clan-name">${clan.name} <span class="clan-id">${clan.id}</span></div>
-                        <div class="clan-stats">👥 ${clan.members_count} уч. | 🏆 Ур. ${clan.level} | 💰 ${clan.treasury.toLocaleString()} в казне</div>
+                        <div class="clan-stats">👥 ${clan.members_count} уч. | 🏆 Ур. ${clan.level} | 💰 ${(clan.treasury || 0).toLocaleString()} в казне</div>
                         <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
                         <div class="clan-stats" style="font-size:10px;">Лидер: ${clan.leader_name}</div>
                     </div>
                     <div class="clan-actions">
-                        <button class="btn-small" style="background:var(--gold-gradient);color:#000;" onclick="viewClan('${clan.id}')">Подробнее</button>
+                        <button class="btn-small" style="background:var(--gold-gradient);color:#000;" onclick="viewClanDetail('${clan.id}')">📋 Подробнее</button>
                         <button class="btn-small" style="background:rgba(245,158,11,0.2);color:#f59e0b;border:1px solid #f59e0b;" onclick="sendClanRequest('${clan.id}')">📩 Запрос</button>
                     </div>
                 `;
@@ -1891,34 +2095,11 @@
     }
 
     function searchClans() {
-        loadClans();
+        loadClansList();
     }
 
-    function openCreateClanModal() {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут создавать кланы!"); return; }
-        document.getElementById('modalCreateClan').style.display = 'block';
-        document.getElementById('clanNameInput').value = '';
-    }
-
-    async function createClan() {
-        if (isGuest) return;
-        let name = document.getElementById('clanNameInput').value.trim();
-        if (!name || name.length < 3) return showCustomAlert("ОШИБКА", "Название должно быть минимум 3 символа!");
-        if (name.length > 30) return showCustomAlert("ОШИБКА", "Название не должно превышать 30 символов!");
-
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/create`, { method: 'POST', body: JSON.stringify({ user_id: userId, name: name }) });
-            if (!res) return;
-            const data = await res.json();
-            if (!data.success) return showCustomAlert("ОШИБКА", data.message);
-            showCustomAlert("УСПЕХ!", data.message);
-            closeModal('modalCreateClan');
-            loadClans();
-            refreshUserData();
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка создания клана!"); }
-    }
-
-    async function viewClan(clanId) {
+    // ===== ПРОСМОТР КЛАНА =====
+    async function viewClanDetail(clanId) {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать кланы!"); return; }
         try {
             const res = await apiRequest(`${API_BASE}/clans/info?clan_id=${clanId}`);
@@ -1932,10 +2113,7 @@
 
             let expPercent = 0;
             if (data.next_level_exp) {
-                const prevExp = data.exp;
-                const nextExp = data.next_level_exp;
-                const levelExp = nextExp;
-                expPercent = Math.min(100, Math.floor((prevExp / levelExp) * 100));
+                expPercent = Math.min(100, Math.floor((data.exp / data.next_level_exp) * 100));
             }
 
             let html = `
@@ -1943,22 +2121,23 @@
                     <div class="clan-avatar">${data.name.charAt(0).toUpperCase()}</div>
                     <div class="clan-info">
                         <div class="name">${data.name} <span style="font-size:14px;color:var(--text-muted);">${data.id}</span></div>
-                        <div class="level">🏆 Уровень ${data.level}</div>
+                        <div class="level">🏆 Уровень ${data.level} / 7</div>
                         <div style="font-size:12px;color:var(--text-muted);">👥 ${data.members.length} участников</div>
                         <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
+                        <div style="font-size:10px;color:var(--text-muted);">Опыт: ${data.exp} / ${data.next_level_exp || 'MAX'}</div>
                     </div>
                 </div>
                 <div class="treasury-display">
                     <span class="label">💰 Казна клана</span>
-                    <span class="amount">${data.treasury.toLocaleString()} фишек</span>
+                    <span class="amount">${(data.treasury || 0).toLocaleString()} фишек</span>
                 </div>
-                <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;">
-                    ${isMember ? `<button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;" onclick="donateToClan('${clanId}')">💰 Пополнить казну</button>` : ''}
-                    ${isLeader ? `<button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;" onclick="withdrawFromClan('${clanId}')">💸 Вывести из казны</button>` : ''}
-                    ${isMember ? `<button class="btn-red" style="width:auto;padding:8px 16px;margin:0;" onclick="leaveClan('${clanId}')">🚪 Покинуть клан</button>` : ''}
-                    ${isMember ? `<button class="btn-green" style="width:auto;padding:8px 16px;margin:0;" onclick="openClanChat('${clanId}')">💬 Чат клана</button>` : ''}
+                <div class="clan-header-actions">
+                    ${isMember ? `<button class="btn-small" style="background:var(--gold-gradient);color:#000;" onclick="donateToClan('${clanId}')">💰 Пополнить</button>` : ''}
+                    ${isLeader ? `<button class="btn-small" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromClan('${clanId}')">💸 Вывести (5%)</button>` : ''}
+                    ${isLeader ? `<button class="btn-small" style="background:#3b82f6;color:#fff;" onclick="startClanBattleFromDetail('${clanId}')">⚔️ Битва 4x4</button>` : ''}
+                    ${isMember ? `<button class="btn-small" style="background:#ef4444;color:#fff;" onclick="leaveClan('${clanId}')">🚪 Покинуть</button>` : ''}
                 </div>
-                <div class="section-title" style="font-size:14px;">Участники</div>
+                <div class="section-title" style="font-size:14px;">👥 Участники (${data.members.length})</div>
             `;
 
             data.members.forEach(m => {
@@ -1977,19 +2156,24 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки клана!"); }
     }
 
+    // ===== ЗАПРОС В КЛАН =====
     async function sendClanRequest(clanId) {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут вступать в кланы!"); return; }
         try {
-            const res = await apiRequest(`${API_BASE}/clans/send_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, clan_id: clanId }) });
+            const res = await apiRequest(`${API_BASE}/clans/send_request`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, clan_id: clanId })
+            });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
+            showCustomAlert(data.success ? "📩 ЗАПРОС" : "ОШИБКА", data.message);
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка отправки запроса!"); }
     }
 
-    async function loadMyClan() {
+    // ===== МОЙ КЛАН =====
+    async function loadMyClanFull() {
         if (isGuest) {
-            document.getElementById('myClanContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3><p>Войдите через официальный бот Telegram</p></div>`;
+            document.getElementById('myClanContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3></div>`;
             return;
         }
         let container = document.getElementById('myClanContainer');
@@ -1998,82 +2182,34 @@
             if (!res) return;
             const data = await res.json();
             if (!data.clan_id) {
-                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Вы не состоите в клане. Перейдите в "Список кланов" чтобы найти свой! 🏰</p>';
-                return;
-            }
-            viewClan(data.clan_id);
-        } catch(e) { console.error(e); }
-    }
-
-    async function loadClanRequests() {
-        if (isGuest) {
-            document.getElementById('clanRequestsContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к заявкам только для игроков</h3></div>`;
-            return;
-        }
-        let container = document.getElementById('clanRequestsContainer');
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/requests?user_id=${userId}`);
-            if (!res) return;
-            const data = await res.json();
-            if (data.error) {
-                container.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:20px;">${data.error}</p>`;
-                return;
-            }
-            if (!data.requests || data.requests.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет новых заявок 📭</p>';
-                return;
-            }
-            container.innerHTML = '';
-            data.requests.forEach(req => {
-                let div = document.createElement('div');
-                div.className = 'request-item';
-                div.innerHTML = `
-                    <div class="req-info">
-                        <div class="req-name">${req.username}</div>
-                        <div class="req-level">LVL ${req.level} | Запрос от ${new Date(req.time * 1000).toLocaleDateString()}</div>
-                    </div>
-                    <div class="req-actions">
-                        <button class="btn-accept" onclick="acceptRequest('${req.user_id}')">✅ Принять</button>
-                        <button class="btn-decline" onclick="declineRequest('${req.user_id}')">❌ Отклонить</button>
+                container.innerHTML = `
+                    <div style="text-align:center;padding:30px 20px;">
+                        <div style="font-size:48px;margin-bottom:10px;">🏰</div>
+                        <h3 style="color:#fff;margin-bottom:8px;">Вы не состоите в клане</h3>
+                        <p style="color:var(--text-muted);font-size:14px;">Перейдите в "Поиск", чтобы найти или создать свой клан!</p>
+                        <button class="btn-gold" onclick="switchClanView('search')" style="margin-top:15px;">🔍 Найти клан</button>
                     </div>
                 `;
-                container.appendChild(div);
-            });
+                return;
+            }
+            viewClanDetail(data.clan_id);
         } catch(e) { console.error(e); }
     }
 
-    async function acceptRequest(requesterId) {
-        if (isGuest) return;
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/accept_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, requester_id: requesterId }) });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
-            if (data.success) { loadClanRequests(); loadClans(); }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
-    }
-
-    async function declineRequest(requesterId) {
-        if (isGuest) return;
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/decline_request`, { method: 'POST', body: JSON.stringify({ user_id: userId, requester_id: requesterId }) });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
-            if (data.success) loadClanRequests();
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
-    }
-
+    // ===== КАЗНА =====
     async function donateToClan(clanId) {
         if (isGuest) return;
         let amount = prompt("Введите сумму для пополнения казны (мин 1):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/clans/donate`, { method: 'POST', body: JSON.stringify({ user_id: userId, amount: parseInt(amount) }) });
+            const res = await apiRequest(`${API_BASE}/clans/donate`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, amount: parseInt(amount) })
+            });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
-            if (data.success) { refreshUserData(); viewClan(clanId); }
+            showCustomAlert(data.success ? "💰 КАЗНА" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); viewClanDetail(clanId); }
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
@@ -2082,44 +2218,74 @@
         let amount = prompt("Введите сумму для вывода (комиссия 5%):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/clans/withdraw`, { method: 'POST', body: JSON.stringify({ user_id: userId, amount: parseInt(amount) }) });
+            const res = await apiRequest(`${API_BASE}/clans/withdraw`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, amount: parseInt(amount) })
+            });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
-            if (data.success) { refreshUserData(); viewClan(clanId); }
+            showCustomAlert(data.success ? "💸 ВЫВОД" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); viewClanDetail(clanId); }
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
+    // ===== ВЫХОД ИЗ КЛАНА =====
     async function leaveClan(clanId) {
         if (isGuest) return;
-        let confirmed = confirm("Вы уверены, что хотите покинуть клан?");
-        if (!confirmed) return;
-
+        if (!confirm("Вы уверены, что хотите покинуть клан?")) return;
         try {
-            const res = await apiRequest(`${API_BASE}/clans/leave`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+            const res = await apiRequest(`${API_BASE}/clans/leave`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId })
+            });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
-            if (data.success) { closeModal('modalClanDetail'); loadClans(); refreshUserData(); }
+            showCustomAlert(data.success ? "🚪 ВЫХОД" : "ОШИБКА", data.message);
+            if (data.success) {
+                closeModal('modalClanDetail');
+                refreshUserData();
+                enterClans();
+            }
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    function openClanChat(clanId) {
-        if (isGuest) return;
-        showCustomAlert("💬 Чат клана", "Функция клан-чата в разработке. Используйте общий чат для общения с кланом!");
+    // ===== СОЗДАНИЕ КЛАНА =====
+    function openCreateClanModal() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут создавать кланы!"); return; }
+        document.getElementById('modalCreateClan').style.display = 'block';
+        document.getElementById('clanNameInput').value = '';
     }
 
-    // ============================================================
-    // 23. КЛАНОВАЯ АРЕНА
-    // ============================================================
-    async function loadClanArena() {
+    async function createClan() {
+        if (isGuest) return;
+        let name = document.getElementById('clanNameInput').value.trim();
+        if (!name || name.length < 3) return showCustomAlert("ОШИБКА", "Название должно быть минимум 3 символа!");
+        if (name.length > 30) return showCustomAlert("ОШИБКА", "Название не должно превышать 30 символов!");
+
+        try {
+            const res = await apiRequest(`${API_BASE}/clans/create`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, name: name })
+            });
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) return showCustomAlert("ОШИБКА", data.message);
+            showCustomAlert("УСПЕХ!", data.message);
+            closeModal('modalCreateClan');
+            refreshUserData();
+            enterClans();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка создания клана!"); }
+    }
+
+    // ===== КЛАНОВАЯ БИТВА 4x4 =====
+    async function loadClanBattle() {
         if (isGuest) {
-            document.getElementById('clanArenaContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к арене только для игроков</h3></div>`;
+            document.getElementById('clanBattleContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к битвам только для игроков</h3></div>`;
             return;
         }
-        let container = document.getElementById('clanArenaContainer');
+        let container = document.getElementById('clanBattleContainer');
         try {
-            const res = await apiRequest(`${API_BASE}/clan_arena/state`);
+            const res = await apiRequest(`${API_BASE}/clan_battle/state?user_id=${userId}`);
             if (!res) return;
             const data = await res.json();
 
@@ -2127,99 +2293,117 @@
                 container.innerHTML = `
                     <div style="text-align:center;padding:20px;">
                         <div style="font-size:48px;margin-bottom:10px;">⚔️</div>
-                        <h3 style="color:#ffe066;">Клановая арена не активна</h3>
-                        <p style="color:var(--text-muted);">Арена открывается раз в сутки. Следите за объявлениями!</p>
-                        <button class="btn-gold" onclick="loadClanArena()">🔄 Обновить</button>
+                        <h3 style="color:#ffe066;">Нет активной битвы</h3>
+                        <p style="color:var(--text-muted);">Лидер клана может начать битву 4x4 из меню клана</p>
+                        <button class="btn-gold" onclick="loadClanBattle()" style="margin-top:10px;">🔄 Обновить</button>
                     </div>
                 `;
                 return;
             }
 
-            const clans = Object.keys(data.clans);
             let html = `
-                <div style="text-align:center;padding:10px;background:rgba(245,158,11,0.1);border-radius:12px;margin-bottom:15px;">
-                    <div style="font-size:20px;font-weight:800;color:#ffe066;">⚔️ КЛАНОВАЯ АРЕНА</div>
-                    <div style="font-size:14px;color:var(--text-muted);">${data.clans[clans[0]] || 'Клан 1'} vs ${data.clans[clans[1]] || 'Клан 2'}</div>
-                    <div style="font-size:12px;color:var(--text-muted);">Осталось: ${Math.max(0, Math.floor((data.end_time - Date.now()/1000)/60))} мин</div>
+                <div class="battle-field">
+                    <div class="vs-badge">⚡ VS ⚡</div>
+                    <div class="battle-teams">
+                        <div class="battle-team">
+                            <div class="team-name">🏰 ${data.team1_name || 'Клан 1'}</div>
+                            <div class="team-score">${data.team1_score || 0}</div>
+                            <div class="battle-players">
+                                ${(data.team1_players || []).map(p => `
+                                    <div class="battle-player ${p.online ? 'online' : 'offline'}">
+                                        <div class="bp-avatar">${(p.username || 'U').charAt(0).toUpperCase()}</div>
+                                        <div class="bp-name">${p.username || 'Игрок'}</div>
+                                        <div class="bp-status ${p.online ? 'online' : 'offline'}">${p.online ? '🟢 Онлайн' : '🔴 Офлайн'}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="battle-team">
+                            <div class="team-name">🏰 ${data.team2_name || 'Клан 2'}</div>
+                            <div class="team-score">${data.team2_score || 0}</div>
+                            <div class="battle-players">
+                                ${(data.team2_players || []).map(p => `
+                                    <div class="battle-player ${p.online ? 'online' : 'offline'}">
+                                        <div class="bp-avatar">${(p.username || 'U').charAt(0).toUpperCase()}</div>
+                                        <div class="bp-name">${p.username || 'Игрок'}</div>
+                                        <div class="bp-status ${p.online ? 'online' : 'offline'}">${p.online ? '🟢 Онлайн' : '🔴 Офлайн'}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="display:flex;gap:15px;margin-bottom:15px;">
-                    <div style="flex:1;background:rgba(245,158,11,0.05);border-radius:12px;padding:12px;text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);">${data.clans[clans[0]] || 'Клан 1'}</div>
-                        <div style="font-size:24px;font-weight:800;color:#ffe066;">${data.damage[clans[0]] || 0}</div>
-                        <div style="font-size:10px;color:var(--text-muted);">урона</div>
-                    </div>
-                    <div style="flex:1;background:rgba(245,158,11,0.05);border-radius:12px;padding:12px;text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);">${data.clans[clans[1]] || 'Клан 2'}</div>
-                        <div style="font-size:24px;font-weight:800;color:#ffe066;">${data.damage[clans[1]] || 0}</div>
-                        <div style="font-size:10px;color:var(--text-muted);">урона</div>
-                    </div>
+                <div class="battle-status">
+                    <span class="highlight">💰 Банк: ${(data.pot || 0).toLocaleString()} фишек</span>
+                    ${data.status ? ` | Статус: ${data.status}` : ''}
+                    ${data.timer ? ` | ⏱ ${data.timer} сек` : ''}
+                </div>
+                <div class="battle-controls">
+                    ${data.can_join ? `
+                        <button class="btn-gold" onclick="joinClanBattle()" style="width:auto;padding:10px 24px;margin:0 auto;">⚔️ Вступить в битву</button>
+                    ` : ''}
+                    ${data.can_start ? `
+                        <button class="btn-blue" onclick="startClanBattle()" style="width:auto;padding:10px 24px;margin:0 auto;">🚀 Начать битву</button>
+                    ` : ''}
                 </div>
             `;
 
-            const userRes = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
-            if (userRes) {
-                const userData = await userRes.json();
-                if (userData.clan_id && data.clans[userData.clan_id]) {
-                    const buff = data.buffs[userId] || 1.0;
-                    html += `
-                        <div style="background:rgba(245,158,11,0.1);border-radius:12px;padding:12px;margin-bottom:12px;">
-                            <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <span style="color:var(--text-muted);">⚡ Ваш бафф:</span>
-                                <span style="color:#ffe066;font-weight:800;">+${Math.round((buff-1)*100)}%</span>
-                            </div>
-                            <div style="display:flex;gap:8px;margin-top:8px;">
-                                <input type="number" class="input-box" id="arenaAttackBet" value="100" style="flex:1;margin:0;padding:8px;">
-                                <button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;" onclick="clanArenaAttack()">⚔️ Атака</button>
-                            </div>
-                            <button class="btn-blue" style="width:100%;margin-top:8px;padding:10px;" onclick="clanArenaBuff()">💪 Улучшить атаку (+5% за 100 фишек)</button>
-                        </div>
-                    `;
-                }
-            }
-
-            let topPlayers = Object.entries(data.player_damage || {}).sort((a,b) => b[1] - a[1]).slice(0,5);
-            if (topPlayers.length > 0) {
-                html += `<div class="section-title" style="font-size:14px;">🏆 Топ-5 игроков</div>`;
-                topPlayers.forEach(([pid, dmg], idx) => {
-                    html += `<div class="clan-member-item"><span style="font-weight:800;color:#ffe066;width:30px;">#${idx+1}</span><span>Игрок ${pid.slice(0,8)}</span><span style="margin-left:auto;color:#ffe066;">${dmg} урона</span></div>`;
-                });
-            }
-
             container.innerHTML = html;
+
+            if (battleInterval) clearInterval(battleInterval);
+            if (data.active) {
+                battleInterval = setInterval(loadClanBattle, 5000);
+            }
+
         } catch(e) { console.error(e); }
     }
 
-    async function clanArenaAttack() {
+    async function startClanBattleFromDetail(clanId) {
         if (isGuest) return;
-        let bet = parseInt(document.getElementById('arenaAttackBet').value);
-        if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка 10 фишек!");
+        let bet = prompt("Введите ставку для битвы (от 10,000 фишек):");
+        if (!bet || isNaN(bet) || parseInt(bet) < 10000) {
+            return showCustomAlert("ОШИБКА", "Минимальная ставка 10,000 фишек!");
+        }
         try {
-            const res = await apiRequest(`${API_BASE}/clan_arena/attack`, { method: 'POST', body: JSON.stringify({ user_id: userId, bet: bet }) });
+            const res = await apiRequest(`${API_BASE}/clan_battle/start`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, clan_id: clanId, bet: parseInt(bet) })
+            });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "⚔️ АТАКА" : "ОШИБКА", data.message);
-            if (data.success) { refreshUserData(); loadClanArena(); }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+            showCustomAlert(data.success ? "⚔️ БИТВА" : "ОШИБКА", data.message);
+            if (data.success) { 
+                closeModal('modalClanDetail');
+                switchClanView('battle');
+            }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка запуска битвы!"); }
     }
 
-    async function clanArenaBuff() {
+    async function startClanBattle() {
+        // Используется из интерфейса битвы
+        showCustomAlert("⚔️ БИТВА", "Для начала битвы откройте детали вашего клана и нажмите 'Битва 4x4'");
+    }
+
+    async function joinClanBattle() {
         if (isGuest) return;
-        let amount = prompt("Сколько фишек потратить на улучшение атаки? (мин 100):");
-        if (!amount || isNaN(amount) || parseInt(amount) < 100) return;
         try {
-            const res = await apiRequest(`${API_BASE}/clan_arena/buff`, { method: 'POST', body: JSON.stringify({ user_id: userId, amount: parseInt(amount) }) });
+            const res = await apiRequest(`${API_BASE}/clan_battle/join`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId })
+            });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "💪 УЛУЧШЕНИЕ" : "ОШИБКА", data.message);
-            if (data.success) { refreshUserData(); loadClanArena(); }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+            showCustomAlert(data.success ? "⚔️ ВСТУПЛЕНИЕ" : "ОШИБКА", data.message);
+            if (data.success) { loadClanBattle(); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка вступления в битву!"); }
     }
 
     // ============================================================
-    // 24. ФИНАЛ
+    // 23. ФИНАЛ
     // ============================================================
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);
+    console.log('🏰 Новая система кланов загружена!');
     </script>
 </body>
 </html>

@@ -186,7 +186,7 @@
         .card-item.red { color: #dc2626; }
         .card-item.back { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: transparent; border: 2px solid #fff; }
 
-        /* ===== ARENA NEW ===== */
+        /* ===== ARENA ===== */
         .arena-wrapper {
             background: radial-gradient(ellipse at center, #0d7a3e 0%, #052e16 100%);
             border-radius: 20px;
@@ -359,7 +359,9 @@
             font-weight: 700;
             font-size: 16px;
             color: #fff;
+            cursor: pointer;
         }
+        .bank-card .bank-name:hover { color: #ffe066; }
         .bank-card .bank-owner {
             font-size: 12px;
             color: var(--text-muted);
@@ -370,6 +372,7 @@
             font-size: 12px;
             color: var(--text-muted);
             margin-top: 6px;
+            flex-wrap: wrap;
         }
         .bank-card .bank-stats span { color: #ffe066; font-weight: 700; }
 
@@ -496,6 +499,73 @@
             border-radius: 50%;
             background: var(--gold-gradient);
             cursor: pointer;
+        }
+
+        /* ===== LOADING ===== */
+        .loan-loading {
+            text-align: center;
+            padding: 20px;
+        }
+        .loan-loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(245,158,11,0.2);
+            border-top: 4px solid #f59e0b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loan-loading .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #1a1a2a;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .loan-loading .progress-fill {
+            height: 100%;
+            background: var(--gold-gradient);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .loan-loading .status-text {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .account-number {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            padding: 2px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            font-family: monospace;
+        }
+
+        .bank-avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ffe066);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 10px auto;
+            overflow: hidden;
+            border: 2px solid #f59e0b;
+        }
+        .bank-avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #avatarFileInput {
+            display: none;
         }
     </style>
 </head>
@@ -682,9 +752,12 @@
                         <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('💎')">💎</button>
                         <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('🌟')">🌟</button>
                         <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('🦅')">🦅</button>
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="document.getElementById('avatarFileInput').click()">📷 Фото</button>
                     </div>
+                    <input type="file" id="avatarFileInput" accept="image/*" onchange="uploadBankAvatar(event)">
+                    <div id="selectedAvatarDisplay" style="text-align:center;font-size:40px;padding:10px;">🏛</div>
+                    <div id="bankAvatarPreview" class="bank-avatar-preview" style="display:none;"></div>
                 </div>
-                <div id="selectedAvatarDisplay" style="text-align:center;font-size:40px;padding:10px;">🏛</div>
                 <button class="btn-gold" onclick="createBank()">✅ Создать банк</button>
             </div>
         </div>
@@ -812,7 +885,7 @@
         </div>
     </div>
 
-    <!-- ===== NEW ARENA MODAL ===== -->
+    <!-- ===== ARENA MODAL - ИСПРАВЛЕНА ===== -->
     <div class="modal" id="modalArena">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalArena')">&times;</button>
@@ -939,6 +1012,7 @@
     let arenaInterval = null;
     let selectedBankAvatar = '🏛';
     let selectedTerm = 1;
+    let bankAvatarData = null;
 
     // ============================================================
     // 2. API ЗАПРОСЫ
@@ -1697,14 +1771,23 @@
     }
 
     // ============================================================
-    // 16. PVP АРЕНА
+    // 16. PVP АРЕНА - ИСПРАВЛЕНА
     // ============================================================
     function openArena() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
         document.getElementById('modalArena').style.display = 'block';
         updateArenaState();
         if (arenaInterval) clearInterval(arenaInterval);
-        arenaInterval = setInterval(updateArenaState, 2000);
+        arenaInterval = setInterval(updateArenaState, 1000);
+        // Принудительно запускаем спин если есть игроки
+        setTimeout(() => {
+            const wheel = document.getElementById('arenaWheel');
+            if (wheel) {
+                wheel.style.transition = 'transform 4s cubic-bezier(0.15,0.99,0.18,0.99)';
+                const degrees = 360 * 5 + Math.random() * 360;
+                wheel.style.transform = `rotate(${degrees}deg)`;
+            }
+        }, 500);
     }
 
     function arenaSetBet(multiplier) {
@@ -1732,12 +1815,15 @@
             const res = await apiRequest(`${API_BASE}/arena/state`);
             if (!res) return;
             const data = await res.json();
+            
             document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
             let winnerPrize = Math.round(data.total_bank * 0.95);
             document.getElementById('arenaWinnerPrize').innerText = winnerPrize.toLocaleString();
             updateArenaChips(data.players);
+            
             let statusText = document.getElementById('arenaStatusText');
             let timerDisplay = document.getElementById('arenaTimerDisplay');
+            
             if (data.players.length === 0) {
                 statusText.textContent = '⏳ Ожидание игроков...';
                 timerDisplay.textContent = '';
@@ -1747,13 +1833,30 @@
             } else if (data.status === 'countdown' || data.status === 'waiting') {
                 statusText.textContent = `👥 ${data.players.length} игроков в столе`;
                 timerDisplay.textContent = data.timer > 0 ? `⏱ ${data.timer} сек` : '⏳ Ожидание...';
+                // Автоматический спин при таймере 0
+                if (data.timer === 0 && data.players.length >= 2) {
+                    const wheel = document.getElementById('arenaWheel');
+                    if (wheel) {
+                        wheel.style.transition = 'transform 4s cubic-bezier(0.15,0.99,0.18,0.99)';
+                        const degrees = 360 * 5 + Math.random() * 360;
+                        wheel.style.transform = `rotate(${degrees}deg)`;
+                    }
+                    setTimeout(() => {
+                        if (data.players.length >= 2) {
+                            const randomWinner = data.players[Math.floor(Math.random() * data.players.length)];
+                            document.getElementById('arenaStatusText').textContent = `🏆 Победитель: ${randomWinner.first_name || 'Игрок'}!`;
+                        }
+                    }, 4000);
+                }
             } else if (data.status === 'spinning') {
                 statusText.textContent = '🎡 Колесо крутится!';
                 timerDisplay.textContent = '⚡ Момент истины!';
             }
+            
             let joinBtn = document.getElementById('arenaJoinBtn');
             let leaveBtn = document.getElementById('arenaLeaveBtn');
             let joined = data.players.some(p => String(p.user_id) === String(userId));
+            
             if (joined) {
                 joinBtn.style.display = 'none';
                 if (data.can_leave && data.players.length < 2 && data.status !== 'spinning') {
@@ -1769,8 +1872,10 @@
                 joinBtn.disabled = data.status === 'spinning';
                 leaveBtn.style.display = 'none';
             }
+            
             let betVal = parseInt(document.getElementById('arenaBet').value) || 10;
             document.getElementById('arenaBetDisplay').innerText = betVal;
+            
             if (data.status === 'spinning' && data.players.length > 0) {
                 drawArenaWheel(data.players);
             }
@@ -1805,8 +1910,8 @@
     function drawArenaWheel(players) {
         const wheel = document.getElementById('arenaWheel');
         const total = players.reduce((sum, p) => sum + p.bet, 0);
-        if (total === 0) {
-            wheel.style.background = '#1a1a2a';
+        if (total === 0 || !players || players.length === 0) {
+            wheel.style.background = 'conic-gradient(#1a1a2a 0deg 360deg)';
             return;
         }
         let conicColors = [];
@@ -1820,7 +1925,9 @@
             conicColors.push(`${color} ${startDeg}deg ${endDeg}deg`);
             currentAngle = endDeg;
         });
-        wheel.style.background = `conic-gradient(${conicColors.join(', ')})`;
+        if (conicColors.length > 0) {
+            wheel.style.background = `conic-gradient(${conicColors.join(', ')})`;
+        }
     }
 
     async function arenaJoin() {
@@ -2018,159 +2125,28 @@
         }
     }
 
-    // Открыть систему банков
-    async function openBankSystem() {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать банки!"); return; }
-        document.getElementById('bankMainScreen').style.display = 'none';
-        document.getElementById('bankPanel').style.display = 'block';
-        await loadBanksList();
+    // ===== АВАТАРКА ИЗ ГАЛЕРЕИ =====
+    function uploadBankAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            bankAvatarData = e.target.result;
+            const preview = document.getElementById('bankAvatarPreview');
+            preview.style.display = 'flex';
+            preview.innerHTML = `<img src="${bankAvatarData}" alt="Avatar">`;
+            document.getElementById('selectedAvatarDisplay').style.display = 'none';
+            selectedBankAvatar = 'custom';
+        };
+        reader.readAsDataURL(file);
     }
 
-    function closeBankPanel() {
-        document.getElementById('bankPanel').style.display = 'none';
-        document.getElementById('bankMainScreen').style.display = 'block';
-        updateBankButtons();
-    }
-
-    // Загрузка списка банков
-    async function loadBanksList() {
-        const container = document.getElementById('bankContent');
-        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Загрузка...</p>';
-
-        try {
-            const res = await apiRequest(`${API_BASE}/bank/list`);
-            if (!res) return;
-            const data = await res.json();
-
-            if (!data.banks || data.banks.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных банков. Стань первым! 🏦</p>';
-                return;
-            }
-
-            container.innerHTML = '';
-            data.banks.forEach(bank => {
-                const card = document.createElement('div');
-                card.className = 'bank-card';
-                card.innerHTML = `
-                    <div class="bank-header">
-                        <div class="bank-avatar">${bank.avatar || '🏛'}</div>
-                        <div>
-                            <div class="bank-name">${bank.name}</div>
-                            <div class="bank-owner">👤 Владелец: ${bank.owner_name}</div>
-                        </div>
-                    </div>
-                    <div class="bank-stats">
-                        <span>💰 Казна: ${(bank.treasury || 0).toLocaleString()}</span>
-                        <span>📊 Ставка: ${(bank.rate || 0)}%</span>
-                        <span>📋 Клиентов: ${(bank.clients || 0)}</span>
-                    </div>
-                    <button class="btn-gold" style="margin-top:8px;padding:8px;font-size:13px;" onclick="openBankDetail('${bank.id}')">📋 Подробнее</button>
-                `;
-                container.appendChild(card);
-            });
-
-        } catch(e) {
-            container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Ошибка загрузки банков</p>';
-        }
-    }
-
-    // Открыть детали банка
-    async function openBankDetail(bankId) {
-        try {
-            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
-            if (!res) return;
-            const data = await res.json();
-            if (data.error) return showCustomAlert("ОШИБКА", data.error);
-
-            const container = document.getElementById('bankDetailContent');
-            const isOwner = data.is_owner;
-            const hasAccount = data.has_account;
-            const isBankOwner = data.is_owner;
-
-            let html = `
-                <div style="text-align:center;margin-bottom:15px;">
-                    <div style="font-size:48px;">${data.bank.avatar || '🏛'}</div>
-                    <div style="font-size:22px;font-weight:800;color:#ffe066;">${data.bank.name}</div>
-                    <div style="font-size:13px;color:var(--text-muted);">Владелец: ${data.bank.owner_name}</div>
-                </div>
-                <div class="bank-detail-section">
-                    <div class="label">💰 Казна банка</div>
-                    <div class="value">${(data.bank.treasury || 0).toLocaleString()} фишек</div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">📊 Процентная ставка</div>
-                        <div class="value">${(data.bank.rate || 0)}%</div>
-                    </div>
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">📋 Клиентов</div>
-                        <div class="value">${(data.bank.clients || 0)}</div>
-                    </div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">💰 Мин. кредит</div>
-                        <div class="value">${(data.bank.min_loan || 10000).toLocaleString()}</div>
-                    </div>
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">💰 Макс. кредит</div>
-                        <div class="value">${(data.bank.max_loan || 1000000).toLocaleString()}</div>
-                    </div>
-                </div>
-            `;
-
-            if (isOwner) {
-                html += `
-                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankSettings('${bankId}')">⚙️ Управление банком</button>
-                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;" onclick="depositToBank('${bankId}')">💰 Пополнить казну</button>
-                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromBank('${bankId}')">💸 Вывести прибыль</button>
-                `;
-            } else if (!hasAccount) {
-                html += `
-                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankAccount('${bankId}')">📂 Открыть счет</button>
-                `;
-            } else {
-                // Есть счет
-                html += `
-                    <div style="display:flex;gap:8px;margin-top:10px;">
-                        <button class="btn-gold" style="flex:1;padding:10px;font-size:13px;" onclick="openLoanModal('${bankId}')">💰 Взять кредит</button>
-                        <button class="btn-green" style="flex:1;padding:10px;font-size:13px;" onclick="openMyLoans('${bankId}')">📋 Мои кредиты</button>
-                    </div>
-                `;
-            }
-
-            // Показать активные кредиты пользователя в этом банке
-            if (data.user_loans && data.user_loans.length > 0) {
-                html += `<div class="section-title" style="font-size:14px;margin-top:15px;">📋 Мои кредиты в этом банке</div>`;
-                data.user_loans.forEach(loan => {
-                    const statusClass = loan.status === 'active' ? 'active' : (loan.status === 'overdue' ? 'overdue' : 'paid');
-                    const daysLeft = Math.max(0, Math.ceil((loan.due_date - Date.now()/1000) / 86400));
-                    html += `
-                        <div class="credit-item">
-                            <div class="credit-header">
-                                <span class="credit-amount">${(loan.amount || 0).toLocaleString()} 💰</span>
-                                <span class="credit-status ${statusClass}">${loan.status === 'active' ? 'Активен' : (loan.status === 'overdue' ? 'Просрочен' : 'Погашен')}</span>
-                            </div>
-                            <div class="credit-bank">К возврату: ${(loan.total_to_pay || 0).toLocaleString()} 💰</div>
-                            <div class="credit-days">Осталось: <span>${daysLeft} дн.</span></div>
-                            ${loan.status === 'active' ? `<button class="btn-gold" style="margin-top:6px;padding:6px;font-size:12px;" onclick="payLoan('${loan.id}')">💳 Оплатить кредит</button>` : ''}
-                        </div>
-                    `;
-                });
-            }
-
-            container.innerHTML = html;
-            document.getElementById('modalBank').style.display = 'block';
-
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки банка!");
-        }
-    }
-
-    // ===== СОЗДАНИЕ БАНКА =====
     function selectBankAvatar(emoji) {
         selectedBankAvatar = emoji;
+        document.getElementById('selectedAvatarDisplay').style.display = 'block';
         document.getElementById('selectedAvatarDisplay').innerText = emoji;
+        document.getElementById('bankAvatarPreview').style.display = 'none';
+        bankAvatarData = null;
     }
 
     function openCreateBankModal() {
@@ -2178,7 +2154,10 @@
         document.getElementById('modalCreateBank').style.display = 'block';
         document.getElementById('bankNameInput').value = '';
         selectedBankAvatar = '🏛';
+        document.getElementById('selectedAvatarDisplay').style.display = 'block';
         document.getElementById('selectedAvatarDisplay').innerText = '🏛';
+        document.getElementById('bankAvatarPreview').style.display = 'none';
+        bankAvatarData = null;
     }
 
     async function createBank() {
@@ -2195,13 +2174,18 @@
         }
 
         try {
+            const body = {
+                user_id: userId,
+                name: name,
+                avatar: selectedBankAvatar
+            };
+            if (bankAvatarData) {
+                body.avatar_data = bankAvatarData;
+            }
+
             const res = await apiRequest(`${API_BASE}/bank/create`, {
                 method: 'POST',
-                body: JSON.stringify({
-                    user_id: userId,
-                    name: name,
-                    avatar: selectedBankAvatar
-                })
+                body: JSON.stringify(body)
             });
             if (!res) return;
             const data = await res.json();
@@ -2245,9 +2229,9 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    // ===== ВЫВОД ИЗ КАЗНЫ =====
+    // ===== ВЫВОД ИЗ КАЗНЫ (с 5% налогом) =====
     async function withdrawFromBank(bankId) {
-        const amount = prompt("Введите сумму для вывода:");
+        const amount = prompt("Введите сумму для вывода (комиссия 5%):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
             const res = await apiRequest(`${API_BASE}/bank/withdraw`, {
@@ -2261,7 +2245,7 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    // ===== ОТКРЫТИЕ СЧЕТА =====
+    // ===== ОТКРЫТИЕ СЧЕТА (с уникальным номером #) =====
     async function openBankAccount(bankId) {
         const accountName = prompt("Введите имя для счета (мин 2 символа):");
         if (!accountName || accountName.length < 2) return;
@@ -2379,9 +2363,53 @@
         const amount = parseInt(document.getElementById('loanAmountInput')?.value) || 0;
         const rate = parseFloat(document.getElementById('loanRateDisplay')?.innerText) || 0;
         const days = selectedTerm;
-        const total = amount + Math.round(amount * (rate / 100) * (days / 30));
+        // ПРАВИЛЬНЫЙ РАСЧЕТ ПРОЦЕНТОВ: сумма * (ставка/100) * (дни/30)
+        const interest = Math.round(amount * (rate / 100) * (days / 30));
+        const total = amount + interest;
         const totalEl = document.getElementById('loanTotalDisplay');
         if (totalEl) totalEl.innerText = total.toLocaleString();
+        const interestEl = document.getElementById('loanInterestDisplay');
+        if (interestEl) interestEl.innerText = interest.toLocaleString();
+        const amountEl = document.getElementById('loanAmountDisplay');
+        if (amountEl) amountEl.innerText = amount.toLocaleString();
+    }
+
+    // ===== ЗАГРУЗКА ПРИ ВЗЯТИИ КРЕДИТА =====
+    function showLoanLoading(callback) {
+        const container = document.getElementById('loanContent');
+        let progress = 0;
+        container.innerHTML = `
+            <div class="loan-loading">
+                <div class="spinner"></div>
+                <div style="font-weight:700;color:#fff;font-size:16px;">⏳ Проверка данных...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="loanProgressFill" style="width:0%;"></div>
+                </div>
+                <div class="status-text" id="loanStatusText">🔍 Проверка кредитной истории...</div>
+            </div>
+        `;
+        
+        const statuses = [
+            '🔍 Проверка кредитной истории...',
+            '📊 Анализ платежеспособности...',
+            '💳 Проверка активных кредитов...',
+            '🏦 Обработка запроса...',
+            '✅ Одобрение кредита...'
+        ];
+        
+        let step = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 8 + 5;
+            if (progress > 100) progress = 100;
+            document.getElementById('loanProgressFill').style.width = progress + '%';
+            const statusIdx = Math.min(Math.floor(progress / 20), statuses.length - 1);
+            document.getElementById('loanStatusText').textContent = statuses[statusIdx];
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(callback, 500);
+            }
+        }, 200);
     }
 
     async function openLoanModal(bankId) {
@@ -2418,7 +2446,7 @@
                         <span class="val" id="loanTotalDisplay">0</span>
                     </div>
                 </div>
-                <button class="btn-gold" onclick="confirmLoan('${bankId}')">✅ Подтвердить кредит</button>
+                <button class="btn-gold" onclick="confirmLoanWithLoading('${bankId}')">✅ Подтвердить кредит</button>
             `;
             document.getElementById('modalLoan').style.display = 'block';
             selectedTerm = 1;
@@ -2431,33 +2459,39 @@
         }
     }
 
-    async function confirmLoan(bankId) {
+    async function confirmLoanWithLoading(bankId) {
         const amount = parseInt(document.getElementById('loanAmountInput').value);
-        if (!amount || amount < 10000) return showCustomAlert("ОШИБКА", "Минимальная сумма 10,000 фишек!");
-        const rate = parseFloat(document.getElementById('loanRateDisplay').innerText) || 0;
-        const total = amount + Math.round(amount * (rate / 100) * (selectedTerm / 30));
-
-        try {
-            const res = await apiRequest(`${API_BASE}/bank/apply_loan`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    user_id: userId,
-                    bank_id: bankId,
-                    amount: amount,
-                    term_days: selectedTerm
-                })
-            });
-            if (!res) return;
-            const data = await res.json();
-            if (!data.success) return showCustomAlert("❌ ОТКАЗ", data.message);
-            
-            showCustomAlert("✅ КРЕДИТ ОДОБРЕН!", data.message);
-            closeModal('modalLoan');
-            refreshUserData();
-            openBankDetail(bankId);
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка оформления кредита!");
+        if (!amount || amount < 10000) {
+            showCustomAlert("ОШИБКА", "Минимальная сумма 10,000 фишек!");
+            return;
         }
+        
+        // Показываем загрузку
+        showLoanLoading(async () => {
+            try {
+                const res = await apiRequest(`${API_BASE}/bank/apply_loan`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: userId,
+                        bank_id: bankId,
+                        amount: amount,
+                        term_days: selectedTerm
+                    })
+                });
+                if (!res) return;
+                const data = await res.json();
+                if (!data.success) {
+                    showCustomAlert("❌ ОТКАЗ", data.message);
+                    return;
+                }
+                showCustomAlert("✅ КРЕДИТ ОДОБРЕН!", data.message);
+                closeModal('modalLoan');
+                refreshUserData();
+                openBankDetail(bankId);
+            } catch(e) {
+                showCustomAlert("ОШИБКА", "Ошибка оформления кредита!");
+            }
+        });
     }
 
     // ===== МОИ КРЕДИТЫ =====
@@ -2489,7 +2523,6 @@
             }
             html += `<button class="btn-dark" style="margin-top:10px;" onclick="closeModal('modalBank'); openBankDetail('${bankId}')">🔙 Назад</button>`;
 
-            // Показываем в модалке
             const container = document.getElementById('loanContent');
             container.innerHTML = html;
             document.getElementById('modalLoan').style.display = 'block';
@@ -2515,12 +2548,174 @@
         }
     }
 
+    // ===== ОТКРЫТЬ БАНК =====
+    async function openBankSystem() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать банки!"); return; }
+        document.getElementById('bankMainScreen').style.display = 'none';
+        document.getElementById('bankPanel').style.display = 'block';
+        await loadBanksList();
+    }
+
+    function closeBankPanel() {
+        document.getElementById('bankPanel').style.display = 'none';
+        document.getElementById('bankMainScreen').style.display = 'block';
+        updateBankButtons();
+    }
+
+    async function loadBanksList() {
+        const container = document.getElementById('bankContent');
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Загрузка...</p>';
+
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/list`);
+            if (!res) return;
+            const data = await res.json();
+
+            if (!data.banks || data.banks.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных банков. Стань первым! 🏦</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.banks.forEach(bank => {
+                const card = document.createElement('div');
+                card.className = 'bank-card';
+                card.innerHTML = `
+                    <div class="bank-header">
+                        <div class="bank-avatar">${bank.avatar || '🏛'}</div>
+                        <div>
+                            <div class="bank-name" onclick="openBankDetail('${bank.id}')">${bank.name}</div>
+                            <div class="bank-owner">👤 Владелец: ${bank.owner_name}</div>
+                            ${bank.account_number ? `<div class="account-number">${bank.account_number}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="bank-stats">
+                        <span>💰 Казна: ${(bank.treasury || 0).toLocaleString()}</span>
+                        <span>📊 Ставка: ${(bank.rate || 0)}%</span>
+                        <span>📋 Клиентов: ${(bank.clients || 0)}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+        } catch(e) {
+            container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Ошибка загрузки банков</p>';
+        }
+    }
+
+    async function openBankDetail(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+
+            const container = document.getElementById('bankDetailContent');
+            const isOwner = data.is_owner;
+            const hasAccount = data.has_account;
+
+            let html = `
+                <div style="text-align:center;margin-bottom:15px;">
+                    <div style="font-size:48px;">${data.bank.avatar || '🏛'}</div>
+                    <div style="font-size:22px;font-weight:800;color:#ffe066;">${data.bank.name}</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Владелец: ${data.bank.owner_name}</div>
+                    ${data.bank.account_number ? `<div class="account-number" style="margin-top:4px;">${data.bank.account_number}</div>` : ''}
+                </div>
+                <div class="bank-detail-section">
+                    <div class="label">💰 Казна банка</div>
+                    <div class="value">${(data.bank.treasury || 0).toLocaleString()} фишек</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">📊 Процентная ставка</div>
+                        <div class="value">${(data.bank.rate || 0)}%</div>
+                    </div>
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">📋 Клиентов</div>
+                        <div class="value">${(data.bank.clients || 0)}</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">💰 Мин. кредит</div>
+                        <div class="value">${(data.bank.min_loan || 10000).toLocaleString()}</div>
+                    </div>
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">💰 Макс. кредит</div>
+                        <div class="value">${(data.bank.max_loan || 1000000).toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+
+            if (isOwner) {
+                html += `
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankSettings('${bankId}')">⚙️ Управление банком</button>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;" onclick="depositToBank('${bankId}')">💰 Пополнить казну</button>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromBank('${bankId}')">💸 Вывести (5%)</button>
+                `;
+            } else if (!hasAccount) {
+                html += `
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankAccount('${bankId}')">📂 Открыть счет</button>
+                `;
+            } else {
+                html += `
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <button class="btn-gold" style="flex:1;padding:10px;font-size:13px;" onclick="openLoanModal('${bankId}')">💰 Взять кредит</button>
+                        <button class="btn-green" style="flex:1;padding:10px;font-size:13px;" onclick="openMyLoans('${bankId}')">📋 Мои кредиты</button>
+                    </div>
+                    <button class="btn-dark" style="margin-top:8px;padding:8px;font-size:12px;" onclick="depositToBankFromClient('${bankId}')">💰 Пополнить счет</button>
+                `;
+            }
+
+            if (data.user_loans && data.user_loans.length > 0) {
+                html += `<div class="section-title" style="font-size:14px;margin-top:15px;">📋 Мои кредиты в этом банке</div>`;
+                data.user_loans.forEach(loan => {
+                    const statusClass = loan.status === 'active' ? 'active' : (loan.status === 'overdue' ? 'overdue' : 'paid');
+                    const daysLeft = Math.max(0, Math.ceil((loan.due_date - Date.now()/1000) / 86400));
+                    html += `
+                        <div class="credit-item">
+                            <div class="credit-header">
+                                <span class="credit-amount">${(loan.amount || 0).toLocaleString()} 💰</span>
+                                <span class="credit-status ${statusClass}">${loan.status === 'active' ? 'Активен' : (loan.status === 'overdue' ? 'Просрочен' : 'Погашен')}</span>
+                            </div>
+                            <div class="credit-bank">К возврату: ${(loan.total_to_pay || 0).toLocaleString()} 💰</div>
+                            <div class="credit-days">Осталось: <span>${daysLeft} дн.</span></div>
+                            ${loan.status === 'active' ? `<button class="btn-gold" style="margin-top:6px;padding:6px;font-size:12px;" onclick="payLoan('${loan.id}')">💳 Оплатить кредит</button>` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+            document.getElementById('modalBank').style.display = 'block';
+
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки банка!");
+        }
+    }
+
+    async function depositToBankFromClient(bankId) {
+        const amount = prompt("Введите сумму для пополнения счета (мин 1):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/deposit_from_client`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "💰 ПОПОЛНЕНИЕ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
     // ============================================================
     // 22. ФИНАЛ
     // ============================================================
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);
     console.log('🏦 Банковская система загружена!');
+    console.log('🎡 PvP Арена исправлена!');
     </script>
 </body>
 </html>

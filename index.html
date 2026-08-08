@@ -21,6 +21,8 @@
             --chat-own: #f59e0b;
             --chat-other: #1e1e2a;
             --guest-color: #6b7280;
+            --arena-green: #0d7a3e;
+            --arena-gold: #ffd700;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: 'Montserrat', sans-serif; }
@@ -129,6 +131,9 @@
         .btn-green { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: #000; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
         .btn-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; box-shadow: 0 0 15px rgba(59,130,246,0.4); }
         .btn-red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; }
+        .btn-dark { background: #1a1a2a; color: #fff; border: 1px solid #333; padding: 14px 20px; border-radius: 14px; font-weight: 800; width: 100%; margin-top: 12px; cursor: pointer; transition: all 0.2s; }
+        .btn-dark:active { background: #2a2a3a; }
+        .btn-dark:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .input-box { width: 100%; padding: 14px; border-radius: 12px; background: #0b0c10; border: 1px solid #333; color: #fff; margin: 10px 0; text-align: center; font-size: 16px; font-weight: 700; }
         .input-box:disabled { opacity: 0.5; }
@@ -181,9 +186,75 @@
         .card-item.red { color: #dc2626; }
         .card-item.back { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: transparent; border: 2px solid #fff; }
 
-        .arena-wheel-container { position: relative; width: 180px; height: 180px; margin: 15px auto; }
-        .arena-wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #f59e0b; transition: transform 4s cubic-bezier(0.15,0.99,0.18,0.99); box-shadow: 0 0 20px rgba(245,158,11,0.4); position: relative; overflow: hidden; }
-        .arena-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 18px solid #ef4444; z-index: 10; }
+        /* ===== ARENA NEW ===== */
+        .arena-wrapper {
+            background: radial-gradient(ellipse at center, #0d7a3e 0%, #052e16 100%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid var(--arena-gold);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.15);
+            position: relative;
+            margin: 10px 0;
+        }
+        .arena-wrapper .arena-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--arena-gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            margin-bottom: 10px;
+        }
+        .arena-wrapper .arena-bank {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+        .arena-wrapper .arena-bank span {
+            color: var(--arena-gold);
+        }
+        .arena-wrapper .arena-tax {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 4px;
+        }
+        .arena-wrapper .arena-tax span {
+            color: var(--arena-gold);
+            font-weight: 700;
+        }
+
+        .arena-wheel-container { position: relative; width: 200px; height: 200px; margin: 15px auto; }
+        .arena-wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--arena-gold); transition: transform 4s cubic-bezier(0.15,0.99,0.18,0.99); box-shadow: 0 0 30px rgba(255,215,0,0.2); position: relative; overflow: hidden; background: conic-gradient(#f59e0b 0deg 120deg, #3b82f6 120deg 240deg, #10b981 240deg 360deg); }
+        .arena-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 20px solid #ef4444; z-index: 10; }
+
+        .arena-player-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 12px 0; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 12px; }
+        .arena-player-chip { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); padding: 4px 10px 4px 4px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(255,215,0,0.2); }
+        .arena-player-chip .chip-avatar { width: 24px; height: 24px; border-radius: 50%; background: #252530; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #f59e0b; overflow: hidden; }
+        .arena-player-chip .chip-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .arena-player-chip .chip-chance { color: var(--arena-gold); font-weight: 800; }
+        .arena-player-chip .chip-bet { color: rgba(255,255,255,0.5); font-weight: 400; }
+        .arena-player-chip.winner-chip { border-color: var(--arena-gold); background: rgba(255,215,0,0.2); animation: winPulse 0.5s ease-in-out 2; }
+
+        .arena-controls { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .arena-controls .bet-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .arena-controls .bet-row .input-box { flex: 2; margin: 0; min-width: 80px; }
+        .arena-controls .bet-row .btn-small { padding: 8px 12px; border-radius: 8px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.08); color: #fff; }
+        .arena-controls .bet-row .btn-small:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
+        .arena-controls .bet-row .btn-small.gold { background: var(--gold-gradient); color: #000; }
+        .arena-controls .bet-row .btn-small.green { background: var(--accent-green); color: #fff; }
+        .arena-controls .quick-add { display: flex; gap: 6px; flex-wrap: wrap; }
+        .arena-controls .quick-add .qa-btn { padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .arena-controls .quick-add .qa-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+
+        .arena-status { text-align: center; font-size: 14px; color: var(--text-muted); margin: 8px 0; }
+        .arena-status .highlight { color: var(--arena-gold); font-weight: 700; }
+        .arena-status .timer { color: #34d399; font-weight: 700; font-size: 18px; }
+
+        .arena-leave-btn { background: #ef4444; color: #fff; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; transition: all 0.2s; }
+        .arena-leave-btn:active { transform: scale(0.96); }
+        .arena-leave-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .profile-card { background: var(--card-bg); border-radius: 18px; padding: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .progress-bar { width: 100%; height: 10px; background: #0b0c10; border-radius: 5px; overflow: hidden; margin: 8px 0; }
@@ -215,7 +286,6 @@
         .slot-balance { text-align: center; font-size: 14px; color: var(--text-muted); margin: 5px 0 10px 0; }
         .slot-balance span { color: #ffe066; font-weight: 800; }
 
-        /* ===== CLANS ===== */
         .clan-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(245,158,11,0.15); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
         .clan-card:active { transform: scale(0.98); }
         .clan-card .clan-info { flex: 1; }
@@ -256,13 +326,13 @@
         .clan-guest-msg .icon { font-size: 48px; display: block; margin-bottom: 12px; }
         .clan-guest-msg h3 { color: #fff; margin-bottom: 8px; }
 
-        .arena-players-on-wheel { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 10px 0; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 12px; }
-        .arena-player-chip { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); padding: 4px 10px 4px 4px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid rgba(245,158,11,0.2); }
-        .arena-player-chip .chip-avatar { width: 22px; height: 22px; border-radius: 50%; background: #252530; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #f59e0b; overflow: hidden; }
-        .arena-player-chip .chip-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .arena-player-chip .chip-chance { color: #ffe066; font-weight: 800; }
-        .arena-player-chip .chip-bet { color: var(--text-muted); font-weight: 400; }
-        .arena-player-chip.winner-chip { border-color: #ffe066; background: rgba(245,158,11,0.15); animation: winPulse 0.5s ease-in-out 2; }
+        .mines-restore-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; padding: 30px; }
+        .mines-restore-box { background: var(--card-bg); border: 2px solid #f59e0b; border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; text-align: center; }
+        .mines-restore-box h2 { color: #ffe066; margin-bottom: 10px; }
+        .mines-restore-box p { color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+        .mines-restore-box .btn-row { display: flex; gap: 10px; }
+        .mines-restore-box .btn-row .btn-gold { flex: 1; margin: 0; }
+        .mines-restore-box .btn-row .btn-red { flex: 1; margin: 0; }
     </style>
 </head>
 <body>
@@ -489,6 +559,18 @@
         </div>
     </div>
 
+    <!-- ===== MINES RESTORE OVERLAY ===== -->
+    <div class="mines-restore-overlay" id="minesRestoreOverlay">
+        <div class="mines-restore-box">
+            <h2>🔄 Неоконченная игра</h2>
+            <p>У вас есть активная игра в Мины!<br>Желаете продолжить?</p>
+            <div class="btn-row">
+                <button class="btn-gold" onclick="restoreMinesGame()">Продолжить</button>
+                <button class="btn-red" onclick="cancelMinesGame()">Завершить</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="modalPlinko">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalPlinko')">&times;</button>
@@ -518,24 +600,46 @@
         </div>
     </div>
 
+    <!-- ===== NEW ARENA MODAL ===== -->
     <div class="modal" id="modalArena">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalArena')">&times;</button>
             <div class="section-title" style="text-align:center;">🎡 PvP Арена</div>
-            <div class="arena-players-on-wheel" id="arenaPlayersChips"></div>
-            <div class="arena-wheel-container">
-                <div class="arena-pointer"></div>
-                <div class="arena-wheel" id="arenaWheel"></div>
+
+            <div class="arena-wrapper">
+                <div class="arena-title">🎡 КОЛЕСО ФОРТУНЫ</div>
+                <div class="arena-bank">💰 <span id="arenaTotalBank">0</span></div>
+                <div class="arena-tax">🏆 Победитель забирает <span id="arenaWinnerPrize">0</span> (комиссия 5%)</div>
+
+                <div class="arena-wheel-container">
+                    <div class="arena-pointer"></div>
+                    <div class="arena-wheel" id="arenaWheel"></div>
+                </div>
+
+                <div class="arena-status">
+                    <span id="arenaStatusText">⏳ Ожидание игроков...</span>
+                    <div class="timer" id="arenaTimerDisplay"></div>
+                </div>
+
+                <div class="arena-player-chips" id="arenaPlayersChips"></div>
+
+                <div class="arena-controls">
+                    <div class="bet-row">
+                        <input type="number" class="input-box" id="arenaBet" value="10" min="10" placeholder="Ставка">
+                        <button class="btn-small gold" onclick="arenaSetBet(0.5)">½</button>
+                        <button class="btn-small gold" onclick="arenaSetBet(2)">2×</button>
+                        <button class="btn-small gold" onclick="arenaSetBet('max')">MAX</button>
+                    </div>
+                    <div class="quick-add">
+                        <button class="qa-btn" onclick="arenaAddBet(50)">+50</button>
+                        <button class="qa-btn" onclick="arenaAddBet(100)">+100</button>
+                        <button class="qa-btn" onclick="arenaAddBet(500)">+500</button>
+                        <button class="qa-btn" onclick="arenaAddBet(1000)">+1K</button>
+                    </div>
+                    <button class="btn-gold" id="arenaJoinBtn" onclick="arenaJoin()">Добавить <span id="arenaBetDisplay">10</span> к ставке</button>
+                    <button class="btn-dark" id="arenaLeaveBtn" onclick="arenaLeave()" style="display:none;">🚪 Выйти из игры</button>
+                </div>
             </div>
-            <div style="text-align:center;margin-bottom:10px;">
-                <div style="font-size:14px;color:var(--text-muted);">Банк: <b style="color:#ffe066;" id="arenaTotalBank">0</b> 💰</div>
-                <div style="font-size:13px;color:#34d399;font-weight:700;margin-top:4px;" id="arenaUserChance">Шанс: 0%</div>
-                <div style="font-size:12px;color:var(--text-muted);" id="arenaTimer">⏱ Ожидание игроков...</div>
-            </div>
-            <div id="arenaPlayersList" style="margin-bottom:15px;font-size:12px;color:var(--text-muted);background:#0b0c10;padding:10px;border-radius:12px;">Ожидание участников...</div>
-            <input type="number" class="input-box" id="arenaBet" value="10" min="10">
-            <button class="btn-gold" id="arenaJoinBtn" onclick="joinArena()">Вступить</button>
-            <button class="btn-green" id="arenaSpinBtn" style="display:none;" onclick="spinArena()">КРУТИТЬ</button>
         </div>
     </div>
 
@@ -638,6 +742,7 @@
     let currentClanTab = 'list';
     let arenaTimer = null;
     let isGuest = false;
+    let arenaInterval = null;
 
     // ============================================================
     // 2. API ЗАПРОСЫ
@@ -1118,19 +1223,84 @@
     }
 
     // ============================================================
-    // 13. МИНЫ
+    // 13. МИНЫ (С ВОССТАНОВЛЕНИЕМ СЕССИИ)
     // ============================================================
+    let minesRestoreData = null;
+
+    async function checkMinesActive() {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/mines/active?user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.has_active) {
+                minesRestoreData = data.game;
+                document.getElementById('minesRestoreOverlay').style.display = 'flex';
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    async function restoreMinesGame() {
+        if (!minesRestoreData) return;
+        document.getElementById('minesRestoreOverlay').style.display = 'none';
+        
+        document.getElementById('modalMines').style.display = 'block';
+        document.getElementById('minesControls').style.display = 'none';
+        document.getElementById('minesGameArea').style.display = 'block';
+        
+        let grid = document.getElementById('minesGrid');
+        grid.innerHTML = '';
+        for (let i = 0; i < 25; i++) {
+            let cell = document.createElement('div');
+            cell.className = 'mine-cell';
+            if (minesRestoreData.revealed.includes(i)) {
+                cell.classList.add('revealed-safe');
+                cell.innerHTML = `<svg width="24" height="24"><use href="#svg-diamond"/></svg>`;
+            }
+            cell.onclick = () => clickMine(i, cell);
+            grid.appendChild(cell);
+        }
+        
+        let cashoutBtn = document.getElementById('cashoutBtn');
+        cashoutBtn.disabled = false;
+        cashoutBtn.innerText = `Забрать ${Math.round(minesRestoreData.bet * minesRestoreData.current_multiplier).toLocaleString()} 💰 (x${minesRestoreData.current_multiplier})`;
+        
+        showCustomAlert("🔄 ИГРА ВОССТАНОВЛЕНА", `Ваша игра продолжена! Ставка: ${minesRestoreData.bet} 💰, Множитель: x${minesRestoreData.current_multiplier}`);
+        refreshUserData();
+    }
+
+    function cancelMinesGame() {
+        document.getElementById('minesRestoreOverlay').style.display = 'none';
+        minesRestoreData = null;
+        showCustomAlert("❌ ИГРА ЗАВЕРШЕНА", "Неоконченная игра была завершена. Ставка не возвращается.");
+    }
+
     function openMines() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
-        document.getElementById('modalMines').style.display = 'block'; 
-        document.getElementById('minesControls').style.display = 'block'; 
-        document.getElementById('minesGameArea').style.display = 'none'; 
+        // Проверяем активную игру при открытии
+        checkMinesActive();
+        // Если нет активной - показываем интерфейс
+        document.getElementById('minesControls').style.display = 'block';
+        document.getElementById('minesGameArea').style.display = 'none';
+        document.getElementById('modalMines').style.display = 'block';
     }
+
     function addMineBet(amount) { let input = document.getElementById('mineBet'); let curr = parseInt(input.value) || 0; input.value = curr + amount; }
     function selectBombMode(count) { selectedMinesCount = count; document.querySelectorAll('.bomb-btn').forEach(b => b.classList.remove('active')); document.getElementById(`bomb-${count}`).classList.add('active'); }
 
     async function startMines() {
         if (isGuest) return;
+        // Проверяем, нет ли активной игры
+        const checkRes = await apiRequest(`${API_BASE}/mines/active?user_id=${userId}`);
+        if (checkRes) {
+            const checkData = await checkRes.json();
+            if (checkData.has_active) {
+                minesRestoreData = checkData.game;
+                document.getElementById('minesRestoreOverlay').style.display = 'flex';
+                return;
+            }
+        }
+        
         let bet = parseInt(document.getElementById('mineBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         try {
@@ -1358,14 +1528,33 @@
     }
 
     // ============================================================
-    // 16. PVP АРЕНА
+    // 16. PVP АРЕНА (НОВАЯ)
     // ============================================================
     function openArena() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
         document.getElementById('modalArena').style.display = 'block';
         updateArenaState();
-        if (arenaTimer) clearInterval(arenaTimer);
-        arenaTimer = setInterval(updateArenaState, 3000);
+        if (arenaInterval) clearInterval(arenaInterval);
+        arenaInterval = setInterval(updateArenaState, 2000);
+    }
+
+    function arenaSetBet(multiplier) {
+        let input = document.getElementById('arenaBet');
+        let current = parseFloat(input.value) || 10;
+        if (multiplier === 'max') {
+            let bal = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, ''));
+            if (bal > 0) input.value = bal;
+            return;
+        }
+        input.value = Math.round(current * multiplier);
+        document.getElementById('arenaBetDisplay').innerText = input.value;
+    }
+
+    function arenaAddBet(amount) {
+        let input = document.getElementById('arenaBet');
+        let current = parseInt(input.value) || 0;
+        input.value = current + amount;
+        document.getElementById('arenaBetDisplay').innerText = input.value;
     }
 
     async function updateArenaState() {
@@ -1376,45 +1565,58 @@
             const data = await res.json();
 
             document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
-            updateArenaPlayerChips(data.players);
+            
+            // Показываем потенциальный выигрыш победителя (95% от банка)
+            let winnerPrize = Math.round(data.total_bank * 0.95);
+            document.getElementById('arenaWinnerPrize').innerText = winnerPrize.toLocaleString();
 
-            let list = document.getElementById('arenaPlayersList');
+            // Обновляем чипы
+            updateArenaChips(data.players);
+
+            // Статус и таймер
+            let statusText = document.getElementById('arenaStatusText');
+            let timerDisplay = document.getElementById('arenaTimerDisplay');
+            
             if (data.players.length === 0) {
-                list.innerText = "За столом: Ожидание участников...";
-                document.getElementById('arenaUserChance').innerText = "Ваш шанс на победу: 0%";
-                document.getElementById('arenaTimer').innerText = "⏱ Ожидание игроков...";
-            } else {
-                let text = "За столом: " + data.players.map(p => `${p.first_name} (${p.bet} 💰, ${p.chance || 0}%)`).join(", ");
-                list.innerText = text;
-
-                let myPlayer = data.players.find(p => String(p.user_id) === String(userId));
-                if (myPlayer && data.total_bank > 0) {
-                    document.getElementById('arenaUserChance').innerText = `Ваш шанс на победу: ${myPlayer.chance || 0}%`;
-                } else {
-                    document.getElementById('arenaUserChance').innerText = "Ваш шанс на победу: 0%";
-                }
-
-                if (data.status === 'waiting' && data.timer > 0) {
-                    document.getElementById('arenaTimer').innerText = `⏱ Спин через ${data.timer} сек...`;
-                } else if (data.status === 'spinning') {
-                    document.getElementById('arenaTimer').innerText = "🎡 Колесо крутится...";
-                } else {
-                    document.getElementById('arenaTimer').innerText = "⏱ Ожидание игроков...";
-                }
+                statusText.textContent = '⏳ Ожидание игроков...';
+                timerDisplay.textContent = '';
+            } else if (data.players.length === 1) {
+                statusText.textContent = `👤 1 игрок в столе. Ожидание соперника...`;
+                timerDisplay.textContent = '';
+            } else if (data.status === 'countdown' || data.status === 'waiting') {
+                statusText.textContent = `👥 ${data.players.length} игроков в столе`;
+                timerDisplay.textContent = data.timer > 0 ? `⏱ ${data.timer} сек` : '⏳ Ожидание...';
+            } else if (data.status === 'spinning') {
+                statusText.textContent = '🎡 Колесо крутится!';
+                timerDisplay.textContent = '⚡ Момент истины!';
             }
 
+            // Кнопки
             let joinBtn = document.getElementById('arenaJoinBtn');
-            let spinBtn = document.getElementById('arenaSpinBtn');
+            let leaveBtn = document.getElementById('arenaLeaveBtn');
             let joined = data.players.some(p => String(p.user_id) === String(userId));
 
-            if (joined && data.players.length >= 2 && data.status !== 'spinning') {
+            if (joined) {
                 joinBtn.style.display = 'none';
-                spinBtn.style.display = 'block';
+                if (data.can_leave && data.players.length < 2 && data.status !== 'spinning') {
+                    leaveBtn.style.display = 'block';
+                    leaveBtn.disabled = false;
+                } else {
+                    leaveBtn.style.display = 'block';
+                    leaveBtn.disabled = true;
+                    leaveBtn.textContent = data.status === 'spinning' ? '⛔ Идёт спин...' : '🔒 Деньги в банке';
+                }
             } else {
                 joinBtn.style.display = 'block';
-                spinBtn.style.display = 'none';
+                joinBtn.disabled = data.status === 'spinning';
+                leaveBtn.style.display = 'none';
             }
 
+            // Обновляем текст кнопки Join
+            let betVal = parseInt(document.getElementById('arenaBet').value) || 10;
+            document.getElementById('arenaBetDisplay').innerText = betVal;
+
+            // Рисуем колесо если spinning
             if (data.status === 'spinning' && data.players.length > 0) {
                 drawArenaWheel(data.players);
             }
@@ -1422,7 +1624,7 @@
         } catch(e) { console.error(e); }
     }
 
-    function updateArenaPlayerChips(players) {
+    function updateArenaChips(players) {
         const container = document.getElementById('arenaPlayersChips');
         container.innerHTML = '';
         if (!players || players.length === 0) {
@@ -1472,61 +1674,30 @@
         wheel.style.background = `conic-gradient(${conicColors.join(', ')})`;
     }
 
-    async function joinArena() {
+    async function arenaJoin() {
         if (isGuest) return;
         let bet = parseInt(document.getElementById('arenaBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         try {
-            const res = await apiRequest(`${API_BASE}/arena/join`, { method: 'POST', body: JSON.stringify({ user_id: userId, bet }) });
+            const res = await apiRequest(`${API_BASE}/arena/join`, { method: 'POST', body: JSON.stringify({ user_id: userId, bet: bet }) });
             if (!res) return;
             const data = await res.json();
             if (data.error) return showCustomAlert("ОШИБКА", data.error);
             showCustomAlert("PvP АРЕНА", "Вы успешно вступили в стол!");
-            updateArenaState();
             refreshUserData();
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка входа в Арену!"); }
     }
 
-    async function spinArena() {
+    async function arenaLeave() {
         if (isGuest) return;
-        let spinBtn = document.getElementById('arenaSpinBtn');
-        spinBtn.disabled = true;
         try {
-            const res = await apiRequest(`${API_BASE}/arena/spin`, { method: 'POST' });
-            if (!res) { spinBtn.disabled = false; return; }
+            const res = await apiRequest(`${API_BASE}/arena/leave`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+            if (!res) return;
             const data = await res.json();
-            if (data.error) { showCustomAlert("ОШИБКА", data.error); spinBtn.disabled = false; return; }
-
-            const wheel = document.getElementById('arenaWheel');
-            let degrees = 1440 + Math.floor(Math.random() * 360);
-            wheel.style.transform = `rotate(${degrees}deg)`;
-
-            setTimeout(() => {
-                wheel.style.transform = 'rotate(0deg)';
-                let isWinner = String(data.winner.user_id) === String(userId);
-                
-                document.querySelectorAll('.arena-player-chip').forEach(chip => {
-                    chip.classList.remove('winner-chip');
-                });
-                const chips = document.querySelectorAll('.arena-player-chip');
-                data.players.forEach((p, idx) => {
-                    if (String(p.user_id) === String(data.winner.user_id) && chips[idx]) {
-                        chips[idx].classList.add('winner-chip');
-                    }
-                });
-                
-                drawArenaWheel(data.players);
-                
-                let msg = isWinner ?
-                    `🎉 ВЫ ПОБЕДИЛИ!\nОбщий банк: ${data.total_bank} 💰\nНалог: ${data.casino_tax} 💰\nВаш профит: +${data.winner_prize.toLocaleString()} 💰` :
-                    `👑 Победил: ${data.winner.first_name}!\nВыигрыш: ${data.winner_prize.toLocaleString()} 💰`;
-                showCustomAlert("🎡 ИТОГИ АРЕНЫ", msg);
-                spinBtn.disabled = false;
-                updateArenaState();
-                refreshUserData();
-            }, 4000);
-
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка вращения колеса!"); spinBtn.disabled = false; }
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            showCustomAlert("🚪 ВЫХОД", data.message || "Вы вышли из игры");
+            refreshUserData();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка выхода!"); }
     }
 
     // ============================================================

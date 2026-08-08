@@ -286,46 +286,6 @@
         .slot-balance { text-align: center; font-size: 14px; color: var(--text-muted); margin: 5px 0 10px 0; }
         .slot-balance span { color: #ffe066; font-weight: 800; }
 
-        .clan-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(245,158,11,0.15); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-        .clan-card:active { transform: scale(0.98); }
-        .clan-card .clan-info { flex: 1; }
-        .clan-card .clan-name { font-weight: 700; font-size: 16px; color: #fff; }
-        .clan-card .clan-name .clan-id { color: var(--text-muted); font-weight: 400; font-size: 12px; }
-        .clan-card .clan-stats { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-        .clan-card .clan-stats span { color: #ffe066; }
-        .clan-card .clan-actions { display: flex; gap: 8px; }
-        .clan-card .clan-actions .btn-small { padding: 6px 14px; border-radius: 10px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; }
-
-        .clan-detail-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 16px; }
-        .clan-detail-header .clan-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ffe066); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: #000; }
-        .clan-detail-header .clan-info { flex: 1; }
-        .clan-detail-header .clan-info .name { font-size: 20px; font-weight: 800; }
-        .clan-detail-header .clan-info .level { color: #ffe066; font-weight: 700; }
-
-        .clan-member-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .clan-member-item .member-avatar { width: 32px; height: 32px; border-radius: 50%; background: #252530; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #f59e0b; }
-        .clan-member-item .member-name { flex: 1; font-weight: 600; }
-        .clan-member-item .member-role { font-size: 11px; color: #ffe066; font-weight: 700; }
-
-        .request-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .request-item .req-info { flex: 1; }
-        .request-item .req-info .req-name { font-weight: 600; }
-        .request-item .req-info .req-level { font-size: 12px; color: var(--text-muted); }
-        .request-item .req-actions { display: flex; gap: 8px; }
-        .request-item .req-actions .btn-accept { background: #10b981; color: #fff; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; }
-        .request-item .req-actions .btn-decline { background: #ef4444; color: #fff; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; }
-
-        .treasury-display { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
-        .treasury-display .label { color: var(--text-muted); font-size: 13px; }
-        .treasury-display .amount { color: #ffe066; font-weight: 800; font-size: 18px; }
-
-        .xp-bar { width: 100%; height: 6px; background: #0b0c10; border-radius: 3px; overflow: hidden; margin: 8px 0; }
-        .xp-bar .xp-fill { height: 100%; background: var(--gold-gradient); border-radius: 3px; transition: width 0.5s; }
-
-        .clan-guest-msg { text-align: center; padding: 30px 20px; color: var(--text-muted); }
-        .clan-guest-msg .icon { font-size: 48px; display: block; margin-bottom: 12px; }
-        .clan-guest-msg h3 { color: #fff; margin-bottom: 8px; }
-
         .mines-restore-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; padding: 30px; }
         .mines-restore-box { background: var(--card-bg); border: 2px solid #f59e0b; border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; text-align: center; }
         .mines-restore-box h2 { color: #ffe066; margin-bottom: 10px; }
@@ -334,174 +294,209 @@
         .mines-restore-box .btn-row .btn-gold { flex: 1; margin: 0; }
         .mines-restore-box .btn-row .btn-red { flex: 1; margin: 0; }
 
-        /* ===== НОВЫЕ СТИЛИ ДЛЯ КЛАНОВ ===== */
-        .clan-main-btn {
+        /* ===== БАНКОВСКАЯ СИСТЕМА ===== */
+        .bank-main-btn {
             background: var(--gold-gradient);
             color: #000;
             border: none;
-            padding: 20px 40px;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 22px;
+            padding: 18px 30px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 18px;
             cursor: pointer;
-            box-shadow: 0 0 40px rgba(245,158,11,0.4);
+            box-shadow: 0 0 30px rgba(245,158,11,0.3);
             transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
-            max-width: 320px;
-            margin: 20px auto;
+            margin: 8px 0;
             display: block;
-        }
-        .clan-main-btn:active { transform: scale(0.95); box-shadow: 0 0 60px rgba(245,158,11,0.6); }
-
-        .clan-panel {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .clan-view-btn {
-            background: var(--card-bg);
-            color: var(--text-muted);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 10px 20px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .clan-view-btn.active {
-            background: var(--gold-gradient);
-            color: #000;
-            box-shadow: var(--gold-glow);
-        }
-
-        /* Battle 4x4 */
-        .battle-field {
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0b0c10 100%);
-            border-radius: 20px;
-            padding: 16px;
-            border: 2px solid #f59e0b;
-            position: relative;
-            min-height: 350px;
-            margin: 10px 0;
-        }
-        .battle-field .vs-badge {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 36px;
-            font-weight: 900;
-            color: #ef4444;
-            text-shadow: 0 0 30px rgba(239,68,68,0.5);
-            z-index: 5;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 2px solid #ef4444;
-        }
-        .battle-teams {
-            display: flex;
-            gap: 12px;
-            justify-content: space-between;
-        }
-        .battle-team {
-            flex: 1;
             text-align: center;
         }
-        .battle-team .team-name {
-            font-weight: 800;
-            font-size: 13px;
-            color: #ffe066;
+        .bank-main-btn:active { transform: scale(0.97); }
+        .bank-main-btn.secondary {
+            background: var(--card-bg);
+            color: #fff;
+            border: 1px solid rgba(245,158,11,0.3);
+            box-shadow: none;
+        }
+        .bank-main-btn.secondary:active { background: #1e1e2e; }
+
+        .bank-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(245,158,11,0.12);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .bank-card:active { transform: scale(0.98); }
+        .bank-card .bank-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 8px;
         }
-        .battle-team .team-score {
-            font-size: 24px;
-            font-weight: 900;
-            color: #fff;
-            margin: 6px 0;
-        }
-        .battle-players {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
-        .battle-player {
-            background: rgba(255,255,255,0.04);
-            border-radius: 10px;
-            padding: 8px 4px;
-            border: 1px solid rgba(255,255,255,0.06);
-            transition: all 0.3s;
-            text-align: center;
-        }
-        .battle-player.online {
-            border-color: #10b981;
-            box-shadow: 0 0 12px rgba(16,185,129,0.15);
-        }
-        .battle-player.offline {
-            border-color: #ef4444;
-            opacity: 0.5;
-        }
-        .battle-player .bp-avatar {
-            width: 34px;
-            height: 34px;
+        .bank-card .bank-avatar {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: #252530;
-            margin: 0 auto 3px;
+            background: linear-gradient(135deg, #f59e0b, #ffe066);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 700;
-            color: #f59e0b;
-            border: 2px solid transparent;
-        }
-        .battle-player.online .bp-avatar {
-            border-color: #10b981;
-        }
-        .battle-player .bp-name {
-            font-size: 9px;
-            color: var(--text-muted);
+            font-size: 20px;
+            font-weight: 800;
+            color: #000;
+            flex-shrink: 0;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
-        .battle-player .bp-status {
-            font-size: 8px;
+        .bank-card .bank-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .bank-card .bank-name {
             font-weight: 700;
-            margin-top: 1px;
+            font-size: 16px;
+            color: #fff;
         }
-        .battle-player .bp-status.online { color: #10b981; }
-        .battle-player .bp-status.offline { color: #ef4444; }
-
-        .battle-controls { margin-top: 12px; text-align: center; }
-        .battle-status {
-            text-align: center;
-            font-size: 13px;
+        .bank-card .bank-owner {
+            font-size: 12px;
             color: var(--text-muted);
-            margin: 8px 0;
-            padding: 8px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 10px;
         }
-        .battle-status .highlight { color: #ffe066; font-weight: 700; }
-
-        .clan-header-actions {
+        .bank-card .bank-stats {
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        .bank-card .bank-stats span { color: #ffe066; font-weight: 700; }
+
+        .bank-detail-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px;
             margin: 10px 0;
         }
-        .clan-header-actions .btn-small {
-            padding: 6px 14px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 700;
+        .bank-detail-section .label {
             font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .bank-detail-section .value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffe066;
+        }
+
+        .term-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .term-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
         }
-        .clan-header-actions .btn-small:active { transform: scale(0.95); }
+        .term-btn.active {
+            border-color: #f59e0b;
+            background: rgba(245,158,11,0.15);
+            color: #ffe066;
+        }
+        .term-btn:active { transform: scale(0.95); }
+
+        .loan-calc {
+            background: rgba(245,158,11,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid rgba(245,158,11,0.15);
+        }
+        .loan-calc .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+        }
+        .loan-calc .row .label { color: var(--text-muted); }
+        .loan-calc .row .val { color: #ffe066; font-weight: 700; }
+
+        .credit-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid #f59e0b;
+        }
+        .credit-item .credit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .credit-item .credit-amount {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffe066;
+        }
+        .credit-item .credit-bank {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .credit-item .credit-days {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .credit-item .credit-days span { color: #34d399; font-weight: 700; }
+        .credit-item .credit-status {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        .credit-item .credit-status.active { background: rgba(16,185,129,0.2); color: #10b981; }
+        .credit-item .credit-status.overdue { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .credit-item .credit-status.paid { background: rgba(107,114,128,0.2); color: var(--text-muted); }
+
+        .bank-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .bank-settings .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .bank-settings .setting-row .label { font-size: 13px; color: var(--text-muted); }
+        .bank-settings .setting-row .value { font-size: 14px; font-weight: 700; color: #ffe066; }
+        .bank-settings input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+        }
+        .bank-settings input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -625,53 +620,80 @@
         <div id="questsContainer"></div>
     </div>
 
-    <!-- ===== DEVELOPMENT TAB (CLANS) - НОВАЯ ВЕРСИЯ ===== -->
+    <!-- ===== DEVELOPMENT TAB - БАНКОВСКАЯ СИСТЕМА ===== -->
     <div id="tab-development" class="tab-content">
-        <!-- Главный экран с одной кнопкой -->
-        <div id="clanMainScreen">
-            <div style="text-align:center;padding:30px 20px;">
-                <div style="font-size:72px;margin-bottom:16px;">🏰</div>
-                <h2 style="color:#fff;font-size:22px;font-weight:800;margin-bottom:8px;">Кланы spnxplay</h2>
-                <p style="color:var(--text-muted);font-size:14px;margin-bottom:25px;line-height:1.5;">
-                    Объединяйся с друзьями,<br>сражайся и забирай банк!<br>
-                    <span style="color:#ffe066;">Максимальный уровень клана — 7 🔥</span>
+        <!-- Главный экран -->
+        <div id="bankMainScreen">
+            <div style="text-align:center;padding:20px 10px;">
+                <div style="font-size:64px;margin-bottom:12px;">🏦</div>
+                <h2 style="color:#fff;font-size:20px;font-weight:800;margin-bottom:6px;">Банковская система</h2>
+                <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px;line-height:1.5;">
+                    Создавай свой банк, выдавай кредиты<br>или бери в долг под проценты!
                 </p>
-                <button class="clan-main-btn" onclick="enterClans()">🚪 Войти в кланы</button>
+            </div>
+
+            <!-- Кнопка 1: Система Банков (всегда) -->
+            <button class="bank-main-btn" onclick="openBankSystem()">🏛 Система Банков</button>
+
+            <!-- Кнопка 2/3: Создать банк или Моя компания -->
+            <div id="bankActionButtons">
+                <!-- Заполняется динамически -->
             </div>
         </div>
 
-        <!-- Панель управления кланами -->
-        <div id="clanPanel" class="clan-panel">
+        <!-- Панель банков -->
+        <div id="bankPanel" style="display:none;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <div class="section-title" style="margin:0;font-size:16px;">🏰 Управление кланами</div>
-                <button class="btn-gold" style="width:auto;padding:6px 14px;font-size:11px;margin:0;" onclick="exitClans()">✕ Выйти</button>
+                <div class="section-title" style="margin:0;font-size:16px;">🏛 Банки</div>
+                <button class="btn-gold" style="width:auto;padding:6px 14px;font-size:11px;margin:0;" onclick="closeBankPanel()">✕ Назад</button>
             </div>
+            <div id="bankContent"></div>
+        </div>
 
-            <!-- Вкладки -->
-            <div class="nav-filter" style="margin-bottom:12px;">
-                <button class="clan-view-btn active" id="clanViewSearchBtn" onclick="switchClanView('search')">🔍 Поиск</button>
-                <button class="clan-view-btn" id="clanViewMyBtn" onclick="switchClanView('my')">👥 Мой клан</button>
-                <button class="clan-view-btn" id="clanViewBattleBtn" onclick="switchClanView('battle')">⚔️ Битва 4x4</button>
+        <!-- Модалка банка -->
+        <div class="modal" id="modalBank">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal('modalBank')">&times;</button>
+                <div id="bankDetailContent"></div>
             </div>
+        </div>
 
-            <!-- Вкладка: Поиск клана -->
-            <div id="clanViewSearch">
-                <div style="display:flex;gap:10px;margin-bottom:12px;">
-                    <input type="text" class="input-box" id="clanSearchInput" placeholder="Поиск по ID или названию..." style="margin:0;flex:1;padding:10px;">
-                    <button class="btn-gold" style="width:auto;padding:8px 16px;margin:0;font-size:13px;" onclick="searchClans()">🔍</button>
+        <!-- Модалка кредита -->
+        <div class="modal" id="modalLoan">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal('modalLoan')">&times;</button>
+                <div id="loanContent"></div>
+            </div>
+        </div>
+
+        <!-- Модалка создания банка -->
+        <div class="modal" id="modalCreateBank">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal('modalCreateBank')">&times;</button>
+                <div class="section-title" style="text-align:center;">🏦 Создание банка</div>
+                <p style="font-size:13px;color:var(--text-muted);text-align:center;margin-bottom:15px;">Стоимость создания: <b style="color:#ffe066;">10,000,000 💰</b></p>
+                <input type="text" class="input-box" id="bankNameInput" placeholder="Название банка (англ, 3-15 симв.)" maxlength="15">
+                <div style="margin:10px 0;">
+                    <label style="font-size:12px;color:var(--text-muted);">Аватарка банка:</label>
+                    <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('🏛')">🏛</button>
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('💰')">💰</button>
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('🏦')">🏦</button>
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('💎')">💎</button>
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('🌟')">🌟</button>
+                        <button class="btn-dark" style="width:auto;padding:8px 12px;font-size:12px;margin:0;" onclick="selectBankAvatar('🦅')">🦅</button>
+                    </div>
                 </div>
-                <button class="btn-gold" onclick="openCreateClanModal()" style="font-size:14px;padding:12px;">➕ Создать клан (50,000 💰)</button>
-                <div id="clanListContainer" style="margin-top:12px;"></div>
+                <div id="selectedAvatarDisplay" style="text-align:center;font-size:40px;padding:10px;">🏛</div>
+                <button class="btn-gold" onclick="createBank()">✅ Создать банк</button>
             </div>
+        </div>
 
-            <!-- Вкладка: Мой клан -->
-            <div id="clanViewMy" style="display:none;">
-                <div id="myClanContainer"></div>
-            </div>
-
-            <!-- Вкладка: Битва 4x4 -->
-            <div id="clanViewBattle" style="display:none;">
-                <div id="clanBattleContainer"></div>
+        <!-- Модалка настройки банка -->
+        <div class="modal" id="modalBankSettings">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal('modalBankSettings')">&times;</button>
+                <div id="bankSettingsContent"></div>
             </div>
         </div>
     </div>
@@ -865,23 +887,6 @@
         </div>
     </div>
 
-    <div class="modal" id="modalCreateClan">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('modalCreateClan')">&times;</button>
-            <div class="section-title" style="text-align:center;">🏰 Создание клана</div>
-            <p style="font-size:13px;text-align:center;color:var(--text-muted);margin-bottom:15px;">Стоимость: <b>50,000 фишек</b></p>
-            <input type="text" class="input-box" id="clanNameInput" placeholder="Название клана (мин 3 символа)" maxlength="30">
-            <button class="btn-gold" onclick="createClan()">Создать</button>
-        </div>
-    </div>
-
-    <div class="modal" id="modalClanDetail">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('modalClanDetail')">&times;</button>
-            <div id="clanDetailContent"></div>
-        </div>
-    </div>
-
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('games', this)">
             <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H9v2H7v-2H5v-2h2V9h2v2h2v2zm4.5 1c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
@@ -932,8 +937,8 @@
     let arenaTimer = null;
     let isGuest = false;
     let arenaInterval = null;
-    let battleInterval = null;
-    let currentClanView = 'search';
+    let selectedBankAvatar = '🏛';
+    let selectedTerm = 1;
 
     // ============================================================
     // 2. API ЗАПРОСЫ
@@ -1055,6 +1060,7 @@
             refreshUserData();
             loadChatMessages();
             setInterval(loadChatMessages, 5000);
+            updateBankButtons();
         } else {
             document.getElementById('headerRank').innerText = 'Гость';
             document.getElementById('profRank').innerText = 'Гость';
@@ -1096,9 +1102,9 @@
             refreshUserData();
             if (tabId === 'friends') loadLeaderboard();
             if (tabId === 'development') {
-                // При заходе в развитие показываем главный экран
-                document.getElementById('clanMainScreen').style.display = 'block';
-                document.getElementById('clanPanel').style.display = 'none';
+                document.getElementById('bankMainScreen').style.display = 'block';
+                document.getElementById('bankPanel').style.display = 'none';
+                updateBankButtons();
             }
         }
     }
@@ -1163,6 +1169,8 @@
 
             let slotBalance = document.getElementById('slotBalanceDisplay');
             if (slotBalance) slotBalance.innerText = data.balance.toLocaleString();
+
+            updateBankButtons();
 
         } catch(e) { console.error(e); }
     }
@@ -1392,7 +1400,7 @@
     }
 
     // ============================================================
-    // 13. МИНЫ (С ВОССТАНОВЛЕНИЕМ СЕССИИ)
+    // 13. МИНЫ
     // ============================================================
     let minesRestoreData = null;
 
@@ -1412,11 +1420,9 @@
     async function restoreMinesGame() {
         if (!minesRestoreData) return;
         document.getElementById('minesRestoreOverlay').style.display = 'none';
-        
         document.getElementById('modalMines').style.display = 'block';
         document.getElementById('minesControls').style.display = 'none';
         document.getElementById('minesGameArea').style.display = 'block';
-        
         let grid = document.getElementById('minesGrid');
         grid.innerHTML = '';
         for (let i = 0; i < 25; i++) {
@@ -1429,11 +1435,9 @@
             cell.onclick = () => clickMine(i, cell);
             grid.appendChild(cell);
         }
-        
         let cashoutBtn = document.getElementById('cashoutBtn');
         cashoutBtn.disabled = false;
         cashoutBtn.innerText = `Забрать ${Math.round(minesRestoreData.bet * minesRestoreData.current_multiplier).toLocaleString()} 💰 (x${minesRestoreData.current_multiplier})`;
-        
         showCustomAlert("🔄 ИГРА ВОССТАНОВЛЕНА", `Ваша игра продолжена! Ставка: ${minesRestoreData.bet} 💰, Множитель: x${minesRestoreData.current_multiplier}`);
         refreshUserData();
     }
@@ -1466,7 +1470,6 @@
                 return;
             }
         }
-        
         let bet = parseInt(document.getElementById('mineBet').value);
         if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
         try {
@@ -1729,15 +1732,12 @@
             const res = await apiRequest(`${API_BASE}/arena/state`);
             if (!res) return;
             const data = await res.json();
-
             document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
             let winnerPrize = Math.round(data.total_bank * 0.95);
             document.getElementById('arenaWinnerPrize').innerText = winnerPrize.toLocaleString();
             updateArenaChips(data.players);
-
             let statusText = document.getElementById('arenaStatusText');
             let timerDisplay = document.getElementById('arenaTimerDisplay');
-            
             if (data.players.length === 0) {
                 statusText.textContent = '⏳ Ожидание игроков...';
                 timerDisplay.textContent = '';
@@ -1751,11 +1751,9 @@
                 statusText.textContent = '🎡 Колесо крутится!';
                 timerDisplay.textContent = '⚡ Момент истины!';
             }
-
             let joinBtn = document.getElementById('arenaJoinBtn');
             let leaveBtn = document.getElementById('arenaLeaveBtn');
             let joined = data.players.some(p => String(p.user_id) === String(userId));
-
             if (joined) {
                 joinBtn.style.display = 'none';
                 if (data.can_leave && data.players.length < 2 && data.status !== 'spinning') {
@@ -1771,14 +1769,11 @@
                 joinBtn.disabled = data.status === 'spinning';
                 leaveBtn.style.display = 'none';
             }
-
             let betVal = parseInt(document.getElementById('arenaBet').value) || 10;
             document.getElementById('arenaBetDisplay').innerText = betVal;
-
             if (data.status === 'spinning' && data.players.length > 0) {
                 drawArenaWheel(data.players);
             }
-
         } catch(e) { console.error(e); }
     }
 
@@ -1794,11 +1789,9 @@
             chip.className = 'arena-player-chip';
             const isMe = String(p.user_id) === String(userId);
             if (isMe) chip.style.borderColor = '#ffe066';
-            
             const avatarHtml = p.photo_url ? 
                 `<img src="${p.photo_url}" alt="">` : 
                 (p.first_name ? p.first_name.charAt(0).toUpperCase() : '?');
-            
             chip.innerHTML = `
                 <div class="chip-avatar">${avatarHtml}</div>
                 <span>${p.first_name || 'Игрок'}${isMe ? ' (Вы)' : ''}</span>
@@ -1819,7 +1812,6 @@
         let conicColors = [];
         let currentAngle = 0;
         const colors = ['#f59e0b', '#3b82f6', '#ef4444', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
-
         players.forEach((p, index) => {
             const percentage = (p.bet / total) * 100;
             const color = colors[index % colors.length];
@@ -1828,7 +1820,6 @@
             conicColors.push(`${color} ${startDeg}deg ${endDeg}deg`);
             currentAngle = endDeg;
         });
-
         wheel.style.background = `conic-gradient(${conicColors.join(', ')})`;
     }
 
@@ -1881,19 +1872,7 @@
     }
 
     // ============================================================
-    // 18. МАГАЗИН
-    // ============================================================
-    async function buyItem(itemId, itemType, price, minLvl) {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут покупать предметы!"); return; }
-        const res = await apiRequest(`${API_BASE}/buy_item`, { method: 'POST', body: JSON.stringify({ user_id: userId, item_id: itemId, item_type: itemType, price, min_lvl: minLvl }) });
-        if (!res) return;
-        const data = await res.json();
-        showCustomAlert("МАГАЗИН", data.message);
-        refreshUserData();
-    }
-
-    // ============================================================
-    // 19. ЧАТ
+    // 18. ЧАТ
     // ============================================================
     function toggleChat() { if (chatOpen) closeChat(); else openChat(); }
     function openChat() { chatOpen = true; document.getElementById('chatSheet').classList.add('open'); document.getElementById('chatFab').style.display = 'none'; loadChatMessages(); if (!isGuest) document.getElementById('chatInput').focus(); }
@@ -1967,7 +1946,7 @@
     }
 
     // ============================================================
-    // 20. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
+    // 19. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
     // ============================================================
     (function initChatDrag() {
         const sheet = document.getElementById('chatSheet');
@@ -1991,7 +1970,7 @@
     })();
 
     // ============================================================
-    // 21. КЛАВИШИ
+    // 20. КЛАВИШИ
     // ============================================================
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -2001,409 +1980,547 @@
     });
 
     // ============================================================
-    // 22. НОВАЯ СИСТЕМА КЛАНОВ (ПОЛНАЯ ПЕРЕРАБОТКА)
+    // 21. БАНКОВСКАЯ СИСТЕМА (НОВАЯ)
     // ============================================================
-    let isInClanPanel = false;
 
-    function enterClans() {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут входить в кланы!"); return; }
-        isInClanPanel = true;
-        document.getElementById('clanMainScreen').style.display = 'none';
-        document.getElementById('clanPanel').style.display = 'block';
-        checkClanMembership();
-    }
+    // Обновление кнопок на главном экране
+    async function updateBankButtons() {
+        if (isGuest) {
+            document.getElementById('bankActionButtons').innerHTML = `
+                <button class="bank-main-btn secondary" disabled>⛔ Создать банк (гостям недоступно)</button>
+                <button class="bank-main-btn secondary" disabled>⛔ Моя компания (гостям недоступно)</button>
+            `;
+            return;
+        }
 
-    function exitClans() {
-        isInClanPanel = false;
-        document.getElementById('clanPanel').style.display = 'none';
-        document.getElementById('clanMainScreen').style.display = 'block';
-        if (battleInterval) clearInterval(battleInterval);
-    }
-
-    function switchClanView(view) {
-        currentClanView = view;
-        document.querySelectorAll('.clan-view-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('clanViewSearch').style.display = 'none';
-        document.getElementById('clanViewMy').style.display = 'none';
-        document.getElementById('clanViewBattle').style.display = 'none';
-
-        if (view === 'search') {
-            document.getElementById('clanViewSearch').style.display = 'block';
-            document.getElementById('clanViewSearchBtn').classList.add('active');
-            loadClansList();
-        } else if (view === 'my') {
-            document.getElementById('clanViewMy').style.display = 'block';
-            document.getElementById('clanViewMyBtn').classList.add('active');
-            loadMyClanFull();
-        } else if (view === 'battle') {
-            document.getElementById('clanViewBattle').style.display = 'block';
-            document.getElementById('clanViewBattleBtn').classList.add('active');
-            loadClanBattle();
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/user_bank?user_id=${userId}`);
+            if (!res) {
+                document.getElementById('bankActionButtons').innerHTML = `
+                    <button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>
+                `;
+                return;
+            }
+            const data = await res.json();
+            if (data.has_bank) {
+                document.getElementById('bankActionButtons').innerHTML = `
+                    <button class="bank-main-btn" onclick="openMyCompany()">🏢 Моя Компания</button>
+                `;
+            } else {
+                document.getElementById('bankActionButtons').innerHTML = `
+                    <button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>
+                `;
+            }
+        } catch(e) {
+            document.getElementById('bankActionButtons').innerHTML = `
+                <button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>
+            `;
         }
     }
 
-    async function checkClanMembership() {
-        try {
-            const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
-            if (!res) return;
-            const data = await res.json();
-            if (data.clan_id) {
-                switchClanView('my');
-            } else {
-                switchClanView('search');
-            }
-        } catch(e) { console.error(e); }
+    // Открыть систему банков
+    async function openBankSystem() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать банки!"); return; }
+        document.getElementById('bankMainScreen').style.display = 'none';
+        document.getElementById('bankPanel').style.display = 'block';
+        await loadBanksList();
     }
 
-    // ===== СПИСОК КЛАНОВ =====
-    async function loadClansList() {
-        if (isGuest) return;
+    function closeBankPanel() {
+        document.getElementById('bankPanel').style.display = 'none';
+        document.getElementById('bankMainScreen').style.display = 'block';
+        updateBankButtons();
+    }
+
+    // Загрузка списка банков
+    async function loadBanksList() {
+        const container = document.getElementById('bankContent');
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Загрузка...</p>';
+
         try {
-            const res = await apiRequest(`${API_BASE}/clans/list`);
+            const res = await apiRequest(`${API_BASE}/bank/list`);
             if (!res) return;
             const data = await res.json();
-            let container = document.getElementById('clanListContainer');
-            container.innerHTML = '';
 
-            if (!data.clans || data.clans.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных кланов. Будьте первым! 🏰</p>';
+            if (!data.banks || data.banks.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных банков. Стань первым! 🏦</p>';
                 return;
             }
 
-            data.clans.forEach(clan => {
-                let card = document.createElement('div');
-                card.className = 'clan-card';
-                let expPercent = 0;
-                if (clan.next_level_exp) {
-                    expPercent = Math.min(100, Math.floor((clan.exp / clan.next_level_exp) * 100));
-                }
+            container.innerHTML = '';
+            data.banks.forEach(bank => {
+                const card = document.createElement('div');
+                card.className = 'bank-card';
                 card.innerHTML = `
-                    <div class="clan-info">
-                        <div class="clan-name">${clan.name} <span class="clan-id">${clan.id}</span></div>
-                        <div class="clan-stats">👥 ${clan.members_count} уч. | 🏆 Ур. ${clan.level} | 💰 ${(clan.treasury || 0).toLocaleString()} в казне</div>
-                        <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
-                        <div class="clan-stats" style="font-size:10px;">Лидер: ${clan.leader_name}</div>
+                    <div class="bank-header">
+                        <div class="bank-avatar">${bank.avatar || '🏛'}</div>
+                        <div>
+                            <div class="bank-name">${bank.name}</div>
+                            <div class="bank-owner">👤 Владелец: ${bank.owner_name}</div>
+                        </div>
                     </div>
-                    <div class="clan-actions">
-                        <button class="btn-small" style="background:var(--gold-gradient);color:#000;" onclick="viewClanDetail('${clan.id}')">📋 Подробнее</button>
-                        <button class="btn-small" style="background:rgba(245,158,11,0.2);color:#f59e0b;border:1px solid #f59e0b;" onclick="sendClanRequest('${clan.id}')">📩 Запрос</button>
+                    <div class="bank-stats">
+                        <span>💰 Казна: ${(bank.treasury || 0).toLocaleString()}</span>
+                        <span>📊 Ставка: ${(bank.rate || 0)}%</span>
+                        <span>📋 Клиентов: ${(bank.clients || 0)}</span>
                     </div>
+                    <button class="btn-gold" style="margin-top:8px;padding:8px;font-size:13px;" onclick="openBankDetail('${bank.id}')">📋 Подробнее</button>
                 `;
                 container.appendChild(card);
             });
-        } catch(e) { console.error(e); }
+
+        } catch(e) {
+            container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Ошибка загрузки банков</p>';
+        }
     }
 
-    function searchClans() {
-        loadClansList();
-    }
-
-    // ===== ПРОСМОТР КЛАНА =====
-    async function viewClanDetail(clanId) {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать кланы!"); return; }
+    // Открыть детали банка
+    async function openBankDetail(bankId) {
         try {
-            const res = await apiRequest(`${API_BASE}/clans/info?clan_id=${clanId}`);
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
             if (!res) return;
             const data = await res.json();
             if (data.error) return showCustomAlert("ОШИБКА", data.error);
 
-            let container = document.getElementById('clanDetailContent');
-            let isMember = data.members.some(m => String(m.user_id) === String(userId));
-            let isLeader = String(data.leader_id) === String(userId);
-
-            let expPercent = 0;
-            if (data.next_level_exp) {
-                expPercent = Math.min(100, Math.floor((data.exp / data.next_level_exp) * 100));
-            }
+            const container = document.getElementById('bankDetailContent');
+            const isOwner = data.is_owner;
+            const hasAccount = data.has_account;
+            const isBankOwner = data.is_owner;
 
             let html = `
-                <div class="clan-detail-header">
-                    <div class="clan-avatar">${data.name.charAt(0).toUpperCase()}</div>
-                    <div class="clan-info">
-                        <div class="name">${data.name} <span style="font-size:14px;color:var(--text-muted);">${data.id}</span></div>
-                        <div class="level">🏆 Уровень ${data.level} / 7</div>
-                        <div style="font-size:12px;color:var(--text-muted);">👥 ${data.members.length} участников</div>
-                        <div class="xp-bar"><div class="xp-fill" style="width:${expPercent}%;"></div></div>
-                        <div style="font-size:10px;color:var(--text-muted);">Опыт: ${data.exp} / ${data.next_level_exp || 'MAX'}</div>
+                <div style="text-align:center;margin-bottom:15px;">
+                    <div style="font-size:48px;">${data.bank.avatar || '🏛'}</div>
+                    <div style="font-size:22px;font-weight:800;color:#ffe066;">${data.bank.name}</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Владелец: ${data.bank.owner_name}</div>
+                </div>
+                <div class="bank-detail-section">
+                    <div class="label">💰 Казна банка</div>
+                    <div class="value">${(data.bank.treasury || 0).toLocaleString()} фишек</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">📊 Процентная ставка</div>
+                        <div class="value">${(data.bank.rate || 0)}%</div>
+                    </div>
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">📋 Клиентов</div>
+                        <div class="value">${(data.bank.clients || 0)}</div>
                     </div>
                 </div>
-                <div class="treasury-display">
-                    <span class="label">💰 Казна клана</span>
-                    <span class="amount">${(data.treasury || 0).toLocaleString()} фишек</span>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">💰 Мин. кредит</div>
+                        <div class="value">${(data.bank.min_loan || 10000).toLocaleString()}</div>
+                    </div>
+                    <div class="bank-detail-section" style="margin:0;">
+                        <div class="label">💰 Макс. кредит</div>
+                        <div class="value">${(data.bank.max_loan || 1000000).toLocaleString()}</div>
+                    </div>
                 </div>
-                <div class="clan-header-actions">
-                    ${isMember ? `<button class="btn-small" style="background:var(--gold-gradient);color:#000;" onclick="donateToClan('${clanId}')">💰 Пополнить</button>` : ''}
-                    ${isLeader ? `<button class="btn-small" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromClan('${clanId}')">💸 Вывести (5%)</button>` : ''}
-                    ${isLeader ? `<button class="btn-small" style="background:#3b82f6;color:#fff;" onclick="startClanBattleFromDetail('${clanId}')">⚔️ Битва 4x4</button>` : ''}
-                    ${isMember ? `<button class="btn-small" style="background:#ef4444;color:#fff;" onclick="leaveClan('${clanId}')">🚪 Покинуть</button>` : ''}
-                </div>
-                <div class="section-title" style="font-size:14px;">👥 Участники (${data.members.length})</div>
             `;
 
-            data.members.forEach(m => {
-                let roleLabel = m.role === 'leader' ? '👑 Лидер' : '👤 Участник';
+            if (isOwner) {
                 html += `
-                    <div class="clan-member-item">
-                        <div class="member-avatar">${m.username.charAt(0).toUpperCase()}</div>
-                        <div class="member-name">${m.username}</div>
-                        <div class="member-role">${roleLabel} | LVL ${m.level}</div>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankSettings('${bankId}')">⚙️ Управление банком</button>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;" onclick="depositToBank('${bankId}')">💰 Пополнить казну</button>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromBank('${bankId}')">💸 Вывести прибыль</button>
+                `;
+            } else if (!hasAccount) {
+                html += `
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankAccount('${bankId}')">📂 Открыть счет</button>
+                `;
+            } else {
+                // Есть счет
+                html += `
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <button class="btn-gold" style="flex:1;padding:10px;font-size:13px;" onclick="openLoanModal('${bankId}')">💰 Взять кредит</button>
+                        <button class="btn-green" style="flex:1;padding:10px;font-size:13px;" onclick="openMyLoans('${bankId}')">📋 Мои кредиты</button>
                     </div>
                 `;
-            });
+            }
+
+            // Показать активные кредиты пользователя в этом банке
+            if (data.user_loans && data.user_loans.length > 0) {
+                html += `<div class="section-title" style="font-size:14px;margin-top:15px;">📋 Мои кредиты в этом банке</div>`;
+                data.user_loans.forEach(loan => {
+                    const statusClass = loan.status === 'active' ? 'active' : (loan.status === 'overdue' ? 'overdue' : 'paid');
+                    const daysLeft = Math.max(0, Math.ceil((loan.due_date - Date.now()/1000) / 86400));
+                    html += `
+                        <div class="credit-item">
+                            <div class="credit-header">
+                                <span class="credit-amount">${(loan.amount || 0).toLocaleString()} 💰</span>
+                                <span class="credit-status ${statusClass}">${loan.status === 'active' ? 'Активен' : (loan.status === 'overdue' ? 'Просрочен' : 'Погашен')}</span>
+                            </div>
+                            <div class="credit-bank">К возврату: ${(loan.total_to_pay || 0).toLocaleString()} 💰</div>
+                            <div class="credit-days">Осталось: <span>${daysLeft} дн.</span></div>
+                            ${loan.status === 'active' ? `<button class="btn-gold" style="margin-top:6px;padding:6px;font-size:12px;" onclick="payLoan('${loan.id}')">💳 Оплатить кредит</button>` : ''}
+                        </div>
+                    `;
+                });
+            }
 
             container.innerHTML = html;
-            document.getElementById('modalClanDetail').style.display = 'block';
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки клана!"); }
+            document.getElementById('modalBank').style.display = 'block';
+
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки банка!");
+        }
     }
 
-    // ===== ЗАПРОС В КЛАН =====
-    async function sendClanRequest(clanId) {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут вступать в кланы!"); return; }
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/send_request`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, clan_id: clanId })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "📩 ЗАПРОС" : "ОШИБКА", data.message);
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка отправки запроса!"); }
+    // ===== СОЗДАНИЕ БАНКА =====
+    function selectBankAvatar(emoji) {
+        selectedBankAvatar = emoji;
+        document.getElementById('selectedAvatarDisplay').innerText = emoji;
     }
 
-    // ===== МОЙ КЛАН =====
-    async function loadMyClanFull() {
-        if (isGuest) {
-            document.getElementById('myClanContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к кланам только для игроков</h3></div>`;
+    function openCreateBankModal() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут создавать банки!"); return; }
+        document.getElementById('modalCreateBank').style.display = 'block';
+        document.getElementById('bankNameInput').value = '';
+        selectedBankAvatar = '🏛';
+        document.getElementById('selectedAvatarDisplay').innerText = '🏛';
+    }
+
+    async function createBank() {
+        const name = document.getElementById('bankNameInput').value.trim();
+        if (!name || name.length < 3 || name.length > 15) {
+            return showCustomAlert("ОШИБКА", "Название должно быть от 3 до 15 символов!");
+        }
+        if (!/^[a-zA-Z]+$/.test(name)) {
+            return showCustomAlert("ОШИБКА", "Название должно содержать только английские буквы!");
+        }
+
+        if (!confirm("Вы уверены, что хотите создать собственный банк? Стоимость: 10,000,000 фишек")) {
             return;
         }
-        let container = document.getElementById('myClanContainer');
-        try {
-            const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}`);
-            if (!res) return;
-            const data = await res.json();
-            if (!data.clan_id) {
-                container.innerHTML = `
-                    <div style="text-align:center;padding:30px 20px;">
-                        <div style="font-size:48px;margin-bottom:10px;">🏰</div>
-                        <h3 style="color:#fff;margin-bottom:8px;">Вы не состоите в клане</h3>
-                        <p style="color:var(--text-muted);font-size:14px;">Перейдите в "Поиск", чтобы найти или создать свой клан!</p>
-                        <button class="btn-gold" onclick="switchClanView('search')" style="margin-top:15px;">🔍 Найти клан</button>
-                    </div>
-                `;
-                return;
-            }
-            viewClanDetail(data.clan_id);
-        } catch(e) { console.error(e); }
-    }
 
-    // ===== КАЗНА =====
-    async function donateToClan(clanId) {
-        if (isGuest) return;
-        let amount = prompt("Введите сумму для пополнения казны (мин 1):");
-        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/clans/donate`, {
+            const res = await apiRequest(`${API_BASE}/bank/create`, {
                 method: 'POST',
-                body: JSON.stringify({ user_id: userId, amount: parseInt(amount) })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "💰 КАЗНА" : "ОШИБКА", data.message);
-            if (data.success) { refreshUserData(); viewClanDetail(clanId); }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
-    }
-
-    async function withdrawFromClan(clanId) {
-        if (isGuest) return;
-        let amount = prompt("Введите сумму для вывода (комиссия 5%):");
-        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/withdraw`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, amount: parseInt(amount) })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "💸 ВЫВОД" : "ОШИБКА", data.message);
-            if (data.success) { refreshUserData(); viewClanDetail(clanId); }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
-    }
-
-    // ===== ВЫХОД ИЗ КЛАНА =====
-    async function leaveClan(clanId) {
-        if (isGuest) return;
-        if (!confirm("Вы уверены, что хотите покинуть клан?")) return;
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/leave`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "🚪 ВЫХОД" : "ОШИБКА", data.message);
-            if (data.success) {
-                closeModal('modalClanDetail');
-                refreshUserData();
-                enterClans();
-            }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
-    }
-
-    // ===== СОЗДАНИЕ КЛАНА =====
-    function openCreateClanModal() {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут создавать кланы!"); return; }
-        document.getElementById('modalCreateClan').style.display = 'block';
-        document.getElementById('clanNameInput').value = '';
-    }
-
-    async function createClan() {
-        if (isGuest) return;
-        let name = document.getElementById('clanNameInput').value.trim();
-        if (!name || name.length < 3) return showCustomAlert("ОШИБКА", "Название должно быть минимум 3 символа!");
-        if (name.length > 30) return showCustomAlert("ОШИБКА", "Название не должно превышать 30 символов!");
-
-        try {
-            const res = await apiRequest(`${API_BASE}/clans/create`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, name: name })
+                body: JSON.stringify({
+                    user_id: userId,
+                    name: name,
+                    avatar: selectedBankAvatar
+                })
             });
             if (!res) return;
             const data = await res.json();
             if (!data.success) return showCustomAlert("ОШИБКА", data.message);
             showCustomAlert("УСПЕХ!", data.message);
-            closeModal('modalCreateClan');
+            closeModal('modalCreateBank');
             refreshUserData();
-            enterClans();
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка создания клана!"); }
+            updateBankButtons();
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка создания банка!");
+        }
     }
 
-    // ===== КЛАНОВАЯ БИТВА 4x4 =====
-    async function loadClanBattle() {
-        if (isGuest) {
-            document.getElementById('clanBattleContainer').innerHTML = `<div class="clan-guest-msg"><span class="icon">🔒</span><h3>Доступ к битвам только для игроков</h3></div>`;
-            return;
-        }
-        let container = document.getElementById('clanBattleContainer');
+    // ===== МОЯ КОМПАНИЯ =====
+    async function openMyCompany() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут управлять компанией!"); return; }
         try {
-            const res = await apiRequest(`${API_BASE}/clan_battle/state?user_id=${userId}`);
+            const res = await apiRequest(`${API_BASE}/bank/user_bank?user_id=${userId}`);
             if (!res) return;
             const data = await res.json();
+            if (!data.has_bank) return showCustomAlert("ОШИБКА", "У вас нет банка!");
+            openBankDetail(data.bank_id);
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки!");
+        }
+    }
 
-            if (!data.active) {
-                container.innerHTML = `
-                    <div style="text-align:center;padding:20px;">
-                        <div style="font-size:48px;margin-bottom:10px;">⚔️</div>
-                        <h3 style="color:#ffe066;">Нет активной битвы</h3>
-                        <p style="color:var(--text-muted);">Лидер клана может начать битву 4x4 из меню клана</p>
-                        <button class="btn-gold" onclick="loadClanBattle()" style="margin-top:10px;">🔄 Обновить</button>
-                    </div>
-                `;
-                return;
-            }
+    // ===== ПОПОЛНЕНИЕ КАЗНЫ =====
+    async function depositToBank(bankId) {
+        const amount = prompt("Введите сумму для пополнения казны (мин 1):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/deposit`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "💰 КАЗНА" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
 
-            let html = `
-                <div class="battle-field">
-                    <div class="vs-badge">⚡ VS ⚡</div>
-                    <div class="battle-teams">
-                        <div class="battle-team">
-                            <div class="team-name">🏰 ${data.team1_name || 'Клан 1'}</div>
-                            <div class="team-score">${data.team1_score || 0}</div>
-                            <div class="battle-players">
-                                ${(data.team1_players || []).map(p => `
-                                    <div class="battle-player ${p.online ? 'online' : 'offline'}">
-                                        <div class="bp-avatar">${(p.username || 'U').charAt(0).toUpperCase()}</div>
-                                        <div class="bp-name">${p.username || 'Игрок'}</div>
-                                        <div class="bp-status ${p.online ? 'online' : 'offline'}">${p.online ? '🟢 Онлайн' : '🔴 Офлайн'}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                        <div class="battle-team">
-                            <div class="team-name">🏰 ${data.team2_name || 'Клан 2'}</div>
-                            <div class="team-score">${data.team2_score || 0}</div>
-                            <div class="battle-players">
-                                ${(data.team2_players || []).map(p => `
-                                    <div class="battle-player ${p.online ? 'online' : 'offline'}">
-                                        <div class="bp-avatar">${(p.username || 'U').charAt(0).toUpperCase()}</div>
-                                        <div class="bp-name">${p.username || 'Игрок'}</div>
-                                        <div class="bp-status ${p.online ? 'online' : 'offline'}">${p.online ? '🟢 Онлайн' : '🔴 Офлайн'}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
+    // ===== ВЫВОД ИЗ КАЗНЫ =====
+    async function withdrawFromBank(bankId) {
+        const amount = prompt("Введите сумму для вывода:");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/withdraw`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "💸 ВЫВОД" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    // ===== ОТКРЫТИЕ СЧЕТА =====
+    async function openBankAccount(bankId) {
+        const accountName = prompt("Введите имя для счета (мин 2 символа):");
+        if (!accountName || accountName.length < 2) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/open_account`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bank_id: bankId, account_name: accountName })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "📂 СЧЕТ" : "ОШИБКА", data.message);
+            if (data.success) { openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    // ===== НАСТРОЙКИ БАНКА =====
+    async function openBankSettings(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+
+            const container = document.getElementById('bankSettingsContent');
+            container.innerHTML = `
+                <div class="section-title" style="text-align:center;font-size:16px;">⚙️ Настройки банка</div>
+                <div class="bank-settings">
+                    <div class="setting-row">
+                        <span class="label">📊 Процентная ставка</span>
+                        <span class="value" id="rateDisplay">${data.bank.rate || 0}%</span>
+                    </div>
+                    <input type="range" min="0.1" max="50" step="0.1" value="${data.bank.rate || 0}" 
+                           oninput="document.getElementById('rateDisplay').innerText = this.value + '%'; document.getElementById('rateValue').value = this.value;">
+                    <input type="hidden" id="rateValue" value="${data.bank.rate || 0}">
+                    
+                    <div class="setting-row">
+                        <span class="label">💰 Минимальный кредит</span>
+                        <input type="number" id="minLoanInput" value="${data.bank.min_loan || 10000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;">
+                    </div>
+                    <div class="setting-row">
+                        <span class="label">💰 Максимальный кредит</span>
+                        <input type="number" id="maxLoanInput" value="${data.bank.max_loan || 1000000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;">
                     </div>
                 </div>
-                <div class="battle-status">
-                    <span class="highlight">💰 Банк: ${(data.pot || 0).toLocaleString()} фишек</span>
-                    ${data.status ? ` | Статус: ${data.status}` : ''}
-                    ${data.timer ? ` | ⏱ ${data.timer} сек` : ''}
-                </div>
-                <div class="battle-controls">
-                    ${data.can_join ? `
-                        <button class="btn-gold" onclick="joinClanBattle()" style="width:auto;padding:10px 24px;margin:0 auto;">⚔️ Вступить в битву</button>
-                    ` : ''}
-                    ${data.can_start ? `
-                        <button class="btn-blue" onclick="startClanBattle()" style="width:auto;padding:10px 24px;margin:0 auto;">🚀 Начать битву</button>
-                    ` : ''}
-                </div>
+                <button class="btn-gold" onclick="saveBankSettings('${bankId}')">💾 Сохранить настройки</button>
+                <button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;" onclick="upgradeBank('${bankId}')">🚀 Улучшить банк (10,000,000 💰)</button>
+                <button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="hireEmployee('${bankId}')">👨‍💼 Нанять сотрудника (5,000,000 💰)</button>
             `;
-
-            container.innerHTML = html;
-
-            if (battleInterval) clearInterval(battleInterval);
-            if (data.active) {
-                battleInterval = setInterval(loadClanBattle, 5000);
-            }
-
-        } catch(e) { console.error(e); }
-    }
-
-    async function startClanBattleFromDetail(clanId) {
-        if (isGuest) return;
-        let bet = prompt("Введите ставку для битвы (от 10,000 фишек):");
-        if (!bet || isNaN(bet) || parseInt(bet) < 10000) {
-            return showCustomAlert("ОШИБКА", "Минимальная ставка 10,000 фишек!");
+            document.getElementById('modalBankSettings').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки настроек!");
         }
+    }
+
+    async function saveBankSettings(bankId) {
+        const rate = parseFloat(document.getElementById('rateValue').value) || 0;
+        const minLoan = parseInt(document.getElementById('minLoanInput').value) || 10000;
+        const maxLoan = parseInt(document.getElementById('maxLoanInput').value) || 1000000;
+
+        if (minLoan > maxLoan) return showCustomAlert("ОШИБКА", "Мин. кредит не может быть больше макс. кредита!");
+        if (minLoan < 1000) return showCustomAlert("ОШИБКА", "Мин. кредит должен быть не менее 1,000 фишек!");
+        if (maxLoan > 100000000) return showCustomAlert("ОШИБКА", "Макс. кредит не может превышать 100,000,000 фишек!");
+
         try {
-            const res = await apiRequest(`${API_BASE}/clan_battle/start`, {
+            const res = await apiRequest(`${API_BASE}/bank/settings`, {
                 method: 'POST',
-                body: JSON.stringify({ user_id: userId, clan_id: clanId, bet: parseInt(bet) })
+                body: JSON.stringify({ user_id: userId, bank_id: bankId, rate: rate, min_loan: minLoan, max_loan: maxLoan })
             });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "⚔️ БИТВА" : "ОШИБКА", data.message);
-            if (data.success) { 
-                closeModal('modalClanDetail');
-                switchClanView('battle');
+            showCustomAlert(data.success ? "✅ НАСТРОЙКИ" : "ОШИБКА", data.message);
+            if (data.success) { closeModal('modalBankSettings'); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка сохранения!"); }
+    }
+
+    async function upgradeBank(bankId) {
+        if (!confirm("Улучшить банк за 10,000,000 фишек?")) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/upgrade`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bank_id: bankId })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "🚀 УЛУЧШЕНИЕ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankSettings(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function hireEmployee(bankId) {
+        if (!confirm("Нанять сотрудника за 5,000,000 фишек?")) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/hire`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bank_id: bankId })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "👨‍💼 СОТРУДНИК" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankSettings(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    // ===== КРЕДИТЫ =====
+    function selectTerm(days) {
+        selectedTerm = days;
+        document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.term-btn').forEach(b => {
+            if (b.dataset.days == days) b.classList.add('active');
+        });
+        updateLoanCalc();
+    }
+
+    function updateLoanCalc() {
+        const amount = parseInt(document.getElementById('loanAmountInput')?.value) || 0;
+        const rate = parseFloat(document.getElementById('loanRateDisplay')?.innerText) || 0;
+        const days = selectedTerm;
+        const total = amount + Math.round(amount * (rate / 100) * (days / 30));
+        const totalEl = document.getElementById('loanTotalDisplay');
+        if (totalEl) totalEl.innerText = total.toLocaleString();
+    }
+
+    async function openLoanModal(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+
+            const container = document.getElementById('loanContent');
+            container.innerHTML = `
+                <div class="section-title" style="text-align:center;font-size:16px;">💰 Взять кредит</div>
+                <div style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:10px;">
+                    Банк: <b style="color:#ffe066;">${data.bank.name}</b>
+                </div>
+                <div class="bank-detail-section" style="margin:10px 0;">
+                    <div class="label">📊 Процентная ставка</div>
+                    <div class="value" id="loanRateDisplay">${data.bank.rate || 0}%</div>
+                </div>
+                <label style="font-size:12px;color:var(--text-muted);">Срок кредита:</label>
+                <div class="term-selector">
+                    <button class="term-btn active" data-days="1" onclick="selectTerm(1)">1 день</button>
+                    <button class="term-btn" data-days="3" onclick="selectTerm(3)">3 дня</button>
+                    <button class="term-btn" data-days="7" onclick="selectTerm(7)">7 дней</button>
+                    <button class="term-btn" data-days="14" onclick="selectTerm(14)">14 дней</button>
+                </div>
+                <label style="font-size:12px;color:var(--text-muted);">Сумма кредита (мин ${(data.bank.min_loan || 10000).toLocaleString()}):</label>
+                <input type="number" class="input-box" id="loanAmountInput" value="${data.bank.min_loan || 10000}" min="${data.bank.min_loan || 10000}" max="${data.bank.max_loan || 1000000}" oninput="updateLoanCalc()">
+                <div class="loan-calc">
+                    <div class="row"><span class="label">💰 Сумма кредита:</span><span class="val" id="loanAmountDisplay">0</span></div>
+                    <div class="row"><span class="label">📊 Проценты (${data.bank.rate || 0}%):</span><span class="val" id="loanInterestDisplay">0</span></div>
+                    <div class="row" style="border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;margin-top:4px;">
+                        <span class="label">💳 Итого к возврату:</span>
+                        <span class="val" id="loanTotalDisplay">0</span>
+                    </div>
+                </div>
+                <button class="btn-gold" onclick="confirmLoan('${bankId}')">✅ Подтвердить кредит</button>
+            `;
+            document.getElementById('modalLoan').style.display = 'block';
+            selectedTerm = 1;
+            document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.term-btn[data-days="1"]').classList.add('active');
+            updateLoanCalc();
+            document.getElementById('loanAmountDisplay').innerText = (data.bank.min_loan || 10000).toLocaleString();
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки кредита!");
+        }
+    }
+
+    async function confirmLoan(bankId) {
+        const amount = parseInt(document.getElementById('loanAmountInput').value);
+        if (!amount || amount < 10000) return showCustomAlert("ОШИБКА", "Минимальная сумма 10,000 фишек!");
+        const rate = parseFloat(document.getElementById('loanRateDisplay').innerText) || 0;
+        const total = amount + Math.round(amount * (rate / 100) * (selectedTerm / 30));
+
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/apply_loan`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: userId,
+                    bank_id: bankId,
+                    amount: amount,
+                    term_days: selectedTerm
+                })
+            });
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) return showCustomAlert("❌ ОТКАЗ", data.message);
+            
+            showCustomAlert("✅ КРЕДИТ ОДОБРЕН!", data.message);
+            closeModal('modalLoan');
+            refreshUserData();
+            openBankDetail(bankId);
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка оформления кредита!");
+        }
+    }
+
+    // ===== МОИ КРЕДИТЫ =====
+    async function openMyLoans(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/my_loans?user_id=${userId}&bank_id=${bankId}`);
+            if (!res) return;
+            const data = await res.json();
+
+            let html = `<div class="section-title" style="font-size:16px;">📋 Мои кредиты</div>`;
+            if (!data.loans || data.loans.length === 0) {
+                html += `<p style="color:var(--text-muted);text-align:center;padding:20px;">У вас нет кредитов в этом банке</p>`;
+            } else {
+                data.loans.forEach(loan => {
+                    const statusClass = loan.status === 'active' ? 'active' : (loan.status === 'overdue' ? 'overdue' : 'paid');
+                    const daysLeft = Math.max(0, Math.ceil((loan.due_date - Date.now()/1000) / 86400));
+                    html += `
+                        <div class="credit-item">
+                            <div class="credit-header">
+                                <span class="credit-amount">${(loan.amount || 0).toLocaleString()} 💰</span>
+                                <span class="credit-status ${statusClass}">${loan.status === 'active' ? 'Активен' : (loan.status === 'overdue' ? 'Просрочен' : 'Погашен')}</span>
+                            </div>
+                            <div class="credit-bank">К возврату: ${(loan.total_to_pay || 0).toLocaleString()} 💰</div>
+                            <div class="credit-days">Осталось: <span>${daysLeft} дн.</span></div>
+                            ${loan.status === 'active' ? `<button class="btn-gold" style="margin-top:6px;padding:6px;font-size:12px;" onclick="payLoan('${loan.id}')">💳 Оплатить кредит</button>` : ''}
+                        </div>
+                    `;
+                });
             }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка запуска битвы!"); }
+            html += `<button class="btn-dark" style="margin-top:10px;" onclick="closeModal('modalBank'); openBankDetail('${bankId}')">🔙 Назад</button>`;
+
+            // Показываем в модалке
+            const container = document.getElementById('loanContent');
+            container.innerHTML = html;
+            document.getElementById('modalLoan').style.display = 'block';
+
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки кредитов!");
+        }
     }
 
-    async function startClanBattle() {
-        // Используется из интерфейса битвы
-        showCustomAlert("⚔️ БИТВА", "Для начала битвы откройте детали вашего клана и нажмите 'Битва 4x4'");
-    }
-
-    async function joinClanBattle() {
-        if (isGuest) return;
+    async function payLoan(loanId) {
+        if (!confirm("Вы уверены, что хотите погасить кредит?")) return;
         try {
-            const res = await apiRequest(`${API_BASE}/clan_battle/join`, {
+            const res = await apiRequest(`${API_BASE}/bank/pay_loan`, {
                 method: 'POST',
-                body: JSON.stringify({ user_id: userId })
+                body: JSON.stringify({ user_id: userId, loan_id: loanId })
             });
             if (!res) return;
             const data = await res.json();
-            showCustomAlert(data.success ? "⚔️ ВСТУПЛЕНИЕ" : "ОШИБКА", data.message);
-            if (data.success) { loadClanBattle(); }
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка вступления в битву!"); }
+            showCustomAlert(data.success ? "✅ ОПЛАЧЕНО" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); closeModal('modalLoan'); }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка оплаты кредита!");
+        }
     }
 
     // ============================================================
-    // 23. ФИНАЛ
+    // 22. ФИНАЛ
     // ============================================================
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);
-    console.log('🏰 Новая система кланов загружена!');
+    console.log('🏦 Банковская система загружена!');
     </script>
 </body>
 </html>

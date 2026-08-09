@@ -407,6 +407,11 @@
         .card-plinko { background: linear-gradient(135deg, #064e3b 0%, #047857 100%); box-shadow: 0 6px 20px rgba(4,120,87,0.4); }
         .card-blackjack { background: linear-gradient(135deg, #14532d 0%, #15803d 100%); box-shadow: 0 6px 20px rgba(21,128,61,0.4); }
         .card-arena { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); box-shadow: 0 6px 20px rgba(217,119,6,0.4); }
+        .card-crash { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 100%); box-shadow: 0 6px 20px rgba(255, 100, 0, 0.3); }
+        .card-coinflip { background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 100%); box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3); }
+        .card-dice { background: linear-gradient(135deg, #1a2a1a 0%, #2d4a2d 100%); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); }
+        .card-tower { background: linear-gradient(135deg, #2a1a1a 0%, #4a2d2d 100%); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3); }
+        .card-upgrade { background: linear-gradient(135deg, #1a0d2a 0%, #3a1a5c 100%); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3); }
         .game-card .svg-icon { width: 48px; height: 48px; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         .game-card .title { font-weight: 800; font-size: 16px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
@@ -929,6 +934,293 @@
             font-weight: 900;
             font-size: 18px;
         }
+
+        /* ===== НОВЫЕ ИГРЫ - CSS ===== */
+
+        /* ---- CRASH / AVIATOR ---- */
+        .crash-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(ellipse at center, #0a1628 0%, #050810 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .crash-graph { position: absolute; bottom: 0; left: 0; right: 0; height: 100%; }
+        .crash-graph canvas { width: 100%; height: 100%; }
+        .crash-rocket {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            font-size: 36px;
+            transition: all 0.1s linear;
+            filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.5));
+            z-index: 5;
+        }
+        .crash-multiplier {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 52px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(255, 165, 0, 0.3);
+            pointer-events: none;
+            transition: all 0.1s;
+            z-index: 5;
+        }
+        .crash-multiplier.crashed { color: #ef4444; animation: crashPulse 0.3s ease-in-out 3; }
+        @keyframes crashPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+        .crash-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(239, 68, 68, 0.15);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 72px;
+            font-weight: 900;
+            color: #ef4444;
+            text-shadow: 0 0 60px rgba(239, 68, 68, 0.5);
+            animation: boomIn 0.3s ease;
+            z-index: 10;
+        }
+        .crash-overlay.show { display: flex; }
+        @keyframes boomIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .crash-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .crash-info .val { color: #ffe066; font-weight: 700; }
+        .crash-info .val.green { color: #10b981; }
+        .crash-info .val.red { color: #ef4444; }
+        .crash-timer {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffe066;
+            padding: 10px;
+        }
+        .crash-history {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+        .crash-history .h-item {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.05);
+        }
+        .crash-history .h-item.win { color: #10b981; background: rgba(16,185,129,0.15); }
+        .crash-history .h-item.lose { color: #ef4444; background: rgba(239,68,68,0.15); }
+
+        /* ---- COIN FLIP ---- */
+        .coin-flip-container { display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+        .coin-3d {
+            width: 120px;
+            height: 120px;
+            perspective: 800px;
+            margin: 10px auto;
+        }
+        .coin-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+            border-radius: 50%;
+        }
+        .coin-inner.flipping { animation: coinSpin 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        @keyframes coinSpin {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(1800deg) scale(1.1); }
+            100% { transform: rotateY(3600deg) scale(1); }
+        }
+        .coin-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 900;
+            border: 3px solid #f59e0b;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+        }
+        .coin-heads { background: radial-gradient(circle at 30% 30%, #ffe066, #f59e0b); color: #0b0c10; }
+        .coin-tails { background: radial-gradient(circle at 30% 30%, #60a5fa, #1d4ed8); color: #fff; transform: rotateY(180deg); }
+        .coin-result { margin-top: 15px; font-size: 24px; font-weight: 800; }
+        .coin-result.win { color: #10b981; }
+        .coin-result.lose { color: #ef4444; }
+        .coin-buttons { display: flex; gap: 10px; width: 100%; margin: 10px 0; }
+        .coin-buttons .btn-gold { flex: 1; margin: 0; }
+        .coin-buttons .btn-blue { flex: 1; margin: 0; }
+
+        /* ---- DICE ---- */
+        .dice-table {
+            background: radial-gradient(ellipse at center, #0d7a3e 0%, #052e16 100%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid #b45309;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+            margin: 10px 0;
+        }
+        .dice-row { display: flex; justify-content: center; gap: 30px; margin: 15px 0; }
+        .dice-box { text-align: center; }
+        .dice-box .label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .dice-box .dice {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+            transition: transform 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .dice-box .dice.dealer { background: linear-gradient(135deg, #dc2626, #991b1b); color: #fff; border: 2px solid #f87171; }
+        .dice-box .dice.player { background: linear-gradient(135deg, #2563eb, #1e40af); color: #fff; border: 2px solid #60a5fa; }
+        .dice-box .dice.rolling { animation: diceRoll 0.6s ease-in-out; }
+        @keyframes diceRoll {
+            0% { transform: rotateX(0) rotateY(0) scale(1); }
+            25% { transform: rotateX(90deg) rotateY(90deg) scale(0.8); }
+            50% { transform: rotateX(180deg) rotateY(180deg) scale(0.9); }
+            75% { transform: rotateX(270deg) rotateY(270deg) scale(0.8); }
+            100% { transform: rotateX(360deg) rotateY(360deg) scale(1); }
+        }
+
+        /* ---- TOWER ---- */
+        .tower-container { display: flex; flex-direction: column; align-items: center; padding: 10px 0; }
+        .tower-level {
+            display: flex;
+            gap: 6px;
+            margin: 3px 0;
+            padding: 4px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+        .tower-cell {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.2s;
+        }
+        .tower-cell:active { transform: scale(0.92); }
+        .tower-cell.revealed-safe { background: linear-gradient(145deg, #10b981, #059669); border-color: #34d399; animation: popIn 0.2s ease; }
+        .tower-cell.revealed-bomb { background: linear-gradient(145deg, #ef4444, #dc2626); border-color: #f87171; animation: shake 0.3s ease-in-out; }
+        .tower-cell.locked { opacity: 0.3; cursor: not-allowed; }
+        .tower-cell.current-level { border-color: #f59e0b; box-shadow: 0 0 15px rgba(245,158,11,0.2); }
+        .tower-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .tower-info .val { color: #ffe066; font-weight: 700; }
+
+        /* ---- UPGRADE ---- */
+        .upgrade-container { display: flex; flex-direction: column; align-items: center; padding: 10px 0; }
+        .upgrade-wheel {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 10px auto;
+        }
+        .upgrade-wheel .wheel-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #f59e0b;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.15, 0.99, 0.18, 0.99);
+        }
+        .upgrade-wheel .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 24px solid #ef4444;
+            z-index: 10;
+            filter: drop-shadow(0 0 10px rgba(239,68,68,0.3));
+        }
+        .upgrade-wheel .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffe066, #f59e0b);
+            border: 2px solid #fff;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            color: #000;
+        }
+        .upgrade-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .upgrade-btn {
+            padding: 10px 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--card-bg);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .upgrade-btn:active { transform: scale(0.95); }
+        .upgrade-btn.selected { border-color: #f59e0b; background: rgba(245,158,11,0.15); color: #ffe066; }
+        .upgrade-btn .mult { font-size: 16px; font-weight: 800; }
+        .upgrade-btn .chance { font-size: 9px; color: var(--text-muted); }
+        .upgrade-result { margin-top: 10px; font-size: 20px; font-weight: 800; }
+        .upgrade-result.win { color: #10b981; }
+        .upgrade-result.lose { color: #ef4444; }
     </style>
 </head>
 <body>
@@ -1005,7 +1297,7 @@
             <button class="filter-btn" id="btnFilterLive" onclick="switchGameFilter('live')">Live-игры</button>
         </div>
         <div id="sec-quick-games">
-            <div class="section-title">Быстрые игры</div>
+            <div class="section-title">🎮 Классические</div>
             <div class="games-grid">
                 <div class="game-card card-slots" id="gameSlots" onclick="openSlots()">
                     <svg class="svg-icon" viewBox="0 0 24 24"><path fill="#ffe066" d="M19,8H5C3.34,8 2,9.34 2,11V18C2,19.66 3.34,21 5,21H19C20.66,21 22,19.66 22,18V11C22,9.34 20.66,8 19,8M11,17H7V13H11V17M17,17H13V13H17V17M13,5H11V3H13V5Z"/></svg>
@@ -1022,6 +1314,29 @@
                 <div class="game-card card-blackjack" id="gameBlackjack" onclick="openBlackjack()">
                     <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="2" fill="#ffffff"/><text x="6" y="14" fill="#000" font-weight="bold" font-size="10">A♠</text><rect x="9" y="4" width="12" height="16" rx="2" fill="#f87171"/><text x="12" y="14" fill="#fff" font-weight="bold" font-size="10">K♥</text></svg>
                     <div class="title">Блэкджек</div>
+                </div>
+            </div>
+            <div class="section-title" style="margin-top:15px;">🚀 Новые игры</div>
+            <div class="games-grid">
+                <div class="game-card card-crash" id="gameCrash" onclick="openCrash()">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12,3 2,21 22,21" fill="none" stroke="#ff6600" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="#ff6600"/><path d="M12,3 L12,12 L22,12" stroke="#ff6600" stroke-width="2"/></svg>
+                    <div class="title">Краш</div>
+                </div>
+                <div class="game-card card-coinflip" id="gameCoinFlip" onclick="openCoinFlip()">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#ffe066" stroke-width="2"/><path d="M12,2 L12,22" stroke="#ffe066" stroke-width="2"/><text x="7" y="14" fill="#ffe066" font-weight="bold" font-size="8">О</text><text x="14" y="14" fill="#ffe066" font-weight="bold" font-size="8">Р</text></svg>
+                    <div class="title">Монетка</div>
+                </div>
+                <div class="game-card card-dice" id="gameDice" onclick="openDice()">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="#10b981"/><circle cx="12" cy="12" r="2" fill="#10b981"/><circle cx="17" cy="17" r="2" fill="#10b981"/></svg>
+                    <div class="title">Кости</div>
+                </div>
+                <div class="game-card card-tower" id="gameTower" onclick="openTower()">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><rect x="8" y="14" width="8" height="8" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="6" y="10" width="12" height="4" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="4" y="6" width="16" height="4" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="2" y="2" width="20" height="4" fill="none" stroke="#ef4444" stroke-width="2"/></svg>
+                    <div class="title">Башня</div>
+                </div>
+                <div class="game-card card-upgrade" id="gameUpgrade" onclick="openUpgrade()" style="grid-column: span 2;">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#a78bfa" stroke-width="2"/><path d="M12,3 L12,12 L19,12" stroke="#a78bfa" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#a78bfa"/></svg>
+                    <div class="title">Апгрейд</div>
                 </div>
             </div>
         </div>
@@ -1069,7 +1384,6 @@
 
     <!-- ===== DEVELOPMENT TAB - БАНКОВСКАЯ СИСТЕМА ===== -->
     <div id="tab-development" class="tab-content">
-        <!-- Главный экран -->
         <div id="bankMainScreen">
             <div style="text-align:center;padding:20px 10px;">
                 <div style="font-size:64px;margin-bottom:12px;">🏦</div>
@@ -1078,17 +1392,9 @@
                     Создавай свой банк, выдавай кредиты<br>или бери в долг под проценты!
                 </p>
             </div>
-
-            <!-- Кнопка 1: Банки (всегда) -->
             <button class="bank-main-btn" onclick="openBankSystem()">🏛 Банки</button>
-
-            <!-- Кнопка 2/3: Создать банк или Моя компания -->
-            <div id="bankActionButtons">
-                <!-- Заполняется динамически -->
-            </div>
+            <div id="bankActionButtons"></div>
         </div>
-
-        <!-- Панель банков -->
         <div id="bankPanel" style="display:none;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                 <div class="section-title" style="margin:0;font-size:16px;">🏛 Банки</div>
@@ -1096,24 +1402,8 @@
             </div>
             <div id="bankContent"></div>
         </div>
-
-        <!-- Модалка банка -->
-        <div class="modal" id="modalBank">
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('modalBank')">&times;</button>
-                <div id="bankDetailContent"></div>
-            </div>
-        </div>
-
-        <!-- Модалка кредита -->
-        <div class="modal" id="modalLoan">
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('modalLoan')">&times;</button>
-                <div id="loanContent"></div>
-            </div>
-        </div>
-
-        <!-- Модалка создания банка -->
+        <div class="modal" id="modalBank"><div class="modal-content"><button class="close-btn" onclick="closeModal('modalBank')">&times;</button><div id="bankDetailContent"></div></div></div>
+        <div class="modal" id="modalLoan"><div class="modal-content"><button class="close-btn" onclick="closeModal('modalLoan')">&times;</button><div id="loanContent"></div></div></div>
         <div class="modal" id="modalCreateBank">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('modalCreateBank')">&times;</button>
@@ -1138,14 +1428,7 @@
                 <button class="btn-gold" onclick="createBank()">✅ Создать банк</button>
             </div>
         </div>
-
-        <!-- Модалка настройки банка -->
-        <div class="modal" id="modalBankSettings">
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('modalBankSettings')">&times;</button>
-                <div id="bankSettingsContent"></div>
-            </div>
-        </div>
+        <div class="modal" id="modalBankSettings"><div class="modal-content"><button class="close-btn" onclick="closeModal('modalBankSettings')">&times;</button><div id="bankSettingsContent"></div></div></div>
     </div>
 
     <!-- ===== PROFILE TAB ===== -->
@@ -1181,7 +1464,7 @@
         </div>
     </div>
 
-    <!-- ===== MODALS ===== -->
+    <!-- ===== МОДАЛКИ СТАРЫХ ИГР ===== -->
     <div class="modal" id="modalSlots">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalSlots')">&times;</button>
@@ -1222,7 +1505,6 @@
         </div>
     </div>
 
-    <!-- ===== MINES RESTORE OVERLAY ===== -->
     <div class="mines-restore-overlay" id="minesRestoreOverlay">
         <div class="mines-restore-box">
             <h2>🔄 Неоконченная игра</h2>
@@ -1263,29 +1545,155 @@
         </div>
     </div>
 
+    <!-- ===== НОВЫЕ МОДАЛКИ ===== -->
+
+    <!-- CRASH -->
+    <div class="modal" id="modalCrash">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalCrash')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#ff6600;">🚀 Краш</div>
+            <div class="crash-container" id="crashContainer">
+                <div class="crash-graph"><canvas id="crashCanvas"></canvas></div>
+                <div class="crash-rocket" id="crashRocket">🚀</div>
+                <div class="crash-multiplier" id="crashMultiplier">1.00x</div>
+                <div class="crash-overlay" id="crashOverlay">💥 BOOM!</div>
+            </div>
+            <div class="crash-info">
+                <span>💰 Банк: <span class="val" id="crashBank">0</span></span>
+                <span>🎯 Игроков: <span class="val" id="crashPlayers">0</span></span>
+            </div>
+            <div class="crash-timer" id="crashTimer">⏳ 6</div>
+            <div class="crash-history" id="crashHistory"></div>
+            <div style="display:flex;gap:8px;align-items:center;margin:10px 0;">
+                <input type="number" class="input-box" id="crashBet" value="10" style="margin:0;flex:1;" min="1">
+                <button class="btn-gold" style="width:auto;padding:10px 16px;margin:0;" onclick="toggleBetMenu('crash')">▼</button>
+            </div>
+            <div class="bet-menu" id="betMenuCrash">
+                <div class="bet-option" onclick="setBet('crash',10)">10</div>
+                <div class="bet-option" onclick="setBet('crash',50)">50</div>
+                <div class="bet-option" onclick="setBet('crash',100)">100</div>
+                <div class="bet-option allin" onclick="setBetAllIn('crash')">ALL IN</div>
+            </div>
+            <button class="btn-gold" id="crashActionBtn" onclick="crashAction()">📈 Поставить</button>
+        </div>
+    </div>
+
+    <!-- COIN FLIP -->
+    <div class="modal" id="modalCoinFlip">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalCoinFlip')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#ffe066;">🪙 Монетка</div>
+            <div class="coin-flip-container">
+                <div class="coin-3d">
+                    <div class="coin-inner" id="coinInner">
+                        <div class="coin-side coin-heads">🦅</div>
+                        <div class="coin-side coin-tails">⚡</div>
+                    </div>
+                </div>
+                <div class="coin-result" id="coinResult">Выберите сторону</div>
+                <div class="coin-buttons">
+                    <button class="btn-gold" onclick="coinFlip('heads')">🦅 Орел (x2)</button>
+                    <button class="btn-blue" onclick="coinFlip('tails')">⚡ Решка (x2)</button>
+                </div>
+                <input type="number" class="input-box" id="coinBet" value="10" min="1">
+                <button class="btn-gold" id="coinFlipBtn" onclick="coinFlipPlay()">🎲 Бросить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DICE -->
+    <div class="modal" id="modalDice">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalDice')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#10b981;">🎲 Кости</div>
+            <div class="dice-table">
+                <div class="dice-row">
+                    <div class="dice-box">
+                        <div class="label">🔴 Дилер</div>
+                        <div class="dice dealer" id="diceDealer">⚀</div>
+                    </div>
+                    <div class="dice-box">
+                        <div class="label">🔵 Игрок</div>
+                        <div class="dice player" id="dicePlayer">⚀</div>
+                    </div>
+                </div>
+                <div style="text-align:center;font-size:18px;font-weight:700;color:#ffe066;" id="diceResult">Нажмите "Бросить"</div>
+            </div>
+            <input type="number" class="input-box" id="diceBet" value="10" min="1">
+            <button class="btn-gold" id="diceRollBtn" onclick="diceRoll()">🎲 Бросить кости</button>
+        </div>
+    </div>
+
+    <!-- TOWER -->
+    <div class="modal" id="modalTower">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalTower')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#ef4444;">🏗️ Башня</div>
+            <div class="tower-container">
+                <div class="tower-info">
+                    <span>💰 Текущий выигрыш: <span class="val" id="towerWin">0</span></span>
+                    <span>🎯 Множитель: <span class="val" id="towerMultiplier">1.00x</span></span>
+                </div>
+                <div id="towerLevels"></div>
+                <div style="display:flex;gap:8px;width:100%;margin:10px 0;">
+                    <button class="btn-dark" style="flex:1;padding:8px;" onclick="towerSelectDifficulty('light')">☀️ Лайт</button>
+                    <button class="btn-dark" style="flex:1;padding:8px;" onclick="towerSelectDifficulty('medium')">🌤️ Средне</button>
+                    <button class="btn-dark" style="flex:1;padding:8px;" onclick="towerSelectDifficulty('hard')">🔥 Хард</button>
+                </div>
+                <div class="tower-info">
+                    <span id="towerDifficulty">Выберите сложность</span>
+                </div>
+                <input type="number" class="input-box" id="towerBet" value="10" min="1">
+                <button class="btn-gold" id="towerStartBtn" onclick="towerStart()">🚀 Начать подъем</button>
+                <button class="btn-green" id="towerCashoutBtn" onclick="towerCashout()" style="display:none;">💰 Забрать выигрыш</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPGRADE -->
+    <div class="modal" id="modalUpgrade">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalUpgrade')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#a78bfa;">⚡ Апгрейд</div>
+            <div class="upgrade-container">
+                <div class="upgrade-wheel">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel-bg" id="upgradeWheel"></div>
+                    <div class="wheel-center">⚡</div>
+                </div>
+                <div class="upgrade-result" id="upgradeResult">Выберите множитель</div>
+                <div class="upgrade-buttons" id="upgradeButtons">
+                    <button class="upgrade-btn" data-mult="2" onclick="upgradeSelect(2)"><span class="mult">2x</span><span class="chance">48.50%</span></button>
+                    <button class="upgrade-btn" data-mult="5" onclick="upgradeSelect(5)"><span class="mult">5x</span><span class="chance">19.39%</span></button>
+                    <button class="upgrade-btn" data-mult="10" onclick="upgradeSelect(10)"><span class="mult">10x</span><span class="chance">9.69%</span></button>
+                    <button class="upgrade-btn" data-mult="25" onclick="upgradeSelect(25)"><span class="mult">25x</span><span class="chance">3.88%</span></button>
+                    <button class="upgrade-btn" data-mult="50" onclick="upgradeSelect(50)"><span class="mult">50x</span><span class="chance">1.94%</span></button>
+                    <button class="upgrade-btn" data-mult="100" onclick="upgradeSelect(100)"><span class="mult">100x</span><span class="chance">0.97%</span></button>
+                </div>
+                <input type="number" class="input-box" id="upgradeBet" value="10" min="1">
+                <button class="btn-gold" id="upgradePlayBtn" onclick="upgradePlay()" disabled>🎯 Апгрейд</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== ARENA MODAL ===== -->
     <div class="modal" id="modalArena">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalArena')">&times;</button>
             <div class="section-title" style="text-align:center;">🎡 PvP Арена</div>
-
             <div class="arena-wrapper">
                 <div class="arena-title">🎡 КОЛЕСО ФОРТУНЫ</div>
                 <div class="arena-bank">💰 <span id="arenaTotalBank">0</span></div>
                 <div class="arena-tax">🏆 Победитель забирает <span id="arenaWinnerPrize">0</span> (комиссия 5%)</div>
-
                 <div class="arena-wheel-container">
                     <div class="arena-pointer"></div>
                     <div class="arena-wheel" id="arenaWheel"></div>
                 </div>
-
                 <div class="arena-status">
                     <span id="arenaStatusText">⏳ Ожидание игроков...</span>
                     <div class="timer" id="arenaTimerDisplay"></div>
                 </div>
-
                 <div class="arena-player-chips" id="arenaPlayersChips"></div>
-
                 <div class="arena-controls">
                     <div class="bet-row">
                         <input type="number" class="input-box" id="arenaBet" value="10" min="10" placeholder="Ставка">
@@ -1306,6 +1714,7 @@
         </div>
     </div>
 
+    <!-- ===== ОСТАЛЬНЫЕ МОДАЛКИ (ПРОМО, ДОНАТ, АДМИН, ДЕПУТИ, БАН, СТАТС) ===== -->
     <div class="modal" id="modalPromo">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalPromo')">&times;</button>
@@ -1326,17 +1735,12 @@
         </div>
     </div>
 
-    <!-- ===== ADMIN MODAL - ОБНОВЛЕНА ===== -->
     <div class="modal" id="modalAdmin">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalAdmin')">&times;</button>
             <div class="section-title" style="text-align:center;color:#ef4444;">👑 Админ-панель</div>
-            
-            <!-- Стандартные кнопки -->
             <button class="btn-gold" style="margin-bottom:8px;" onclick="adminAddMoneyPrompt()">💰 Выдать фишки</button>
             <button class="btn-gold" style="margin-bottom:8px;" onclick="adminCreatePromoPrompt()">🎟 Создать промокод</button>
-            
-            <!-- НОВАЯ КНОПКА: БЛОКИРОВКА -->
             <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;" onclick="toggleBanMenu()">🚫 Блокировка</button>
             <div id="banSubMenu" style="display:none;">
                 <div class="admin-sub-menu">
@@ -1345,25 +1749,15 @@
                     <button class="admin-sub-btn" onclick="adminBanStatus()">[3] Статус</button>
                 </div>
             </div>
-            
-            <!-- НОВАЯ КНОПКА: ДОСТУП (для создателя) -->
             <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="adminAccessMenu()">🔑 Доступ</button>
-            
-            <!-- НОВАЯ КНОПКА: НАЙТИ (расширенный поиск) -->
             <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;" onclick="adminFindUser()">🔍 Найти игрока</button>
-            
-            <!-- НОВАЯ КНОПКА: СТАТИСТИКА БОТА -->
             <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;" onclick="adminBotStats()">📊 Статистика</button>
-            
-            <!-- Старая кнопка инфо (оставляем) -->
             <button class="btn-gold" style="margin-bottom:8px;" onclick="adminUserInfoPrompt()">🔍 Инфо (старый)</button>
             <button class="btn-gold" style="margin-bottom:8px;" onclick="adminUnmutePrompt()">🔊 Размутить</button>
-            
             <div id="adminOutput" style="margin-top:15px;background:#0b0c10;padding:10px;border-radius:10px;font-size:12px;display:none;text-align:left;max-height:300px;overflow-y:auto;"></div>
         </div>
     </div>
 
-    <!-- ===== DEPUTY PANEL MODAL ===== -->
     <div class="modal" id="modalDeputy">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalDeputy')">&times;</button>
@@ -1375,7 +1769,6 @@
         </div>
     </div>
 
-    <!-- ===== BAN STATUS MODAL ===== -->
     <div class="modal" id="modalBanStatus">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalBanStatus')">&times;</button>
@@ -1384,7 +1777,6 @@
         </div>
     </div>
 
-    <!-- ===== SEARCH RESULT MODAL ===== -->
     <div class="modal" id="modalSearchResult">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalSearchResult')">&times;</button>
@@ -1393,7 +1785,6 @@
         </div>
     </div>
 
-    <!-- ===== STATS MODAL ===== -->
     <div class="modal" id="modalStats">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
@@ -1402,6 +1793,7 @@
         </div>
     </div>
 
+    <!-- ===== BOTTOM NAV ===== -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('games', this)">
             <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H9v2H7v-2H5v-2h2V9h2v2h2v2zm4.5 1c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
@@ -1431,7 +1823,6 @@
         <g id="svg-diamond"><path fill="#00d2ff" d="M12,2 L2,9 L12,22 L22,9 L12,2 Z"/><path fill="#ffffff" opacity="0.4" d="M12,2 L12,22 L22,9 Z"/></g>
         <g id="svg-bomb"><circle cx="11" cy="13" r="7" fill="#111"/><path d="M14,8 L17,5" stroke="#ff8c00" stroke-width="2"/><circle cx="18" cy="4" r="2" fill="#ef4444"/></g>
     </svg>
-
     <script>
     // ============================================================
     // 1. КОНФИГУРАЦИЯ
@@ -1462,6 +1853,28 @@
     let selectedBanDuration = null;
     let selectedBanType = null;
     let banTargetUser = null;
+
+    // Переменные для новых игр
+    let crashInterval = null;
+    let crashGameActive = false;
+    let crashMultiplier = 1.00;
+    let crashBetPlaced = false;
+    let crashHistory = [];
+    let crashTimer = 6;
+    let crashRoundActive = false;
+
+    let coinFlipActive = false;
+    let towerGameActive = false;
+    let towerDifficulty = 'medium';
+    let towerCurrentLevel = 0;
+    let towerMultiplier = 1.00;
+    let towerWin = 0;
+    let towerCells = [];
+    let towerBombs = [];
+    let towerRevealed = [];
+
+    let upgradeSelected = null;
+    let upgradeSpinning = false;
 
     // ============================================================
     // 2. API ЗАПРОСЫ
@@ -1523,10 +1936,7 @@
                 document.getElementById('headerRank').style.color = '#6b7280';
                 applyGuestMode();
             }
-            
-            // Проверяем бан
             await checkBanStatus();
-            
             return true;
         } catch(e) {
             isGuest = true;
@@ -1618,6 +2028,7 @@
             setInterval(loadChatMessages, 5000);
             updateBankButtons();
             checkDeputyStatus();
+            initCrashGame();
         } else {
             document.getElementById('headerRank').innerText = 'Гость';
             document.getElementById('profRank').innerText = 'Гость';
@@ -1630,6 +2041,7 @@
             document.getElementById('statWagered').innerText = '0 💰';
             document.getElementById('statMaxWin').innerText = '0 💰';
             loadChatMessages();
+            initCrashGame();
         }
     })();
 
@@ -1790,7 +2202,7 @@
     }
 
     // ============================================================
-    // 8. РЕФЕРАЛКА
+    // 8. РЕФЕРАЛКА, ПРОМОКОДЫ, ЗАМЕСТИТЕЛЬ, АДМИН (СОХРАНЯЕМ ВЕСЬ КОД)
     // ============================================================
     function shareRef() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут приглашать!"); return; }
@@ -1799,9 +2211,6 @@
         tg.openTelegramLink(shareUrl);
     }
 
-    // ============================================================
-    // 9. ПРОМОКОДЫ
-    // ============================================================
     function openPromoModal() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут активировать промокоды!"); return; }
         document.getElementById('modalPromo').style.display = 'block'; 
@@ -1820,9 +2229,6 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка при активации!"); }
     }
 
-    // ============================================================
-    // 10. СИСТЕМА ЗАМЕСТИТЕЛЯ
-    // ============================================================
     async function checkDeputyStatus() {
         if (isGuest) return;
         try {
@@ -1873,7 +2279,6 @@
         if (!target) return;
         const amount = prompt("Сколько фишек выдать? (макс 50,000 в день):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
-        
         const intAmount = parseInt(amount);
         try {
             const res = await apiRequest(`${API_BASE}/deputy/add_chips`, {
@@ -1897,7 +2302,6 @@
         if (!reward || isNaN(reward) || parseInt(reward) <= 0) return;
         const code = prompt("Введите код промокода (начинается с #, латиница):");
         if (!code) return;
-        
         try {
             const res = await apiRequest(`${API_BASE}/deputy/create_promo`, {
                 method: 'POST',
@@ -1915,323 +2319,7 @@
     }
 
     // ============================================================
-    // 11. АДМИН - НОВЫЕ ФУНКЦИИ
-    // ============================================================
-
-    // 11.1 Блокировка - меню
-    function toggleBanMenu() {
-        banSubMenuOpen = !banSubMenuOpen;
-        document.getElementById('banSubMenu').style.display = banSubMenuOpen ? 'block' : 'none';
-    }
-
-    // 11.2 Забанить
-    function adminBanUser() {
-        if (isGuest) return;
-        const target = prompt("Введите ID или Username игрока:");
-        if (!target) return;
-        banTargetUser = target;
-        selectedBanDuration = null;
-        selectedBanType = null;
-        
-        // Выбор срока
-        const durationMsg = "Выберите срок бана:\n1 - Навсегда\n2 - 30 дней\n3 - 90 дней";
-        const durationChoice = prompt(durationMsg);
-        if (!durationChoice) return;
-        if (durationChoice === '1') selectedBanDuration = 'forever';
-        else if (durationChoice === '2') selectedBanDuration = 30;
-        else if (durationChoice === '3') selectedBanDuration = 90;
-        else { showCustomAlert("ОШИБКА", "Неверный выбор!"); return; }
-        
-        // Выбор типа бана
-        const typeMsg = "Выберите тип бана:\n1 - Простой бан\n2 - Бан + Обнуление";
-        const typeChoice = prompt(typeMsg);
-        if (!typeChoice) return;
-        if (typeChoice === '1') selectedBanType = 'simple';
-        else if (typeChoice === '2') selectedBanType = 'wipe';
-        else { showCustomAlert("ОШИБКА", "Неверный выбор!"); return; }
-        
-        // Подтверждение
-        const confirmMsg = `Вы уверены, что хотите заблокировать игрока ${target}?\nСрок: ${selectedBanDuration === 'forever' ? 'Навсегда' : selectedBanDuration + ' дней'}\nТип: ${selectedBanType === 'simple' ? 'Простой бан' : 'Бан + Обнуление'}`;
-        if (!confirm(confirmMsg)) return;
-        
-        // Отправка запроса
-        executeBan(target, selectedBanDuration, selectedBanType);
-    }
-
-    async function executeBan(target, duration, banType) {
-        try {
-            const res = await apiRequest(`${API_BASE}/ban/ban_user`, {
-                method: 'POST',
-                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target, duration: duration, ban_type: banType })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "✅ БАН" : "ОШИБКА", data.message);
-            if (data.success) {
-                document.getElementById('adminOutput').style.display = 'block';
-                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
-                // Проверяем, не забанен ли текущий пользователь
-                if (String(target) === String(userId)) {
-                    showBanOverlay();
-                }
-            }
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка блокировки!");
-        }
-    }
-
-    // 11.3 Разблокировать
-    async function adminUnbanUser() {
-        if (isGuest) return;
-        const target = prompt("Введите ID или Username игрока для разблокировки:");
-        if (!target) return;
-        if (!confirm(`Разблокировать игрока ${target}?`)) return;
-        
-        try {
-            const res = await apiRequest(`${API_BASE}/ban/unban_user`, {
-                method: 'POST',
-                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "✅ РАЗБАН" : "ОШИБКА", data.message);
-            if (data.success) {
-                document.getElementById('adminOutput').style.display = 'block';
-                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
-                // Обновляем статус бана
-                await checkBanStatus();
-            }
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка разблокировки!");
-        }
-    }
-
-    // 11.4 Статус бана
-    async function adminBanStatus() {
-        if (isGuest) return;
-        const target = prompt("Введите ID или Username игрока:");
-        if (!target) return;
-        
-        try {
-            const res = await apiRequest(`${API_BASE}/ban/ban_status?target=${target}`);
-            if (!res) return;
-            const data = await res.json();
-            
-            const container = document.getElementById('banStatusContent');
-            if (!data.success) {
-                container.innerHTML = `<p style="color:var(--text-muted);text-align:center;">${data.message}</p>`;
-            } else if (!data.is_banned) {
-                container.innerHTML = `<p style="color:#10b981;text-align:center;font-weight:700;">✅ Игрок не в бане</p>`;
-            } else {
-                container.innerHTML = `
-                    <div class="search-result-card">
-                        <div style="text-align:center;padding:10px;">
-                            <div style="font-size:48px;">🚫</div>
-                            <div style="color:#ef4444;font-weight:800;font-size:18px;">Игрок в бане!</div>
-                            <div class="detail-grid">
-                                <span class="label">Тип бана:</span>
-                                <span class="value">${data.ban_type === 'simple' ? 'Простой бан' : 'Бан + Обнуление'}</span>
-                                <span class="label">Срок:</span>
-                                <span class="value">${data.duration === 'forever' ? 'Навсегда' : data.duration + ' дней'}</span>
-                                <span class="label">Осталось:</span>
-                                <span class="value" style="color:#ef4444;">${data.remaining}</span>
-                                <span class="label">Причина:</span>
-                                <span class="value">${data.reason || 'Нарушение правил'}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            document.getElementById('modalBanStatus').style.display = 'block';
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка проверки статуса!");
-        }
-    }
-
-    // 11.5 Доступ - назначение заместителя
-    function adminAccessMenu() {
-        if (isGuest) return;
-        const target = prompt("Введите ID или Username будущего заместителя:");
-        if (!target) return;
-        if (!confirm(`Назначить игрока ${target} заместителем?`)) return;
-        
-        executeAssignDeputy(target);
-    }
-
-    async function executeAssignDeputy(target) {
-        try {
-            const res = await apiRequest(`${API_BASE}/admin/assign_deputy`, {
-                method: 'POST',
-                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
-            });
-            if (!res) return;
-            const data = await res.json();
-            showCustomAlert(data.success ? "✅ ЗАМЕСТИТЕЛЬ" : "ОШИБКА", data.message);
-            if (data.success) {
-                document.getElementById('adminOutput').style.display = 'block';
-                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
-                // Обновляем статус зама
-                await checkDeputyStatus();
-            }
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка назначения заместителя!");
-        }
-    }
-
-    // 11.6 Расширенный поиск игрока
-    async function adminFindUser() {
-        if (isGuest) return;
-        const target = prompt("Введите ID или Username игрока для полного поиска:");
-        if (!target) return;
-        
-        try {
-            const res = await apiRequest(`${API_BASE}/admin/find_user?target=${target}`);
-            if (!res) return;
-            const data = await res.json();
-            if (!data.success) {
-                showCustomAlert("ОШИБКА", data.message);
-                return;
-            }
-            
-            const u = data.user;
-            const container = document.getElementById('searchResultContent');
-            const avatarHtml = u.photo_url ? `<img src="${u.photo_url}" alt="">` : (u.first_name ? u.first_name.charAt(0).toUpperCase() : '?');
-            const bankStatus = u.has_bank ? `<span class="bank-status has">✅ Есть банк (${(u.bank_treasury || 0).toLocaleString()}💰)</span>` : `<span class="bank-status no">❌ Нет банка</span>`;
-            const promoList = u.promos && u.promos.length > 0 ? u.promos.map(p => `<span class="promo-tag">${p}</span>`).join('') : 'Нет активированных промокодов';
-            const lastGame = u.last_game ? `${u.last_game.name || 'Неизвестно'}, ставка ${(u.last_game.bet || 0).toLocaleString()}, результат: ${u.last_game.result || '—'}` : 'Нет данных';
-            
-            container.innerHTML = `
-                <div class="search-result-card">
-                    <div class="header">
-                        <div class="avatar-lg">${avatarHtml}</div>
-                        <div>
-                            <div class="name">${u.first_name || 'Игрок'}</div>
-                            <div class="id">🆔 ${u.user_id}</div>
-                            ${u.username ? `<div style="font-size:13px;color:#3b82f6;">@${u.username}</div>` : ''}
-                        </div>
-                    </div>
-                    <div class="detail-grid">
-                        <span class="label">📅 Дата регистрации:</span>
-                        <span class="value">${u.registered_at ? new Date(u.registered_at * 1000).toLocaleString() : 'Нет данных'}</span>
-                        <span class="label">🕐 Последний вход:</span>
-                        <span class="value">${u.last_active ? new Date(u.last_active * 1000).toLocaleString() : 'Нет данных'}</span>
-                        <span class="label">🎮 Сыграно игр:</span>
-                        <span class="value">${u.total_games || 0}</span>
-                        <span class="label">💰 Баланс:</span>
-                        <span class="value" style="color:#ffe066;">${(u.balance || 0).toLocaleString()} 💰</span>
-                        <span class="label">⭐ Уровень:</span>
-                        <span class="value">${u.level || 1} (${u.xp || 0} XP)</span>
-                        <span class="label">🏆 Выиграно:</span>
-                        <span class="value">${(u.total_won || 0).toLocaleString()} 💰</span>
-                        <span class="label">📈 Профит:</span>
-                        <span class="value" style="color:${(u.total_won || 0) - (u.total_wagered || 0) >= 0 ? '#10b981' : '#ef4444'};">${((u.total_won || 0) - (u.total_wagered || 0)).toLocaleString()} 💰</span>
-                    </div>
-                    <div style="margin:8px 0;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
-                        <div style="font-size:12px;color:var(--text-muted);">🎯 Последняя игра:</div>
-                        <div style="font-size:13px;">${lastGame}</div>
-                    </div>
-                    <div style="margin:8px 0;">
-                        <div style="font-size:12px;color:var(--text-muted);">🎟 Промокоды:</div>
-                        <div class="promo-list">${promoList}</div>
-                    </div>
-                    <div style="margin:8px 0;">
-                        <div style="font-size:12px;color:var(--text-muted);">🏦 Банк:</div>
-                        <div style="margin-top:4px;">${bankStatus}</div>
-                    </div>
-                    ${u.is_banned ? `<div style="margin:8px 0;padding:8px;background:rgba(239,68,68,0.1);border-radius:8px;border:1px solid rgba(239,68,68,0.3);text-align:center;color:#ef4444;font-weight:700;">🚫 Игрок ЗАБЛОКИРОВАН (${u.ban_remaining || 'Навсегда'})</div>` : ''}
-                    ${u.is_deputy ? `<div style="margin:8px 0;padding:8px;background:rgba(139,92,246,0.1);border-radius:8px;border:1px solid rgba(139,92,246,0.3);text-align:center;color:#a78bfa;font-weight:700;">🛡 Заместитель</div>` : ''}
-                </div>
-            `;
-            document.getElementById('modalSearchResult').style.display = 'block';
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка поиска!");
-        }
-    }
-
-    // 11.7 Статистика бота
-    async function adminBotStats() {
-        if (isGuest) return;
-        try {
-            const res = await apiRequest(`${API_BASE}/admin/bot_stats`);
-            if (!res) return;
-            const data = await res.json();
-            if (!data.success) {
-                showCustomAlert("ОШИБКА", data.message);
-                return;
-            }
-            
-            const container = document.getElementById('statsContent');
-            container.innerHTML = `
-                <div class="stats-grid">
-                    <div class="stats-card">
-                        <div class="num">${data.total_users || 0}</div>
-                        <div class="label">👥 Всего аккаунтов</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="num">${data.guests || 0}</div>
-                        <div class="label">👤 Гостей</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="num">${data.full_users || 0}</div>
-                        <div class="label">✅ Полноценных</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="num">${data.banned_users || 0}</div>
-                        <div class="label">🚫 Забаненных</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="num">${data.deputies || 0}</div>
-                        <div class="label">🛡 Заместителей</div>
-                    </div>
-                    <div class="stats-card">
-                        <div class="num">${data.avg_session_time || '0'}</div>
-                        <div class="label">⏱ Среднее время сессии (мин)</div>
-                    </div>
-                </div>
-                <div style="background:rgba(245,158,11,0.05);border-radius:12px;padding:16px;margin:10px 0;border:1px solid rgba(245,158,11,0.1);text-align:center;">
-                    <div style="font-size:12px;color:var(--text-muted);">💰 Общая экономика бота</div>
-                    <div style="font-size:28px;font-weight:900;color:#ffe066;">${(data.total_economy || 0).toLocaleString()} 💰</div>
-                    <div style="font-size:11px;color:var(--text-muted);">(фишки у игроков + в банках)</div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0;">
-                    <div style="background:rgba(16,185,129,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(16,185,129,0.1);">
-                        <div style="font-size:11px;color:var(--text-muted);">🎮 Активных сегодня</div>
-                        <div style="font-size:18px;font-weight:800;color:#10b981;">${data.active_today || 0}</div>
-                    </div>
-                    <div style="background:rgba(245,158,11,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(245,158,11,0.1);">
-                        <div style="font-size:11px;color:var(--text-muted);">🏆 Всего сыграно</div>
-                        <div style="font-size:18px;font-weight:800;color:#ffe066;">${(data.total_games || 0).toLocaleString()}</div>
-                    </div>
-                    <div style="background:rgba(59,130,246,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(59,130,246,0.1);">
-                        <div style="font-size:11px;color:var(--text-muted);">🏦 Банков создано</div>
-                        <div style="font-size:18px;font-weight:800;color:#3b82f6;">${data.total_banks || 0}</div>
-                    </div>
-                </div>
-                ${data.banned_list && data.banned_list.length > 0 ? `
-                <div style="margin-top:10px;">
-                    <div style="font-size:12px;color:var(--text-muted);">🚫 Забаненные игроки:</div>
-                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
-                        ${data.banned_list.map(id => `<span style="background:rgba(239,68,68,0.1);padding:2px 8px;border-radius:6px;font-size:11px;color:#ef4444;">${id}</span>`).join('')}
-                    </div>
-                </div>
-                ` : ''}
-                ${data.deputy_list && data.deputy_list.length > 0 ? `
-                <div style="margin-top:10px;">
-                    <div style="font-size:12px;color:var(--text-muted);">🛡 Заместители:</div>
-                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
-                        ${data.deputy_list.map(id => `<span style="background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:6px;font-size:11px;color:#a78bfa;">${id}</span>`).join('')}
-                    </div>
-                </div>
-                ` : ''}
-            `;
-            document.getElementById('modalStats').style.display = 'block';
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки статистики!");
-        }
-    }
-
-    // ============================================================
-    // 12. СТАРЫЕ АДМИН ФУНКЦИИ (сохраняем)
+    // 9. АДМИН ФУНКЦИИ
     // ============================================================
     function openAdminModal() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Доступ запрещён!"); return; }
@@ -2239,6 +2327,11 @@
         document.getElementById('adminOutput').style.display = 'none'; 
         document.getElementById('banSubMenu').style.display = 'none';
         banSubMenuOpen = false;
+    }
+
+    function toggleBanMenu() {
+        banSubMenuOpen = !banSubMenuOpen;
+        document.getElementById('banSubMenu').style.display = banSubMenuOpen ? 'block' : 'none';
     }
 
     async function adminAddMoneyPrompt() {
@@ -2287,31 +2380,269 @@
         showCustomAlert(data.success ? "УСПЕХ" : "ОШИБКА", data.message);
     }
 
-    // ============================================================
-    // 13. ОПЛАТА STARS
-    // ============================================================
-    function openDonateModal() { 
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут пополнять баланс!"); return; }
-        document.getElementById('modalDonate').style.display = 'block'; 
+    async function adminBanUser() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока:");
+        if (!target) return;
+        banTargetUser = target;
+        selectedBanDuration = null;
+        selectedBanType = null;
+        const durationMsg = "Выберите срок бана:\n1 - Навсегда\n2 - 30 дней\n3 - 90 дней";
+        const durationChoice = prompt(durationMsg);
+        if (!durationChoice) return;
+        if (durationChoice === '1') selectedBanDuration = 'forever';
+        else if (durationChoice === '2') selectedBanDuration = 30;
+        else if (durationChoice === '3') selectedBanDuration = 90;
+        else { showCustomAlert("ОШИБКА", "Неверный выбор!"); return; }
+        const typeMsg = "Выберите тип бана:\n1 - Простой бан\n2 - Бан + Обнуление";
+        const typeChoice = prompt(typeMsg);
+        if (!typeChoice) return;
+        if (typeChoice === '1') selectedBanType = 'simple';
+        else if (typeChoice === '2') selectedBanType = 'wipe';
+        else { showCustomAlert("ОШИБКА", "Неверный выбор!"); return; }
+        const confirmMsg = `Вы уверены, что хотите заблокировать игрока ${target}?\nСрок: ${selectedBanDuration === 'forever' ? 'Навсегда' : selectedBanDuration + ' дней'}\nТип: ${selectedBanType === 'simple' ? 'Простой бан' : 'Бан + Обнуление'}`;
+        if (!confirm(confirmMsg)) return;
+        executeBan(target, selectedBanDuration, selectedBanType);
     }
 
-    async function processStarsDonate() {
-        if (isGuest) return;
-        let stars = parseInt(document.getElementById('starsAmount').value);
-        if (!stars || stars <= 0) return showCustomAlert("ОШИБКА", "Укажите число Stars");
+    async function executeBan(target, duration, banType) {
         try {
-            const res = await apiRequest(`${API_BASE}/create_stars_invoice`, { method: 'POST', body: JSON.stringify({ user_id: userId, stars: stars }) });
+            const res = await apiRequest(`${API_BASE}/ban/ban_user`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target, duration: duration, ban_type: banType })
+            });
             if (!res) return;
             const data = await res.json();
-            if (data.error) return showCustomAlert("ОШИБКА", data.error);
-            tg.openInvoice(data.invoice_link, (status) => {
-                if (status === 'paid') { showCustomAlert("ПОПОЛНЕНИЕ", "Оплата прошла успешно!"); closeModal('modalDonate'); refreshUserData(); }
+            showCustomAlert(data.success ? "✅ БАН" : "ОШИБКА", data.message);
+            if (data.success) {
+                document.getElementById('adminOutput').style.display = 'block';
+                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
+                if (String(target) === String(userId)) { showBanOverlay(); }
+            }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка блокировки!");
+        }
+    }
+
+    async function adminUnbanUser() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока для разблокировки:");
+        if (!target) return;
+        if (!confirm(`Разблокировать игрока ${target}?`)) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/ban/unban_user`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
             });
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка оплаты"); }
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ РАЗБАН" : "ОШИБКА", data.message);
+            if (data.success) {
+                document.getElementById('adminOutput').style.display = 'block';
+                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
+                await checkBanStatus();
+            }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка разблокировки!");
+        }
+    }
+
+    async function adminBanStatus() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока:");
+        if (!target) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/ban/ban_status?target=${target}`);
+            if (!res) return;
+            const data = await res.json();
+            const container = document.getElementById('banStatusContent');
+            if (!data.success) {
+                container.innerHTML = `<p style="color:var(--text-muted);text-align:center;">${data.message}</p>`;
+            } else if (!data.is_banned) {
+                container.innerHTML = `<p style="color:#10b981;text-align:center;font-weight:700;">✅ Игрок не в бане</p>`;
+            } else {
+                container.innerHTML = `
+                    <div class="search-result-card">
+                        <div style="text-align:center;padding:10px;">
+                            <div style="font-size:48px;">🚫</div>
+                            <div style="color:#ef4444;font-weight:800;font-size:18px;">Игрок в бане!</div>
+                            <div class="detail-grid">
+                                <span class="label">Тип бана:</span>
+                                <span class="value">${data.ban_type === 'simple' ? 'Простой бан' : 'Бан + Обнуление'}</span>
+                                <span class="label">Срок:</span>
+                                <span class="value">${data.duration === 'forever' ? 'Навсегда' : data.duration + ' дней'}</span>
+                                <span class="label">Осталось:</span>
+                                <span class="value" style="color:#ef4444;">${data.remaining}</span>
+                                <span class="label">Причина:</span>
+                                <span class="value">${data.reason || 'Нарушение правил'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('modalBanStatus').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка проверки статуса!");
+        }
+    }
+
+    function adminAccessMenu() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username будущего заместителя:");
+        if (!target) return;
+        if (!confirm(`Назначить игрока ${target} заместителем?`)) return;
+        executeAssignDeputy(target);
+    }
+
+    async function executeAssignDeputy(target) {
+        try {
+            const res = await apiRequest(`${API_BASE}/admin/assign_deputy`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ ЗАМЕСТИТЕЛЬ" : "ОШИБКА", data.message);
+            if (data.success) {
+                document.getElementById('adminOutput').style.display = 'block';
+                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
+                await checkDeputyStatus();
+            }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка назначения заместителя!");
+        }
+    }
+
+    async function adminFindUser() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока для полного поиска:");
+        if (!target) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/admin/find_user?target=${target}`);
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) {
+                showCustomAlert("ОШИБКА", data.message);
+                return;
+            }
+            const u = data.user;
+            const container = document.getElementById('searchResultContent');
+            const avatarHtml = u.photo_url ? `<img src="${u.photo_url}" alt="">` : (u.first_name ? u.first_name.charAt(0).toUpperCase() : '?');
+            const bankStatus = u.has_bank ? `<span class="bank-status has">✅ Есть банк (${(u.bank_treasury || 0).toLocaleString()}💰)</span>` : `<span class="bank-status no">❌ Нет банка</span>`;
+            const promoList = u.promos && u.promos.length > 0 ? u.promos.map(p => `<span class="promo-tag">${p}</span>`).join('') : 'Нет активированных промокодов';
+            const lastGame = u.last_game ? `${u.last_game.name || 'Неизвестно'}, ставка ${(u.last_game.bet || 0).toLocaleString()}, результат: ${u.last_game.result || '—'}` : 'Нет данных';
+            container.innerHTML = `
+                <div class="search-result-card">
+                    <div class="header">
+                        <div class="avatar-lg">${avatarHtml}</div>
+                        <div>
+                            <div class="name">${u.first_name || 'Игрок'}</div>
+                            <div class="id">🆔 ${u.user_id}</div>
+                            ${u.username ? `<div style="font-size:13px;color:#3b82f6;">@${u.username}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="detail-grid">
+                        <span class="label">📅 Дата регистрации:</span>
+                        <span class="value">${u.registered_at ? new Date(u.registered_at * 1000).toLocaleString() : 'Нет данных'}</span>
+                        <span class="label">🕐 Последний вход:</span>
+                        <span class="value">${u.last_active ? new Date(u.last_active * 1000).toLocaleString() : 'Нет данных'}</span>
+                        <span class="label">🎮 Сыграно игр:</span>
+                        <span class="value">${u.total_games || 0}</span>
+                        <span class="label">💰 Баланс:</span>
+                        <span class="value" style="color:#ffe066;">${(u.balance || 0).toLocaleString()} 💰</span>
+                        <span class="label">⭐ Уровень:</span>
+                        <span class="value">${u.level || 1} (${u.xp || 0} XP)</span>
+                        <span class="label">🏆 Выиграно:</span>
+                        <span class="value">${(u.total_won || 0).toLocaleString()} 💰</span>
+                        <span class="label">📈 Профит:</span>
+                        <span class="value" style="color:${(u.total_won || 0) - (u.total_wagered || 0) >= 0 ? '#10b981' : '#ef4444'};">${((u.total_won || 0) - (u.total_wagered || 0)).toLocaleString()} 💰</span>
+                    </div>
+                    <div style="margin:8px 0;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
+                        <div style="font-size:12px;color:var(--text-muted);">🎯 Последняя игра:</div>
+                        <div style="font-size:13px;">${lastGame}</div>
+                    </div>
+                    <div style="margin:8px 0;">
+                        <div style="font-size:12px;color:var(--text-muted);">🎟 Промокоды:</div>
+                        <div class="promo-list">${promoList}</div>
+                    </div>
+                    <div style="margin:8px 0;">
+                        <div style="font-size:12px;color:var(--text-muted);">🏦 Банк:</div>
+                        <div style="margin-top:4px;">${bankStatus}</div>
+                    </div>
+                    ${u.is_banned ? `<div style="margin:8px 0;padding:8px;background:rgba(239,68,68,0.1);border-radius:8px;border:1px solid rgba(239,68,68,0.3);text-align:center;color:#ef4444;font-weight:700;">🚫 Игрок ЗАБЛОКИРОВАН (${u.ban_remaining || 'Навсегда'})</div>` : ''}
+                    ${u.is_deputy ? `<div style="margin:8px 0;padding:8px;background:rgba(139,92,246,0.1);border-radius:8px;border:1px solid rgba(139,92,246,0.3);text-align:center;color:#a78bfa;font-weight:700;">🛡 Заместитель</div>` : ''}
+                </div>
+            `;
+            document.getElementById('modalSearchResult').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка поиска!");
+        }
+    }
+
+    async function adminBotStats() {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/admin/bot_stats`);
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) {
+                showCustomAlert("ОШИБКА", data.message);
+                return;
+            }
+            const container = document.getElementById('statsContent');
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stats-card"><div class="num">${data.total_users || 0}</div><div class="label">👥 Всего аккаунтов</div></div>
+                    <div class="stats-card"><div class="num">${data.guests || 0}</div><div class="label">👤 Гостей</div></div>
+                    <div class="stats-card"><div class="num">${data.full_users || 0}</div><div class="label">✅ Полноценных</div></div>
+                    <div class="stats-card"><div class="num">${data.banned_users || 0}</div><div class="label">🚫 Забаненных</div></div>
+                    <div class="stats-card"><div class="num">${data.deputies || 0}</div><div class="label">🛡 Заместителей</div></div>
+                    <div class="stats-card"><div class="num">${data.avg_session_time || '0'}</div><div class="label">⏱ Среднее время сессии (мин)</div></div>
+                </div>
+                <div style="background:rgba(245,158,11,0.05);border-radius:12px;padding:16px;margin:10px 0;border:1px solid rgba(245,158,11,0.1);text-align:center;">
+                    <div style="font-size:12px;color:var(--text-muted);">💰 Общая экономика бота</div>
+                    <div style="font-size:28px;font-weight:900;color:#ffe066;">${(data.total_economy || 0).toLocaleString()} 💰</div>
+                    <div style="font-size:11px;color:var(--text-muted);">(фишки у игроков + в банках)</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0;">
+                    <div style="background:rgba(16,185,129,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(16,185,129,0.1);">
+                        <div style="font-size:11px;color:var(--text-muted);">🎮 Активных сегодня</div>
+                        <div style="font-size:18px;font-weight:800;color:#10b981;">${data.active_today || 0}</div>
+                    </div>
+                    <div style="background:rgba(245,158,11,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(245,158,11,0.1);">
+                        <div style="font-size:11px;color:var(--text-muted);">🏆 Всего сыграно</div>
+                        <div style="font-size:18px;font-weight:800;color:#ffe066;">${(data.total_games || 0).toLocaleString()}</div>
+                    </div>
+                    <div style="background:rgba(59,130,246,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(59,130,246,0.1);">
+                        <div style="font-size:11px;color:var(--text-muted);">🏦 Банков создано</div>
+                        <div style="font-size:18px;font-weight:800;color:#3b82f6;">${data.total_banks || 0}</div>
+                    </div>
+                </div>
+                ${data.banned_list && data.banned_list.length > 0 ? `
+                <div style="margin-top:10px;">
+                    <div style="font-size:12px;color:var(--text-muted);">🚫 Забаненные игроки:</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+                        ${data.banned_list.map(id => `<span style="background:rgba(239,68,68,0.1);padding:2px 8px;border-radius:6px;font-size:11px;color:#ef4444;">${id}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.deputy_list && data.deputy_list.length > 0 ? `
+                <div style="margin-top:10px;">
+                    <div style="font-size:12px;color:var(--text-muted);">🛡 Заместители:</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+                        ${data.deputy_list.map(id => `<span style="background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:6px;font-size:11px;color:#a78bfa;">${id}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            document.getElementById('modalStats').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки статистики!");
+        }
     }
 
     // ============================================================
-    // 14. СЛОТЫ
+    // 10. СТАРЫЕ ИГРЫ (СЛОТЫ, МИНЫ, ПЛИНКО, БЛЭКДЖЕК)
     // ============================================================
     function openSlots() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -2320,8 +2651,21 @@
         document.getElementById('betMenuSlots').classList.remove('open'); 
     }
     function toggleBetMenu(game) { document.getElementById('betMenuSlots').classList.toggle('open'); }
-    function setBet(game, amount) { document.getElementById('slotBet').value = amount; document.getElementById('betMenuSlots').classList.remove('open'); }
-    function setBetAllIn(game) { let bal = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, '')); if (bal > 0) document.getElementById('slotBet').value = bal; document.getElementById('betMenuSlots').classList.remove('open'); }
+    function setBet(game, amount) { 
+        if (game === 'slots') document.getElementById('slotBet').value = amount;
+        else if (game === 'crash') document.getElementById('crashBet').value = amount;
+        document.getElementById('betMenuSlots').classList.remove('open');
+        document.getElementById('betMenuCrash').classList.remove('open');
+    }
+    function setBetAllIn(game) { 
+        let bal = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, '')); 
+        if (bal > 0) {
+            if (game === 'slots') document.getElementById('slotBet').value = bal;
+            else if (game === 'crash') document.getElementById('crashBet').value = bal;
+        }
+        document.getElementById('betMenuSlots').classList.remove('open');
+        document.getElementById('betMenuCrash').classList.remove('open');
+    }
 
     function spawnConfetti(count = 60) {
         const container = document.getElementById('confettiContainer');
@@ -2370,7 +2714,7 @@
     }
 
     // ============================================================
-    // 15. МИНЫ
+    // МИНЫ
     // ============================================================
     let minesRestoreData = null;
 
@@ -2499,7 +2843,7 @@
     }
 
     // ============================================================
-    // 16. ПЛИНКО
+    // ПЛИНКО
     // ============================================================
     function openPlinko() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -2561,7 +2905,7 @@
     }
 
     // ============================================================
-    // 17. БЛЭКДЖЕК
+    // БЛЭКДЖЕК
     // ============================================================
     function openBlackjack() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -2667,237 +3011,768 @@
     }
 
     // ============================================================
-    // 18. PVP АРЕНА
+    // 11. НОВАЯ ИГРА: КРАШ (CRASH / AVIATOR)
     // ============================================================
-    function openArena() {
+    let crashPoints = [];
+    let crashHistoryData = [];
+
+    function openCrash() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
-        document.getElementById('modalArena').style.display = 'block';
-        updateArenaState();
-        if (arenaInterval) clearInterval(arenaInterval);
-        arenaInterval = setInterval(updateArenaState, 1000);
-        arenaSpinInProgress = false;
+        document.getElementById('modalCrash').style.display = 'block';
+        document.getElementById('betMenuCrash').classList.remove('open');
+        renderCrashHistory();
+        if (!crashGameActive) initCrashGame();
     }
 
-    function arenaSetBet(multiplier) {
-        let input = document.getElementById('arenaBet');
-        let current = parseFloat(input.value) || 10;
-        if (multiplier === 'max') {
-            let bal = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, ''));
-            if (bal > 0) input.value = bal;
-            return;
-        }
-        input.value = Math.round(current * multiplier);
-        document.getElementById('arenaBetDisplay').innerText = input.value;
+    function initCrashGame() {
+        crashGameActive = true;
+        crashMultiplier = 1.00;
+        crashBetPlaced = false;
+        crashPoints = [];
+        crashTimer = 6;
+        document.getElementById('crashMultiplier').innerText = '1.00x';
+        document.getElementById('crashMultiplier').classList.remove('crashed');
+        document.getElementById('crashOverlay').classList.remove('show');
+        document.getElementById('crashActionBtn').innerText = '📈 Поставить';
+        document.getElementById('crashActionBtn').disabled = false;
+        document.getElementById('crashTimer').innerText = '⏳ ' + crashTimer;
+        document.getElementById('crashTimer').style.color = '#ffe066';
+        document.getElementById('crashBank').innerText = '0';
+        document.getElementById('crashPlayers').innerText = '0';
+        updateCrashGraph();
+        startCrashTimer();
     }
 
-    function arenaAddBet(amount) {
-        let input = document.getElementById('arenaBet');
-        let current = parseInt(input.value) || 0;
-        input.value = current + amount;
-        document.getElementById('arenaBetDisplay').innerText = input.value;
+    function startCrashTimer() {
+        if (crashInterval) clearInterval(crashInterval);
+        crashInterval = setInterval(() => {
+            crashTimer--;
+            document.getElementById('crashTimer').innerText = '⏳ ' + crashTimer;
+            if (crashTimer <= 0) {
+                clearInterval(crashInterval);
+                startCrashRound();
+            }
+        }, 1000);
     }
 
-    async function updateArenaState() {
-        if (isGuest) return;
-        try {
-            const res = await apiRequest(`${API_BASE}/arena/state`);
-            if (!res) return;
-            const data = await res.json();
+    function startCrashRound() {
+        if (crashRoundActive) return;
+        crashRoundActive = true;
+        crashMultiplier = 1.00;
+        document.getElementById('crashTimer').innerText = '🚀 ВЗЛЕТ!';
+        document.getElementById('crashTimer').style.color = '#10b981';
+        document.getElementById('crashActionBtn').innerText = '💰 Забрать';
+        document.getElementById('crashActionBtn').disabled = false;
+        document.getElementById('crashOverlay').classList.remove('show');
+        document.getElementById('crashMultiplier').classList.remove('crashed');
+
+        // Генерируем случайную точку краша (от 1.01 до 100)
+        const crashPoint = Math.floor(Math.random() * 9900 + 100) / 100;
+        crashPoints = [];
+        let currentX = 0;
+
+        // Анимируем рост
+        let speed = 0.02;
+        let currentMultiplier = 1.00;
+        
+        if (crashInterval) clearInterval(crashInterval);
+        crashInterval = setInterval(() => {
+            speed += 0.001;
+            currentMultiplier = Math.min(currentMultiplier + speed, crashPoint + 0.5);
+            crashMultiplier = currentMultiplier;
             
-            document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
-            let winnerPrize = Math.round(data.total_bank * 0.95);
-            document.getElementById('arenaWinnerPrize').innerText = winnerPrize.toLocaleString();
-            updateArenaChips(data.players);
+            // Добавляем точку для графика
+            crashPoints.push({x: currentX, y: currentMultiplier});
+            currentX += 1;
             
-            let statusText = document.getElementById('arenaStatusText');
-            let timerDisplay = document.getElementById('arenaTimerDisplay');
+            // Обновляем отображение
+            document.getElementById('crashMultiplier').innerText = currentMultiplier.toFixed(2) + 'x';
+            updateCrashGraph();
             
-            if (data.players.length === 0) {
-                statusText.textContent = '⏳ Ожидание игроков...';
-                timerDisplay.textContent = '';
-                arenaSpinInProgress = false;
-            } else if (data.players.length === 1) {
-                statusText.textContent = `👤 1 игрок в столе. Ожидание соперника...`;
-                timerDisplay.textContent = '';
-                arenaSpinInProgress = false;
-            } else if (data.status === 'countdown' || data.status === 'waiting') {
-                statusText.textContent = `👥 ${data.players.length} игроков в столе`;
-                timerDisplay.textContent = data.timer > 0 ? `⏱ ${data.timer} сек` : '⏳ Ожидание...';
+            // Двигаем ракету
+            let rocket = document.getElementById('crashRocket');
+            let progress = Math.min((currentMultiplier - 1) / 10, 0.8);
+            rocket.style.bottom = (30 + progress * 200) + 'px';
+            rocket.style.left = (20 + progress * 150) + 'px';
+            
+            // Проверяем краш
+            if (currentMultiplier >= crashPoint) {
+                clearInterval(crashInterval);
+                crashRoundActive = false;
+                document.getElementById('crashOverlay').classList.add('show');
+                document.getElementById('crashMultiplier').classList.add('crashed');
+                document.getElementById('crashActionBtn').innerText = '💥 CRASH!';
+                document.getElementById('crashActionBtn').disabled = true;
+                document.getElementById('crashTimer').innerText = '💥 ' + crashPoint.toFixed(2) + 'x';
+                document.getElementById('crashTimer').style.color = '#ef4444';
                 
-                if (data.timer === 0 && data.players.length >= 2 && !arenaSpinInProgress) {
-                    arenaSpinInProgress = true;
-                    statusText.textContent = '🎡 Колесо крутится!';
-                    timerDisplay.textContent = '⚡ Момент истины!';
-                    
-                    const wheel = document.getElementById('arenaWheel');
-                    if (wheel) {
-                        drawArenaWheel(data.players);
-                        wheel.style.transition = 'transform 4s cubic-bezier(0.15,0.99,0.18,0.99)';
-                        const degrees = 360 * 3 + Math.random() * 360;
-                        wheel.style.transform = `rotate(${degrees}deg)`;
-                    }
-                    
-                    setTimeout(async () => {
-                        if (data.players.length >= 2) {
-                            try {
-                                const spinRes = await apiRequest(`${API_BASE}/arena/spin`, { method: 'POST' });
-                                if (spinRes) {
-                                    const spinData = await spinRes.json();
-                                    if (spinData.winner) {
-                                        const winnerName = spinData.winner.first_name || spinData.winner.username || 'Игрок';
-                                        const prize = spinData.winner_prize || 0;
-                                        statusText.innerHTML = `🏆 <span class="arena-winner-announce">ПОБЕДИТЕЛЬ: ${winnerName}! 🎉</span>`;
-                                        timerDisplay.textContent = `💰 +${prize.toLocaleString()} фишек!`;
-                                        spawnConfetti(80);
-                                        showCustomAlert("🏆 ПОБЕДИТЕЛЬ!", `${winnerName} выиграл ${prize.toLocaleString()} фишек! 🎉`);
-                                        refreshUserData();
-                                    }
-                                }
-                            } catch(e) { console.error('Spin error:', e); }
-                        }
-                        arenaSpinInProgress = false;
-                    }, 4000);
+                // Добавляем в историю
+                crashHistoryData.unshift({point: crashPoint, win: crashBetPlaced ? false : true});
+                if (crashHistoryData.length > 20) crashHistoryData.pop();
+                renderCrashHistory();
+                
+                // Если игрок поставил и не забрал - проигрыш
+                if (crashBetPlaced) {
+                    showCustomAlert("💥 КРАШ!", `Ракета взорвалась на ${crashPoint.toFixed(2)}x! Ставка сгорела.`);
+                    crashBetPlaced = false;
+                    refreshUserData();
                 }
-            } else if (data.status === 'spinning') {
-                if (!arenaSpinInProgress) {
-                    statusText.textContent = '🎡 Колесо крутится!';
-                    timerDisplay.textContent = '⚡ Момент истины!';
-                    arenaSpinInProgress = true;
-                }
+                
+                // Запускаем новый таймер через 3 секунды
+                setTimeout(() => {
+                    crashTimer = 6;
+                    document.getElementById('crashTimer').innerText = '⏳ ' + crashTimer;
+                    document.getElementById('crashTimer').style.color = '#ffe066';
+                    document.getElementById('crashActionBtn').innerText = '📈 Поставить';
+                    document.getElementById('crashActionBtn').disabled = false;
+                    document.getElementById('crashOverlay').classList.remove('show');
+                    startCrashTimer();
+                }, 3000);
             }
-            
-            let joinBtn = document.getElementById('arenaJoinBtn');
-            let leaveBtn = document.getElementById('arenaLeaveBtn');
-            let joined = data.players.some(p => String(p.user_id) === String(userId));
-            
-            if (joined) {
-                joinBtn.style.display = 'none';
-                if (data.can_leave && data.players.length < 2 && data.status !== 'spinning' && !arenaSpinInProgress) {
-                    leaveBtn.style.display = 'block';
-                    leaveBtn.disabled = false;
-                } else {
-                    leaveBtn.style.display = 'block';
-                    leaveBtn.disabled = true;
-                    leaveBtn.textContent = arenaSpinInProgress ? '⛔ Идёт спин...' : '🔒 Деньги в банке';
-                }
-            } else {
-                joinBtn.style.display = 'block';
-                joinBtn.disabled = arenaSpinInProgress || data.status === 'spinning';
-                leaveBtn.style.display = 'none';
-            }
-            
-            let betVal = parseInt(document.getElementById('arenaBet').value) || 10;
-            document.getElementById('arenaBetDisplay').innerText = betVal;
-            
-        } catch(e) { console.error(e); }
+        }, 80);
     }
 
-    function updateArenaChips(players) {
-        const container = document.getElementById('arenaPlayersChips');
+    function updateCrashGraph() {
+        const canvas = document.getElementById('crashCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width || 300;
+        canvas.height = rect.height || 300;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (crashPoints.length < 2) {
+            // Рисуем сетку
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 10; i++) {
+                let y = canvas.height - (i / 10) * canvas.height;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            return;
+        }
+        
+        // Рисуем линию графика
+        const maxY = Math.max(...crashPoints.map(p => p.y), 1.5);
+        const maxX = crashPoints.length;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = '#ff6600';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = 'rgba(255, 100, 0, 0.5)';
+        ctx.shadowBlur = 10;
+        
+        for (let i = 0; i < crashPoints.length; i++) {
+            let x = (crashPoints[i].x / maxX) * canvas.width;
+            let y = canvas.height - (crashPoints[i].y / maxY) * canvas.height * 0.8 - 20;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        // Заливка под графиком
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(255, 100, 0, 0.05)';
+        const lastX = (crashPoints[crashPoints.length - 1].x / maxX) * canvas.width;
+        const lastY = canvas.height - (crashPoints[crashPoints.length - 1].y / maxY) * canvas.height * 0.8 - 20;
+        ctx.lineTo(lastX, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function renderCrashHistory() {
+        const container = document.getElementById('crashHistory');
         container.innerHTML = '';
-        if (!players || players.length === 0) {
-            container.innerHTML = '<span style="color:var(--text-muted);font-size:12px;">Нет игроков</span>';
-            return;
-        }
-        players.forEach(p => {
-            const chip = document.createElement('div');
-            chip.className = 'arena-player-chip';
-            const isMe = String(p.user_id) === String(userId);
-            if (isMe) chip.style.borderColor = '#ffe066';
-            const avatarHtml = p.photo_url ? 
-                `<img src="${p.photo_url}" alt="">` : 
-                (p.first_name ? p.first_name.charAt(0).toUpperCase() : '?');
-            chip.innerHTML = `
-                <div class="chip-avatar">${avatarHtml}</div>
-                <span>${p.first_name || 'Игрок'}${isMe ? ' (Вы)' : ''}</span>
-                <span class="chip-chance">${p.chance || 0}%</span>
-                <span class="chip-bet">${p.bet}💰</span>
-            `;
-            container.appendChild(chip);
+        crashHistoryData.slice(0, 20).forEach(item => {
+            const el = document.createElement('span');
+            el.className = 'h-item ' + (item.win ? 'win' : 'lose');
+            el.innerText = item.point.toFixed(2) + 'x';
+            container.appendChild(el);
         });
     }
 
-    function drawArenaWheel(players) {
-        const wheel = document.getElementById('arenaWheel');
-        const total = players.reduce((sum, p) => sum + p.bet, 0);
-        if (total === 0 || !players || players.length === 0) {
-            wheel.style.background = 'conic-gradient(#1a1a2a 0deg 360deg)';
+    async function crashAction() {
+        if (isGuest) return;
+        if (!crashRoundActive) {
+            // Режим ставки
+            let bet = parseInt(document.getElementById('crashBet').value);
+            if (!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите ставку!");
+            
+            // Проверяем баланс
+            const balance = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, ''));
+            if (bet > balance) return showCustomAlert("ОШИБКА", "Недостаточно фишек!");
+            
+            // Списываем ставку
+            crashBetPlaced = true;
+            document.getElementById('crashActionBtn').innerText = '⏳ Ожидание...';
+            document.getElementById('crashActionBtn').disabled = true;
+            
+            // Отправляем на сервер
+            try {
+                const res = await apiRequest(`${API_BASE}/crash/place_bet`, {
+                    method: 'POST',
+                    body: JSON.stringify({ user_id: userId, bet: bet })
+                });
+                if (!res) { crashBetPlaced = false; document.getElementById('crashActionBtn').innerText = '📈 Поставить'; document.getElementById('crashActionBtn').disabled = false; return; }
+                const data = await res.json();
+                if (data.error) {
+                    showCustomAlert("ОШИБКА", data.error);
+                    crashBetPlaced = false;
+                    document.getElementById('crashActionBtn').innerText = '📈 Поставить';
+                    document.getElementById('crashActionBtn').disabled = false;
+                    return;
+                }
+                document.getElementById('crashActionBtn').innerText = '💰 Забрать';
+                document.getElementById('crashActionBtn').disabled = false;
+                refreshUserData();
+                showCustomAlert("✅ СТАВКА ПРИНЯТА", `Ваша ставка ${bet} фишек участвует в раунде!`);
+            } catch(e) {
+                showCustomAlert("ОШИБКА", "Ошибка сервера!");
+                crashBetPlaced = false;
+                document.getElementById('crashActionBtn').innerText = '📈 Поставить';
+                document.getElementById('crashActionBtn').disabled = false;
+            }
+        } else {
+            // Забираем выигрыш
+            if (!crashBetPlaced) return;
+            crashBetPlaced = false;
+            document.getElementById('crashActionBtn').innerText = '✅ Забрано!';
+            document.getElementById('crashActionBtn').disabled = true;
+            
+            try {
+                const res = await apiRequest(`${API_BASE}/crash/cashout`, {
+                    method: 'POST',
+                    body: JSON.stringify({ user_id: userId })
+                });
+                if (!res) return;
+                const data = await res.json();
+                if (data.success) {
+                    const win = data.win || 0;
+                    showCustomAlert("🎉 ВЫИГРЫШ!", `Вы забрали ${win.toLocaleString()} фишек (x${crashMultiplier.toFixed(2)})!`);
+                    refreshUserData();
+                    // Добавляем в историю победу
+                    crashHistoryData.unshift({point: crashMultiplier, win: true});
+                    if (crashHistoryData.length > 20) crashHistoryData.pop();
+                    renderCrashHistory();
+                } else {
+                    showCustomAlert("ОШИБКА", data.message || "Не удалось забрать выигрыш!");
+                    document.getElementById('crashActionBtn').innerText = '💰 Забрать';
+                    document.getElementById('crashActionBtn').disabled = false;
+                }
+            } catch(e) {
+                showCustomAlert("ОШИБКА", "Ошибка сервера!");
+                document.getElementById('crashActionBtn').innerText = '💰 Забрать';
+                document.getElementById('crashActionBtn').disabled = false;
+            }
+        }
+    }
+
+    // ============================================================
+    // 12. НОВАЯ ИГРА: МОНЕТКА (COIN FLIP)
+    // ============================================================
+    let coinSelectedSide = null;
+    let coinFlipping = false;
+
+    function openCoinFlip() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalCoinFlip').style.display = 'block';
+        coinSelectedSide = null;
+        coinFlipping = false;
+        document.getElementById('coinResult').innerText = 'Выберите сторону';
+        document.getElementById('coinResult').className = 'coin-result';
+        document.getElementById('coinInner').className = 'coin-inner';
+        document.getElementById('coinFlipBtn').disabled = false;
+        document.getElementById('coinFlipBtn').innerText = '🎲 Бросить';
+        document.querySelectorAll('.coin-buttons .btn-gold, .coin-buttons .btn-blue').forEach(b => b.style.opacity = '1');
+    }
+
+    function coinFlip(side) {
+        if (coinFlipping) return;
+        coinSelectedSide = side;
+        document.querySelectorAll('.coin-buttons .btn-gold, .coin-buttons .btn-blue').forEach(b => b.style.opacity = '0.5');
+        if (side === 'heads') {
+            document.querySelector('.coin-buttons .btn-gold').style.opacity = '1';
+            document.querySelector('.coin-buttons .btn-gold').style.border = '2px solid #ffe066';
+            document.querySelector('.coin-buttons .btn-blue').style.border = 'none';
+        } else {
+            document.querySelector('.coin-buttons .btn-blue').style.opacity = '1';
+            document.querySelector('.coin-buttons .btn-blue').style.border = '2px solid #60a5fa';
+            document.querySelector('.coin-buttons .btn-gold').style.border = 'none';
+        }
+        document.getElementById('coinResult').innerText = `Выбрано: ${side === 'heads' ? 'Орел' : 'Решка'}`;
+        document.getElementById('coinResult').className = 'coin-result';
+    }
+
+    async function coinFlipPlay() {
+        if (isGuest) return;
+        if (coinFlipping) return;
+        if (!coinSelectedSide) return showCustomAlert("ОШИБКА", "Выберите сторону монетки!");
+        
+        let bet = parseInt(document.getElementById('coinBet').value);
+        if (!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите ставку!");
+        
+        coinFlipping = true;
+        document.getElementById('coinFlipBtn').disabled = true;
+        document.getElementById('coinFlipBtn').innerText = '⏳...';
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/coinflip/play`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bet: bet, side: coinSelectedSide })
+            });
+            if (!res) { coinFlipping = false; document.getElementById('coinFlipBtn').disabled = false; document.getElementById('coinFlipBtn').innerText = '🎲 Бросить'; return; }
+            const data = await res.json();
+            if (data.error) {
+                showCustomAlert("ОШИБКА", data.error);
+                coinFlipping = false;
+                document.getElementById('coinFlipBtn').disabled = false;
+                document.getElementById('coinFlipBtn').innerText = '🎲 Бросить';
+                return;
+            }
+            
+            // Анимируем монетку
+            const coin = document.getElementById('coinInner');
+            coin.className = 'coin-inner flipping';
+            
+            // Ждем окончания анимации
+            setTimeout(() => {
+                const result = data.result;
+                if (result === 'heads') {
+                    coin.style.transform = 'rotateY(0deg)';
+                } else {
+                    coin.style.transform = 'rotateY(180deg)';
+                }
+                coin.className = 'coin-inner';
+                
+                const won = data.win > 0;
+                document.getElementById('coinResult').innerText = won ? `🎉 ВЫИГРЫШ! +${data.win} 💰` : `😔 ПРОИГРЫШ! Ставка сгорела.`;
+                document.getElementById('coinResult').className = 'coin-result ' + (won ? 'win' : 'lose');
+                
+                refreshUserData();
+                coinFlipping = false;
+                document.getElementById('coinFlipBtn').disabled = false;
+                document.getElementById('coinFlipBtn').innerText = '🎲 Бросить';
+                document.querySelectorAll('.coin-buttons .btn-gold, .coin-buttons .btn-blue').forEach(b => b.style.opacity = '1');
+                document.querySelectorAll('.coin-buttons .btn-gold, .coin-buttons .btn-blue').forEach(b => b.style.border = 'none');
+                
+                if (won) spawnConfetti(40);
+            }, 1600);
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка сервера!");
+            coinFlipping = false;
+            document.getElementById('coinFlipBtn').disabled = false;
+            document.getElementById('coinFlipBtn').innerText = '🎲 Бросить';
+        }
+    }
+
+    // ============================================================
+    // 13. НОВАЯ ИГРА: КОСТИ (DICE)
+    // ============================================================
+    let diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+    function openDice() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalDice').style.display = 'block';
+        document.getElementById('diceDealer').innerText = '⚀';
+        document.getElementById('dicePlayer').innerText = '⚀';
+        document.getElementById('diceResult').innerText = 'Нажмите "Бросить"';
+        document.getElementById('diceResult').style.color = '#ffe066';
+        document.getElementById('diceRollBtn').disabled = false;
+        document.getElementById('diceRollBtn').innerText = '🎲 Бросить кости';
+    }
+
+    async function diceRoll() {
+        if (isGuest) return;
+        let bet = parseInt(document.getElementById('diceBet').value);
+        if (!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите ставку!");
+        
+        document.getElementById('diceRollBtn').disabled = true;
+        document.getElementById('diceRollBtn').innerText = '⏳...';
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/dice/play`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bet: bet })
+            });
+            if (!res) { document.getElementById('diceRollBtn').disabled = false; document.getElementById('diceRollBtn').innerText = '🎲 Бросить кости'; return; }
+            const data = await res.json();
+            if (data.error) {
+                showCustomAlert("ОШИБКА", data.error);
+                document.getElementById('diceRollBtn').disabled = false;
+                document.getElementById('diceRollBtn').innerText = '🎲 Бросить кости';
+                return;
+            }
+            
+            // Анимируем кости
+            const dealerEl = document.getElementById('diceDealer');
+            const playerEl = document.getElementById('dicePlayer');
+            
+            dealerEl.classList.add('rolling');
+            playerEl.classList.add('rolling');
+            
+            let dealerVal = data.dealer;
+            let playerVal = data.player;
+            
+            // Меняем значения во время анимации
+            let count = 0;
+            let interval = setInterval(() => {
+                dealerEl.innerText = diceFaces[Math.floor(Math.random() * 6)];
+                playerEl.innerText = diceFaces[Math.floor(Math.random() * 6)];
+                count++;
+                if (count > 10) {
+                    clearInterval(interval);
+                    dealerEl.classList.remove('rolling');
+                    playerEl.classList.remove('rolling');
+                    dealerEl.innerText = diceFaces[dealerVal - 1];
+                    playerEl.innerText = diceFaces[playerVal - 1];
+                    
+                    const won = data.win > 0;
+                    const resultText = won ? `🎉 ВЫИГРЫШ! +${data.win} 💰` : 
+                                      (data.result === 'push' ? `🤝 НИЧЬЯ! Ставка возвращена.` : `😔 ПРОИГРЫШ! Ставка сгорела.`);
+                    document.getElementById('diceResult').innerText = resultText;
+                    document.getElementById('diceResult').style.color = won ? '#10b981' : (data.result === 'push' ? '#fbbf24' : '#ef4444');
+                    
+                    refreshUserData();
+                    document.getElementById('diceRollBtn').disabled = false;
+                    document.getElementById('diceRollBtn').innerText = '🎲 Бросить кости';
+                    
+                    if (won) spawnConfetti(40);
+                }
+            }, 150);
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка сервера!");
+            document.getElementById('diceRollBtn').disabled = false;
+            document.getElementById('diceRollBtn').innerText = '🎲 Бросить кости';
+        }
+    }
+
+    // ============================================================
+    // 14. НОВАЯ ИГРА: БАШНЯ (TOWER)
+    // ============================================================
+    let towerState = {};
+
+    function openTower() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalTower').style.display = 'block';
+        towerGameActive = false;
+        towerCurrentLevel = 0;
+        towerMultiplier = 1.00;
+        towerWin = 0;
+        document.getElementById('towerWin').innerText = '0';
+        document.getElementById('towerMultiplier').innerText = '1.00x';
+        document.getElementById('towerStartBtn').style.display = 'block';
+        document.getElementById('towerCashoutBtn').style.display = 'none';
+        document.getElementById('towerDifficulty').innerText = 'Выберите сложность';
+        towerSelectDifficulty('medium');
+        renderTowerLevels();
+    }
+
+    function towerSelectDifficulty(diff) {
+        towerDifficulty = diff;
+        document.querySelectorAll('#towerLevels .tower-cell').forEach(c => c.className = 'tower-cell locked');
+        document.getElementById('towerDifficulty').innerText = diff === 'light' ? '☀️ Лайт (x1.46 за шаг)' : 
+                                                              diff === 'medium' ? '🌤️ Средне (x1.94 за шаг)' : 
+                                                              '🔥 Хард (x2.91 за шаг)';
+        document.querySelectorAll('.tower-level').forEach((el, idx) => {
+            if (idx === 0) {
+                el.querySelectorAll('.tower-cell').forEach(c => {
+                    if (!c.classList.contains('revealed-safe') && !c.classList.contains('revealed-bomb')) {
+                        c.classList.remove('locked');
+                        c.classList.add('current-level');
+                    }
+                });
+            }
+        });
+    }
+
+    function renderTowerLevels() {
+        const container = document.getElementById('towerLevels');
+        container.innerHTML = '';
+        const levels = 8;
+        const configs = {
+            light: { cells: 4, bombs: 1, multiplier: 1.46 },
+            medium: { cells: 3, bombs: 1, multiplier: 1.94 },
+            hard: { cells: 2, bombs: 1, multiplier: 2.91 }
+        };
+        
+        for (let l = 0; l < levels; l++) {
+            const levelDiv = document.createElement('div');
+            levelDiv.className = 'tower-level';
+            levelDiv.dataset.level = l;
+            
+            const config = configs[towerDifficulty];
+            const totalCells = config.cells;
+            
+            for (let c = 0; c < totalCells; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'tower-cell locked';
+                cell.dataset.level = l;
+                cell.dataset.cell = c;
+                cell.onclick = () => towerClickCell(l, c);
+                levelDiv.appendChild(cell);
+            }
+            container.appendChild(levelDiv);
+        }
+        
+        // Разблокируем первый уровень
+        const firstLevel = container.querySelector('.tower-level[data-level="0"]');
+        if (firstLevel) {
+            firstLevel.querySelectorAll('.tower-cell').forEach(c => {
+                c.classList.remove('locked');
+                c.classList.add('current-level');
+            });
+        }
+    }
+
+    async function towerStart() {
+        if (isGuest) return;
+        let bet = parseInt(document.getElementById('towerBet').value);
+        if (!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите ставку!");
+        
+        document.getElementById('towerStartBtn').disabled = true;
+        document.getElementById('towerStartBtn').innerText = '⏳...';
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/tower/start`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bet: bet, difficulty: towerDifficulty })
+            });
+            if (!res) { document.getElementById('towerStartBtn').disabled = false; document.getElementById('towerStartBtn').innerText = '🚀 Начать подъем'; return; }
+            const data = await res.json();
+            if (data.error) {
+                showCustomAlert("ОШИБКА", data.error);
+                document.getElementById('towerStartBtn').disabled = false;
+                document.getElementById('towerStartBtn').innerText = '🚀 Начать подъем';
+                return;
+            }
+            
+            towerGameActive = true;
+            towerState = data;
+            towerCurrentLevel = 0;
+            towerMultiplier = 1.00;
+            towerWin = 0;
+            towerBombs = data.bombs || [];
+            
+            document.getElementById('towerStartBtn').style.display = 'none';
+            document.getElementById('towerCashoutBtn').style.display = 'block';
+            document.getElementById('towerCashoutBtn').disabled = true;
+            document.getElementById('towerWin').innerText = '0';
+            document.getElementById('towerMultiplier').innerText = '1.00x';
+            
+            renderTowerLevels();
+            refreshUserData();
+            
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка сервера!");
+            document.getElementById('towerStartBtn').disabled = false;
+            document.getElementById('towerStartBtn').innerText = '🚀 Начать подъем';
+        }
+    }
+
+    function towerClickCell(level, cell) {
+        if (!towerGameActive) return showCustomAlert("ОШИБКА", "Сначала начните игру!");
+        if (level !== towerCurrentLevel) return showCustomAlert("ОШИБКА", "Сначала откройте текущий уровень!");
+        
+        const cellEl = document.querySelector(`.tower-cell[data-level="${level}"][data-cell="${cell}"]`);
+        if (!cellEl || cellEl.classList.contains('revealed-safe') || cellEl.classList.contains('revealed-bomb')) return;
+        
+        // Проверяем, есть ли бомба
+        const isBomb = towerBombs.some(b => b.level === level && b.cell === cell);
+        
+        if (isBomb) {
+            cellEl.classList.add('revealed-bomb');
+            cellEl.innerText = '💣';
+            // Взрыв
+            showCustomAlert("💥 ВЗРЫВ!", "Вы наткнулись на бомбу! Ставка сгорела.");
+            towerGameActive = false;
+            document.getElementById('towerCashoutBtn').style.display = 'none';
+            document.getElementById('towerStartBtn').style.display = 'block';
+            document.getElementById('towerStartBtn').disabled = false;
+            document.getElementById('towerStartBtn').innerText = '🚀 Начать подъем';
+            refreshUserData();
             return;
         }
-        let conicColors = [];
+        
+        // Безопасно
+        cellEl.classList.add('revealed-safe');
+        cellEl.innerText = '✅';
+        
+        towerCurrentLevel++;
+        const configs = {
+            light: { multiplier: 1.46 },
+            medium: { multiplier: 1.94 },
+            hard: { multiplier: 2.91 }
+        };
+        towerMultiplier *= configs[towerDifficulty].multiplier;
+        towerWin = Math.round(parseInt(document.getElementById('towerBet').value) * towerMultiplier);
+        
+        document.getElementById('towerWin').innerText = towerWin.toLocaleString();
+        document.getElementById('towerMultiplier').innerText = towerMultiplier.toFixed(2) + 'x';
+        document.getElementById('towerCashoutBtn').disabled = false;
+        
+        // Разблокируем следующий уровень
+        if (towerCurrentLevel < 8) {
+            const nextLevel = document.querySelector(`.tower-level[data-level="${towerCurrentLevel}"]`);
+            if (nextLevel) {
+                nextLevel.querySelectorAll('.tower-cell').forEach(c => {
+                    c.classList.remove('locked');
+                    c.classList.add('current-level');
+                });
+            }
+        } else {
+            // Прошли все уровни - автоматический выигрыш
+            towerCashout();
+        }
+    }
+
+    async function towerCashout() {
+        if (!towerGameActive) return;
+        if (towerWin <= 0) return showCustomAlert("ОШИБКА", "Нет выигрыша!");
+        
+        document.getElementById('towerCashoutBtn').disabled = true;
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/tower/cashout`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId })
+            });
+            if (!res) { document.getElementById('towerCashoutBtn').disabled = false; return; }
+            const data = await res.json();
+            if (data.error) {
+                showCustomAlert("ОШИБКА", data.error);
+                document.getElementById('towerCashoutBtn').disabled = false;
+                return;
+            }
+            
+            showCustomAlert("🎉 ВЫИГРЫШ!", `Вы забрали ${towerWin.toLocaleString()} фишек (x${towerMultiplier.toFixed(2)})!`);
+            spawnConfetti(60);
+            towerGameActive = false;
+            document.getElementById('towerCashoutBtn').style.display = 'none';
+            document.getElementById('towerStartBtn').style.display = 'block';
+            document.getElementById('towerStartBtn').disabled = false;
+            document.getElementById('towerStartBtn').innerText = '🚀 Начать подъем';
+            refreshUserData();
+            
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка сервера!");
+            document.getElementById('towerCashoutBtn').disabled = false;
+        }
+    }
+
+    // ============================================================
+    // 15. НОВАЯ ИГРА: АПГРЕЙД (UPGRADE)
+    // ============================================================
+    function openUpgrade() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalUpgrade').style.display = 'block';
+        upgradeSelected = null;
+        upgradeSpinning = false;
+        document.getElementById('upgradeResult').innerText = 'Выберите множитель';
+        document.getElementById('upgradeResult').className = 'upgrade-result';
+        document.getElementById('upgradePlayBtn').disabled = true;
+        document.getElementById('upgradePlayBtn').innerText = '🎯 Апгрейд';
+        document.querySelectorAll('.upgrade-btn').forEach(b => b.classList.remove('selected'));
+        drawUpgradeWheel();
+    }
+
+    function drawUpgradeWheel() {
+        const wheel = document.getElementById('upgradeWheel');
+        const segments = [
+            { label: '2x', color: '#10b981', angle: 48.5 },
+            { label: '5x', color: '#3b82f6', angle: 19.39 },
+            { label: '10x', color: '#8b5cf6', angle: 9.69 },
+            { label: '25x', color: '#f59e0b', angle: 3.88 },
+            { label: '50x', color: '#f97316', angle: 1.94 },
+            { label: '100x', color: '#ef4444', angle: 0.97 }
+        ];
+        
         let currentAngle = 0;
-        const colors = ['#f59e0b', '#3b82f6', '#ef4444', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
-        players.forEach((p, index) => {
-            const percentage = (p.bet / total) * 100;
-            const color = colors[index % colors.length];
-            const startDeg = currentAngle;
-            const endDeg = currentAngle + (percentage * 3.6);
-            conicColors.push(`${color} ${startDeg}deg ${endDeg}deg`);
-            currentAngle = endDeg;
+        let conicGradient = [];
+        segments.forEach(seg => {
+            const start = currentAngle;
+            const end = currentAngle + (seg.angle / 100 * 360);
+            conicGradient.push(`${seg.color} ${start}deg ${end}deg`);
+            currentAngle = end;
         });
-        if (conicColors.length > 0) {
-            wheel.style.background = `conic-gradient(${conicColors.join(', ')})`;
+        // Заполняем оставшееся пространство
+        if (currentAngle < 360) {
+            conicGradient.push(`#1a1a2a ${currentAngle}deg 360deg`);
         }
+        wheel.style.background = `conic-gradient(${conicGradient.join(', ')})`;
     }
 
-    async function arenaJoin() {
+    function upgradeSelect(mult) {
+        if (upgradeSpinning) return;
+        upgradeSelected = mult;
+        document.querySelectorAll('.upgrade-btn').forEach(b => b.classList.remove('selected'));
+        document.querySelector(`.upgrade-btn[data-mult="${mult}"]`).classList.add('selected');
+        document.getElementById('upgradeResult').innerText = `Выбран: ${mult}x`;
+        document.getElementById('upgradeResult').className = 'upgrade-result';
+        document.getElementById('upgradePlayBtn').disabled = false;
+    }
+
+    async function upgradePlay() {
         if (isGuest) return;
-        if (arenaSpinInProgress) {
-            showCustomAlert("ОШИБКА", "Сейчас идет спин! Подождите.");
-            return;
-        }
-        let bet = parseInt(document.getElementById('arenaBet').value);
-        if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
+        if (!upgradeSelected) return showCustomAlert("ОШИБКА", "Выберите множитель!");
+        if (upgradeSpinning) return;
+        
+        let bet = parseInt(document.getElementById('upgradeBet').value);
+        if (!bet || bet <= 0) return showCustomAlert("ОШИБКА", "Введите ставку!");
+        
+        upgradeSpinning = true;
+        document.getElementById('upgradePlayBtn').disabled = true;
+        document.getElementById('upgradePlayBtn').innerText = '⏳...';
+        document.getElementById('upgradeResult').innerText = '🎡 Крутим...';
+        
         try {
-            const res = await apiRequest(`${API_BASE}/arena/join`, { method: 'POST', body: JSON.stringify({ user_id: userId, bet: bet }) });
-            if (!res) return;
+            const res = await apiRequest(`${API_BASE}/upgrade/play`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: userId, bet: bet, mult: upgradeSelected })
+            });
+            if (!res) { upgradeSpinning = false; document.getElementById('upgradePlayBtn').disabled = false; document.getElementById('upgradePlayBtn').innerText = '🎯 Апгрейд'; return; }
             const data = await res.json();
-            if (data.error) return showCustomAlert("ОШИБКА", data.error);
-            showCustomAlert("PvP АРЕНА", "Вы успешно вступили в стол!");
-            refreshUserData();
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка входа в Арену!"); }
-    }
-
-    async function arenaLeave() {
-        if (isGuest) return;
-        if (arenaSpinInProgress) {
-            showCustomAlert("ОШИБКА", "Нельзя выйти во время спина!");
-            return;
+            if (data.error) {
+                showCustomAlert("ОШИБКА", data.error);
+                upgradeSpinning = false;
+                document.getElementById('upgradePlayBtn').disabled = false;
+                document.getElementById('upgradePlayBtn').innerText = '🎯 Апгрейд';
+                return;
+            }
+            
+            // Вращаем колесо
+            const wheel = document.getElementById('upgradeWheel');
+            const degrees = 360 * 5 + (Math.random() * 360);
+            wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0.99, 0.18, 0.99)';
+            wheel.style.transform = `rotate(${degrees}deg)`;
+            
+            setTimeout(() => {
+                const won = data.win > 0;
+                document.getElementById('upgradeResult').innerText = won ? `🎉 ВЫИГРЫШ! +${data.win} 💰 (${upgradeSelected}x)` : `😔 ПРОИГРЫШ! Ставка сгорела.`;
+                document.getElementById('upgradeResult').className = 'upgrade-result ' + (won ? 'win' : 'lose');
+                
+                refreshUserData();
+                upgradeSpinning = false;
+                document.getElementById('upgradePlayBtn').disabled = false;
+                document.getElementById('upgradePlayBtn').innerText = '🎯 Апгрейд';
+                
+                if (won) spawnConfetti(50);
+            }, 4000);
+            
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка сервера!");
+            upgradeSpinning = false;
+            document.getElementById('upgradePlayBtn').disabled = false;
+            document.getElementById('upgradePlayBtn').innerText = '🎯 Апгрейд';
         }
-        try {
-            const res = await apiRequest(`${API_BASE}/arena/leave`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
-            if (!res) return;
-            const data = await res.json();
-            if (data.error) return showCustomAlert("ОШИБКА", data.error);
-            showCustomAlert("🚪 ВЫХОД", data.message || "Вы вышли из игры");
-            refreshUserData();
-        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка выхода!"); }
     }
 
     // ============================================================
-    // 19. КВЕСТЫ
-    // ============================================================
-    async function claimDaily() {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут получать награды!"); return; }
-        const res = await apiRequest(`${API_BASE}/claim_daily`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
-        if (!res) return;
-        const data = await res.json();
-        showCustomAlert("НАГРАДА", data.message);
-        refreshUserData();
-    }
-
-    async function claimQuest(questId) {
-        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут выполнять квесты!"); return; }
-        const res = await apiRequest(`${API_BASE}/claim_quest`, { method: 'POST', body: JSON.stringify({ user_id: userId, quest_id: questId }) });
-        if (!res) return;
-        const data = await res.json();
-        if (data.error) return showCustomAlert("ОШИБКА", data.error);
-        showCustomAlert("КВЕСТ ВЫПОЛНЕН!", `Получено +${data.reward} фишек.`);
-        refreshUserData();
-    }
-
-    // ============================================================
-    // 20. ЧАТ
+    // 16. ЧАТ
     // ============================================================
     function toggleChat() { if (chatOpen) closeChat(); else openChat(); }
     function openChat() { chatOpen = true; document.getElementById('chatSheet').classList.add('open'); document.getElementById('chatFab').style.display = 'none'; loadChatMessages(); if (!isGuest) document.getElementById('chatInput').focus(); }
@@ -2971,7 +3846,7 @@
     }
 
     // ============================================================
-    // 21. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
+    // 17. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
     // ============================================================
     (function initChatDrag() {
         const sheet = document.getElementById('chatSheet');
@@ -2995,7 +3870,7 @@
     })();
 
     // ============================================================
-    // 22. КЛАВИШИ
+    // 18. КЛАВИШИ
     // ============================================================
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -3005,7 +3880,7 @@
     });
 
     // ============================================================
-    // 23. БАНКОВСКАЯ СИСТЕМА (полная копия из твоего кода)
+    // 19. БАНКОВСКАЯ СИСТЕМА
     // ============================================================
     async function updateBankButtons() {
         if (isGuest) {
@@ -3015,29 +3890,20 @@
             `;
             return;
         }
-
         try {
             const res = await apiRequest(`${API_BASE}/bank/user_bank?user_id=${userId}`);
             if (!res) {
-                document.getElementById('bankActionButtons').innerHTML = `
-                    <button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>
-                `;
+                document.getElementById('bankActionButtons').innerHTML = `<button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>`;
                 return;
             }
             const data = await res.json();
             if (data.has_bank) {
-                document.getElementById('bankActionButtons').innerHTML = `
-                    <button class="bank-main-btn" onclick="openMyCompany()">🏢 Моя Компания</button>
-                `;
+                document.getElementById('bankActionButtons').innerHTML = `<button class="bank-main-btn" onclick="openMyCompany()">🏢 Моя Компания</button>`;
             } else {
-                document.getElementById('bankActionButtons').innerHTML = `
-                    <button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>
-                `;
+                document.getElementById('bankActionButtons').innerHTML = `<button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>`;
             }
         } catch(e) {
-            document.getElementById('bankActionButtons').innerHTML = `
-                <button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>
-            `;
+            document.getElementById('bankActionButtons').innerHTML = `<button class="bank-main-btn" onclick="openCreateBankModal()">➕ Создать свой Банк</button>`;
         }
     }
 
@@ -3083,25 +3949,11 @@
         if (!/^[a-zA-Z]+$/.test(name)) {
             return showCustomAlert("ОШИБКА", "Название должно содержать только английские буквы!");
         }
-
-        if (!confirm("Вы уверены, что хотите создать собственный банк? Стоимость: 10,000,000 фишек")) {
-            return;
-        }
-
+        if (!confirm("Вы уверены, что хотите создать собственный банк? Стоимость: 10,000,000 фишек")) return;
         try {
-            const body = {
-                user_id: userId,
-                name: name,
-                avatar: selectedBankAvatar
-            };
-            if (bankAvatarData) {
-                body.avatar_data = bankAvatarData;
-            }
-
-            const res = await apiRequest(`${API_BASE}/bank/create`, {
-                method: 'POST',
-                body: JSON.stringify(body)
-            });
+            const body = { user_id: userId, name: name, avatar: selectedBankAvatar };
+            if (bankAvatarData) body.avatar_data = bankAvatarData;
+            const res = await apiRequest(`${API_BASE}/bank/create`, { method: 'POST', body: JSON.stringify(body) });
             if (!res) return;
             const data = await res.json();
             if (!data.success) return showCustomAlert("ОШИБКА", data.message);
@@ -3109,9 +3961,7 @@
             closeModal('modalCreateBank');
             refreshUserData();
             updateBankButtons();
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка создания банка!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка создания банка!"); }
     }
 
     async function openMyCompany() {
@@ -3122,19 +3972,14 @@
             const data = await res.json();
             if (!data.has_bank) return showCustomAlert("ОШИБКА", "У вас нет банка!");
             openBankDetail(data.bank_id);
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки!"); }
     }
 
     async function depositToBank(bankId) {
         const amount = prompt("Введите сумму для пополнения казны (мин 1):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/deposit`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/deposit`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "💰 КАЗНА" : "ОШИБКА", data.message);
@@ -3146,10 +3991,7 @@
         const amount = prompt("Введите сумму для вывода:");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/withdraw`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/withdraw`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "💸 ВЫВОД" : "ОШИБКА", data.message);
@@ -3161,10 +4003,7 @@
         const accountName = prompt("Введите имя для счета (мин 2 символа):");
         if (!accountName || accountName.length < 2) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/open_account`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId, account_name: accountName })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/open_account`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, account_name: accountName }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "📂 СЧЕТ" : "ОШИБКА", data.message);
@@ -3178,52 +4017,33 @@
             if (!res) return;
             const data = await res.json();
             if (data.error) return showCustomAlert("ОШИБКА", data.error);
-
             const container = document.getElementById('bankSettingsContent');
             container.innerHTML = `
                 <div class="section-title" style="text-align:center;font-size:16px;">⚙️ Настройки банка</div>
                 <div class="bank-settings">
-                    <div class="setting-row">
-                        <span class="label">📊 Процентная ставка</span>
-                        <span class="value" id="rateDisplay">${data.bank.rate || 0}%</span>
-                    </div>
-                    <input type="range" min="0.1" max="50" step="0.1" value="${data.bank.rate || 0}" 
-                           oninput="document.getElementById('rateDisplay').innerText = this.value + '%'; document.getElementById('rateValue').value = this.value;">
+                    <div class="setting-row"><span class="label">📊 Процентная ставка</span><span class="value" id="rateDisplay">${data.bank.rate || 0}%</span></div>
+                    <input type="range" min="0.1" max="50" step="0.1" value="${data.bank.rate || 0}" oninput="document.getElementById('rateDisplay').innerText = this.value + '%'; document.getElementById('rateValue').value = this.value;">
                     <input type="hidden" id="rateValue" value="${data.bank.rate || 0}">
-                    
-                    <div class="setting-row">
-                        <span class="label">💰 Минимальный кредит</span>
-                        <input type="number" id="minLoanInput" value="${data.bank.min_loan || 10000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;">
-                    </div>
-                    <div class="setting-row">
-                        <span class="label">💰 Максимальный кредит</span>
-                        <input type="number" id="maxLoanInput" value="${data.bank.max_loan || 1000000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;">
-                    </div>
+                    <div class="setting-row"><span class="label">💰 Минимальный кредит</span><input type="number" id="minLoanInput" value="${data.bank.min_loan || 10000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;"></div>
+                    <div class="setting-row"><span class="label">💰 Максимальный кредит</span><input type="number" id="maxLoanInput" value="${data.bank.max_loan || 1000000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;"></div>
                 </div>
                 <button class="btn-gold" onclick="saveBankSettings('${bankId}')">💾 Сохранить настройки</button>
                 <button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;" onclick="upgradeBank('${bankId}')">🚀 Улучшить банк (10,000,000 💰)</button>
                 <button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="hireEmployee('${bankId}')">👨‍💼 Нанять сотрудника (5,000,000 💰)</button>
             `;
             document.getElementById('modalBankSettings').style.display = 'block';
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки настроек!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки настроек!"); }
     }
 
     async function saveBankSettings(bankId) {
         const rate = parseFloat(document.getElementById('rateValue').value) || 0;
         const minLoan = parseInt(document.getElementById('minLoanInput').value) || 10000;
         const maxLoan = parseInt(document.getElementById('maxLoanInput').value) || 1000000;
-
         if (minLoan > maxLoan) return showCustomAlert("ОШИБКА", "Мин. кредит не может быть больше макс. кредита!");
         if (minLoan < 1000) return showCustomAlert("ОШИБКА", "Мин. кредит должен быть не менее 1,000 фишек!");
         if (maxLoan > 100000000) return showCustomAlert("ОШИБКА", "Макс. кредит не может превышать 100,000,000 фишек!");
-
         try {
-            const res = await apiRequest(`${API_BASE}/bank/settings`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId, rate: rate, min_loan: minLoan, max_loan: maxLoan })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/settings`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, rate: rate, min_loan: minLoan, max_loan: maxLoan }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "✅ НАСТРОЙКИ" : "ОШИБКА", data.message);
@@ -3234,10 +4054,7 @@
     async function upgradeBank(bankId) {
         if (!confirm("Улучшить банк за 10,000,000 фишек?")) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/upgrade`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/upgrade`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "🚀 УЛУЧШЕНИЕ" : "ОШИБКА", data.message);
@@ -3248,10 +4065,7 @@
     async function hireEmployee(bankId) {
         if (!confirm("Нанять сотрудника за 5,000,000 фишек?")) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/hire`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/hire`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "👨‍💼 СОТРУДНИК" : "ОШИБКА", data.message);
@@ -3262,9 +4076,7 @@
     function selectTerm(days) {
         selectedTerm = days;
         document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.term-btn').forEach(b => {
-            if (b.dataset.days == days) b.classList.add('active');
-        });
+        document.querySelectorAll('.term-btn').forEach(b => { if (b.dataset.days == days) b.classList.add('active'); });
         updateLoanCalc();
     }
 
@@ -3289,33 +4101,18 @@
             <div class="loan-loading">
                 <div class="spinner"></div>
                 <div style="font-weight:700;color:#fff;font-size:16px;">⏳ Проверка данных...</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="loanProgressFill" style="width:0%;"></div>
-                </div>
+                <div class="progress-bar"><div class="progress-fill" id="loanProgressFill" style="width:0%;"></div></div>
                 <div class="status-text" id="loanStatusText">🔍 Проверка кредитной истории...</div>
             </div>
         `;
-        
-        const statuses = [
-            '🔍 Проверка кредитной истории...',
-            '📊 Анализ платежеспособности...',
-            '💳 Проверка активных кредитов...',
-            '🏦 Обработка запроса...',
-            '✅ Одобрение кредита...'
-        ];
-        
-        let step = 0;
+        const statuses = ['🔍 Проверка кредитной истории...', '📊 Анализ платежеспособности...', '💳 Проверка активных кредитов...', '🏦 Обработка запроса...', '✅ Одобрение кредита...'];
         const interval = setInterval(() => {
             progress += Math.random() * 8 + 5;
             if (progress > 100) progress = 100;
             document.getElementById('loanProgressFill').style.width = progress + '%';
             const statusIdx = Math.min(Math.floor(progress / 20), statuses.length - 1);
             document.getElementById('loanStatusText').textContent = statuses[statusIdx];
-            
-            if (progress >= 100) {
-                clearInterval(interval);
-                setTimeout(callback, 500);
-            }
+            if (progress >= 100) { clearInterval(interval); setTimeout(callback, 500); }
         }, 200);
     }
 
@@ -3325,17 +4122,11 @@
             if (!res) return;
             const data = await res.json();
             if (data.error) return showCustomAlert("ОШИБКА", data.error);
-
             const container = document.getElementById('loanContent');
             container.innerHTML = `
                 <div class="section-title" style="text-align:center;font-size:16px;">💰 Взять кредит</div>
-                <div style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:10px;">
-                    Банк: <b style="color:#ffe066;">${data.bank.name}</b>
-                </div>
-                <div class="bank-detail-section" style="margin:10px 0;">
-                    <div class="label">📊 Процентная ставка</div>
-                    <div class="value" id="loanRateDisplay">${data.bank.rate || 0}%</div>
-                </div>
+                <div style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:10px;">Банк: <b style="color:#ffe066;">${data.bank.name}</b></div>
+                <div class="bank-detail-section" style="margin:10px 0;"><div class="label">📊 Процентная ставка</div><div class="value" id="loanRateDisplay">${data.bank.rate || 0}%</div></div>
                 <label style="font-size:12px;color:var(--text-muted);">Срок кредита:</label>
                 <div class="term-selector">
                     <button class="term-btn active" data-days="1" onclick="selectTerm(1)">1 день</button>
@@ -3361,42 +4152,23 @@
             document.querySelector('.term-btn[data-days="1"]').classList.add('active');
             updateLoanCalc();
             document.getElementById('loanAmountDisplay').innerText = (data.bank.min_loan || 10000).toLocaleString();
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки кредита!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки кредита!"); }
     }
 
     async function confirmLoanWithLoading(bankId) {
         const amount = parseInt(document.getElementById('loanAmountInput').value);
-        if (!amount || amount < 10000) {
-            showCustomAlert("ОШИБКА", "Минимальная сумма 10,000 фишек!");
-            return;
-        }
-        
+        if (!amount || amount < 10000) { showCustomAlert("ОШИБКА", "Минимальная сумма 10,000 фишек!"); return; }
         showLoanLoading(async () => {
             try {
-                const res = await apiRequest(`${API_BASE}/bank/apply_loan`, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        user_id: userId,
-                        bank_id: bankId,
-                        amount: amount,
-                        term_days: selectedTerm
-                    })
-                });
+                const res = await apiRequest(`${API_BASE}/bank/apply_loan`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: amount, term_days: selectedTerm }) });
                 if (!res) return;
                 const data = await res.json();
-                if (!data.success) {
-                    showCustomAlert("❌ ОТКАЗ", data.message);
-                    return;
-                }
+                if (!data.success) { showCustomAlert("❌ ОТКАЗ", data.message); return; }
                 showCustomAlert("✅ КРЕДИТ ОДОБРЕН!", data.message);
                 closeModal('modalLoan');
                 refreshUserData();
                 openBankDetail(bankId);
-            } catch(e) {
-                showCustomAlert("ОШИБКА", "Ошибка оформления кредита!");
-            }
+            } catch(e) { showCustomAlert("ОШИБКА", "Ошибка оформления кредита!"); }
         });
     }
 
@@ -3405,7 +4177,6 @@
             const res = await apiRequest(`${API_BASE}/bank/my_loans?user_id=${userId}&bank_id=${bankId}`);
             if (!res) return;
             const data = await res.json();
-
             let html = `<div class="section-title" style="font-size:16px;">📋 Мои кредиты</div>`;
             if (!data.loans || data.loans.length === 0) {
                 html += `<p style="color:var(--text-muted);text-align:center;padding:20px;">У вас нет кредитов в этом банке</p>`;
@@ -3427,30 +4198,21 @@
                 });
             }
             html += `<button class="btn-dark" style="margin-top:10px;" onclick="closeModal('modalBank'); openBankDetail('${bankId}')">🔙 Назад</button>`;
-
             const container = document.getElementById('loanContent');
             container.innerHTML = html;
             document.getElementById('modalLoan').style.display = 'block';
-
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки кредитов!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки кредитов!"); }
     }
 
     async function payLoan(loanId) {
         if (!confirm("Вы уверены, что хотите погасить кредит?")) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/pay_loan`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, loan_id: loanId })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/pay_loan`, { method: 'POST', body: JSON.stringify({ user_id: userId, loan_id: loanId }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "✅ ОПЛАЧЕНО" : "ОШИБКА", data.message);
             if (data.success) { refreshUserData(); closeModal('modalLoan'); }
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка оплаты кредита!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка оплаты кредита!"); }
     }
 
     async function openBankSystem() {
@@ -3469,29 +4231,22 @@
     async function loadBanksList() {
         const container = document.getElementById('bankContent');
         container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Загрузка...</p>';
-
         try {
             const res = await apiRequest(`${API_BASE}/bank/list`);
             if (!res) return;
             const data = await res.json();
-
             if (!data.banks || data.banks.length === 0) {
                 container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных банков. Стань первым! 🏦</p>';
                 return;
             }
-
             container.innerHTML = '';
             data.banks.forEach(bank => {
                 const card = document.createElement('div');
                 card.className = 'bank-card';
                 let avatarHtml = '';
-                if (bank.avatar_data) {
-                    avatarHtml = `<img src="${bank.avatar_data}" alt="Avatar">`;
-                } else if (bank.avatar) {
-                    avatarHtml = bank.avatar;
-                } else {
-                    avatarHtml = '🏛';
-                }
+                if (bank.avatar_data) avatarHtml = `<img src="${bank.avatar_data}" alt="Avatar">`;
+                else if (bank.avatar) avatarHtml = bank.avatar;
+                else avatarHtml = '🏛';
                 card.innerHTML = `
                     <div class="bank-header">
                         <div class="bank-avatar">${avatarHtml}</div>
@@ -3508,7 +4263,6 @@
                 `;
                 container.appendChild(card);
             });
-
         } catch(e) {
             container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Ошибка загрузки банков</p>';
         }
@@ -3520,59 +4274,31 @@
             if (!res) return;
             const data = await res.json();
             if (data.error) return showCustomAlert("ОШИБКА", data.error);
-
             const container = document.getElementById('bankDetailContent');
             const isOwner = data.is_owner;
             const hasAccount = data.has_account;
             const clientBalance = data.bank?.client_deposits?.[userId] || 0;
-
             let avatarHtml = '';
-            if (data.bank?.avatar_data) {
-                avatarHtml = `<img src="${data.bank.avatar_data}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-            } else if (data.bank?.avatar) {
-                avatarHtml = data.bank.avatar;
-            } else {
-                avatarHtml = '🏛';
-            }
-
+            if (data.bank?.avatar_data) avatarHtml = `<img src="${data.bank.avatar_data}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            else if (data.bank?.avatar) avatarHtml = data.bank.avatar;
+            else avatarHtml = '🏛';
             let html = `
                 <div style="text-align:center;margin-bottom:15px;">
                     <div style="font-size:48px;width:80px;height:80px;margin:0 auto;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ffe066);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #f59e0b;">${avatarHtml}</div>
                     <div style="font-size:22px;font-weight:800;color:#ffe066;margin-top:8px;">${data.bank.name}</div>
                     <div style="font-size:13px;color:var(--text-muted);">Владелец: ${data.bank.owner_name}</div>
                 </div>
-                <div class="bank-detail-section">
-                    <div class="label">💰 Казна банка</div>
-                    <div class="value">${(data.bank.treasury || 0).toLocaleString()} фишек</div>
-                </div>
-                ${hasAccount ? `
-                <div class="bank-detail-section" style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);">
-                    <div class="label">💳 Ваш баланс на счете</div>
-                    <div class="value" style="color:#10b981;">${clientBalance.toLocaleString()} фишек</div>
-                </div>
-                ` : ''}
+                <div class="bank-detail-section"><div class="label">💰 Казна банка</div><div class="value">${(data.bank.treasury || 0).toLocaleString()} фишек</div></div>
+                ${hasAccount ? `<div class="bank-detail-section" style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);"><div class="label">💳 Ваш баланс на счете</div><div class="value" style="color:#10b981;">${clientBalance.toLocaleString()} фишек</div></div>` : ''}
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">📊 Процентная ставка</div>
-                        <div class="value">${(data.bank.rate || 0)}%</div>
-                    </div>
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">📋 Клиентов</div>
-                        <div class="value">${(data.bank.clients || 0)}</div>
-                    </div>
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">📊 Процентная ставка</div><div class="value">${(data.bank.rate || 0)}%</div></div>
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">📋 Клиентов</div><div class="value">${(data.bank.clients || 0)}</div></div>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">💰 Мин. кредит</div>
-                        <div class="value">${(data.bank.min_loan || 10000).toLocaleString()}</div>
-                    </div>
-                    <div class="bank-detail-section" style="margin:0;">
-                        <div class="label">💰 Макс. кредит</div>
-                        <div class="value">${(data.bank.max_loan || 1000000).toLocaleString()}</div>
-                    </div>
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">💰 Мин. кредит</div><div class="value">${(data.bank.min_loan || 10000).toLocaleString()}</div></div>
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">💰 Макс. кредит</div><div class="value">${(data.bank.max_loan || 1000000).toLocaleString()}</div></div>
                 </div>
             `;
-
             if (isOwner) {
                 html += `
                     <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankSettings('${bankId}')">⚙️ Управление банком</button>
@@ -3580,9 +4306,7 @@
                     <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromBank('${bankId}')">💸 Вывести (без налога)</button>
                 `;
             } else if (!hasAccount) {
-                html += `
-                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankAccount('${bankId}')">📂 Открыть счет</button>
-                `;
+                html += `<button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankAccount('${bankId}')">📂 Открыть счет</button>`;
             } else {
                 html += `
                     <div style="display:flex;gap:8px;margin-top:10px;">
@@ -3593,7 +4317,6 @@
                     <button class="btn-dark" style="margin-top:8px;padding:8px;font-size:12px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromClientAccount('${bankId}')">💸 Вывести со счета (5%)</button>
                 `;
             }
-
             if (data.user_loans && data.user_loans.length > 0) {
                 html += `<div class="section-title" style="font-size:14px;margin-top:15px;">📋 Мои кредиты в этом банке</div>`;
                 data.user_loans.forEach(loan => {
@@ -3612,23 +4335,16 @@
                     `;
                 });
             }
-
             container.innerHTML = html;
             document.getElementById('modalBank').style.display = 'block';
-
-        } catch(e) {
-            showCustomAlert("ОШИБКА", "Ошибка загрузки банка!");
-        }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки банка!"); }
     }
 
     async function depositToBankFromClient(bankId) {
         const amount = prompt("Введите сумму для пополнения счета (мин 1):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/deposit_from_client`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/deposit_from_client`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "💰 ПОПОЛНЕНИЕ" : "ОШИБКА", data.message);
@@ -3640,10 +4356,7 @@
         const amount = prompt("Введите сумму для вывода со счета (комиссия 5%):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
         try {
-            const res = await apiRequest(`${API_BASE}/bank/withdraw_from_client`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) })
-            });
+            const res = await apiRequest(`${API_BASE}/bank/withdraw_from_client`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) }) });
             if (!res) return;
             const data = await res.json();
             showCustomAlert(data.success ? "💸 ВЫВОД" : "ОШИБКА", data.message);
@@ -3652,7 +4365,255 @@
     }
 
     // ============================================================
-    // 24. ФИНАЛ
+    // 20. ОСТАЛЬНЫЕ ФУНКЦИИ (КВЕСТЫ, ОПЛАТА)
+    // ============================================================
+    async function claimDaily() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут получать награды!"); return; }
+        const res = await apiRequest(`${API_BASE}/claim_daily`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+        if (!res) return;
+        const data = await res.json();
+        showCustomAlert("НАГРАДА", data.message);
+        refreshUserData();
+    }
+
+    async function claimQuest(questId) {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут выполнять квесты!"); return; }
+        const res = await apiRequest(`${API_BASE}/claim_quest`, { method: 'POST', body: JSON.stringify({ user_id: userId, quest_id: questId }) });
+        if (!res) return;
+        const data = await res.json();
+        if (data.error) return showCustomAlert("ОШИБКА", data.error);
+        showCustomAlert("КВЕСТ ВЫПОЛНЕН!", `Получено +${data.reward} фишек.`);
+        refreshUserData();
+    }
+
+    function openDonateModal() { 
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут пополнять баланс!"); return; }
+        document.getElementById('modalDonate').style.display = 'block'; 
+    }
+
+    async function processStarsDonate() {
+        if (isGuest) return;
+        let stars = parseInt(document.getElementById('starsAmount').value);
+        if (!stars || stars <= 0) return showCustomAlert("ОШИБКА", "Укажите число Stars");
+        try {
+            const res = await apiRequest(`${API_BASE}/create_stars_invoice`, { method: 'POST', body: JSON.stringify({ user_id: userId, stars: stars }) });
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            tg.openInvoice(data.invoice_link, (status) => {
+                if (status === 'paid') { showCustomAlert("ПОПОЛНЕНИЕ", "Оплата прошла успешно!"); closeModal('modalDonate'); refreshUserData(); }
+            });
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка оплаты"); }
+    }
+
+    // ============================================================
+    // 21. PVP АРЕНА (ИСПРАВЛЕННАЯ)
+    // ============================================================
+    function openArena() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
+        document.getElementById('modalArena').style.display = 'block';
+        updateArenaState();
+        if (arenaInterval) clearInterval(arenaInterval);
+        arenaInterval = setInterval(updateArenaState, 1000);
+        arenaSpinInProgress = false;
+    }
+
+    function arenaSetBet(multiplier) {
+        let input = document.getElementById('arenaBet');
+        let current = parseFloat(input.value) || 10;
+        if (multiplier === 'max') {
+            let bal = parseInt(document.getElementById('headerBalance').innerText.replace(/,/g, ''));
+            if (bal > 0) input.value = bal;
+            return;
+        }
+        input.value = Math.round(current * multiplier);
+        document.getElementById('arenaBetDisplay').innerText = input.value;
+    }
+
+    function arenaAddBet(amount) {
+        let input = document.getElementById('arenaBet');
+        let current = parseInt(input.value) || 0;
+        input.value = current + amount;
+        document.getElementById('arenaBetDisplay').innerText = input.value;
+    }
+
+    async function updateArenaState() {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/arena/state`);
+            if (!res) return;
+            const data = await res.json();
+            
+            document.getElementById('arenaTotalBank').innerText = data.total_bank.toLocaleString();
+            let winnerPrize = Math.round(data.total_bank * 0.95);
+            document.getElementById('arenaWinnerPrize').innerText = winnerPrize.toLocaleString();
+            updateArenaChips(data.players);
+            
+            let statusText = document.getElementById('arenaStatusText');
+            let timerDisplay = document.getElementById('arenaTimerDisplay');
+            
+            if (data.players.length === 0) {
+                statusText.textContent = '⏳ Ожидание игроков...';
+                timerDisplay.textContent = '';
+                arenaSpinInProgress = false;
+            } else if (data.players.length === 1) {
+                statusText.textContent = `👤 1 игрок в столе. Ожидание соперника...`;
+                timerDisplay.textContent = '';
+                arenaSpinInProgress = false;
+            } else if (data.status === 'countdown' || data.status === 'waiting') {
+                statusText.textContent = `👥 ${data.players.length} игроков в столе`;
+                timerDisplay.textContent = data.timer > 0 ? `⏱ ${data.timer} сек` : '⏳ Ожидание...';
+                
+                if (data.timer === 0 && data.players.length >= 2 && !arenaSpinInProgress) {
+                    arenaSpinInProgress = true;
+                    statusText.textContent = '🎡 Колесо крутится!';
+                    timerDisplay.textContent = '⚡ Момент истины!';
+                    
+                    const wheel = document.getElementById('arenaWheel');
+                    if (wheel) {
+                        drawArenaWheel(data.players);
+                        wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0.99, 0.18, 0.99)';
+                        const degrees = 360 * 3 + Math.random() * 360;
+                        wheel.style.transform = `rotate(${degrees}deg)`;
+                    }
+                    
+                    setTimeout(async () => {
+                        if (data.players.length >= 2) {
+                            try {
+                                const spinRes = await apiRequest(`${API_BASE}/arena/spin`, { method: 'POST' });
+                                if (spinRes) {
+                                    const spinData = await spinRes.json();
+                                    if (spinData.winner) {
+                                        const winnerName = spinData.winner.first_name || spinData.winner.username || 'Игрок';
+                                        const prize = spinData.winner_prize || 0;
+                                        statusText.innerHTML = `🏆 <span class="arena-winner-announce">ПОБЕДИТЕЛЬ: ${winnerName}! 🎉</span>`;
+                                        timerDisplay.textContent = `💰 +${prize.toLocaleString()} фишек!`;
+                                        spawnConfetti(80);
+                                        showCustomAlert("🏆 ПОБЕДИТЕЛЬ!", `${winnerName} выиграл ${prize.toLocaleString()} фишек! 🎉`);
+                                        refreshUserData();
+                                    }
+                                }
+                            } catch(e) { console.error('Spin error:', e); }
+                        }
+                        arenaSpinInProgress = false;
+                    }, 4000);
+                }
+            } else if (data.status === 'spinning') {
+                if (!arenaSpinInProgress) {
+                    statusText.textContent = '🎡 Колесо крутится!';
+                    timerDisplay.textContent = '⚡ Момент истины!';
+                    arenaSpinInProgress = true;
+                }
+            }
+            
+            let joinBtn = document.getElementById('arenaJoinBtn');
+            let leaveBtn = document.getElementById('arenaLeaveBtn');
+            let joined = data.players.some(p => String(p.user_id) === String(userId));
+            
+            if (joined) {
+                joinBtn.style.display = 'none';
+                if (data.can_leave && data.players.length < 2 && data.status !== 'spinning' && !arenaSpinInProgress) {
+                    leaveBtn.style.display = 'block';
+                    leaveBtn.disabled = false;
+                } else {
+                    leaveBtn.style.display = 'block';
+                    leaveBtn.disabled = true;
+                    leaveBtn.textContent = arenaSpinInProgress ? '⛔ Идёт спин...' : '🔒 Деньги в банке';
+                }
+            } else {
+                joinBtn.style.display = 'block';
+                joinBtn.disabled = arenaSpinInProgress || data.status === 'spinning';
+                leaveBtn.style.display = 'none';
+            }
+            
+            let betVal = parseInt(document.getElementById('arenaBet').value) || 10;
+            document.getElementById('arenaBetDisplay').innerText = betVal;
+            
+        } catch(e) { console.error(e); }
+    }
+
+    function updateArenaChips(players) {
+        const container = document.getElementById('arenaPlayersChips');
+        container.innerHTML = '';
+        if (!players || players.length === 0) {
+            container.innerHTML = '<span style="color:var(--text-muted);font-size:12px;">Нет игроков</span>';
+            return;
+        }
+        players.forEach(p => {
+            const chip = document.createElement('div');
+            chip.className = 'arena-player-chip';
+            const isMe = String(p.user_id) === String(userId);
+            if (isMe) chip.style.borderColor = '#ffe066';
+            const avatarHtml = p.photo_url ? `<img src="${p.photo_url}" alt="">` : (p.first_name ? p.first_name.charAt(0).toUpperCase() : '?');
+            chip.innerHTML = `
+                <div class="chip-avatar">${avatarHtml}</div>
+                <span>${p.first_name || 'Игрок'}${isMe ? ' (Вы)' : ''}</span>
+                <span class="chip-chance">${p.chance || 0}%</span>
+                <span class="chip-bet">${p.bet}💰</span>
+            `;
+            container.appendChild(chip);
+        });
+    }
+
+    function drawArenaWheel(players) {
+        const wheel = document.getElementById('arenaWheel');
+        const total = players.reduce((sum, p) => sum + p.bet, 0);
+        if (total === 0 || !players || players.length === 0) {
+            wheel.style.background = 'conic-gradient(#1a1a2a 0deg 360deg)';
+            return;
+        }
+        let conicColors = [];
+        let currentAngle = 0;
+        const colors = ['#f59e0b', '#3b82f6', '#ef4444', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+        players.forEach((p, index) => {
+            const percentage = (p.bet / total) * 100;
+            const color = colors[index % colors.length];
+            const startDeg = currentAngle;
+            const endDeg = currentAngle + (percentage * 3.6);
+            conicColors.push(`${color} ${startDeg}deg ${endDeg}deg`);
+            currentAngle = endDeg;
+        });
+        if (conicColors.length > 0) {
+            wheel.style.background = `conic-gradient(${conicColors.join(', ')})`;
+        }
+    }
+
+    async function arenaJoin() {
+        if (isGuest) return;
+        if (arenaSpinInProgress) {
+            showCustomAlert("ОШИБКА", "Сейчас идет спин! Подождите.");
+            return;
+        }
+        let bet = parseInt(document.getElementById('arenaBet').value);
+        if (!bet || bet < 10) return showCustomAlert("ОШИБКА", "Минимальная ставка = 10 фишек!");
+        try {
+            const res = await apiRequest(`${API_BASE}/arena/join`, { method: 'POST', body: JSON.stringify({ user_id: userId, bet: bet }) });
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            showCustomAlert("PvP АРЕНА", "Вы успешно вступили в стол!");
+            refreshUserData();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка входа в Арену!"); }
+    }
+
+    async function arenaLeave() {
+        if (isGuest) return;
+        if (arenaSpinInProgress) {
+            showCustomAlert("ОШИБКА", "Нельзя выйти во время спина!");
+            return;
+        }
+        try {
+            const res = await apiRequest(`${API_BASE}/arena/leave`, { method: 'POST', body: JSON.stringify({ user_id: userId }) });
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            showCustomAlert("🚪 ВЫХОД", data.message || "Вы вышли из игры");
+            refreshUserData();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка выхода!"); }
+    }
+
+    // ============================================================
+    // 22. ФИНАЛ
     // ============================================================
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);
@@ -3660,6 +4621,11 @@
     console.log('🎡 PvP Арена полностью исправлена!');
     console.log('🛡 Система заместителя загружена!');
     console.log('🚫 Система блокировки загружена!');
+    console.log('🚀 Игра КРАШ загружена!');
+    console.log('🪙 Игра МОНЕТКА загружена!');
+    console.log('🎲 Игра КОСТИ загружена!');
+    console.log('🏗️ Игра БАШНЯ загружена!');
+    console.log('⚡ Игра АПГРЕЙД загружена!');
     </script>
 </body>
 </html>

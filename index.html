@@ -23,10 +23,355 @@
             --guest-color: #6b7280;
             --arena-green: #0d7a3e;
             --arena-gold: #ffd700;
+            --ban-red: #dc2626;
+            --ban-bg: #1a0a0a;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: 'Montserrat', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 85px; overflow-x: hidden; }
+
+        /* ===== BAN OVERLAY ===== */
+        #banOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0000;
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+            animation: banFadeIn 0.5s ease;
+        }
+        #banOverlay.show { display: flex; }
+        @keyframes banFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        #banOverlay .ban-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: banPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes banPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        #banOverlay .ban-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ef4444;
+            text-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        #banOverlay .ban-text {
+            font-size: 16px;
+            color: #9ca3af;
+            line-height: 1.6;
+            max-width: 400px;
+            margin-bottom: 25px;
+        }
+        #banOverlay .ban-text strong {
+            color: #ef4444;
+        }
+        #banOverlay .ban-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        #banOverlay .ban-btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 140px;
+        }
+        #banOverlay .ban-btn:active { transform: scale(0.95); }
+        #banOverlay .ban-btn.contact {
+            background: var(--gold-gradient);
+            color: #000;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+        }
+        #banOverlay .ban-btn.exit {
+            background: #1a1a2a;
+            color: #fff;
+            border: 1px solid #333;
+        }
+        #banOverlay .ban-btn.exit:hover { background: #2a2a3a; }
+
+        /* ===== DEPUTY PANEL ===== */
+        .deputy-panel-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: 800;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            transition: transform 0.2s;
+        }
+        .deputy-panel-btn:active { transform: scale(0.97); }
+        .deputy-limits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .deputy-limit-card {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+        .deputy-limit-card .label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .deputy-limit-card .value {
+            font-size: 18px;
+            font-weight: 800;
+            color: #a78bfa;
+        }
+        .deputy-limit-card .value.warning { color: #fbbf24; }
+        .deputy-limit-card .value.danger { color: #ef4444; }
+
+        /* ===== BAN STATUS BADGE ===== */
+        .ban-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .ban-badge.clean { background: rgba(16, 185, 129, 0.2); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
+
+        /* ===== SEARCH RESULT CARD ===== */
+        .search-result-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 12px;
+            border: 1px solid rgba(245, 158, 11, 0.15);
+        }
+        .search-result-card .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .search-result-card .avatar-lg {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #252530;
+            border: 2px solid #f59e0b;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: #f59e0b;
+            flex-shrink: 0;
+        }
+        .search-result-card .avatar-lg img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .search-result-card .name {
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .search-result-card .id {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+        .search-result-card .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+        .search-result-card .detail-grid .label {
+            color: var(--text-muted);
+        }
+        .search-result-card .detail-grid .value {
+            font-weight: 600;
+            color: #fff;
+            text-align: right;
+        }
+        .search-result-card .promo-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .search-result-card .promo-tag {
+            background: rgba(245, 158, 11, 0.12);
+            color: #ffe066;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid rgba(245, 158, 11, 0.15);
+        }
+        .search-result-card .bank-status {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .search-result-card .bank-status.has { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .search-result-card .bank-status.no { background: rgba(107, 114, 128, 0.15); color: var(--text-muted); }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .stats-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stats-card .num {
+            font-size: 22px;
+            font-weight: 900;
+            color: #ffe066;
+        }
+        .stats-card .label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* ===== ADMIN SUB-MENU ===== */
+        .admin-sub-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin: 10px 0;
+        }
+        .admin-sub-btn {
+            padding: 10px 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--card-bg);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .admin-sub-btn:active { transform: scale(0.95); background: #1e1e2e; }
+        .admin-sub-btn.danger { border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+        .admin-sub-btn.danger:active { background: rgba(239, 68, 68, 0.1); }
+        .admin-sub-btn.gold { border-color: rgba(245, 158, 11, 0.3); color: #ffe066; }
+        .admin-sub-btn.gold:active { background: rgba(245, 158, 11, 0.1); }
+        .admin-sub-btn.purple { border-color: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+        .admin-sub-btn.purple:active { background: rgba(139, 92, 246, 0.1); }
+
+        .ban-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        .ban-opt-btn {
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--card-bg);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .ban-opt-btn:active { transform: scale(0.95); }
+        .ban-opt-btn.active { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+        .ban-type-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        .ban-type-btn {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--card-bg);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .ban-type-btn:active { transform: scale(0.95); }
+        .ban-type-btn.simple { border-color: rgba(245, 158, 11, 0.3); }
+        .ban-type-btn.wipe { border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+        .ban-type-btn.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+
+        .ban-confirm-row {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .ban-confirm-row .btn-gold { flex: 1; margin: 0; }
+        .ban-confirm-row .btn-red { flex: 1; margin: 0; }
+
+        /* ===== MUFFLE ===== */
+        .mute-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            margin: 8px 0;
+        }
+        .mute-opt-btn {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--card-bg);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .mute-opt-btn:active { transform: scale(0.95); }
+        .mute-opt-btn.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
 
         .guest-badge { background: rgba(107,114,128,0.3); border: 1px solid var(--guest-color); color: var(--guest-color); font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-left: 6px; }
 
@@ -588,6 +933,20 @@
 </head>
 <body>
 
+    <!-- ===== BAN OVERLAY ===== -->
+    <div id="banOverlay">
+        <div class="ban-icon">🚫</div>
+        <div class="ban-title">ДОСТУП ЗАБЛОКИРОВАН</div>
+        <div class="ban-text">
+            Вы были заблокированы в нашем <strong>spnxplay bot</strong> за нарушение правил.<br><br>
+            Если вы считаете, что блокировка ошибочна, свяжитесь с создателем.
+        </div>
+        <div class="ban-buttons">
+            <button class="ban-btn contact" onclick="contactOwner()">📩 Написать владельцу</button>
+            <button class="ban-btn exit" onclick="closeApp()">🚪 Выйти</button>
+        </div>
+    </div>
+
     <div class="custom-alert-overlay" id="customAlert">
         <div class="custom-alert-box">
             <div class="custom-alert-title" id="alertTitle">УВЕДОМЛЕНИЕ</div>
@@ -606,6 +965,7 @@
                 <div id="headerName" style="font-weight: 800; font-size: 14px;">Игрок</div>
                 <div id="headerRank" style="font-size: 11px; color: #f59e0b; font-weight: 700;">Уровень 1</div>
                 <span id="guestBadge" class="guest-badge" style="display:none;">ГОСТЬ</span>
+                <span id="banBadge" class="ban-badge" style="display:none;">🚫 В БАНЕ</span>
             </div>
         </div>
         <div class="balance-pill" id="balancePill" onclick="refreshUserData()">
@@ -809,6 +1169,7 @@
                 <button class="btn-gold" id="promoBtn" onclick="openPromoModal()">🎟 Промокод</button>
             </div>
             <button class="btn-gold" id="btnAdminPanel" style="display:none;background:linear-gradient(135deg,#ef4444 0%,#b91c1c 100%);color:#fff;margin-top:10px;" onclick="openAdminModal()">👑 Админ</button>
+            <button class="deputy-panel-btn" id="btnDeputyPanel" style="display:none;" onclick="openDeputyPanel()">🛡 Панель заместителя</button>
         </div>
         <div class="section-title">Статистика</div>
         <div class="profile-card">
@@ -902,7 +1263,7 @@
         </div>
     </div>
 
-    <!-- ===== ARENA MODAL - ИСПРАВЛЕНА ===== -->
+    <!-- ===== ARENA MODAL ===== -->
     <div class="modal" id="modalArena">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalArena')">&times;</button>
@@ -965,15 +1326,79 @@
         </div>
     </div>
 
+    <!-- ===== ADMIN MODAL - ОБНОВЛЕНА ===== -->
     <div class="modal" id="modalAdmin">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('modalAdmin')">&times;</button>
-            <div class="section-title" style="text-align:center;color:#ef4444;">👑 Админ</div>
-            <button class="btn-gold" style="margin-bottom:10px;" onclick="adminAddMoneyPrompt()">💰 Выдать</button>
-            <button class="btn-gold" style="margin-bottom:10px;" onclick="adminCreatePromoPrompt()">🎟 Создать промо</button>
-            <button class="btn-gold" style="margin-bottom:10px;" onclick="adminUserInfoPrompt()">🔍 Инфо</button>
-            <button class="btn-gold" style="margin-bottom:10px;" onclick="adminUnmutePrompt()">🔊 Размутить</button>
-            <div id="adminOutput" style="margin-top:15px;background:#0b0c10;padding:10px;border-radius:10px;font-size:12px;display:none;text-align:left;"></div>
+            <div class="section-title" style="text-align:center;color:#ef4444;">👑 Админ-панель</div>
+            
+            <!-- Стандартные кнопки -->
+            <button class="btn-gold" style="margin-bottom:8px;" onclick="adminAddMoneyPrompt()">💰 Выдать фишки</button>
+            <button class="btn-gold" style="margin-bottom:8px;" onclick="adminCreatePromoPrompt()">🎟 Создать промокод</button>
+            
+            <!-- НОВАЯ КНОПКА: БЛОКИРОВКА -->
+            <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;" onclick="toggleBanMenu()">🚫 Блокировка</button>
+            <div id="banSubMenu" style="display:none;">
+                <div class="admin-sub-menu">
+                    <button class="admin-sub-btn danger" onclick="adminBanUser()">[1] Забанить</button>
+                    <button class="admin-sub-btn gold" onclick="adminUnbanUser()">[2] Разблокировать</button>
+                    <button class="admin-sub-btn" onclick="adminBanStatus()">[3] Статус</button>
+                </div>
+            </div>
+            
+            <!-- НОВАЯ КНОПКА: ДОСТУП (для создателя) -->
+            <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="adminAccessMenu()">🔑 Доступ</button>
+            
+            <!-- НОВАЯ КНОПКА: НАЙТИ (расширенный поиск) -->
+            <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;" onclick="adminFindUser()">🔍 Найти игрока</button>
+            
+            <!-- НОВАЯ КНОПКА: СТАТИСТИКА БОТА -->
+            <button class="btn-gold" style="margin-bottom:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;" onclick="adminBotStats()">📊 Статистика</button>
+            
+            <!-- Старая кнопка инфо (оставляем) -->
+            <button class="btn-gold" style="margin-bottom:8px;" onclick="adminUserInfoPrompt()">🔍 Инфо (старый)</button>
+            <button class="btn-gold" style="margin-bottom:8px;" onclick="adminUnmutePrompt()">🔊 Размутить</button>
+            
+            <div id="adminOutput" style="margin-top:15px;background:#0b0c10;padding:10px;border-radius:10px;font-size:12px;display:none;text-align:left;max-height:300px;overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <!-- ===== DEPUTY PANEL MODAL ===== -->
+    <div class="modal" id="modalDeputy">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalDeputy')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#a78bfa;">🛡 Панель заместителя</div>
+            <div id="deputyLimitsDisplay" class="deputy-limits"></div>
+            <button class="btn-gold" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="deputyAddChips()">💰 Выдать фишки</button>
+            <button class="btn-gold" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="deputyCreatePromo()">🎟 Создать промокод</button>
+            <div id="deputyOutput" style="margin-top:12px;background:#0b0c10;padding:10px;border-radius:10px;font-size:12px;display:none;text-align:left;"></div>
+        </div>
+    </div>
+
+    <!-- ===== BAN STATUS MODAL ===== -->
+    <div class="modal" id="modalBanStatus">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalBanStatus')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#ef4444;">🚫 Статус бана</div>
+            <div id="banStatusContent"></div>
+        </div>
+    </div>
+
+    <!-- ===== SEARCH RESULT MODAL ===== -->
+    <div class="modal" id="modalSearchResult">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalSearchResult')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#3b82f6;">🔍 Результат поиска</div>
+            <div id="searchResultContent"></div>
+        </div>
+    </div>
+
+    <!-- ===== STATS MODAL ===== -->
+    <div class="modal" id="modalStats">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modalStats')">&times;</button>
+            <div class="section-title" style="text-align:center;color:#10b981;">📊 Статистика бота</div>
+            <div id="statsContent"></div>
         </div>
     </div>
 
@@ -1032,6 +1457,12 @@
     let bankAvatarData = null;
     let arenaSpinInProgress = false;
 
+    // Переменные для бана
+    let banSubMenuOpen = false;
+    let selectedBanDuration = null;
+    let selectedBanType = null;
+    let banTargetUser = null;
+
     // ============================================================
     // 2. API ЗАПРОСЫ
     // ============================================================
@@ -1051,7 +1482,7 @@
     }
 
     // ============================================================
-    // 3. ПРОВЕРКА ДОСТУПА
+    // 3. ПРОВЕРКА ДОСТУПА И БАНА
     // ============================================================
     async function verifyAccess() {
         if (!INIT_DATA) {
@@ -1092,6 +1523,10 @@
                 document.getElementById('headerRank').style.color = '#6b7280';
                 applyGuestMode();
             }
+            
+            // Проверяем бан
+            await checkBanStatus();
+            
             return true;
         } catch(e) {
             isGuest = true;
@@ -1102,6 +1537,35 @@
             applyGuestMode();
             return true;
         }
+    }
+
+    async function checkBanStatus() {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/ban/status?user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.is_banned) {
+                showBanOverlay();
+                document.getElementById('banBadge').style.display = 'inline';
+                document.getElementById('banBadge').innerText = `🚫 В БАНЕ (${data.remaining})`;
+            } else {
+                document.getElementById('banBadge').style.display = 'none';
+            }
+        } catch(e) { console.error('Ban check error:', e); }
+    }
+
+    function showBanOverlay() {
+        document.getElementById('banOverlay').classList.add('show');
+        document.getElementById('banOverlay').style.display = 'flex';
+    }
+
+    function contactOwner() {
+        tg.openTelegramLink('https://t.me/dauletbr');
+    }
+
+    function closeApp() {
+        tg.close();
     }
 
     function applyGuestMode() {
@@ -1153,6 +1617,7 @@
             loadChatMessages();
             setInterval(loadChatMessages, 5000);
             updateBankButtons();
+            checkDeputyStatus();
         } else {
             document.getElementById('headerRank').innerText = 'Гость';
             document.getElementById('profRank').innerText = 'Гость';
@@ -1263,6 +1728,7 @@
             if (slotBalance) slotBalance.innerText = data.balance.toLocaleString();
 
             updateBankButtons();
+            checkDeputyStatus();
 
         } catch(e) { console.error(e); }
     }
@@ -1355,12 +1821,424 @@
     }
 
     // ============================================================
-    // 10. АДМИН
+    // 10. СИСТЕМА ЗАМЕСТИТЕЛЯ
+    // ============================================================
+    async function checkDeputyStatus() {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/user_data?user_id=${userId}&username=${userName}&first_name=${encodeURIComponent(userFirstName)}&photo_url=${encodeURIComponent(userPhoto)}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.is_deputy) {
+                document.getElementById('btnDeputyPanel').style.display = 'block';
+            } else {
+                document.getElementById('btnDeputyPanel').style.display = 'none';
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    function openDeputyPanel() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Доступ запрещён!"); return; }
+        document.getElementById('modalDeputy').style.display = 'block';
+        loadDeputyLimits();
+        document.getElementById('deputyOutput').style.display = 'none';
+    }
+
+    async function loadDeputyLimits() {
+        try {
+            const res = await apiRequest(`${API_BASE}/deputy/limits?user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            const container = document.getElementById('deputyLimitsDisplay');
+            container.innerHTML = `
+                <div class="deputy-limit-card">
+                    <div class="label">💰 Выдано сегодня</div>
+                    <div class="value ${data.remaining_chips < 10000 ? 'warning' : ''} ${data.remaining_chips <= 0 ? 'danger' : ''}">
+                        ${data.chips_given_today.toLocaleString()} / ${data.chips_limit.toLocaleString()}
+                    </div>
+                </div>
+                <div class="deputy-limit-card">
+                    <div class="label">🎟 Промокодов сегодня</div>
+                    <div class="value ${data.remaining_promos <= 0 ? 'danger' : ''}">
+                        ${data.promos_created_today} / ${data.promos_limit}
+                    </div>
+                </div>
+            `;
+        } catch(e) { console.error(e); }
+    }
+
+    async function deputyAddChips() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока:");
+        if (!target) return;
+        const amount = prompt("Сколько фишек выдать? (макс 50,000 в день):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        
+        const intAmount = parseInt(amount);
+        try {
+            const res = await apiRequest(`${API_BASE}/deputy/add_chips`, {
+                method: 'POST',
+                body: JSON.stringify({ deputy_id: userId, target: target, amount: intAmount })
+            });
+            if (!res) return;
+            const data = await res.json();
+            const out = document.getElementById('deputyOutput');
+            out.style.display = 'block';
+            out.innerHTML = data.success ? `✅ ${data.message}` : `❌ ${data.message}`;
+            if (data.success) { refreshUserData(); loadDeputyLimits(); }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка выдачи фишек!");
+        }
+    }
+
+    async function deputyCreatePromo() {
+        if (isGuest) return;
+        const reward = prompt("На сколько фишек промокод? (макс 50,000):");
+        if (!reward || isNaN(reward) || parseInt(reward) <= 0) return;
+        const code = prompt("Введите код промокода (начинается с #, латиница):");
+        if (!code) return;
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/deputy/create_promo`, {
+                method: 'POST',
+                body: JSON.stringify({ deputy_id: userId, code: code, reward: parseInt(reward) })
+            });
+            if (!res) return;
+            const data = await res.json();
+            const out = document.getElementById('deputyOutput');
+            out.style.display = 'block';
+            out.innerHTML = data.success ? `✅ ${data.message}` : `❌ ${data.message}`;
+            if (data.success) { loadDeputyLimits(); }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка создания промокода!");
+        }
+    }
+
+    // ============================================================
+    // 11. АДМИН - НОВЫЕ ФУНКЦИИ
+    // ============================================================
+
+    // 11.1 Блокировка - меню
+    function toggleBanMenu() {
+        banSubMenuOpen = !banSubMenuOpen;
+        document.getElementById('banSubMenu').style.display = banSubMenuOpen ? 'block' : 'none';
+    }
+
+    // 11.2 Забанить
+    function adminBanUser() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока:");
+        if (!target) return;
+        banTargetUser = target;
+        selectedBanDuration = null;
+        selectedBanType = null;
+        
+        // Выбор срока
+        const durationMsg = "Выберите срок бана:\n1 - Навсегда\n2 - 30 дней\n3 - 90 дней";
+        const durationChoice = prompt(durationMsg);
+        if (!durationChoice) return;
+        if (durationChoice === '1') selectedBanDuration = 'forever';
+        else if (durationChoice === '2') selectedBanDuration = 30;
+        else if (durationChoice === '3') selectedBanDuration = 90;
+        else { showCustomAlert("ОШИБКА", "Неверный выбор!"); return; }
+        
+        // Выбор типа бана
+        const typeMsg = "Выберите тип бана:\n1 - Простой бан\n2 - Бан + Обнуление";
+        const typeChoice = prompt(typeMsg);
+        if (!typeChoice) return;
+        if (typeChoice === '1') selectedBanType = 'simple';
+        else if (typeChoice === '2') selectedBanType = 'wipe';
+        else { showCustomAlert("ОШИБКА", "Неверный выбор!"); return; }
+        
+        // Подтверждение
+        const confirmMsg = `Вы уверены, что хотите заблокировать игрока ${target}?\nСрок: ${selectedBanDuration === 'forever' ? 'Навсегда' : selectedBanDuration + ' дней'}\nТип: ${selectedBanType === 'simple' ? 'Простой бан' : 'Бан + Обнуление'}`;
+        if (!confirm(confirmMsg)) return;
+        
+        // Отправка запроса
+        executeBan(target, selectedBanDuration, selectedBanType);
+    }
+
+    async function executeBan(target, duration, banType) {
+        try {
+            const res = await apiRequest(`${API_BASE}/ban/ban_user`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target, duration: duration, ban_type: banType })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ БАН" : "ОШИБКА", data.message);
+            if (data.success) {
+                document.getElementById('adminOutput').style.display = 'block';
+                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
+                // Проверяем, не забанен ли текущий пользователь
+                if (String(target) === String(userId)) {
+                    showBanOverlay();
+                }
+            }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка блокировки!");
+        }
+    }
+
+    // 11.3 Разблокировать
+    async function adminUnbanUser() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока для разблокировки:");
+        if (!target) return;
+        if (!confirm(`Разблокировать игрока ${target}?`)) return;
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/ban/unban_user`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ РАЗБАН" : "ОШИБКА", data.message);
+            if (data.success) {
+                document.getElementById('adminOutput').style.display = 'block';
+                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
+                // Обновляем статус бана
+                await checkBanStatus();
+            }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка разблокировки!");
+        }
+    }
+
+    // 11.4 Статус бана
+    async function adminBanStatus() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока:");
+        if (!target) return;
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/ban/ban_status?target=${target}`);
+            if (!res) return;
+            const data = await res.json();
+            
+            const container = document.getElementById('banStatusContent');
+            if (!data.success) {
+                container.innerHTML = `<p style="color:var(--text-muted);text-align:center;">${data.message}</p>`;
+            } else if (!data.is_banned) {
+                container.innerHTML = `<p style="color:#10b981;text-align:center;font-weight:700;">✅ Игрок не в бане</p>`;
+            } else {
+                container.innerHTML = `
+                    <div class="search-result-card">
+                        <div style="text-align:center;padding:10px;">
+                            <div style="font-size:48px;">🚫</div>
+                            <div style="color:#ef4444;font-weight:800;font-size:18px;">Игрок в бане!</div>
+                            <div class="detail-grid">
+                                <span class="label">Тип бана:</span>
+                                <span class="value">${data.ban_type === 'simple' ? 'Простой бан' : 'Бан + Обнуление'}</span>
+                                <span class="label">Срок:</span>
+                                <span class="value">${data.duration === 'forever' ? 'Навсегда' : data.duration + ' дней'}</span>
+                                <span class="label">Осталось:</span>
+                                <span class="value" style="color:#ef4444;">${data.remaining}</span>
+                                <span class="label">Причина:</span>
+                                <span class="value">${data.reason || 'Нарушение правил'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('modalBanStatus').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка проверки статуса!");
+        }
+    }
+
+    // 11.5 Доступ - назначение заместителя
+    function adminAccessMenu() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username будущего заместителя:");
+        if (!target) return;
+        if (!confirm(`Назначить игрока ${target} заместителем?`)) return;
+        
+        executeAssignDeputy(target);
+    }
+
+    async function executeAssignDeputy(target) {
+        try {
+            const res = await apiRequest(`${API_BASE}/admin/assign_deputy`, {
+                method: 'POST',
+                body: JSON.stringify({ admin_id: userId, admin_username: userName, target: target })
+            });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ ЗАМЕСТИТЕЛЬ" : "ОШИБКА", data.message);
+            if (data.success) {
+                document.getElementById('adminOutput').style.display = 'block';
+                document.getElementById('adminOutput').innerHTML = `✅ ${data.message}`;
+                // Обновляем статус зама
+                await checkDeputyStatus();
+            }
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка назначения заместителя!");
+        }
+    }
+
+    // 11.6 Расширенный поиск игрока
+    async function adminFindUser() {
+        if (isGuest) return;
+        const target = prompt("Введите ID или Username игрока для полного поиска:");
+        if (!target) return;
+        
+        try {
+            const res = await apiRequest(`${API_BASE}/admin/find_user?target=${target}`);
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) {
+                showCustomAlert("ОШИБКА", data.message);
+                return;
+            }
+            
+            const u = data.user;
+            const container = document.getElementById('searchResultContent');
+            const avatarHtml = u.photo_url ? `<img src="${u.photo_url}" alt="">` : (u.first_name ? u.first_name.charAt(0).toUpperCase() : '?');
+            const bankStatus = u.has_bank ? `<span class="bank-status has">✅ Есть банк (${(u.bank_treasury || 0).toLocaleString()}💰)</span>` : `<span class="bank-status no">❌ Нет банка</span>`;
+            const promoList = u.promos && u.promos.length > 0 ? u.promos.map(p => `<span class="promo-tag">${p}</span>`).join('') : 'Нет активированных промокодов';
+            const lastGame = u.last_game ? `${u.last_game.name || 'Неизвестно'}, ставка ${(u.last_game.bet || 0).toLocaleString()}, результат: ${u.last_game.result || '—'}` : 'Нет данных';
+            
+            container.innerHTML = `
+                <div class="search-result-card">
+                    <div class="header">
+                        <div class="avatar-lg">${avatarHtml}</div>
+                        <div>
+                            <div class="name">${u.first_name || 'Игрок'}</div>
+                            <div class="id">🆔 ${u.user_id}</div>
+                            ${u.username ? `<div style="font-size:13px;color:#3b82f6;">@${u.username}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="detail-grid">
+                        <span class="label">📅 Дата регистрации:</span>
+                        <span class="value">${u.registered_at ? new Date(u.registered_at * 1000).toLocaleString() : 'Нет данных'}</span>
+                        <span class="label">🕐 Последний вход:</span>
+                        <span class="value">${u.last_active ? new Date(u.last_active * 1000).toLocaleString() : 'Нет данных'}</span>
+                        <span class="label">🎮 Сыграно игр:</span>
+                        <span class="value">${u.total_games || 0}</span>
+                        <span class="label">💰 Баланс:</span>
+                        <span class="value" style="color:#ffe066;">${(u.balance || 0).toLocaleString()} 💰</span>
+                        <span class="label">⭐ Уровень:</span>
+                        <span class="value">${u.level || 1} (${u.xp || 0} XP)</span>
+                        <span class="label">🏆 Выиграно:</span>
+                        <span class="value">${(u.total_won || 0).toLocaleString()} 💰</span>
+                        <span class="label">📈 Профит:</span>
+                        <span class="value" style="color:${(u.total_won || 0) - (u.total_wagered || 0) >= 0 ? '#10b981' : '#ef4444'};">${((u.total_won || 0) - (u.total_wagered || 0)).toLocaleString()} 💰</span>
+                    </div>
+                    <div style="margin:8px 0;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
+                        <div style="font-size:12px;color:var(--text-muted);">🎯 Последняя игра:</div>
+                        <div style="font-size:13px;">${lastGame}</div>
+                    </div>
+                    <div style="margin:8px 0;">
+                        <div style="font-size:12px;color:var(--text-muted);">🎟 Промокоды:</div>
+                        <div class="promo-list">${promoList}</div>
+                    </div>
+                    <div style="margin:8px 0;">
+                        <div style="font-size:12px;color:var(--text-muted);">🏦 Банк:</div>
+                        <div style="margin-top:4px;">${bankStatus}</div>
+                    </div>
+                    ${u.is_banned ? `<div style="margin:8px 0;padding:8px;background:rgba(239,68,68,0.1);border-radius:8px;border:1px solid rgba(239,68,68,0.3);text-align:center;color:#ef4444;font-weight:700;">🚫 Игрок ЗАБЛОКИРОВАН (${u.ban_remaining || 'Навсегда'})</div>` : ''}
+                    ${u.is_deputy ? `<div style="margin:8px 0;padding:8px;background:rgba(139,92,246,0.1);border-radius:8px;border:1px solid rgba(139,92,246,0.3);text-align:center;color:#a78bfa;font-weight:700;">🛡 Заместитель</div>` : ''}
+                </div>
+            `;
+            document.getElementById('modalSearchResult').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка поиска!");
+        }
+    }
+
+    // 11.7 Статистика бота
+    async function adminBotStats() {
+        if (isGuest) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/admin/bot_stats`);
+            if (!res) return;
+            const data = await res.json();
+            if (!data.success) {
+                showCustomAlert("ОШИБКА", data.message);
+                return;
+            }
+            
+            const container = document.getElementById('statsContent');
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <div class="num">${data.total_users || 0}</div>
+                        <div class="label">👥 Всего аккаунтов</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="num">${data.guests || 0}</div>
+                        <div class="label">👤 Гостей</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="num">${data.full_users || 0}</div>
+                        <div class="label">✅ Полноценных</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="num">${data.banned_users || 0}</div>
+                        <div class="label">🚫 Забаненных</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="num">${data.deputies || 0}</div>
+                        <div class="label">🛡 Заместителей</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="num">${data.avg_session_time || '0'}</div>
+                        <div class="label">⏱ Среднее время сессии (мин)</div>
+                    </div>
+                </div>
+                <div style="background:rgba(245,158,11,0.05);border-radius:12px;padding:16px;margin:10px 0;border:1px solid rgba(245,158,11,0.1);text-align:center;">
+                    <div style="font-size:12px;color:var(--text-muted);">💰 Общая экономика бота</div>
+                    <div style="font-size:28px;font-weight:900;color:#ffe066;">${(data.total_economy || 0).toLocaleString()} 💰</div>
+                    <div style="font-size:11px;color:var(--text-muted);">(фишки у игроков + в банках)</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0;">
+                    <div style="background:rgba(16,185,129,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(16,185,129,0.1);">
+                        <div style="font-size:11px;color:var(--text-muted);">🎮 Активных сегодня</div>
+                        <div style="font-size:18px;font-weight:800;color:#10b981;">${data.active_today || 0}</div>
+                    </div>
+                    <div style="background:rgba(245,158,11,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(245,158,11,0.1);">
+                        <div style="font-size:11px;color:var(--text-muted);">🏆 Всего сыграно</div>
+                        <div style="font-size:18px;font-weight:800;color:#ffe066;">${(data.total_games || 0).toLocaleString()}</div>
+                    </div>
+                    <div style="background:rgba(59,130,246,0.05);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(59,130,246,0.1);">
+                        <div style="font-size:11px;color:var(--text-muted);">🏦 Банков создано</div>
+                        <div style="font-size:18px;font-weight:800;color:#3b82f6;">${data.total_banks || 0}</div>
+                    </div>
+                </div>
+                ${data.banned_list && data.banned_list.length > 0 ? `
+                <div style="margin-top:10px;">
+                    <div style="font-size:12px;color:var(--text-muted);">🚫 Забаненные игроки:</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+                        ${data.banned_list.map(id => `<span style="background:rgba(239,68,68,0.1);padding:2px 8px;border-radius:6px;font-size:11px;color:#ef4444;">${id}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                ${data.deputy_list && data.deputy_list.length > 0 ? `
+                <div style="margin-top:10px;">
+                    <div style="font-size:12px;color:var(--text-muted);">🛡 Заместители:</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+                        ${data.deputy_list.map(id => `<span style="background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:6px;font-size:11px;color:#a78bfa;">${id}</span>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            document.getElementById('modalStats').style.display = 'block';
+        } catch(e) {
+            showCustomAlert("ОШИБКА", "Ошибка загрузки статистики!");
+        }
+    }
+
+    // ============================================================
+    // 12. СТАРЫЕ АДМИН ФУНКЦИИ (сохраняем)
     // ============================================================
     function openAdminModal() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Доступ запрещён!"); return; }
         document.getElementById('modalAdmin').style.display = 'block'; 
         document.getElementById('adminOutput').style.display = 'none'; 
+        document.getElementById('banSubMenu').style.display = 'none';
+        banSubMenuOpen = false;
     }
 
     async function adminAddMoneyPrompt() {
@@ -1410,7 +2288,7 @@
     }
 
     // ============================================================
-    // 11. ОПЛАТА STARS
+    // 13. ОПЛАТА STARS
     // ============================================================
     function openDonateModal() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут пополнять баланс!"); return; }
@@ -1433,7 +2311,7 @@
     }
 
     // ============================================================
-    // 12. СЛОТЫ
+    // 14. СЛОТЫ
     // ============================================================
     function openSlots() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -1492,7 +2370,7 @@
     }
 
     // ============================================================
-    // 13. МИНЫ
+    // 15. МИНЫ
     // ============================================================
     let minesRestoreData = null;
 
@@ -1621,7 +2499,7 @@
     }
 
     // ============================================================
-    // 14. ПЛИНКО
+    // 16. ПЛИНКО
     // ============================================================
     function openPlinko() { 
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -1683,7 +2561,7 @@
     }
 
     // ============================================================
-    // 15. БЛЭКДЖЕК
+    // 17. БЛЭКДЖЕК
     // ============================================================
     function openBlackjack() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -1789,7 +2667,7 @@
     }
 
     // ============================================================
-    // 16. PVP АРЕНА - ИСПРАВЛЕНА ПОЛНОСТЬЮ
+    // 18. PVP АРЕНА
     // ============================================================
     function openArena() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут играть!"); return; }
@@ -1846,7 +2724,6 @@
                 statusText.textContent = `👥 ${data.players.length} игроков в столе`;
                 timerDisplay.textContent = data.timer > 0 ? `⏱ ${data.timer} сек` : '⏳ Ожидание...';
                 
-                // Автоматический спин при таймере 0
                 if (data.timer === 0 && data.players.length >= 2 && !arenaSpinInProgress) {
                     arenaSpinInProgress = true;
                     statusText.textContent = '🎡 Колесо крутится!';
@@ -1860,7 +2737,6 @@
                         wheel.style.transform = `rotate(${degrees}deg)`;
                     }
                     
-                    // Определяем победителя через 4 секунды
                     setTimeout(async () => {
                         if (data.players.length >= 2) {
                             try {
@@ -1999,7 +2875,7 @@
     }
 
     // ============================================================
-    // 17. КВЕСТЫ
+    // 19. КВЕСТЫ
     // ============================================================
     async function claimDaily() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут получать награды!"); return; }
@@ -2021,7 +2897,7 @@
     }
 
     // ============================================================
-    // 18. ЧАТ
+    // 20. ЧАТ
     // ============================================================
     function toggleChat() { if (chatOpen) closeChat(); else openChat(); }
     function openChat() { chatOpen = true; document.getElementById('chatSheet').classList.add('open'); document.getElementById('chatFab').style.display = 'none'; loadChatMessages(); if (!isGuest) document.getElementById('chatInput').focus(); }
@@ -2095,7 +2971,7 @@
     }
 
     // ============================================================
-    // 19. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
+    // 21. СВАЙП ДЛЯ ЗАКРЫТИЯ ЧАТА
     // ============================================================
     (function initChatDrag() {
         const sheet = document.getElementById('chatSheet');
@@ -2119,7 +2995,7 @@
     })();
 
     // ============================================================
-    // 20. КЛАВИШИ
+    // 22. КЛАВИШИ
     // ============================================================
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -2129,10 +3005,8 @@
     });
 
     // ============================================================
-    // 21. БАНКОВСКАЯ СИСТЕМА
+    // 23. БАНКОВСКАЯ СИСТЕМА (полная копия из твоего кода)
     // ============================================================
-
-    // Обновление кнопок на главном экране
     async function updateBankButtons() {
         if (isGuest) {
             document.getElementById('bankActionButtons').innerHTML = `
@@ -2167,7 +3041,6 @@
         }
     }
 
-    // ===== АВАТАРКА ИЗ ГАЛЕРЕИ =====
     function uploadBankAvatar(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -2241,7 +3114,6 @@
         }
     }
 
-    // ===== МОЯ КОМПАНИЯ =====
     async function openMyCompany() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут управлять компанией!"); return; }
         try {
@@ -2255,7 +3127,6 @@
         }
     }
 
-    // ===== ПОПОЛНЕНИЕ КАЗНЫ =====
     async function depositToBank(bankId) {
         const amount = prompt("Введите сумму для пополнения казны (мин 1):");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
@@ -2271,7 +3142,6 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    // ===== ВЫВОД ИЗ КАЗНЫ (для владельца без налога) =====
     async function withdrawFromBank(bankId) {
         const amount = prompt("Введите сумму для вывода:");
         if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
@@ -2287,7 +3157,6 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    // ===== ОТКРЫТИЕ СЧЕТА (с уникальным номером счета # для клиента) =====
     async function openBankAccount(bankId) {
         const accountName = prompt("Введите имя для счета (мин 2 символа):");
         if (!accountName || accountName.length < 2) return;
@@ -2303,7 +3172,6 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    // ===== НАСТРОЙКИ БАНКА =====
     async function openBankSettings(bankId) {
         try {
             const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
@@ -2391,7 +3259,6 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    // ===== КРЕДИТЫ =====
     function selectTerm(days) {
         selectedTerm = days;
         document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
@@ -2533,7 +3400,6 @@
         });
     }
 
-    // ===== МОИ КРЕДИТЫ =====
     async function openMyLoans(bankId) {
         try {
             const res = await apiRequest(`${API_BASE}/bank/my_loans?user_id=${userId}&bank_id=${bankId}`);
@@ -2587,7 +3453,6 @@
         }
     }
 
-    // ===== ОТКРЫТЬ БАНК =====
     async function openBankSystem() {
         if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать банки!"); return; }
         document.getElementById('bankMainScreen').style.display = 'none';
@@ -2619,7 +3484,6 @@
             data.banks.forEach(bank => {
                 const card = document.createElement('div');
                 card.className = 'bank-card';
-                // Проверяем аватарку - если avatar_data есть, используем её, иначе avatar
                 let avatarHtml = '';
                 if (bank.avatar_data) {
                     avatarHtml = `<img src="${bank.avatar_data}" alt="Avatar">`;
@@ -2662,7 +3526,6 @@
             const hasAccount = data.has_account;
             const clientBalance = data.bank?.client_deposits?.[userId] || 0;
 
-            // Аватарка
             let avatarHtml = '';
             if (data.bank?.avatar_data) {
                 avatarHtml = `<img src="${data.bank.avatar_data}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
@@ -2789,12 +3652,14 @@
     }
 
     // ============================================================
-    // 22. ФИНАЛ
+    // 24. ФИНАЛ
     // ============================================================
     console.log('🚀 spnxplay Mini App loaded successfully!');
     console.log(`👤 Режим: ${isGuest ? 'ГОСТЬ' : 'ИГРОК'}`);
     console.log('🏦 Банковская система загружена!');
     console.log('🎡 PvP Арена полностью исправлена!');
+    console.log('🛡 Система заместителя загружена!');
+    console.log('🚫 Система блокировки загружена!');
     </script>
 </body>
 </html>

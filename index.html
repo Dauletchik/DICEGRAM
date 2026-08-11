@@ -1277,67 +1277,67 @@
             </div>
         </div>
     </div>
-
-    <!-- ===== GAMES TAB ===== -->
-    <div id="tab-games" class="tab-content active">
-        <div class="nav-filter">
-            <button class="filter-btn active" id="btnFilterQuick" onclick="switchGameFilter('quick')">Быстрые игры</button>
-            <button class="filter-btn" id="btnFilterLive" onclick="switchGameFilter('live')">Live-игры</button>
-        </div>
-        <div id="sec-quick-games">
-            <div class="section-title">🎮 Классические</div>
-            <div class="games-grid">
-                <div class="game-card card-slots" id="gameSlots" onclick="openSlots()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><path fill="#ffe066" d="M19,8H5C3.34,8 2,9.34 2,11V18C2,19.66 3.34,21 5,21H19C20.66,21 22,19.66 22,18V11C22,9.34 20.66,8 19,8M11,17H7V13H11V17M17,17H13V13H17V17M13,5H11V3H13V5Z"/></svg>
-                    <div class="title">Слоты</div>
-                </div>
-                <div class="game-card card-mines" id="gameMines" onclick="openMines()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="14" r="7" fill="#ffe066"/><path d="M15,9 L18,6" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="5" r="2" fill="#ef4444"/></svg>
-                    <div class="title">Мины</div>
-                </div>
-                <div class="game-card card-plinko" id="gamePlinko" onclick="openPlinko()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12,3 2,21 22,21" fill="none" stroke="#ffe066" stroke-width="2"/><circle cx="12" cy="8" r="2" fill="#ffe066"/><circle cx="9" cy="13" r="2" fill="#ffe066"/><circle cx="15" cy="13" r="2" fill="#ffe066"/><circle cx="12" cy="18" r="2.5" fill="#34d399"/></svg>
-                    <div class="title">Плинко</div>
-                </div>
-                <div class="game-card card-blackjack" id="gameBlackjack" onclick="openBlackjack()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="2" fill="#ffffff"/><text x="6" y="14" fill="#000" font-weight="bold" font-size="10">A♠</text><rect x="9" y="4" width="12" height="16" rx="2" fill="#f87171"/><text x="12" y="14" fill="#fff" font-weight="bold" font-size="10">K♥</text></svg>
-                    <div class="title">Блэкджек</div>
-                </div>
+<!-- ===== GAMES TAB ===== -->
+<div id="tab-games" class="tab-content active">
+    <div class="nav-filter">
+        <button class="filter-btn active" id="btnFilterQuick" onclick="switchGameFilter('quick')">Быстрые игры</button>
+        <button class="filter-btn" id="btnFilterLive" onclick="switchGameFilter('live')">Live-игры</button>
+    </div>
+    <div id="sec-quick-games">
+        <div class="section-title">🎮 Классические</div>
+        <div class="games-grid">
+            <div class="game-card card-slots" id="gameSlots" onclick="openSlots()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path fill="#ffe066" d="M19,8H5C3.34,8 2,9.34 2,11V18C2,19.66 3.34,21 5,21H19C20.66,21 22,19.66 22,18V11C22,9.34 20.66,8 19,8M11,17H7V13H11V17M17,17H13V13H17V17M13,5H11V3H13V5Z"/></svg>
+                <div class="title">Слоты</div>
             </div>
-            <div class="section-title" style="margin-top:15px;">🚀 Новые игры</div>
-            <div class="games-grid">
-                <div class="game-card card-crash" id="gameCrash" onclick="openCrash()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12,3 2,21 22,21" fill="none" stroke="#ff6600" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="#ff6600"/><path d="M12,3 L12,12 L22,12" stroke="#ff6600" stroke-width="2"/></svg>
-                    <div class="title">Краш</div>
-                </div>
-                <div class="game-card card-coinflip" id="gameCoinFlip" onclick="openCoinFlip()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#ffe066" stroke-width="2"/><path d="M12,2 L12,22" stroke="#ffe066" stroke-width="2"/><text x="7" y="14" fill="#ffe066" font-weight="bold" font-size="8">О</text><text x="14" y="14" fill="#ffe066" font-weight="bold" font-size="8">Р</text></svg>
-                    <div class="title">Монетка</div>
-                </div>
-                <div class="game-card card-dice" id="gameDice" onclick="openDice()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="#10b981"/><circle cx="12" cy="12" r="2" fill="#10b981"/><circle cx="17" cy="17" r="2" fill="#10b981"/></svg>
-                    <div class="title">Кости</div>
-                </div>
-                <div class="game-card card-tower" id="gameTower" onclick="openTower()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><rect x="8" y="14" width="8" height="8" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="6" y="10" width="12" height="4" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="4" y="6" width="16" height="4" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="2" y="2" width="20" height="4" fill="none" stroke="#ef4444" stroke-width="2"/></svg>
-                    <div class="title">Башня</div>
-                </div>
-                <div class="game-card card-upgrade" id="gameUpgrade" onclick="openUpgrade()" style="grid-column: span 2;">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#a78bfa" stroke-width="2"/><path d="M12,3 L12,12 L19,12" stroke="#a78bfa" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#a78bfa"/></svg>
-                    <div class="title">Апгрейд</div>
-                </div>
+            <div class="game-card card-mines" id="gameMines" onclick="openMines()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="14" r="7" fill="#ffe066"/><path d="M15,9 L18,6" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/><circle cx="19" cy="5" r="2" fill="#ef4444"/></svg>
+                <div class="title">Мины</div>
+            </div>
+            <div class="game-card card-plinko" id="gamePlinko" onclick="openPlinko()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12,3 2,21 22,21" fill="none" stroke="#ffe066" stroke-width="2"/><circle cx="12" cy="8" r="2" fill="#ffe066"/><circle cx="9" cy="13" r="2" fill="#ffe066"/><circle cx="15" cy="13" r="2" fill="#ffe066"/><circle cx="12" cy="18" r="2.5" fill="#34d399"/></svg>
+                <div class="title">Плинко</div>
+            </div>
+            <div class="game-card card-blackjack" id="gameBlackjack" onclick="openBlackjack()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="12" height="16" rx="2" fill="#ffffff"/><text x="6" y="14" fill="#000" font-weight="bold" font-size="10">A♠</text><rect x="9" y="4" width="12" height="16" rx="2" fill="#f87171"/><text x="12" y="14" fill="#fff" font-weight="bold" font-size="10">K♥</text></svg>
+                <div class="title">Блэкджек</div>
             </div>
         </div>
-        <div id="sec-live-games" style="display: none;">
-            <div class="section-title">Live-игры</div>
-            <div class="games-grid">
-                <div class="game-card card-arena" id="gameArena" onclick="openArena()" style="grid-column: span 2;">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#ffe066" stroke-width="2"/><path d="M12,3 L12,12 L19,15" stroke="#ffe066" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#ef4444"/></svg>
-                    <div class="title">PvP Арена</div>
-                </div>
+        <div class="section-title" style="margin-top:15px;">🚀 Новые игры</div>
+        <div class="games-grid">
+            <div class="game-card card-crash" id="gameCrash" onclick="openCrash()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12,3 2,21 22,21" fill="none" stroke="#ff6600" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="#ff6600"/><path d="M12,3 L12,12 L22,12" stroke="#ff6600" stroke-width="2"/></svg>
+                <div class="title">Краш</div>
+            </div>
+            <div class="game-card card-coinflip" id="gameCoinFlip" onclick="openCoinFlip()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#ffe066" stroke-width="2"/><path d="M12,2 L12,22" stroke="#ffe066" stroke-width="2"/><text x="7" y="14" fill="#ffe066" font-weight="bold" font-size="8">О</text><text x="14" y="14" fill="#ffe066" font-weight="bold" font-size="8">Р</text></svg>
+                <div class="title">Монетка</div>
+            </div>
+            <div class="game-card card-dice" id="gameDice" onclick="openDice()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="#10b981" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="#10b981"/><circle cx="12" cy="12" r="2" fill="#10b981"/><circle cx="17" cy="17" r="2" fill="#10b981"/></svg>
+                <div class="title">Кости</div>
+            </div>
+            <div class="game-card card-tower" id="gameTower" onclick="openTower()">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="8" y="14" width="8" height="8" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="6" y="10" width="12" height="4" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="4" y="6" width="16" height="4" fill="none" stroke="#ef4444" stroke-width="2"/><rect x="2" y="2" width="20" height="4" fill="none" stroke="#ef4444" stroke-width="2"/></svg>
+                <div class="title">Башня</div>
+            </div>
+            <div class="game-card card-upgrade" id="gameUpgrade" onclick="openUpgrade()" style="grid-column: span 2;">
+                <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#a78bfa" stroke-width="2"/><path d="M12,3 L12,12 L19,12" stroke="#a78bfa" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#a78bfa"/></svg>
+                <div class="title">Апгрейд</div>
             </div>
         </div>
     </div>
+    <div id="sec-live-games" style="display: none;">
+        <div class="section-title">Live-игры</div>
+        <div class="games-grid">
+            <div class="game-card card-arena" id="gameArena" onclick="openArena()" style="grid-column: span 2;">
+                <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#ffe066" stroke-width="2"/><path d="M12,3 L12,12 L19,15" stroke="#ffe066" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#ef4444"/></svg>
+                <div class="title">PvP Арена</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ===== FRIENDS TAB ===== -->
 <div id="tab-friends" class="tab-content">
     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
@@ -1450,7 +1450,6 @@
         <div class="stat-row"><span>Макс выигрыш:</span><span id="statMaxWin">0 💰</span></div>
     </div>
 </div>
-
 <!-- ===== МОДАЛКИ СТАРЫХ ИГР ===== -->
 <div class="modal" id="modalSlots">
     <div class="modal-content">
@@ -3078,7 +3077,6 @@
             
             document.getElementById('crashMultiplier').innerText = currentMultiplier.toFixed(2) + 'x';
             
-            // Обновляем сумму выигрыша на кнопке
             if (crashBetPlaced) {
                 let bet = parseInt(document.getElementById('crashBet').value) || 10;
                 let winAmount = Math.round(bet * currentMultiplier);
@@ -3142,7 +3140,6 @@
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Сетка
         ctx.strokeStyle = 'rgba(255,255,255,0.05)';
         ctx.lineWidth = 1;
         for (let i = 0; i < 10; i++) {
@@ -3956,7 +3953,7 @@
     });
 
     // ============================================================
-    // 19. БАНКОВСКАЯ СИСТЕМА (СОКРАЩЕНА ДЛЯ ЭКОНОМИИ)
+    // 19. БАНКОВСКАЯ СИСТЕМА (ПОЛНАЯ)
     // ============================================================
     async function updateBankButtons() {
         if (isGuest) {
@@ -4087,23 +4084,358 @@
         } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
     }
 
-    async function openBankSettings(bankId) { /* ... полная функция */ }
-    async function saveBankSettings(bankId) { /* ... полная функция */ }
-    async function upgradeBank(bankId) { /* ... полная функция */ }
-    async function hireEmployee(bankId) { /* ... полная функция */ }
-    function selectTerm(days) { /* ... полная функция */ }
-    function updateLoanCalc() { /* ... полная функция */ }
-    function showLoanLoading(callback) { /* ... полная функция */ }
-    async function openLoanModal(bankId) { /* ... полная функция */ }
-    async function confirmLoanWithLoading(bankId) { /* ... полная функция */ }
-    async function openMyLoans(bankId) { /* ... полная функция */ }
-    async function payLoan(loanId) { /* ... полная функция */ }
-    async function openBankSystem() { /* ... полная функция */ }
-    function closeBankPanel() { /* ... полная функция */ }
-    async function loadBanksList() { /* ... полная функция */ }
-    async function openBankDetail(bankId) { /* ... полная функция */ }
-    async function depositToBankFromClient(bankId) { /* ... полная функция */ }
-    async function withdrawFromClientAccount(bankId) { /* ... полная функция */ }
+    async function openBankSettings(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            const container = document.getElementById('bankSettingsContent');
+            container.innerHTML = `
+                <div class="section-title" style="text-align:center;font-size:16px;">⚙️ Настройки банка</div>
+                <div class="bank-settings">
+                    <div class="setting-row"><span class="label">📊 Процентная ставка</span><span class="value" id="rateDisplay">${data.bank.rate || 0}%</span></div>
+                    <input type="range" min="0.1" max="50" step="0.1" value="${data.bank.rate || 0}" oninput="document.getElementById('rateDisplay').innerText = this.value + '%'; document.getElementById('rateValue').value = this.value;">
+                    <input type="hidden" id="rateValue" value="${data.bank.rate || 0}">
+                    <div class="setting-row"><span class="label">💰 Минимальный кредит</span><input type="number" id="minLoanInput" value="${data.bank.min_loan || 10000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;"></div>
+                    <div class="setting-row"><span class="label">💰 Максимальный кредит</span><input type="number" id="maxLoanInput" value="${data.bank.max_loan || 1000000}" style="background:#0b0c10;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;width:120px;text-align:center;"></div>
+                </div>
+                <button class="btn-gold" onclick="saveBankSettings('${bankId}')">💾 Сохранить настройки</button>
+                <button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;" onclick="upgradeBank('${bankId}')">🚀 Улучшить банк (10,000,000 💰)</button>
+                <button class="btn-gold" style="margin-top:8px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;" onclick="hireEmployee('${bankId}')">👨‍💼 Нанять сотрудника (5,000,000 💰)</button>
+            `;
+            document.getElementById('modalBankSettings').style.display = 'block';
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки настроек!"); }
+    }
+
+    async function saveBankSettings(bankId) {
+        const rate = parseFloat(document.getElementById('rateValue').value) || 0;
+        const minLoan = parseInt(document.getElementById('minLoanInput').value) || 10000;
+        const maxLoan = parseInt(document.getElementById('maxLoanInput').value) || 1000000;
+        if (minLoan > maxLoan) return showCustomAlert("ОШИБКА", "Мин. кредит не может быть больше макс. кредита!");
+        if (minLoan < 1000) return showCustomAlert("ОШИБКА", "Мин. кредит должен быть не менее 1,000 фишек!");
+        if (maxLoan > 100000000) return showCustomAlert("ОШИБКА", "Макс. кредит не может превышать 100,000,000 фишек!");
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/settings`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, rate: rate, min_loan: minLoan, max_loan: maxLoan }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ НАСТРОЙКИ" : "ОШИБКА", data.message);
+            if (data.success) { closeModal('modalBankSettings'); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка сохранения!"); }
+    }
+
+    async function upgradeBank(bankId) {
+        if (!confirm("Улучшить банк за 10,000,000 фишек?")) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/upgrade`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "🚀 УЛУЧШЕНИЕ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankSettings(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function hireEmployee(bankId) {
+        if (!confirm("Нанять сотрудника за 5,000,000 фишек?")) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/hire`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "👨‍💼 СОТРУДНИК" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankSettings(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    function selectTerm(days) {
+        selectedTerm = days;
+        document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.term-btn').forEach(b => { if (b.dataset.days == days) b.classList.add('active'); });
+        updateLoanCalc();
+    }
+
+    function updateLoanCalc() {
+        const amount = parseInt(document.getElementById('loanAmountInput')?.value) || 0;
+        const rate = parseFloat(document.getElementById('loanRateDisplay')?.innerText) || 0;
+        const days = selectedTerm;
+        const interest = Math.round(amount * (rate / 100) * (days / 30));
+        const total = amount + interest;
+        const totalEl = document.getElementById('loanTotalDisplay');
+        if (totalEl) totalEl.innerText = total.toLocaleString();
+        const interestEl = document.getElementById('loanInterestDisplay');
+        if (interestEl) interestEl.innerText = interest.toLocaleString();
+        const amountEl = document.getElementById('loanAmountDisplay');
+        if (amountEl) amountEl.innerText = amount.toLocaleString();
+    }
+
+    function showLoanLoading(callback) {
+        const container = document.getElementById('loanContent');
+        let progress = 0;
+        container.innerHTML = `
+            <div class="loan-loading">
+                <div class="spinner"></div>
+                <div style="font-weight:700;color:#fff;font-size:16px;">⏳ Проверка данных...</div>
+                <div class="progress-bar"><div class="progress-fill" id="loanProgressFill" style="width:0%;"></div></div>
+                <div class="status-text" id="loanStatusText">🔍 Проверка кредитной истории...</div>
+            </div>
+        `;
+        const statuses = ['🔍 Проверка кредитной истории...', '📊 Анализ платежеспособности...', '💳 Проверка активных кредитов...', '🏦 Обработка запроса...', '✅ Одобрение кредита...'];
+        const interval = setInterval(() => {
+            progress += Math.random() * 8 + 5;
+            if (progress > 100) progress = 100;
+            document.getElementById('loanProgressFill').style.width = progress + '%';
+            const statusIdx = Math.min(Math.floor(progress / 20), statuses.length - 1);
+            document.getElementById('loanStatusText').textContent = statuses[statusIdx];
+            if (progress >= 100) { clearInterval(interval); setTimeout(callback, 500); }
+        }, 200);
+    }
+
+    async function openLoanModal(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            const container = document.getElementById('loanContent');
+            container.innerHTML = `
+                <div class="section-title" style="text-align:center;font-size:16px;">💰 Взять кредит</div>
+                <div style="text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:10px;">Банк: <b style="color:#ffe066;">${data.bank.name}</b></div>
+                <div class="bank-detail-section" style="margin:10px 0;"><div class="label">📊 Процентная ставка</div><div class="value" id="loanRateDisplay">${data.bank.rate || 0}%</div></div>
+                <label style="font-size:12px;color:var(--text-muted);">Срок кредита:</label>
+                <div class="term-selector">
+                    <button class="term-btn active" data-days="1" onclick="selectTerm(1)">1 день</button>
+                    <button class="term-btn" data-days="3" onclick="selectTerm(3)">3 дня</button>
+                    <button class="term-btn" data-days="7" onclick="selectTerm(7)">7 дней</button>
+                    <button class="term-btn" data-days="14" onclick="selectTerm(14)">14 дней</button>
+                </div>
+                <label style="font-size:12px;color:var(--text-muted);">Сумма кредита (мин ${(data.bank.min_loan || 10000).toLocaleString()}):</label>
+                <input type="number" class="input-box" id="loanAmountInput" value="${data.bank.min_loan || 10000}" min="${data.bank.min_loan || 10000}" max="${data.bank.max_loan || 1000000}" oninput="updateLoanCalc()">
+                <div class="loan-calc">
+                    <div class="row"><span class="label">💰 Сумма кредита:</span><span class="val" id="loanAmountDisplay">0</span></div>
+                    <div class="row"><span class="label">📊 Проценты (${data.bank.rate || 0}%):</span><span class="val" id="loanInterestDisplay">0</span></div>
+                    <div class="row" style="border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;margin-top:4px;">
+                        <span class="label">💳 Итого к возврату:</span>
+                        <span class="val" id="loanTotalDisplay">0</span>
+                    </div>
+                </div>
+                <button class="btn-gold" onclick="confirmLoanWithLoading('${bankId}')">✅ Подтвердить кредит</button>
+            `;
+            document.getElementById('modalLoan').style.display = 'block';
+            selectedTerm = 1;
+            document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.term-btn[data-days="1"]').classList.add('active');
+            updateLoanCalc();
+            document.getElementById('loanAmountDisplay').innerText = (data.bank.min_loan || 10000).toLocaleString();
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки кредита!"); }
+    }
+
+    async function confirmLoanWithLoading(bankId) {
+        const amount = parseInt(document.getElementById('loanAmountInput').value);
+        if (!amount || amount < 10000) { showCustomAlert("ОШИБКА", "Минимальная сумма 10,000 фишек!"); return; }
+        showLoanLoading(async () => {
+            try {
+                const res = await apiRequest(`${API_BASE}/bank/apply_loan`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: amount, term_days: selectedTerm }) });
+                if (!res) return;
+                const data = await res.json();
+                if (!data.success) { showCustomAlert("❌ ОТКАЗ", data.message); return; }
+                showCustomAlert("✅ КРЕДИТ ОДОБРЕН!", data.message);
+                closeModal('modalLoan');
+                refreshUserData();
+                openBankDetail(bankId);
+            } catch(e) { showCustomAlert("ОШИБКА", "Ошибка оформления кредита!"); }
+        });
+    }
+
+    async function openMyLoans(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/my_loans?user_id=${userId}&bank_id=${bankId}`);
+            if (!res) return;
+            const data = await res.json();
+            let html = `<div class="section-title" style="font-size:16px;">📋 Мои кредиты</div>`;
+            if (!data.loans || data.loans.length === 0) {
+                html += `<p style="color:var(--text-muted);text-align:center;padding:20px;">У вас нет кредитов в этом банке</p>`;
+            } else {
+                data.loans.forEach(loan => {
+                    const statusClass = loan.status === 'active' ? 'active' : (loan.status === 'overdue' ? 'overdue' : 'paid');
+                    const daysLeft = Math.max(0, Math.ceil((loan.due_date - Date.now()/1000) / 86400));
+                    html += `
+                        <div class="credit-item">
+                            <div class="credit-header">
+                                <span class="credit-amount">${(loan.amount || 0).toLocaleString()} 💰</span>
+                                <span class="credit-status ${statusClass}">${loan.status === 'active' ? 'Активен' : (loan.status === 'overdue' ? 'Просрочен' : 'Погашен')}</span>
+                            </div>
+                            <div class="credit-bank">К возврату: ${(loan.total_to_pay || 0).toLocaleString()} 💰</div>
+                            <div class="credit-days">Осталось: <span>${daysLeft} дн.</span></div>
+                            ${loan.status === 'active' ? `<button class="btn-gold" style="margin-top:6px;padding:6px;font-size:12px;" onclick="payLoan('${loan.id}')">💳 Оплатить кредит</button>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            html += `<button class="btn-dark" style="margin-top:10px;" onclick="closeModal('modalBank'); openBankDetail('${bankId}')">🔙 Назад</button>`;
+            const container = document.getElementById('loanContent');
+            container.innerHTML = html;
+            document.getElementById('modalLoan').style.display = 'block';
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки кредитов!"); }
+    }
+
+    async function payLoan(loanId) {
+        if (!confirm("Вы уверены, что хотите погасить кредит?")) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/pay_loan`, { method: 'POST', body: JSON.stringify({ user_id: userId, loan_id: loanId }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "✅ ОПЛАЧЕНО" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); closeModal('modalLoan'); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка оплаты кредита!"); }
+    }
+
+    async function openBankSystem() {
+        if (isGuest) { showCustomAlert("ОШИБКА", "Гости не могут просматривать банки!"); return; }
+        document.getElementById('bankMainScreen').style.display = 'none';
+        document.getElementById('bankPanel').style.display = 'block';
+        await loadBanksList();
+    }
+
+    function closeBankPanel() {
+        document.getElementById('bankPanel').style.display = 'none';
+        document.getElementById('bankMainScreen').style.display = 'block';
+        updateBankButtons();
+    }
+
+    async function loadBanksList() {
+        const container = document.getElementById('bankContent');
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Загрузка...</p>';
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/list`);
+            if (!res) return;
+            const data = await res.json();
+            if (!data.banks || data.banks.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Нет созданных банков. Стань первым! 🏦</p>';
+                return;
+            }
+            container.innerHTML = '';
+            data.banks.forEach(bank => {
+                const card = document.createElement('div');
+                card.className = 'bank-card';
+                let avatarHtml = '';
+                if (bank.avatar_data) avatarHtml = `<img src="${bank.avatar_data}" alt="Avatar">`;
+                else if (bank.avatar) avatarHtml = bank.avatar;
+                else avatarHtml = '🏛';
+                card.innerHTML = `
+                    <div class="bank-header">
+                        <div class="bank-avatar">${avatarHtml}</div>
+                        <div>
+                            <div class="bank-name" onclick="openBankDetail('${bank.id}')">${bank.name}</div>
+                            <div class="bank-owner">👤 Владелец: ${bank.owner_name}</div>
+                        </div>
+                    </div>
+                    <div class="bank-stats">
+                        <span>💰 Казна: ${(bank.treasury || 0).toLocaleString()}</span>
+                        <span>📊 Ставка: ${(bank.rate || 0)}%</span>
+                        <span>📋 Клиентов: ${(bank.clients || 0)}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } catch(e) {
+            container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Ошибка загрузки банков</p>';
+        }
+    }
+
+    async function openBankDetail(bankId) {
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/info?bank_id=${bankId}&user_id=${userId}`);
+            if (!res) return;
+            const data = await res.json();
+            if (data.error) return showCustomAlert("ОШИБКА", data.error);
+            const container = document.getElementById('bankDetailContent');
+            const isOwner = data.is_owner;
+            const hasAccount = data.has_account;
+            const clientBalance = data.bank?.client_deposits?.[userId] || 0;
+            let avatarHtml = '';
+            if (data.bank?.avatar_data) avatarHtml = `<img src="${data.bank.avatar_data}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            else if (data.bank?.avatar) avatarHtml = data.bank.avatar;
+            else avatarHtml = '🏛';
+            let html = `
+                <div style="text-align:center;margin-bottom:15px;">
+                    <div style="font-size:48px;width:80px;height:80px;margin:0 auto;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ffe066);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #f59e0b;">${avatarHtml}</div>
+                    <div style="font-size:22px;font-weight:800;color:#ffe066;margin-top:8px;">${data.bank.name}</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Владелец: ${data.bank.owner_name}</div>
+                </div>
+                <div class="bank-detail-section"><div class="label">💰 Казна банка</div><div class="value">${(data.bank.treasury || 0).toLocaleString()} фишек</div></div>
+                ${hasAccount ? `<div class="bank-detail-section" style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);"><div class="label">💳 Ваш баланс на счете</div><div class="value" style="color:#10b981;">${clientBalance.toLocaleString()} фишек</div></div>` : ''}
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">📊 Процентная ставка</div><div class="value">${(data.bank.rate || 0)}%</div></div>
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">📋 Клиентов</div><div class="value">${(data.bank.clients || 0)}</div></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">💰 Мин. кредит</div><div class="value">${(data.bank.min_loan || 10000).toLocaleString()}</div></div>
+                    <div class="bank-detail-section" style="margin:0;"><div class="label">💰 Макс. кредит</div><div class="value">${(data.bank.max_loan || 1000000).toLocaleString()}</div></div>
+                </div>
+            `;
+            if (isOwner) {
+                html += `
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankSettings('${bankId}')">⚙️ Управление банком</button>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;" onclick="depositToBank('${bankId}')">💰 Пополнить казну</button>
+                    <button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromBank('${bankId}')">💸 Вывести (без налога)</button>
+                `;
+            } else if (!hasAccount) {
+                html += `<button class="btn-gold" style="margin-top:8px;padding:10px;font-size:14px;" onclick="openBankAccount('${bankId}')">📂 Открыть счет</button>`;
+            } else {
+                html += `
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <button class="btn-gold" style="flex:1;padding:10px;font-size:13px;" onclick="openLoanModal('${bankId}')">💰 Взять кредит</button>
+                        <button class="btn-green" style="flex:1;padding:10px;font-size:13px;" onclick="openMyLoans('${bankId}')">📋 Мои кредиты</button>
+                    </div>
+                    <button class="btn-dark" style="margin-top:8px;padding:8px;font-size:12px;" onclick="depositToBankFromClient('${bankId}')">💰 Пополнить счет</button>
+                    <button class="btn-dark" style="margin-top:8px;padding:8px;font-size:12px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;" onclick="withdrawFromClientAccount('${bankId}')">💸 Вывести со счета (5%)</button>
+                `;
+            }
+            if (data.user_loans && data.user_loans.length > 0) {
+                html += `<div class="section-title" style="font-size:14px;margin-top:15px;">📋 Мои кредиты в этом банке</div>`;
+                data.user_loans.forEach(loan => {
+                    const statusClass = loan.status === 'active' ? 'active' : (loan.status === 'overdue' ? 'overdue' : 'paid');
+                    const daysLeft = Math.max(0, Math.ceil((loan.due_date - Date.now()/1000) / 86400));
+                    html += `
+                        <div class="credit-item">
+                            <div class="credit-header">
+                                <span class="credit-amount">${(loan.amount || 0).toLocaleString()} 💰</span>
+                                <span class="credit-status ${statusClass}">${loan.status === 'active' ? 'Активен' : (loan.status === 'overdue' ? 'Просрочен' : 'Погашен')}</span>
+                            </div>
+                            <div class="credit-bank">К возврату: ${(loan.total_to_pay || 0).toLocaleString()} 💰</div>
+                            <div class="credit-days">Осталось: <span>${daysLeft} дн.</span></div>
+                            ${loan.status === 'active' ? `<button class="btn-gold" style="margin-top:6px;padding:6px;font-size:12px;" onclick="payLoan('${loan.id}')">💳 Оплатить кредит</button>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            container.innerHTML = html;
+            document.getElementById('modalBank').style.display = 'block';
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка загрузки банка!"); }
+    }
+
+    async function depositToBankFromClient(bankId) {
+        const amount = prompt("Введите сумму для пополнения счета (мин 1):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/deposit_from_client`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "💰 ПОПОЛНЕНИЕ" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
+
+    async function withdrawFromClientAccount(bankId) {
+        const amount = prompt("Введите сумму для вывода со счета (комиссия 5%):");
+        if (!amount || isNaN(amount) || parseInt(amount) <= 0) return;
+        try {
+            const res = await apiRequest(`${API_BASE}/bank/withdraw_from_client`, { method: 'POST', body: JSON.stringify({ user_id: userId, bank_id: bankId, amount: parseInt(amount) }) });
+            if (!res) return;
+            const data = await res.json();
+            showCustomAlert(data.success ? "💸 ВЫВОД" : "ОШИБКА", data.message);
+            if (data.success) { refreshUserData(); openBankDetail(bankId); }
+        } catch(e) { showCustomAlert("ОШИБКА", "Ошибка!"); }
+    }
 
     // ============================================================
     // 20. ОСТАЛЬНЫЕ ФУНКЦИИ (КВЕСТЫ, ОПЛАТА)

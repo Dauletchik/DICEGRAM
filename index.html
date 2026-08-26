@@ -1,203 +1,535 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DICEGRAM Web App</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body, html { width: 100%; height: 100%; background-color: #e7ebb9; overflow: hidden; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Dicegram</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --tg-blue:#2ca5e0;
+    --tg-header:#3390ec;
+    --tg-bg:#f4f4f5;
+    --tg-panel:#ffffff;
+    --tg-border:#e4e4e6;
+    --tg-text:#000000;
+    --tg-gray:#707579;
+    --tg-outgoing:#effdde;
+    --tg-incoming:#ffffff;
+    --tg-blue-check:#4fae4e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--tg-bg);
+    color:var(--tg-text);
+    font-size:15px;
+  }
+  #app{height:100vh;width:100vw;display:flex;flex-direction:column;position:relative;}
 
-    /* Экран Авторизации */
-    #auth-screen {
-      display: flex; justify-content: center; align-items: center; height: 100vh; background: #527da3;
-    }
-    .auth-box {
-      background: #fff; padding: 30px; border-radius: 10px; width: 340px; text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .auth-box h2 { color: #0088cc; margin-bottom: 8px; font-size: 22px; }
-    .auth-box p { font-size: 13px; color: #707579; margin-bottom: 20px; }
-    .auth-box input {
-      width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none;
-    }
-    .auth-box input:focus { border-color: #0088cc; }
-    .auth-box button {
-      width: 100%; padding: 12px; background: #0088cc; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;
-    }
-    .auth-box button:hover { background: #0077b3; }
+  /* ---------- AUTH SCREENS ---------- */
+  .auth-screen{
+    height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:32px 24px;background:var(--tg-panel);text-align:center;gap:14px;
+  }
+  .auth-logo{
+    width:88px;height:88px;border-radius:50%;
+    background:linear-gradient(135deg,#5cb3f0,#2b8fe0);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:42px;font-weight:600;margin-bottom:8px;
+    box-shadow:0 4px 18px rgba(43,143,224,.35);
+  }
+  .auth-title{font-size:22px;font-weight:600;}
+  .auth-sub{color:var(--tg-gray);font-size:14px;max-width:280px;line-height:1.4;}
+  .auth-input{
+    width:100%;max-width:300px;padding:14px 16px;border-radius:10px;
+    border:1px solid var(--tg-border);font-size:16px;text-align:center;
+    outline:none;background:#fafafa;letter-spacing:1px;
+  }
+  .auth-input:focus{border-color:var(--tg-header);background:#fff;}
+  .auth-btn{
+    width:100%;max-width:300px;padding:14px;border:none;border-radius:10px;
+    background:var(--tg-header);color:#fff;font-size:16px;font-weight:600;
+    cursor:pointer;transition:opacity .15s;
+  }
+  .auth-btn:active{opacity:.8;}
+  .auth-btn:disabled{background:#b8d6f5;cursor:default;}
+  .auth-error{color:#e05a5a;font-size:13px;min-height:16px;}
+  .auth-hint{color:var(--tg-gray);font-size:12.5px;margin-top:6px;}
 
-    /* Основной Интерфейс Telegram */
-    #app-screen { display: none; width: 100vw; height: 100vh; flex-direction: row; }
-    
-    /* Сайдбар Диалогов */
-    .sidebar { width: 350px; background: #fff; border-right: 1px solid #e6e6e6; display: flex; flex-direction: column; height: 100%; }
-    .sidebar-header { background: #517da2; color: white; padding: 12px 16px; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; }
-    .dialogs-list { flex: 1; overflow-y: auto; }
-    .dialog-item { display: flex; padding: 10px 14px; border-bottom: 1px solid #f2f2f2; cursor: pointer; align-items: center; }
-    .dialog-item:hover, .dialog-item.active { background: #f2f6fa; }
-    .avatar { width: 46px; height: 46px; border-radius: 50%; background: #68a5e3; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 12px; font-size: 18px; }
-    .dialog-info { flex: 1; overflow: hidden; }
-    .dialog-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .dialog-name { font-weight: 600; font-size: 14px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dialog-date { font-size: 11px; color: #a8a8a8; }
-    .dialog-bottom { display: flex; justify-content: space-between; align-items: center; }
-    .dialog-lastmsg { font-size: 13px; color: #707579; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-    .badge { background: #0088cc; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; font-weight: bold; }
+  /* ---------- HEADER ---------- */
+  .tg-header{
+    background:var(--tg-header);color:#fff;height:56px;flex-shrink:0;
+    display:flex;align-items:center;padding:0 12px;gap:12px;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);z-index:10;
+  }
+  .tg-header .icon-btn{
+    width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;
+  }
+  .tg-header .icon-btn:active{background:rgba(255,255,255,.15);}
+  .tg-header .title{font-size:19px;font-weight:600;flex:1;}
+  .search-bar{flex:1;display:flex;align-items:center;background:rgba(255,255,255,.16);
+    border-radius:20px;padding:0 12px;height:36px;gap:8px;}
+  .search-bar input{background:transparent;border:none;outline:none;color:#fff;font-size:15px;width:100%;}
+  .search-bar input::placeholder{color:rgba(255,255,255,.75);}
 
-    /* Зона Чата */
-    .chat-area { flex: 1; display: flex; flex-direction: column; background: #e7ebb9; height: 100%; }
-    .chat-header { background: #fff; padding: 10px 20px; border-bottom: 1px solid #e6e6e6; display: flex; align-items: center; }
-    .chat-header .title { font-weight: bold; font-size: 15px; }
-    .messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    
-    .msg-bubble { max-width: 60%; padding: 8px 12px; border-radius: 12px; font-size: 14px; position: relative; word-wrap: break-word; line-height: 1.4; }
-    .msg-in { background: #ffffff; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-    .msg-out { background: #eeffde; align-self: flex-end; border-bottom-right-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-    .msg-time { font-size: 10px; color: #a8a8a8; float: right; margin-left: 10px; margin-top: 4px; }
+  /* ---------- CHAT LIST ---------- */
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--tg-panel);}
+  .screen.hidden{display:none;}
+  .chat-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .chat-item{
+    display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;
+    border-bottom:1px solid #f0f0f0;
+  }
+  .chat-item:active{background:#f2f2f2;}
+  .avatar{
+    width:52px;height:52px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:20px;
+  }
+  .chat-meta{flex:1;min-width:0;}
+  .chat-row1{display:flex;justify-content:space-between;align-items:baseline;}
+  .chat-name{font-weight:600;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-time{color:var(--tg-gray);font-size:12.5px;flex-shrink:0;margin-left:6px;}
+  .chat-row2{display:flex;justify-content:space-between;align-items:center;margin-top:2px;}
+  .chat-last{color:var(--tg-gray);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .support-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:#3390ec;color:#fff;border-radius:50%;width:14px;height:14px;font-size:10px;margin-left:4px;
+  }
 
-    .read-only-bar { background: #fff; padding: 14px; text-align: center; color: #888; font-size: 13px; border-top: 1px solid #e6e6e6; }
-  </style>
+  /* ---------- CHAT WINDOW ---------- */
+  .chat-header{background:var(--tg-header);color:#fff;height:56px;display:flex;align-items:center;
+    gap:10px;padding:0 8px;flex-shrink:0;}
+  .chat-header .back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .chat-header .avatar{width:38px;height:38px;font-size:15px;}
+  .chat-header-info{flex:1;min-width:0;}
+  .chat-header-name{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-header-status{font-size:12.5px;color:rgba(255,255,255,.85);}
+
+  .messages-area{
+    flex:1;overflow-y:auto;padding:14px 10px;display:flex;flex-direction:column;gap:4px;
+    background:#e7ebf0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='%23e7ebf0'/%3E%3C/svg%3E");
+    -webkit-overflow-scrolling:touch;
+  }
+  .msg-row{display:flex;max-width:100%;}
+  .msg-row.out{justify-content:flex-end;}
+  .msg-bubble{
+    max-width:75%;padding:6px 9px 7px 10px;border-radius:12px;position:relative;
+    font-size:15px;line-height:1.35;word-wrap:break-word;box-shadow:0 1px 1px rgba(0,0,0,.06);
+  }
+  .msg-row.in .msg-bubble{background:var(--tg-incoming);border-top-left-radius:3px;}
+  .msg-row.out .msg-bubble{background:var(--tg-outgoing);border-top-right-radius:3px;}
+  .msg-text{white-space:pre-wrap;}
+  .msg-meta{display:flex;justify-content:flex-end;align-items:center;gap:3px;margin-top:2px;
+    font-size:11px;color:var(--tg-gray);float:right;margin-left:8px;}
+  .msg-check{color:var(--tg-blue-check);font-size:13px;}
+
+  .composer{
+    display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;
+    border-top:1px solid var(--tg-border);flex-shrink:0;
+  }
+  .composer textarea{
+    flex:1;border:1px solid var(--tg-border);border-radius:20px;padding:10px 16px;
+    font-size:15px;resize:none;outline:none;max-height:100px;font-family:inherit;background:#fafafa;
+  }
+  .composer textarea:focus{border-color:var(--tg-header);background:#fff;}
+  .send-btn{
+    width:40px;height:40px;border-radius:50%;background:var(--tg-header);border:none;color:#fff;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+  }
+  .send-btn:active{opacity:.8;}
+
+  /* ---------- PROFILE ---------- */
+  .profile-header{position:relative;background:linear-gradient(135deg,#5cb3f0,#2b8fe0);
+    padding:50px 20px 20px;color:#fff;flex-shrink:0;}
+  .profile-back{position:absolute;top:12px;left:8px;width:36px;height:36px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .profile-avatar-big{
+    width:100px;height:100px;border-radius:50%;margin:0 auto 12px;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:40px;font-weight:600;
+    border:3px solid rgba(255,255,255,.5);
+  }
+  .profile-name{text-align:center;font-size:21px;font-weight:600;}
+  .profile-status{text-align:center;font-size:13px;color:rgba(255,255,255,.85);margin-top:2px;}
+  .profile-body{flex:1;overflow-y:auto;background:var(--tg-panel);}
+  .profile-section{padding:14px 18px;border-bottom:8px solid var(--tg-bg);}
+  .profile-row{padding:10px 0;}
+  .profile-row-label{font-size:13px;color:var(--tg-gray);margin-bottom:2px;}
+  .profile-row-value{font-size:16px;}
+
+  /* ---------- BOTTOM TABS ---------- */
+  .tabbar{display:flex;border-top:1px solid var(--tg-border);background:#fff;flex-shrink:0;}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:6px 0 8px;gap:2px;color:var(--tg-gray);cursor:pointer;font-size:11px;}
+  .tab.active{color:var(--tg-header);}
+  .tab svg{width:24px;height:24px;}
+
+  ::-webkit-scrollbar{width:0;}
+
+  .fab{
+    position:absolute;right:16px;bottom:76px;width:56px;height:56px;border-radius:50%;
+    background:var(--tg-header);color:#fff;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer;font-size:26px;z-index:5;
+  }
+</style>
 </head>
 <body>
+<div id="app">
 
-  <!-- Авторизация -->
-  <div id="auth-screen">
-    <div class="auth-box">
-      <h2>DICEGRAM</h2>
-      <p>Вход через Telegram Client</p>
-      
-      <div id="step-phone">
-        <input type="text" id="phone" placeholder="+79990000000">
-        <button onclick="sendCode()">Продолжить</button>
+  <!-- ==================== AUTH: PHONE ==================== -->
+  <div id="screen-phone" class="auth-screen">
+    <div class="auth-logo">D</div>
+    <div class="auth-title">Dicegram</div>
+    <div class="auth-sub">Введи номер, который тебе выдал бот в Telegram после команды /start</div>
+    <input id="phone-input" class="auth-input" type="text" placeholder="+888 0000 0000" />
+    <button id="phone-submit" class="auth-btn">Продолжить</button>
+    <div id="phone-error" class="auth-error"></div>
+    <div class="auth-hint">Номер и код выдаёт бот @твой_бот в Telegram</div>
+  </div>
+
+  <!-- ==================== AUTH: CODE ==================== -->
+  <div id="screen-code" class="auth-screen hidden">
+    <div class="auth-logo">✓</div>
+    <div class="auth-title">Код подтверждения</div>
+    <div class="auth-sub" id="code-sub">Введи 5-значный код, который прислал бот</div>
+    <input id="code-input" class="auth-input" type="text" inputmode="numeric" maxlength="5" placeholder="• • • • •" />
+    <button id="code-submit" class="auth-btn">Войти</button>
+    <div id="code-error" class="auth-error"></div>
+  </div>
+
+  <!-- ==================== MAIN: CHAT LIST ==================== -->
+  <div id="screen-chats" class="screen hidden">
+    <div class="tg-header">
+      <div class="icon-btn" onclick="showProfile()">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
       </div>
-
-      <div id="step-code" style="display:none;">
-        <input type="text" id="code" placeholder="Код из Telegram">
-        <button onclick="loginCode()">Войти</button>
+      <div class="title">Dicegram</div>
+      <div class="icon-btn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
+    </div>
+    <div id="chat-list" class="chat-list"></div>
+    <div class="fab" onclick="alert('Создание новых чатов и групп появится в следующем обновлении Dicegram 🚀')">✏️</div>
+    <div class="tabbar">
+      <div class="tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Чаты</div>
+      <div class="tab" onclick="showProfile()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</div>
+    </div>
+  </div>
 
-      <div id="step-2fa" style="display:none;">
-        <input type="password" id="password" placeholder="Облачный пароль (2FA)">
-        <button onclick="login2FA()">Подтвердить</button>
+  <!-- ==================== CHAT WINDOW ==================== -->
+  <div id="screen-chat" class="screen hidden">
+    <div class="chat-header">
+      <div class="back-btn" onclick="backToChats()">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div id="chat-header-avatar" class="avatar">D</div>
+      <div class="chat-header-info">
+        <div id="chat-header-name" class="chat-header-name">Чат</div>
+        <div class="chat-header-status">онлайн</div>
+      </div>
+    </div>
+    <div id="messages-area" class="messages-area"></div>
+    <div class="composer">
+      <textarea id="msg-input" rows="1" placeholder="Сообщение"></textarea>
+      <button class="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div id="screen-profile" class="screen hidden">
+    <div class="profile-header">
+      <div class="profile-back" onclick="backToChats()">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div id="profile-avatar-big" class="profile-avatar-big">D</div>
+      <div id="profile-name" class="profile-name">Имя</div>
+      <div class="profile-status">в сети</div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-section">
+        <div class="profile-row">
+          <div class="profile-row-label">Номер телефона</div>
+          <div id="profile-phone" class="profile-row-value">—</div>
+        </div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-row">
+          <div class="profile-row-label">О себе</div>
+          <div id="profile-about" class="profile-row-value">—</div>
+        </div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-row">
+          <div class="profile-row-label">Имя пользователя</div>
+          <div id="profile-username" class="profile-row-value">—</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Главное приложение -->
-  <div id="app-screen">
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <span>DICEGRAM</span>
+</div>
+
+<script>
+/* ============================================================
+   Dicegram mini-app frontend
+   Работает через REST API (bot.py, aiohttp, порт 8080)
+   ============================================================ */
+
+// Если открыто через сам VPS — API на том же домене.
+// Если открыто через GitHub Pages — укажи явно домен VPS.
+const API_BASE = "https://a48794-5d18.e.jrnm.app";
+
+let AUTH_TOKEN = localStorage.getItem("dicegram_token") || null;
+let CURRENT_USER = null;
+let CURRENT_CHAT = null;
+let LAST_MSG_ID = 0;
+let PENDING_PHONE = null;
+let pollAbort = null;
+
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); }
+
+function show(id){
+  document.querySelectorAll('.screen, .auth-screen').forEach(el => el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+/* ---------------- API helpers ---------------- */
+async function api(path, opts = {}) {
+  const headers = opts.headers || {};
+  if (AUTH_TOKEN) headers['X-Auth-Token'] = AUTH_TOKEN;
+  if (opts.body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(API_BASE + path, { ...opts, headers });
+  return res.json();
+}
+
+/* ---------------- AUTH FLOW ---------------- */
+document.getElementById('phone-submit').onclick = () => {
+  const phone = document.getElementById('phone-input').value.trim();
+  const errEl = document.getElementById('phone-error');
+  if (!phone) { errEl.textContent = 'Введи номер телефона'; return; }
+  errEl.textContent = '';
+  PENDING_PHONE = phone;
+  document.getElementById('code-sub').textContent =
+    `Введи 5-значный код, отправленный ботом на номер ${phone}`;
+  show('screen-code');
+};
+
+document.getElementById('code-submit').onclick = async () => {
+  const code = document.getElementById('code-input').value.trim();
+  const errEl = document.getElementById('code-error');
+  if (!code) { errEl.textContent = 'Введи код'; return; }
+  errEl.textContent = 'Проверяю...';
+
+  try {
+    const data = await api('/api/verify_code', {
+      method: 'POST',
+      body: JSON.stringify({ phone: PENDING_PHONE, code })
+    });
+    if (data.ok) {
+      AUTH_TOKEN = data.token;
+      localStorage.setItem('dicegram_token', AUTH_TOKEN);
+      CURRENT_USER = data.user;
+      errEl.textContent = '';
+      await enterApp();
+    } else {
+      errEl.textContent = errText(data.error);
+    }
+  } catch (e) {
+    errEl.textContent = 'Не удалось связаться с сервером Dicegram';
+  }
+};
+
+function errText(code){
+  return {
+    phone_not_found: 'Номер не найден. Проверь, что писал боту /start',
+    wrong_code: 'Неверный код',
+  }[code] || 'Ошибка. Попробуй ещё раз';
+}
+
+/* ---------------- APP ENTRY ---------------- */
+async function enterApp(){
+  if (!CURRENT_USER) {
+    const data = await api('/api/me');
+    if (!data.ok) { AUTH_TOKEN = null; localStorage.removeItem('dicegram_token'); show('screen-phone'); return; }
+    CURRENT_USER = data.user;
+  }
+  renderProfile();
+  await loadChats();
+  show('screen-chats');
+}
+
+/* ---------------- CHAT LIST ---------------- */
+async function loadChats(){
+  const data = await api('/api/chats');
+  if (!data.ok) return;
+  const list = document.getElementById('chat-list');
+  list.innerHTML = '';
+  data.chats.forEach(chat => {
+    const div = document.createElement('div');
+    div.className = 'chat-item';
+    div.onclick = () => openChat(chat);
+    const initial = (chat.title || '?').trim()[0]?.toUpperCase() || '?';
+    const time = chat.last_time ? formatTime(chat.last_time) : '';
+    div.innerHTML = `
+      <div class="avatar" style="background:${chat.avatar_color || '#65aadd'}">${initial}</div>
+      <div class="chat-meta">
+        <div class="chat-row1">
+          <div class="chat-name">${escapeHtml(chat.title || 'Чат')}${chat.type === 'support' ? '<span class="support-badge">✓</span>' : ''}</div>
+          <div class="chat-time">${time}</div>
+        </div>
+        <div class="chat-row2">
+          <div class="chat-last">${escapeHtml(chat.last_text || 'Нет сообщений')}</div>
+        </div>
       </div>
-      <div class="dialogs-list" id="dialogs-container"></div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+/* ---------------- CHAT WINDOW ---------------- */
+async function openChat(chat){
+  CURRENT_CHAT = chat;
+  LAST_MSG_ID = 0;
+  document.getElementById('chat-header-name').textContent = chat.title || 'Чат';
+  document.getElementById('chat-header-avatar').textContent = (chat.title || '?').trim()[0]?.toUpperCase() || '?';
+  document.getElementById('chat-header-avatar').style.background = chat.avatar_color || '#65aadd';
+  show('screen-chat');
+
+  await loadMessages();
+  startPolling();
+}
+
+function backToChats(){
+  stopPolling();
+  CURRENT_CHAT = null;
+  loadChats();
+  show('screen-chats');
+}
+
+async function loadMessages(){
+  const data = await api(`/api/messages?chat_id=${CURRENT_CHAT.id}`);
+  if (!data.ok) return;
+  const area = document.getElementById('messages-area');
+  area.innerHTML = '';
+  data.messages.forEach(renderMessage);
+  if (data.messages.length) LAST_MSG_ID = data.messages[data.messages.length - 1].id;
+  area.scrollTop = area.scrollHeight;
+}
+
+function renderMessage(msg){
+  const area = document.getElementById('messages-area');
+  const isOut = CURRENT_USER && msg.sender_id === CURRENT_USER.id;
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + (isOut ? 'out' : 'in');
+  const time = formatTime(msg.sent_at);
+  const checks = isOut ? '<span class="msg-check">✓✓</span>' : '';
+  row.innerHTML = `
+    <div class="msg-bubble">
+      <span class="msg-text">${escapeHtml(msg.text)}</span>
+      <span class="msg-meta">${time} ${checks}</span>
     </div>
+  `;
+  area.appendChild(row);
+}
 
-    <div class="chat-area">
-      <div class="chat-header">
-        <div class="title" id="chat-title">Выберите чат</div>
-      </div>
-      <div class="messages-container" id="messages-container"></div>
-      <div class="read-only-bar">Режим наблюдения (Только чтение)</div>
-    </div>
-  </div>
+async function sendMessage(){
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text || !CURRENT_CHAT) return;
+  input.value = '';
 
-  <script>
-    let currentPhone = '';
-    let currentActiveChatId = null;
+  // Оптимистичное отображение
+  renderMessage({
+    id: 'tmp-' + Date.now(),
+    sender_id: CURRENT_USER.id,
+    text,
+    sent_at: Math.floor(Date.now() / 1000)
+  });
+  const area = document.getElementById('messages-area');
+  area.scrollTop = area.scrollHeight;
 
-    async function sendCode() {
-      currentPhone = document.getElementById('phone').value;
-      const res = await fetch('/api/auth/send_code', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ phone: currentPhone })
-      });
-      const data = await res.json();
-      if(data.status === 'ok') {
-        document.getElementById('step-phone').style.display = 'none';
-        document.getElementById('step-code').style.display = 'block';
-      } else { alert(data.message); }
-    }
+  const data = await api('/api/send', {
+    method: 'POST',
+    body: JSON.stringify({ chat_id: CURRENT_CHAT.id, text })
+  });
+  if (data.ok) LAST_MSG_ID = data.message_id;
+}
 
-    async function loginCode() {
-      const code = document.getElementById('code').value;
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ phone: currentPhone, code: code })
-      });
-      const data = await res.json();
-      handleLoginResponse(data);
-    }
+document.getElementById('msg-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
 
-    async function login2FA() {
-      const password = document.getElementById('password').value;
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ phone: currentPhone, password: password })
-      });
-      const data = await res.json();
-      handleLoginResponse(data);
-    }
-
-    function handleLoginResponse(data) {
-      if(data.status === 'ok') {
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('app-screen').style.display = 'flex';
-        loadDialogs();
-      } else if(data.status === '2fa_required') {
-        document.getElementById('step-code').style.display = 'none';
-        document.getElementById('step-2fa').style.display = 'block';
-      } else { alert(data.message); }
-    }
-
-    async function loadDialogs() {
-      const res = await fetch(`/api/dialogs?phone=${encodeURIComponent(currentPhone)}`);
-      const data = await res.json();
-      if(data.status === 'ok') {
-        const container = document.getElementById('dialogs-container');
-        container.innerHTML = '';
-        data.dialogs.forEach(d => {
-          const item = document.createElement('div');
-          item.className = 'dialog-item';
-          item.onclick = () => openChat(d.id, d.name);
-          item.innerHTML = `
-            <div class="avatar">${d.name[0] ? d.name[0].toUpperCase() : '?'}</div>
-            <div class="dialog-info">
-              <div class="dialog-top">
-                <span class="dialog-name">${d.name}</span>
-                <span class="dialog-date">${d.date}</span>
-              </div>
-              <div class="dialog-bottom">
-                <span class="dialog-lastmsg">${d.last_message}</span>
-                ${d.unread_count > 0 ? `<span class="badge">${d.unread_count}</span>` : ''}
-              </div>
-            </div>
-          `;
-          container.appendChild(item);
-        });
+/* ---------------- POLLING (long-poll updates) ---------------- */
+function startPolling(){
+  stopPolling();
+  pollAbort = { stopped: false };
+  pollLoop(pollAbort);
+}
+function stopPolling(){
+  if (pollAbort) pollAbort.stopped = true;
+}
+async function pollLoop(handle){
+  while (!handle.stopped && CURRENT_CHAT) {
+    try {
+      const data = await api(`/api/updates?chat_id=${CURRENT_CHAT.id}&since_id=${LAST_MSG_ID}`);
+      if (handle.stopped) break;
+      if (data.ok && data.messages && data.messages.length) {
+        data.messages.forEach(renderMessage);
+        LAST_MSG_ID = data.messages[data.messages.length - 1].id;
+        const area = document.getElementById('messages-area');
+        area.scrollTop = area.scrollHeight;
       }
+    } catch (e) {
+      await sleep(2000);
     }
+  }
+}
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-    async function openChat(id, name) {
-      currentActiveChatId = id;
-      document.getElementById('chat-title').innerText = name;
-      const res = await fetch(`/api/messages?phone=${encodeURIComponent(currentPhone)}&id=${id}`);
-      const data = await res.json();
-      if(data.status === 'ok') {
-        const container = document.getElementById('messages-container');
-        container.innerHTML = '';
-        data.messages.forEach(m => {
-          const bubble = document.createElement('div');
-          bubble.className = `msg-bubble ${m.out ? 'msg-out' : 'msg-in'}`;
-          bubble.innerHTML = `${m.text} <span class="msg-time">${m.date}</span>`;
-          container.appendChild(bubble);
-        });
-        container.scrollTop = container.scrollHeight;
-      }
-    }
-  </script>
+/* ---------------- PROFILE ---------------- */
+function showProfile(){
+  renderProfile();
+  show('screen-profile');
+}
+function renderProfile(){
+  if (!CURRENT_USER) return;
+  const initial = (CURRENT_USER.first_name || '?').trim()[0]?.toUpperCase() || '?';
+  document.getElementById('profile-avatar-big').textContent = initial;
+  document.getElementById('profile-avatar-big').style.background = CURRENT_USER.avatar_color || '#65aadd';
+  document.getElementById('profile-name').textContent =
+    `${CURRENT_USER.first_name || ''} ${CURRENT_USER.last_name || ''}`.trim() || 'Без имени';
+  document.getElementById('profile-phone').textContent = CURRENT_USER.phone || '—';
+  document.getElementById('profile-about').textContent = CURRENT_USER.about || '—';
+  document.getElementById('profile-username').textContent = CURRENT_USER.username ? '@' + CURRENT_USER.username : '—';
+}
+
+/* ---------------- UTILS ---------------- */
+function formatTime(unixSeconds){
+  const d = new Date(unixSeconds * 1000);
+  return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str ?? '';
+  return div.innerHTML;
+}
+
+/* ---------------- INIT ---------------- */
+(async function init(){
+  if (AUTH_TOKEN) {
+    try { await enterApp(); } catch (e) { show('screen-phone'); }
+  } else {
+    show('screen-phone');
+  }
+})();
+</script>
 </body>
 </html>

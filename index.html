@@ -1,771 +1,203 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DICEGRAM</title>
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: #0f0f0f;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .app {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            max-height: 850px;
-            background: #17212b;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-        }
-        .status-bar {
-            background: #17212b;
-            padding: 8px 20px 4px;
-            display: flex;
-            justify-content: space-between;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-            flex-shrink: 0;
-            z-index: 10;
-        }
-        .header {
-            background: #2b5278;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-            flex-shrink: 0;
-            min-height: 54px;
-            z-index: 10;
-        }
-        .header .back {
-            font-size: 24px;
-            cursor: pointer;
-            display: none;
-            width: 30px;
-        }
-        .header .avatar-small {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #5288c1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            color: white;
-            flex-shrink: 0;
-        }
-        .header .title {
-            font-size: 17px;
-            font-weight: 600;
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .header .actions {
-            display: flex;
-            gap: 16px;
-            font-size: 20px;
-        }
-        
-        /* АВТОРИЗАЦИЯ */
-        #authScreen {
-            flex: 1;
-            background: #17212b;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-        #authScreen .logo {
-            font-size: 42px;
-            font-weight: 800;
-            color: #2b5278;
-        }
-        #authScreen .subtitle {
-            color: #8e9aa8;
-            font-size: 14px;
-            text-align: center;
-        }
-        #authScreen .input-group {
-            width: 100%;
-            max-width: 320px;
-        }
-        #authScreen input {
-            width: 100%;
-            padding: 14px 16px;
-            background: #1f2c38;
-            border: 2px solid #2b5278;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-        #authScreen input:focus {
-            border-color: #4d8bc0;
-        }
-        #authScreen input::placeholder {
-            color: #6c7a8a;
-        }
-        #authScreen .btn {
-            width: 100%;
-            max-width: 320px;
-            padding: 14px;
-            background: #2b5278;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        #authScreen .btn:active {
-            transform: scale(0.97);
-        }
-        #authScreen .btn:disabled {
-            opacity: 0.5;
-        }
-        #authScreen .error {
-            color: #e74c3c;
-            font-size: 14px;
-            text-align: center;
-        }
-        .country-row {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 320px;
-        }
-        .country-row select {
-            width: 35%;
-            padding: 14px;
-            background: #1f2c38;
-            border: 2px solid #2b5278;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-        }
-        .country-row input {
-            flex: 1;
-        }
-        .numpad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            width: 100%;
-            max-width: 280px;
-        }
-        .numpad button {
-            padding: 16px;
-            background: #1f2c38;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 22px;
-            font-weight: 500;
-            cursor: pointer;
-            aspect-ratio: 1;
-        }
-        .numpad button:active {
-            background: #2b3d4d;
-            transform: scale(0.95);
-        }
-        .numpad .empty {
-            background: transparent;
-            cursor: default;
-        }
-        
-        /* СПИСОК ЧАТОВ */
-        #chatsScreen {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            background: #17212b;
-            overflow: hidden;
-        }
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 0;
-        }
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            gap: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #1f2c38;
-        }
-        .chat-item:active {
-            background: #1f2c38;
-        }
-        .chat-item .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #5288c1;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 18px;
-            color: white;
-            overflow: hidden;
-        }
-        .chat-item .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .chat-item .info {
-            flex: 1;
-            min-width: 0;
-        }
-        .chat-item .name {
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-        }
-        .chat-item .last-msg {
-            color: #8e9aa8;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .chat-item .time {
-            color: #6c7a8a;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-        .chat-item .unread {
-            background: #2b5278;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        
-        /* ЧАТ */
-        #chatScreen {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            background: #0e1621;
-        }
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .msg {
-            max-width: 80%;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 15px;
-            line-height: 1.4;
-            word-wrap: break-word;
-            position: relative;
-        }
-        .msg.out {
-            align-self: flex-end;
-            background: #2b5278;
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-        .msg.in {
-            align-self: flex-start;
-            background: #1f2c38;
-            color: white;
-            border-bottom-left-radius: 4px;
-        }
-        .msg .time {
-            font-size: 11px;
-            opacity: 0.7;
-            margin-top: 4px;
-            display: block;
-            text-align: right;
-        }
-        .msg .sender {
-            font-size: 12px;
-            color: #4d8bc0;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .msg .media-badge {
-            background: rgba(255,255,255,0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            display: inline-block;
-            margin-bottom: 4px;
-        }
-        .input-bar {
-            padding: 8px 12px;
-            background: #1f2c38;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .input-bar input {
-            flex: 1;
-            padding: 10px 14px;
-            background: #17212b;
-            border: none;
-            border-radius: 20px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-        .input-bar input::placeholder {
-            color: #6c7a8a;
-        }
-        .input-bar button {
-            background: #2b5278;
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .input-bar button:active {
-            transform: scale(0.9);
-        }
-        
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2b5278;
-            border-radius: 4px;
-        }
-        @media (max-width: 440px) {
-            .app {
-                max-height: 100vh;
-                border-radius: 0;
-            }
-        }
-        #codeGroup, #passwordGroup {
-            display: none;
-            width: 100%;
-            max-width: 320px;
-        }
-        #codeGroup input, #passwordGroup input {
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DICEGRAM Web App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body, html { width: 100%; height: 100%; background-color: #e7ebb9; overflow: hidden; }
+
+    /* Экран Авторизации */
+    #auth-screen {
+      display: flex; justify-content: center; align-items: center; height: 100vh; background: #527da3;
+    }
+    .auth-box {
+      background: #fff; padding: 30px; border-radius: 10px; width: 340px; text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .auth-box h2 { color: #0088cc; margin-bottom: 8px; font-size: 22px; }
+    .auth-box p { font-size: 13px; color: #707579; margin-bottom: 20px; }
+    .auth-box input {
+      width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none;
+    }
+    .auth-box input:focus { border-color: #0088cc; }
+    .auth-box button {
+      width: 100%; padding: 12px; background: #0088cc; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;
+    }
+    .auth-box button:hover { background: #0077b3; }
+
+    /* Основной Интерфейс Telegram */
+    #app-screen { display: none; width: 100vw; height: 100vh; flex-direction: row; }
+    
+    /* Сайдбар Диалогов */
+    .sidebar { width: 350px; background: #fff; border-right: 1px solid #e6e6e6; display: flex; flex-direction: column; height: 100%; }
+    .sidebar-header { background: #517da2; color: white; padding: 12px 16px; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; }
+    .dialogs-list { flex: 1; overflow-y: auto; }
+    .dialog-item { display: flex; padding: 10px 14px; border-bottom: 1px solid #f2f2f2; cursor: pointer; align-items: center; }
+    .dialog-item:hover, .dialog-item.active { background: #f2f6fa; }
+    .avatar { width: 46px; height: 46px; border-radius: 50%; background: #68a5e3; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 12px; font-size: 18px; }
+    .dialog-info { flex: 1; overflow: hidden; }
+    .dialog-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .dialog-name { font-weight: 600; font-size: 14px; color: #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dialog-date { font-size: 11px; color: #a8a8a8; }
+    .dialog-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .dialog-lastmsg { font-size: 13px; color: #707579; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+    .badge { background: #0088cc; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; font-weight: bold; }
+
+    /* Зона Чата */
+    .chat-area { flex: 1; display: flex; flex-direction: column; background: #e7ebb9; height: 100%; }
+    .chat-header { background: #fff; padding: 10px 20px; border-bottom: 1px solid #e6e6e6; display: flex; align-items: center; }
+    .chat-header .title { font-weight: bold; font-size: 15px; }
+    .messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    
+    .msg-bubble { max-width: 60%; padding: 8px 12px; border-radius: 12px; font-size: 14px; position: relative; word-wrap: break-word; line-height: 1.4; }
+    .msg-in { background: #ffffff; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .msg-out { background: #eeffde; align-self: flex-end; border-bottom-right-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .msg-time { font-size: 10px; color: #a8a8a8; float: right; margin-left: 10px; margin-top: 4px; }
+
+    .read-only-bar { background: #fff; padding: 14px; text-align: center; color: #888; font-size: 13px; border-top: 1px solid #e6e6e6; }
+  </style>
 </head>
 <body>
 
-<div class="app" id="app">
-    <div class="status-bar">
-        <span id="timeDisplay">12:00</span>
-        <span>📶 📶 🔋</span>
+  <!-- Авторизация -->
+  <div id="auth-screen">
+    <div class="auth-box">
+      <h2>DICEGRAM</h2>
+      <p>Вход через Telegram Client</p>
+      
+      <div id="step-phone">
+        <input type="text" id="phone" placeholder="+79990000000">
+        <button onclick="sendCode()">Продолжить</button>
+      </div>
+
+      <div id="step-code" style="display:none;">
+        <input type="text" id="code" placeholder="Код из Telegram">
+        <button onclick="loginCode()">Войти</button>
+      </div>
+
+      <div id="step-2fa" style="display:none;">
+        <input type="password" id="password" placeholder="Облачный пароль (2FA)">
+        <button onclick="login2FA()">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Главное приложение -->
+  <div id="app-screen">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <span>DICEGRAM</span>
+      </div>
+      <div class="dialogs-list" id="dialogs-container"></div>
     </div>
 
-    <!-- АВТОРИЗАЦИЯ -->
-    <div id="authScreen">
-        <div class="logo">✈️ DICEGRAM</div>
-        <div class="subtitle">Введите номер телефона</div>
-        
-        <div class="country-row">
-            <select id="countryCode">
-                <option value="+7">🇷🇺 +7</option>
-                <option value="+380">🇺🇦 +380</option>
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+44">🇬🇧 +44</option>
-                <option value="+49">🇩🇪 +49</option>
-                <option value="+33">🇫🇷 +33</option>
-                <option value="+86">🇨🇳 +86</option>
-                <option value="+91">🇮🇳 +91</option>
-            </select>
-            <input type="tel" id="phoneInput" placeholder="Номер телефона" maxlength="15">
-        </div>
-
-        <div id="codeGroup">
-            <input type="text" id="codeInput" placeholder="Код из Telegram" maxlength="8">
-        </div>
-        <div id="passwordGroup">
-            <input type="password" id="passwordInput" placeholder="Пароль 2FA" maxlength="64">
-        </div>
-
-        <button class="btn" id="authBtn" onclick="handleAuth()">Продолжить</button>
-        <div class="error" id="authError"></div>
-
-        <div class="numpad">
-            <button onclick="typeNum('1')">1</button>
-            <button onclick="typeNum('2')">2</button>
-            <button onclick="typeNum('3')">3</button>
-            <button onclick="typeNum('4')">4</button>
-            <button onclick="typeNum('5')">5</button>
-            <button onclick="typeNum('6')">6</button>
-            <button onclick="typeNum('7')">7</button>
-            <button onclick="typeNum('8')">8</button>
-            <button onclick="typeNum('9')">9</button>
-            <button onclick="typeNum('+')">+</button>
-            <button onclick="typeNum('0')">0</button>
-            <button class="empty"></button>
-        </div>
+    <div class="chat-area">
+      <div class="chat-header">
+        <div class="title" id="chat-title">Выберите чат</div>
+      </div>
+      <div class="messages-container" id="messages-container"></div>
+      <div class="read-only-bar">Режим наблюдения (Только чтение)</div>
     </div>
+  </div>
 
-    <!-- СПИСОК ЧАТОВ -->
-    <div id="chatsScreen">
-        <div class="header">
-            <div class="back" onclick="goToAuth()">‹</div>
-            <div class="avatar-small" id="myAvatar">👤</div>
-            <div class="title" id="myName">DICEGRAM</div>
-            <div class="actions">
-                <span onclick="logout()">🚪</span>
-            </div>
-        </div>
-        <div class="chat-list" id="chatList">
-            <div style="text-align:center; color:#6c7a8a; padding:40px 20px;">Загрузка...</div>
-        </div>
-    </div>
+  <script>
+    let currentPhone = '';
+    let currentActiveChatId = null;
 
-    <!-- ЧАТ -->
-    <div id="chatScreen">
-        <div class="header" id="chatHeader">
-            <div class="back" onclick="goToChats()">‹</div>
-            <div class="avatar-small" id="chatAvatar">👤</div>
-            <div class="title" id="chatTitle">Чат</div>
-            <div class="actions">
-                <span>📌</span>
-            </div>
-        </div>
-        <div class="messages-container" id="messagesContainer">
-            <div style="text-align:center; color:#6c7a8a; padding:40px 20px;">Загрузка...</div>
-        </div>
-        <div class="input-bar">
-            <input type="text" id="messageInput" placeholder="Сообщение..." onkeydown="if(event.key==='Enter') sendMessage()">
-            <button onclick="sendMessage()">➤</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    let state = {
-        phone: '',
-        step: 'phone',
-        chatId: null,
-        socket: null
-    };
-
-    const API_URL = window.location.origin;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        updateTime();
-        setInterval(updateTime, 1000);
-        document.getElementById('phoneInput').focus();
-    });
-
-    function updateTime() {
-        const now = new Date();
-        document.getElementById('timeDisplay').textContent = 
-            now.getHours().toString().padStart(2,'0') + ':' + 
-            now.getMinutes().toString().padStart(2,'0');
+    async function sendCode() {
+      currentPhone = document.getElementById('phone').value;
+      const res = await fetch('/api/auth/send_code', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ phone: currentPhone })
+      });
+      const data = await res.json();
+      if(data.status === 'ok') {
+        document.getElementById('step-phone').style.display = 'none';
+        document.getElementById('step-code').style.display = 'block';
+      } else { alert(data.message); }
     }
 
-    function typeNum(num) {
-        const phoneInput = document.getElementById('phoneInput');
-        const codeInput = document.getElementById('codeInput');
-        if (document.getElementById('codeGroup').style.display === 'block' && codeInput.value.length < 8) {
-            codeInput.value += num;
-        } else if (document.getElementById('codeGroup').style.display !== 'block') {
-            phoneInput.value += num;
-        }
+    async function loginCode() {
+      const code = document.getElementById('code').value;
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ phone: currentPhone, code: code })
+      });
+      const data = await res.json();
+      handleLoginResponse(data);
     }
 
-    async function handleAuth() {
-        const btn = document.getElementById('authBtn');
-        const error = document.getElementById('authError');
-        btn.disabled = true;
-        error.textContent = '';
-
-        try {
-            if (state.step === 'phone') {
-                const phone = document.getElementById('phoneInput').value.trim();
-                if (!phone || phone.length < 4) {
-                    error.textContent = 'Введите корректный номер';
-                    btn.disabled = false;
-                    return;
-                }
-                state.phone = phone;
-                
-                const res = await fetch('/api/init', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({phone: state.phone})
-                });
-                const data = await res.json();
-                
-                if (data.status === 'code_sent') {
-                    state.step = 'code';
-                    document.getElementById('phoneInput').style.display = 'none';
-                    document.getElementById('codeGroup').style.display = 'block';
-                    document.getElementById('codeInput').focus();
-                    btn.textContent = 'Подтвердить код';
-                } else {
-                    error.textContent = data.error || 'Ошибка';
-                }
-            } 
-            else if (state.step === 'code' || state.step === '2fa') {
-                const code = document.getElementById('codeInput').value.trim();
-                const password = document.getElementById('passwordInput').value.trim();
-                
-                if (!code) {
-                    error.textContent = 'Введите код';
-                    btn.disabled = false;
-                    return;
-                }
-                
-                const body = {
-                    phone: state.phone,
-                    code: code
-                };
-                if (password) body.password = password;
-                
-                const res = await fetch('/api/verify', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
-                });
-                const data = await res.json();
-                
-                if (data.status === '2fa_required') {
-                    state.step = '2fa';
-                    document.getElementById('passwordGroup').style.display = 'block';
-                    document.getElementById('passwordInput').focus();
-                    btn.textContent = 'Подтвердить 2FA';
-                    error.textContent = 'Введите пароль 2FA';
-                } else if (data.status === 'success') {
-                    // Успешный вход
-                    document.getElementById('authScreen').style.display = 'none';
-                    document.getElementById('chatsScreen').style.display = 'flex';
-                    
-                    connectSocket();
-                    loadDialogs();
-                    loadMyInfo();
-                } else {
-                    error.textContent = data.error || 'Ошибка';
-                }
-            }
-        } catch (e) {
-            error.textContent = 'Ошибка: ' + e.message;
-        }
-        btn.disabled = false;
+    async function login2FA() {
+      const password = document.getElementById('password').value;
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ phone: currentPhone, password: password })
+      });
+      const data = await res.json();
+      handleLoginResponse(data);
     }
 
-    async function loadMyInfo() {
-        try {
-            const res = await fetch('/api/me', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({phone: state.phone})
-            });
-            const data = await res.json();
-            if (data.first_name) {
-                document.getElementById('myName').textContent = data.first_name + ' ' + (data.last_name || '');
-                document.getElementById('myAvatar').textContent = data.first_name[0] || '👤';
-            }
-        } catch (e) {
-            console.error('Load my info error:', e);
-        }
+    function handleLoginResponse(data) {
+      if(data.status === 'ok') {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'flex';
+        loadDialogs();
+      } else if(data.status === '2fa_required') {
+        document.getElementById('step-code').style.display = 'none';
+        document.getElementById('step-2fa').style.display = 'block';
+      } else { alert(data.message); }
     }
 
     async function loadDialogs() {
-        try {
-            const res = await fetch('/api/dialogs', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({phone: state.phone})
-            });
-            const data = await res.json();
-            
-            const list = document.getElementById('chatList');
-            if (data.dialogs && data.dialogs.length > 0) {
-                list.innerHTML = data.dialogs.map(d => `
-                    <div class="chat-item" onclick="openChat('${d.id}', '${d.name}')">
-                        <div class="avatar">${d.photo ? `<img src="data:image/jpeg;base64,${d.photo}">` : d.name[0] || '👤'}</div>
-                        <div class="info">
-                            <div class="name">${d.name}</div>
-                            <div class="last-msg">${d.last_message || 'Нет сообщений'}</div>
-                        </div>
-                        <div class="time">${formatTime(d.date)}</div>
-                        ${d.unread > 0 ? `<div class="unread">${d.unread}</div>` : ''}
-                    </div>
-                `).join('');
-            } else {
-                list.innerHTML = '<div style="text-align:center; color:#6c7a8a; padding:40px 20px;">Нет чатов</div>';
-            }
-        } catch (e) {
-            console.error('Load dialogs error:', e);
-        }
-    }
-
-    async function loadMessages(chatId) {
-        try {
-            const res = await fetch('/api/messages', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    phone: state.phone,
-                    chat_id: chatId,
-                    limit: 50
-                })
-            });
-            const data = await res.json();
-            
-            const container = document.getElementById('messagesContainer');
-            if (data.messages && data.messages.length > 0) {
-                container.innerHTML = data.messages.map(msg => `
-                    <div class="msg ${msg.outgoing ? 'out' : 'in'}">
-                        ${!msg.outgoing ? `<span class="sender">${msg.sender_name || 'User'}</span>` : ''}
-                        ${msg.media ? '<span class="media-badge">📎 Медиа</span>' : ''}
-                        ${msg.text || '📎 Медиафайл'}
-                        <span class="time">${formatTime(msg.date)} ${msg.outgoing ? '✓✓' : ''}</span>
-                    </div>
-                `).join('');
-                container.scrollTop = container.scrollHeight;
-            } else {
-                container.innerHTML = '<div style="text-align:center; color:#6c7a8a; padding:40px 20px;">Нет сообщений</div>';
-            }
-        } catch (e) {
-            console.error('Load messages error:', e);
-        }
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if (!text || !state.chatId) return;
-        
-        try {
-            const res = await fetch('/api/send', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    phone: state.phone,
-                    chat_id: state.chatId,
-                    text: text
-                })
-            });
-            const data = await res.json();
-            
-            if (data.id) {
-                const container = document.getElementById('messagesContainer');
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'msg out';
-                msgDiv.innerHTML = `
-                    ${text}
-                    <span class="time">${new Date().toLocaleTimeString()} ✓✓</span>
-                `;
-                container.appendChild(msgDiv);
-                container.scrollTop = container.scrollHeight;
-                input.value = '';
-            }
-        } catch (e) {
-            console.error('Send message error:', e);
-        }
-    }
-
-    function openChat(chatId, name) {
-        state.chatId = chatId;
-        document.getElementById('chatsScreen').style.display = 'none';
-        document.getElementById('chatScreen').style.display = 'flex';
-        document.getElementById('chatTitle').textContent = name;
-        document.getElementById('chatAvatar').textContent = name[0] || '👤';
-        
-        loadMessages(chatId);
-        
-        if (state.socket) {
-            state.socket.emit('join', {phone: state.phone, chat_id: chatId});
-        }
-    }
-
-    function goToChats() {
-        document.getElementById('chatScreen').style.display = 'none';
-        document.getElementById('chatsScreen').style.display = 'flex';
-        state.chatId = null;
-    }
-
-    function goToAuth() {
-        document.getElementById('chatsScreen').style.display = 'none';
-        document.getElementById('authScreen').style.display = 'flex';
-        location.reload();
-    }
-
-    function logout() {
-        if (confirm('Выйти из аккаунта?')) {
-            location.reload();
-        }
-    }
-
-    function connectSocket() {
-        state.socket = io();
-        state.socket.on('connect', () => {
-            console.log('🔌 WebSocket connected');
+      const res = await fetch(`/api/dialogs?phone=${encodeURIComponent(currentPhone)}`);
+      const data = await res.json();
+      if(data.status === 'ok') {
+        const container = document.getElementById('dialogs-container');
+        container.innerHTML = '';
+        data.dialogs.forEach(d => {
+          const item = document.createElement('div');
+          item.className = 'dialog-item';
+          item.onclick = () => openChat(d.id, d.name);
+          item.innerHTML = `
+            <div class="avatar">${d.name[0] ? d.name[0].toUpperCase() : '?'}</div>
+            <div class="dialog-info">
+              <div class="dialog-top">
+                <span class="dialog-name">${d.name}</span>
+                <span class="dialog-date">${d.date}</span>
+              </div>
+              <div class="dialog-bottom">
+                <span class="dialog-lastmsg">${d.last_message}</span>
+                ${d.unread_count > 0 ? `<span class="badge">${d.unread_count}</span>` : ''}
+              </div>
+            </div>
+          `;
+          container.appendChild(item);
         });
-        
-        state.socket.on('new_message', (data) => {
-            if (state.chatId) {
-                const container = document.getElementById('messagesContainer');
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `msg ${data.outgoing ? 'out' : 'in'}`;
-                msgDiv.innerHTML = `
-                    ${data.text || '📎 Медиа'}
-                    <span class="time">${formatTime(data.date)} ${data.outgoing ? '✓✓' : ''}</span>
-                `;
-                container.appendChild(msgDiv);
-                container.scrollTop = container.scrollHeight;
-            }
-        });
+      }
     }
 
-    function formatTime(dateStr) {
-        if (!dateStr) return '';
-        const date = new Date(dateStr);
-        return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    async function openChat(id, name) {
+      currentActiveChatId = id;
+      document.getElementById('chat-title').innerText = name;
+      const res = await fetch(`/api/messages?phone=${encodeURIComponent(currentPhone)}&id=${id}`);
+      const data = await res.json();
+      if(data.status === 'ok') {
+        const container = document.getElementById('messages-container');
+        container.innerHTML = '';
+        data.messages.forEach(m => {
+          const bubble = document.createElement('div');
+          bubble.className = `msg-bubble ${m.out ? 'msg-out' : 'msg-in'}`;
+          bubble.innerHTML = `${m.text} <span class="msg-time">${m.date}</span>`;
+          container.appendChild(bubble);
+        });
+        container.scrollTop = container.scrollHeight;
+      }
     }
-</script>
+  </script>
 </body>
 </html>

@@ -8,7 +8,6 @@
 <style>
 /* ==================== ROOT VARIABLES ==================== */
 :root {
-  /* Dark Theme (Telegram Style) */
   --bg-primary: #0e1621;
   --bg-secondary: #17212b;
   --bg-card: #1f2b38;
@@ -18,14 +17,13 @@
   --bg-nav: #17212b;
   --bg-bubble-in: #1f2b38;
   --bg-bubble-out: #5288c1;
-  --bg-system: rgba(82, 136, 193, 0.15);
+  --bg-system: rgba(82, 136, 193, 0.12);
   --text-primary: #ffffff;
   --text-secondary: #a8b3c4;
   --text-muted: #7e8b9a;
-  --text-link: #5288c1;
   --accent: #5288c1;
   --accent-hover: #6399d4;
-  --accent-glow: rgba(82, 136, 193, 0.3);
+  --accent-glow: rgba(82, 136, 193, 0.25);
   --border: #2b3a4a;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   --radius-sm: 10px;
@@ -37,7 +35,6 @@
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* ==================== RESET & BASE ==================== */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body {
   height: 100%;
@@ -45,13 +42,11 @@ html, body {
   color: var(--text-primary);
   font-family: var(--font);
   overflow: hidden;
-  transition: background 0.3s ease;
 }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* ==================== APP CONTAINER ==================== */
 #app {
   position: relative;
   height: 100vh;
@@ -86,13 +81,13 @@ html, body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ==================== WELCOME SCREEN ==================== */
+/* ==================== WELCOME ==================== */
 #welcome {
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 40px 28px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(82, 136, 193, 0.08), transparent 70%),
+  background: radial-gradient(ellipse at 50% 0%, rgba(82, 136, 193, 0.06), transparent 70%),
               var(--bg-primary);
 }
 .logo-wrapper {
@@ -106,17 +101,8 @@ html, body {
   font-size: 48px;
   font-weight: 800;
   color: #fff;
-  box-shadow: 0 12px 48px rgba(82, 136, 193, 0.25);
+  box-shadow: 0 12px 48px rgba(82, 136, 193, 0.2);
   margin-bottom: 28px;
-  position: relative;
-}
-.logo-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 34px;
-  background: linear-gradient(135deg, rgba(82, 136, 193, 0.3), transparent);
-  z-index: -1;
 }
 .brand {
   font-size: 34px;
@@ -128,12 +114,7 @@ html, body {
   color: transparent;
   margin-bottom: 6px;
 }
-.tagline {
-  color: var(--text-secondary);
-  font-size: 15px;
-  font-weight: 500;
-  margin-bottom: 40px;
-}
+.tagline { color: var(--text-secondary); font-size: 15px; font-weight: 500; margin-bottom: 40px; }
 .btn-row { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
 .btn {
   width: 100%;
@@ -148,14 +129,12 @@ html, body {
 }
 .btn:active { transform: scale(0.96); }
 .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 16px var(--accent-glow); }
-.btn-primary:active { box-shadow: 0 2px 8px var(--accent-glow); }
 .btn-secondary { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); }
-.btn-secondary:active { background: var(--bg-hover); }
-.btn-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.btn-danger { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 .btn-success { background: #22c55e; color: #fff; }
 .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25); }
 
-/* ==================== AUTH SCREENS ==================== */
+/* ==================== AUTH ==================== */
 .auth-screen { padding: 32px 24px; justify-content: flex-start; background: var(--bg-primary); }
 .auth-header { margin-top: 8px; margin-bottom: 32px; }
 .auth-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
@@ -193,11 +172,10 @@ html, body {
   align-items: center;
   gap: 6px;
   font-family: var(--font);
-  transition: color 0.2s ease;
 }
-.back-btn:hover { color: var(--accent-hover); }
+.back-btn svg { width: 20px; height: 20px; }
 
-/* ==================== SUCCESS SCREEN ==================== */
+/* ==================== SUCCESS ==================== */
 #success {
   justify-content: center;
   align-items: center;
@@ -209,14 +187,13 @@ html, body {
   width: 80px;
   height: 80px;
   border-radius: var(--radius-full);
-  background: rgba(34, 197, 94, 0.12);
+  background: rgba(34, 197, 94, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 40px;
   color: #22c55e;
   margin-bottom: 20px;
-  border: 2px solid rgba(34, 197, 94, 0.15);
 }
 .phone-card {
   background: var(--bg-card);
@@ -231,7 +208,7 @@ html, body {
 .phone-num { font-size: 24px; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; }
 .security-note { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 28px; max-width: 320px; }
 
-/* ==================== BANNED SCREEN ==================== */
+/* ==================== BANNED ==================== */
 .banned-screen {
   position: absolute;
   inset: 0;
@@ -250,7 +227,6 @@ html, body {
   background: rgba(239, 68, 68, 0.08);
   display: flex; align-items: center; justify-content: center;
   font-size: 36px; margin-bottom: 24px;
-  border: 2px solid rgba(239, 68, 68, 0.12);
 }
 .banned-title { font-size: 28px; font-weight: 800; color: #ef4444; margin-bottom: 8px; }
 .banned-text { color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 320px; }
@@ -265,9 +241,7 @@ html, body {
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font);
-  transition: background 0.2s ease;
 }
-.banned-btn:active { background: var(--bg-card); }
 
 /* ==================== MAIN APP ==================== */
 #mainApp {
@@ -283,50 +257,41 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 12px 16px;
   background: var(--bg-header);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
-  min-height: 56px;
+  min-height: 52px;
 }
-.header-left { display: flex; align-items: center; gap: 12px; }
+.header-left { display: flex; align-items: center; gap: 10px; }
 .header-menu {
   background: transparent;
   border: none;
-  color: var(--text-primary);
-  font-size: 22px;
+  color: var(--text-secondary);
+  font-size: 20px;
   cursor: pointer;
   padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: opacity 0.2s ease;
 }
 .header-menu:active { opacity: 0.5; }
 .header-title {
   font-size: 18px;
   font-weight: 700;
-  letter-spacing: -0.3px;
-  background: linear-gradient(135deg, #5288c1, #7aa9d9);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-primary);
 }
-.header-right { display: flex; align-items: center; gap: 8px; }
+.header-title span { color: var(--accent); }
+.header-right { display: flex; align-items: center; gap: 4px; }
 .header-icon {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
-  padding: 6px;
+  padding: 6px 8px;
   border-radius: var(--radius-sm);
   transition: background 0.2s ease, color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-.header-icon:active { background: var(--bg-card); color: var(--text-primary); }
+.header-icon:active { background: var(--bg-card); }
 
 /* ==================== TAB CONTENT ==================== */
 .tab-content {
@@ -346,7 +311,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 18px;
+  padding: 12px 16px;
   cursor: pointer;
   transition: background 0.15s ease;
   position: relative;
@@ -388,13 +353,6 @@ html, body {
 }
 .chat-avatar.premium {
   border: 2px solid #f59e0b;
-}
-.chat-avatar.premium.rainbow {
-  border: 2px solid transparent;
-  background-image: linear-gradient(var(--bg-card), var(--bg-card)), 
-                    conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #06b6d4, #f59e0b);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
 }
 .chat-avatar .online-dot {
   position: absolute;
@@ -445,12 +403,7 @@ html, body {
   justify-content: center;
   box-shadow: 0 2px 8px var(--accent-glow);
 }
-.badge-verified {
-  color: var(--accent);
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-}
+.badge-verified { color: var(--accent); font-size: 14px; display: inline-flex; align-items: center; }
 .badge-group { color: var(--text-muted); font-size: 10px; font-weight: 700; background: var(--bg-card); padding: 1px 8px; border-radius: 4px; }
 .badge-nft { color: #f59e0b; font-size: 10px; font-weight: 700; }
 .badge-premium { color: #f59e0b; font-size: 12px; }
@@ -549,7 +502,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: var(--bg-header);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -603,7 +556,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(82, 136, 193, 0.04), transparent 70%),
+  background: radial-gradient(ellipse at 50% 0%, rgba(82, 136, 193, 0.03), transparent 70%),
               var(--bg-primary);
 }
 .msg-row { display: flex; margin: 2px 0; flex-direction: column; }
@@ -857,7 +810,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   padding: 32px 16px 24px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(82, 136, 193, 0.06), transparent 70%),
+  background: radial-gradient(ellipse at 50% 0%, rgba(82, 136, 193, 0.05), transparent 70%),
               var(--bg-primary);
   position: relative;
   flex-shrink: 0;
@@ -868,7 +821,7 @@ html, body {
   left: 0;
   right: 0;
   height: 120px;
-  background: linear-gradient(135deg, rgba(82, 136, 193, 0.12), transparent);
+  background: linear-gradient(135deg, rgba(82, 136, 193, 0.1), transparent);
   border-radius: 0 0 30px 30px;
   opacity: 0.5;
 }
@@ -887,13 +840,6 @@ html, body {
 .profile-avatar.owner {
   border-color: #f59e0b;
   box-shadow: 0 8px 32px rgba(245, 158, 11, 0.2);
-}
-.profile-avatar.premium.rainbow {
-  border: 3px solid transparent;
-  background-image: linear-gradient(var(--bg-primary), var(--bg-primary)), 
-                    conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #06b6d4, #f59e0b);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
 }
 .profile-avatar-hint { font-size: 11px; color: var(--text-muted); margin-top: -6px; margin-bottom: 10px; z-index: 1; }
 .profile-name { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; z-index: 1; }
@@ -1475,7 +1421,7 @@ html, body {
   <div class="app-header">
     <div class="header-left">
       <button class="header-menu" onclick="toggleMenu()">☰</button>
-      <span class="header-title">Dicegram</span>
+      <span class="header-title"><span>Dice</span>gram</span>
     </div>
     <div class="header-right">
       <button class="header-icon" onclick="openSearch()">🔍</button>
@@ -1707,6 +1653,134 @@ html, body {
   <button class="context-menu-item danger" id="deleteMsgBtn" onclick="deleteMessage()" style="display:none;">🗑️ Удалить</button>
 </div>
 
+<!-- ==================== SUB SETTINGS PAGES ==================== -->
+<!-- Security Page -->
+<div class="sub-settings-page" id="securityPage">
+  <div class="app-header">
+    <button class="header-menu" onclick="closeSubSettings('securityPage')">←</button>
+    <span class="header-title">Безопасность</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div style="padding:16px 20px;flex:1;overflow-y:auto;">
+    <div class="settings-card" onclick="openChangePasswordModal()">
+      <div class="left"><span style="font-size:20px;">🔑</span><span class="label">Сменить пароль</span></div>
+      <span class="settings-chevron">›</span>
+    </div>
+    <div class="settings-card" onclick="setup2FA()">
+      <div class="left"><span style="font-size:20px;">🔐</span><span class="label">Двухфакторная аутентификация</span></div>
+      <span class="settings-badge" id="twofaBadge">Выкл</span>
+      <span class="settings-chevron">›</span>
+    </div>
+    <div class="settings-card" onclick="openDevicesPage()">
+      <div class="left"><span style="font-size:20px;">📱</span><span class="label">Устройства</span></div>
+      <span class="value" id="devicesCount">0 сессий</span>
+      <span class="settings-chevron">›</span>
+    </div>
+    <div class="settings-card" onclick="openPinPage()">
+      <div class="left"><span style="font-size:20px;">🔢</span><span class="label">PIN-код</span></div>
+      <span class="value" id="pinStatusDisplay">Не установлен</span>
+      <span class="settings-chevron">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- Devices Page -->
+<div class="sub-settings-page" id="devicesPage">
+  <div class="app-header">
+    <button class="header-menu" onclick="closeSubSettings('devicesPage')">←</button>
+    <span class="header-title">Устройства</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div style="padding:16px 20px;flex:1;overflow-y:auto;" id="devicesList"></div>
+</div>
+
+<!-- PIN Page -->
+<div class="sub-settings-page" id="pinPage">
+  <div class="app-header">
+    <button class="header-menu" onclick="closeSubSettings('pinPage')">←</button>
+    <span class="header-title">PIN-код</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div style="padding:16px 20px;flex:1;overflow-y:auto;">
+    <div id="pinStep1">
+      <div class="auth-sub" style="margin-bottom:12px;">Введите новый PIN-код (4 цифры)</div>
+      <input class="field" id="pinInput" placeholder="XXXX" maxlength="4" type="password" inputmode="numeric">
+      <input class="field" id="pinInput2" placeholder="Подтвердите PIN" maxlength="4" type="password" inputmode="numeric">
+      <div class="hint err" id="pinHint"></div>
+      <button class="btn btn-primary" onclick="submitPin()">Установить PIN</button>
+    </div>
+    <div id="pinStep2" style="display:none;">
+      <div class="auth-sub" style="margin-bottom:12px;">Введите текущий PIN для удаления</div>
+      <input class="field" id="pinRemoveInput" placeholder="XXXX" maxlength="4" type="password" inputmode="numeric">
+      <div class="hint err" id="pinRemoveHint"></div>
+      <button class="btn btn-danger" onclick="removePin()">Удалить PIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- Wallet Page -->
+<div class="sub-settings-page" id="walletPage">
+  <div class="app-header">
+    <button class="header-menu" onclick="closeSubSettings('walletPage')">←</button>
+    <span class="header-title">Dice Wallet</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div style="padding:16px 20px;flex:1;overflow-y:auto;">
+    <div class="wallet-card">
+      <div class="currency">Баланс</div>
+      <div class="amount" id="walletBalanceAmount">0</div>
+      <div class="currency">❤️ Dice Wallet</div>
+    </div>
+    <button class="btn btn-primary" onclick="openGiftWalletModal()" style="margin-bottom:16px;">🎁 Подарить</button>
+    <div class="settings-section">История</div>
+    <div id="walletTransactions"></div>
+  </div>
+</div>
+
+<!-- AI Chat Page -->
+<div class="sub-settings-page" id="aiChatPage">
+  <div class="app-header">
+    <button class="header-menu" onclick="closeSubSettings('aiChatPage')">←</button>
+    <span class="header-title">Dice AI</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div class="ai-messages" id="aiChatMessages">
+    <div class="ai-msg assistant">Привет! Я Dice AI. Чем помочь? 🤖<span class="time">сейчас</span></div>
+  </div>
+  <div class="ai-input-bar">
+    <input id="aiChatInput" placeholder="Спросите что-нибудь..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+    <button class="send-btn" onclick="sendAIMessage()">➤</button>
+  </div>
+</div>
+
+<!-- Premium Page -->
+<div class="premium-page" id="premiumPage">
+  <div class="app-header" style="background:transparent;border:none;">
+    <button class="header-menu" onclick="closePremiumPage()" style="color:#fff;">←</button>
+    <span style="flex:1;text-align:center;font-weight:700;color:#f59e0b;">⭐ PREMIUM</span>
+    <span style="width:40px;"></span>
+  </div>
+  <div class="premium-hero">
+    <span class="crown">👑</span>
+    <div class="title">Dicegram Premium</div>
+    <div class="sub">Расширьте возможности</div>
+  </div>
+  <div class="premium-features">
+    <div class="premium-feature"><span class="icon">🖼️</span><div class="info"><div class="name">Рамка аватара</div><div class="desc">Уникальная рамка</div></div><span class="check">✓</span></div>
+    <div class="premium-feature"><span class="icon">🎨</span><div class="info"><div class="name">Цветной никнейм</div><div class="desc">Выберите свой цвет</div></div><span class="check">✓</span></div>
+    <div class="premium-feature"><span class="icon">⭐</span><div class="info"><div class="name">Премиум бейдж</div><div class="desc">Эксклюзивный значок</div></div><span class="check">✓</span></div>
+    <div class="premium-feature"><span class="icon">🌌</span><div class="info"><div class="name">Уникальные темы</div><div class="desc">Эксклюзивный дизайн</div></div><span class="check">✓</span></div>
+  </div>
+  <div class="premium-price">
+    <div class="price">$4.99 <span>/ месяц</span></div>
+    <div class="period">Отмена в любой момент</div>
+    <button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()">
+      <span id="premiumBtnText">✨ Купить подписку</span>
+    </button>
+    <div style="margin-top:8px;font-size:12px;color:var(--text-muted);" id="premiumDaysDisplay">30 дней бесплатно</div>
+  </div>
+</div>
+
 <!-- ==================== MODALS ==================== -->
 <!-- Add Contact -->
 <div class="modal-overlay" id="addContactModal">
@@ -1840,6 +1914,28 @@ html, body {
   </div>
 </div>
 
+<!-- Change Password -->
+<div class="modal-overlay" id="changePasswordModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
+    <div class="modal-title">🔑 Смена пароля</div>
+    <div id="pwStep1">
+      <div class="auth-sub" style="margin-bottom:12px;">Текущий пароль</div>
+      <input class="field" type="password" id="pwCurrentInput" placeholder="Текущий пароль">
+      <div class="hint err" id="pwStep1Hint"></div>
+      <button class="btn btn-primary" onclick="submitCurrentPassword()">Далее</button>
+    </div>
+    <div id="pwStep2" style="display:none;">
+      <div class="auth-sub" style="margin-bottom:12px;">Новый пароль (минимум 6 символов)</div>
+      <input class="field" type="password" id="pwNewInput" placeholder="Новый пароль">
+      <input class="field" type="password" id="pwNewInput2" placeholder="Подтвердите пароль">
+      <div class="hint err" id="pwStep2Hint"></div>
+      <button class="btn btn-primary" onclick="submitNewPassword()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <!-- Wallet Gift -->
 <div class="modal-overlay" id="giftWalletModal">
   <div class="modal-sheet">
@@ -1865,155 +1961,6 @@ html, body {
     <div style="display:flex;gap:10px;">
       <button class="btn btn-primary" onclick="confirmUploadAvatar()" style="flex:1;">Сохранить</button>
       <button class="btn btn-secondary" onclick="closeModal('avatarCropModal')" style="flex:1;">Отмена</button>
-    </div>
-  </div>
-</div>
-
-<!-- Security Page -->
-<div class="sub-settings-page" id="securityPage">
-  <div class="app-header">
-    <button class="header-menu" onclick="closeSubSettings('securityPage')">←</button>
-    <span class="header-title">Безопасность</span>
-    <span style="width:40px;"></span>
-  </div>
-  <div style="padding:16px 20px;flex:1;overflow-y:auto;">
-    <div class="settings-card" onclick="openChangePasswordModal()">
-      <div class="left"><span style="font-size:20px;">🔑</span><span class="label">Сменить пароль</span></div>
-      <span class="settings-chevron">›</span>
-    </div>
-    <div class="settings-card" onclick="setup2FA()">
-      <div class="left"><span style="font-size:20px;">🔐</span><span class="label">Двухфакторная аутентификация</span></div>
-      <span class="settings-badge" id="twofaBadge">Выкл</span>
-      <span class="settings-chevron">›</span>
-    </div>
-    <div class="settings-card" onclick="openDevicesPage()">
-      <div class="left"><span style="font-size:20px;">📱</span><span class="label">Устройства</span></div>
-      <span class="value" id="devicesCount">0 сессий</span>
-      <span class="settings-chevron">›</span>
-    </div>
-    <div class="settings-card" onclick="openPinPage()">
-      <div class="left"><span style="font-size:20px;">🔢</span><span class="label">PIN-код</span></div>
-      <span class="value" id="pinStatusDisplay">Не установлен</span>
-      <span class="settings-chevron">›</span>
-    </div>
-  </div>
-</div>
-
-<!-- Devices Page -->
-<div class="sub-settings-page" id="devicesPage">
-  <div class="app-header">
-    <button class="header-menu" onclick="closeSubSettings('devicesPage')">←</button>
-    <span class="header-title">Устройства</span>
-    <span style="width:40px;"></span>
-  </div>
-  <div style="padding:16px 20px;flex:1;overflow-y:auto;" id="devicesList"></div>
-</div>
-
-<!-- PIN Page -->
-<div class="sub-settings-page" id="pinPage">
-  <div class="app-header">
-    <button class="header-menu" onclick="closeSubSettings('pinPage')">←</button>
-    <span class="header-title">PIN-код</span>
-    <span style="width:40px;"></span>
-  </div>
-  <div style="padding:16px 20px;flex:1;overflow-y:auto;">
-    <div id="pinStep1">
-      <div class="auth-sub" style="margin-bottom:12px;">Введите новый PIN-код (4 цифры)</div>
-      <input class="field" id="pinInput" placeholder="XXXX" maxlength="4" type="password" inputmode="numeric">
-      <input class="field" id="pinInput2" placeholder="Подтвердите PIN" maxlength="4" type="password" inputmode="numeric">
-      <div class="hint err" id="pinHint"></div>
-      <button class="btn btn-primary" onclick="submitPin()">Установить PIN</button>
-    </div>
-    <div id="pinStep2" style="display:none;">
-      <div class="auth-sub" style="margin-bottom:12px;">Введите текущий PIN для удаления</div>
-      <input class="field" id="pinRemoveInput" placeholder="XXXX" maxlength="4" type="password" inputmode="numeric">
-      <div class="hint err" id="pinRemoveHint"></div>
-      <button class="btn btn-danger" onclick="removePin()">Удалить PIN</button>
-    </div>
-  </div>
-</div>
-
-<!-- Wallet Page -->
-<div class="sub-settings-page" id="walletPage">
-  <div class="app-header">
-    <button class="header-menu" onclick="closeSubSettings('walletPage')">←</button>
-    <span class="header-title">Dice Wallet</span>
-    <span style="width:40px;"></span>
-  </div>
-  <div style="padding:16px 20px;flex:1;overflow-y:auto;">
-    <div class="wallet-card">
-      <div class="currency">Баланс</div>
-      <div class="amount" id="walletBalanceAmount">0</div>
-      <div class="currency">❤️ Dice Wallet</div>
-    </div>
-    <button class="btn btn-primary" onclick="openGiftWalletModal()" style="margin-bottom:16px;">🎁 Подарить</button>
-    <div class="settings-section">История</div>
-    <div id="walletTransactions"></div>
-  </div>
-</div>
-
-<!-- AI Chat Page -->
-<div class="sub-settings-page" id="aiChatPage">
-  <div class="app-header">
-    <button class="header-menu" onclick="closeSubSettings('aiChatPage')">←</button>
-    <span class="header-title">Dice AI</span>
-    <span style="width:40px;"></span>
-  </div>
-  <div class="ai-messages" id="aiChatMessages">
-    <div class="ai-msg assistant">Привет! Я Dice AI. Чем помочь? 🤖<span class="time">сейчас</span></div>
-  </div>
-  <div class="ai-input-bar">
-    <input id="aiChatInput" placeholder="Спросите что-нибудь..." onkeydown="if(event.key==='Enter') sendAIMessage()">
-    <button class="send-btn" onclick="sendAIMessage()">➤</button>
-  </div>
-</div>
-
-<!-- Premium Page -->
-<div class="premium-page" id="premiumPage">
-  <div class="app-header" style="background:transparent;border:none;">
-    <button class="header-menu" onclick="closePremiumPage()" style="color:#fff;">←</button>
-    <span style="flex:1;text-align:center;font-weight:700;color:#f59e0b;">⭐ PREMIUM</span>
-    <span style="width:40px;"></span>
-  </div>
-  <div class="premium-hero">
-    <span class="crown">👑</span>
-    <div class="title">Dicegram Premium</div>
-    <div class="sub">Расширьте возможности</div>
-  </div>
-  <div class="premium-features">
-    <div class="premium-feature"><span class="icon">🖼️</span><div class="info"><div class="name">Рамка аватара</div><div class="desc">Уникальная рамка</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">🎨</span><div class="info"><div class="name">Цветной никнейм</div><div class="desc">Выберите свой цвет</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">⭐</span><div class="info"><div class="name">Премиум бейдж</div><div class="desc">Эксклюзивный значок</div></div><span class="check">✓</span></div>
-    <div class="premium-feature"><span class="icon">🌌</span><div class="info"><div class="name">Уникальные темы</div><div class="desc">Эксклюзивный дизайн</div></div><span class="check">✓</span></div>
-  </div>
-  <div class="premium-price">
-    <div class="price">$4.99 <span>/ месяц</span></div>
-    <div class="period">Отмена в любой момент</div>
-    <button class="btn-premium" id="premiumBuyBtn" onclick="buyPremium()">
-      <span id="premiumBtnText">✨ Купить подписку</span>
-    </button>
-    <div style="margin-top:8px;font-size:12px;color:var(--text-muted);" id="premiumDaysDisplay">30 дней бесплатно</div>
-  </div>
-</div>
-
-<!-- Change Password -->
-<div class="modal-overlay" id="changePasswordModal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
-    <div class="modal-title">🔑 Смена пароля</div>
-    <div id="pwStep1">
-      <div class="auth-sub" style="margin-bottom:12px;">Текущий пароль</div>
-      <input class="field" type="password" id="pwCurrentInput" placeholder="Текущий пароль">
-      <div class="hint err" id="pwStep1Hint"></div>
-      <button class="btn btn-primary" onclick="submitCurrentPassword()">Далее</button>
-    </div>
-    <div id="pwStep2" style="display:none;">
-      <div class="auth-sub" style="margin-bottom:12px;">Новый пароль (минимум 6 символов)</div>
-      <input class="field" type="password" id="pwNewInput" placeholder="Новый пароль">
-      <input class="field" type="password" id="pwNewInput2" placeholder="Подтвердите пароль">
-      <div class="hint err" id="pwStep2Hint"></div>
-      <button class="btn btn-primary" onclick="submitNewPassword()">Сохранить</button>
     </div>
   </div>
 </div>
@@ -2277,7 +2224,7 @@ function renderChatList() {
 
     return `
     <div class="chat-item" onclick="openChat('${username}','${escapeHtml(c.name).replace(/'/g,"\\'")}',${isGroup})">
-      <div class="chat-avatar ${avatarClass} ${isOwner ? 'owner' : ''} ${isPremium && c.premium_avatar_border && c.premium_avatar_border !== 'none' ? 'premium ' + c.premium_avatar_border : ''}">
+      <div class="chat-avatar ${avatarClass} ${isOwner ? 'owner' : ''} ${isPremium && c.premium_avatar_border && c.premium_avatar_border !== 'none' ? 'premium' : ''}">
         ${c.avatar_url ? `<img src="${API_BASE}${c.avatar_url}">` : letter}
         ${presenceMap[username]?.online ? '<span class="online-dot"></span>' : ''}
       </div>
@@ -2495,11 +2442,7 @@ async function syncProfileFromServer() {
       headers: { 'Authorization': `Bearer ${session.token}` }
     });
     if (res.status === 401) {
-      localStorage.removeItem('dicegram_token');
-      localStorage.removeItem('dicegram_session_cache');
-      document.getElementById('mainApp').classList.remove('active');
-      goTo('welcome');
-      showToast('Сессия истекла, войдите заново');
+      handleUnauthorized();
       return;
     }
     const data = await res.json();
@@ -2520,6 +2463,14 @@ async function syncProfileFromServer() {
     updatePremiumUI();
     check2FAStatus();
   } catch (e) {}
+}
+
+function handleUnauthorized() {
+  localStorage.removeItem('dicegram_token');
+  localStorage.removeItem('dicegram_session_cache');
+  document.getElementById('mainApp').classList.remove('active');
+  goTo('welcome');
+  showToast('Сессия истекла, войдите заново');
 }
 
 // ============================================================
@@ -2553,7 +2504,15 @@ function renderProfileTab() {
   const avatarWrap = document.getElementById('profileAvatarWrap');
   avatarWrap.className = 'avatar profile-avatar';
   if (isPremium && session.premium_avatar_border && session.premium_avatar_border !== 'none') {
-    avatarWrap.classList.add('premium', session.premium_avatar_border);
+    avatarWrap.classList.add('premium');
+    if (session.premium_avatar_border === 'rainbow') {
+      avatarWrap.style.border = '3px solid transparent';
+      avatarWrap.style.backgroundImage = `linear-gradient(var(--bg-primary), var(--bg-primary)), conic-gradient(from 0deg, #f59e0b, #ef4444, #8b5cf6, #06b6d4, #f59e0b)`;
+      avatarWrap.style.backgroundOrigin = 'border-box';
+      avatarWrap.style.backgroundClip = 'padding-box, border-box';
+    } else {
+      avatarWrap.style.border = `3px solid ${colors[session.premium_avatar_border] || '#f59e0b'}`;
+    }
   }
   if (isOwner) avatarWrap.classList.add('owner');
 
@@ -2627,14 +2586,7 @@ async function loadChatsList() {
     const res = await fetch(`${API_BASE}/api/chats/list`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
     });
-    if (res.status === 401) {
-      localStorage.removeItem('dicegram_token');
-      localStorage.removeItem('dicegram_session_cache');
-      document.getElementById('mainApp').classList.remove('active');
-      goTo('welcome');
-      showToast('Сессия истекла, войдите заново');
-      return;
-    }
+    if (res.status === 401) { handleUnauthorized(); return; }
     const data = await res.json();
     if (data.ok) {
       data.chats.forEach(c => {
@@ -2660,14 +2612,7 @@ async function loadGroupsList() {
     const res = await fetch(`${API_BASE}/api/groups/list`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
     });
-    if (res.status === 401) {
-      localStorage.removeItem('dicegram_token');
-      localStorage.removeItem('dicegram_session_cache');
-      document.getElementById('mainApp').classList.remove('active');
-      goTo('welcome');
-      showToast('Сессия истекла, войдите заново');
-      return;
-    }
+    if (res.status === 401) { handleUnauthorized(); return; }
     const data = await res.json();
     if (data.ok) {
       data.groups.forEach(g => {
@@ -2765,14 +2710,7 @@ async function openChat(username, name, isGroup = false) {
     const res = await fetch(`${API_BASE}${endpoint}`, {
       headers: { 'Authorization': `Bearer ${session.token}` }
     });
-    if (res.status === 401) {
-      localStorage.removeItem('dicegram_token');
-      localStorage.removeItem('dicegram_session_cache');
-      document.getElementById('mainApp').classList.remove('active');
-      goTo('welcome');
-      showToast('Сессия истекла, войдите заново');
-      return;
-    }
+    if (res.status === 401) { handleUnauthorized(); return; }
     const data = await res.json();
     if (data.ok) {
       data.messages.forEach(m => {
@@ -2998,7 +2936,7 @@ function updateReactionsDisplay(messageId) {
     html += `
       <div class="reaction-bubble ${isMy ? 'my' : ''}" onclick="handleReactionClick('${messageId}','${emoji}')">
         <span class="reaction-emoji">${emoji}</span>
-       <span class="reaction-count">${count}</span>
+        <span class="reaction-count">${count}</span>
       </div>
     `;
   }
@@ -3543,7 +3481,7 @@ async function openUserProfile(username) {
     avatarWrap.className = 'avatar profile-avatar';
     if (isOwner) avatarWrap.classList.add('owner');
     if (isPremium && u.premium_avatar_border && u.premium_avatar_border !== 'none') {
-      avatarWrap.classList.add('premium', u.premium_avatar_border);
+      avatarWrap.classList.add('premium');
     }
     if (isBanned) {
       avatarWrap.innerHTML = '🚫';
@@ -4514,7 +4452,6 @@ function closeSubSettings(id) {
 }
 
 function toggleMenu() {
-  // Бургер меню — можно добавить позже
   showToast('📱 Меню в разработке');
 }
 
@@ -4522,12 +4459,15 @@ function openSearch() {
   showToast('🔍 Поиск в разработке');
 }
 
-function handleUnauthorized() {
-  localStorage.removeItem('dicegram_token');
-  localStorage.removeItem('dicegram_session_cache');
-  document.getElementById('mainApp').classList.remove('active');
-  goTo('welcome');
-  showToast('Сессия истекла, войдите заново');
+async function fetchUserInfo(username) {
+  try {
+    const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
+      headers: { 'Authorization': `Bearer ${session.token}` }
+    });
+    const data = await res.json();
+    if (data.ok && data.user) return data.user;
+    return null;
+  } catch(e) { return null; }
 }
 
 // ============================================================
@@ -4557,47 +4497,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loadingScreen').classList.remove('active');
 });
 
-// ============================================================
-// ===================== FETCH USER INFO =====================
-// ============================================================
-async function fetchUserInfo(username) {
-  try {
-    const res = await fetch(`${API_BASE}/api/user/profile?username=${encodeURIComponent(username)}`, {
-      headers: { 'Authorization': `Bearer ${session.token}` }
-    });
-    const data = await res.json();
-    if (data.ok && data.user) return data.user;
-    return null;
-  } catch(e) { return null; }
-}
-
-// ============================================================
-// ===================== GENERATE E2EE KEYS =====================
-// ============================================================
-async function generateE2EEKeys() {
-  try {
-    const response = await fetch(`${API_BASE}/api/e2ee/public_key`, {
-      headers: { 'Authorization': `Bearer ${session.token}` }
-    });
-    const data = await response.json();
-    if (data.ok && data.public_key) {
-      session.public_key = data.public_key;
-      return;
-    }
-    // Генерируем новые ключи
-    const keyPair = await crypto.subtle.generateKey(
-      { name: "ECDH", namedCurve: "X25519" },
-      true,
-      ["deriveKey", "deriveBits"]
-    );
-    // Сохраняем на сервере
-    // ...
-  } catch(e) {
-    console.warn('E2EE setup error:', e);
-  }
-}
-
-console.log('🚀 DICEGRAM v2.0 — Защищённый мессенджер');
+console.log('🚀 DICEGRAM v3.0 — Защищённый мессенджер');
 </script>
 </body>
 </html>
